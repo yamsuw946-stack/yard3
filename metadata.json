@@ -1,0 +1,8 @@
+{
+  "name": "YARD300 \u2014 AURA CHAMPION",
+  "description": "YARD 300 Combat Health & Athletic Performance Engine founded by the Three Founders. Features AI biometric injury prediction, ACWR load analysis, and sports performance conditioning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

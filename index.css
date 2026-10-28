@@ -1,0 +1,614 @@
+/* ==========================================================================
+   AURA VISUALIZER - DYNAMIC ENERGY FIELD & CSS ANIMATIONS
+   ========================================================================== */
+
+/* Dynamic Hue Cycle (Color-Shifting) */
+@keyframes aura-hue-cycle {
+  0% {
+    filter: hue-rotate(0deg) brightness(1.05) saturate(1.2);
+  }
+  25% {
+    filter: hue-rotate(90deg) brightness(1.25) saturate(1.5);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(1.4) saturate(1.8);
+  }
+  75% {
+    filter: hue-rotate(270deg) brightness(1.25) saturate(1.5);
+  }
+  100% {
+    filter: hue-rotate(360deg) brightness(1.05) saturate(1.2);
+  }
+}
+
+/* Organic Plasma / Flame Morphing */
+@keyframes aura-plasma-morph {
+  0% {
+    border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
+  25% {
+    border-radius: 55% 45% 40% 60% / 60% 35% 65% 40%;
+    transform: scale(1.06) translateY(-4px) rotate(3deg);
+  }
+  50% {
+    border-radius: 38% 62% 65% 35% / 40% 60% 40% 60%;
+    transform: scale(1.03) translateY(2px) rotate(-2deg);
+  }
+  75% {
+    border-radius: 60% 40% 35% 65% / 50% 55% 45% 50%;
+    transform: scale(1.08) translateY(-6px) rotate(4deg);
+  }
+  100% {
+    border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
+}
+
+/* Rhythmic Breathing Pulse */
+@keyframes aura-pulse-breathe {
+  0%, 100% {
+    transform: scale(0.98);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+/* Outer Shockwave Ripple */
+@keyframes aura-shockwave-expand {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.95;
+    border-width: 4px;
+  }
+  70% {
+    opacity: 0.4;
+    border-width: 2px;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* Secondary Shockwave Ripple (Delayed) */
+@keyframes aura-shockwave-secondary {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1.85);
+    opacity: 0;
+  }
+}
+
+/* Clockwise Vortex Spin */
+@keyframes aura-spin-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Counter-Clockwise Vortex Spin */
+@keyframes aura-spin-ccw {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Electric Lightning Arcs Flicker */
+@keyframes aura-electric-strike {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(1) rotate(0deg);
+  }
+  8%, 12% {
+    opacity: 0.95;
+    transform: scale(1.04) rotate(4deg);
+    filter: drop-shadow(0 0 12px #00F0FF);
+  }
+  28%, 32% {
+    opacity: 0.85;
+    transform: scale(0.98) rotate(-3deg);
+    filter: drop-shadow(0 0 15px #FFE600);
+  }
+  55%, 58% {
+    opacity: 1;
+    transform: scale(1.06) rotate(6deg);
+    filter: drop-shadow(0 0 18px #FF007A);
+  }
+  78%, 82% {
+    opacity: 0.9;
+    transform: scale(1.01) rotate(-5deg);
+    filter: drop-shadow(0 0 14px #00F0FF);
+  }
+}
+
+/* Rising Energy Embers / Sparks */
+@keyframes aura-ember-rise {
+  0% {
+    transform: translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-110px) translateX(var(--ember-drift, 15px)) scale(1.2) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* Screen / Avatar Combat Vibration */
+@keyframes aura-combat-shake {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  15% {
+    transform: translate(-3px, 2px) rotate(-0.5deg);
+  }
+  30% {
+    transform: translate(3px, -2px) rotate(0.5deg);
+  }
+  45% {
+    transform: translate(-2px, -3px) rotate(-0.3deg);
+  }
+  60% {
+    transform: translate(2px, 3px) rotate(0.4deg);
+  }
+  75% {
+    transform: translate(-1px, 1px) rotate(-0.2deg);
+  }
+  90% {
+    transform: translate(2px, -1px) rotate(0.2deg);
+  }
+}
+
+/* Intense Burst Explosion Wave */
+@keyframes aura-burst-flare {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+    filter: brightness(2) contrast(1.5);
+  }
+  40% {
+    transform: scale(1.4);
+    opacity: 0.9;
+    filter: brightness(2.5) drop-shadow(0 0 40px #FFE600);
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+    filter: brightness(1);
+  }
+}
+
+/* CSS Classes for the Component */
+.animate-aura-hue {
+  animation: aura-hue-cycle 10s linear infinite;
+}
+
+.animate-aura-plasma {
+  animation: aura-plasma-morph 4s ease-in-out infinite;
+}
+
+.animate-aura-breathe {
+  animation: aura-pulse-breathe 2.4s ease-in-out infinite;
+}
+
+.animate-aura-shockwave-1 {
+  animation: aura-shockwave-expand 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+}
+
+.animate-aura-shockwave-2 {
+  animation: aura-shockwave-secondary 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) 0.8s infinite;
+}
+
+.animate-aura-spin-cw {
+  animation: aura-spin-cw 12s linear infinite;
+}
+
+.animate-aura-spin-ccw {
+  animation: aura-spin-ccw 8s linear infinite;
+}
+
+.animate-aura-lightning {
+  animation: aura-electric-strike 3s steps(1, end) infinite;
+}
+
+.animate-combat-shake {
+  animation: aura-combat-shake 0.25s linear infinite;
+}
+
+.animate-burst-flare {
+  animation: aura-burst-flare 0.9s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+/* ==========================================================================
+   CYBER-SCI-FI & MECHA-ANIME HUD STYLES & GLITCH EFFECTS
+   ========================================================================== */
+
+/* Glitch Slicing & Chromatic Aberration Keyframes */
+@keyframes cyber-glitch-anim {
+  0% {
+    transform: translate(0);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  15% {
+    transform: translate(-3px, 1.5px) skewX(-1.5deg);
+    filter: drop-shadow(-3px 0 #00F0FF) drop-shadow(3px 0 #FF007A);
+  }
+  30% {
+    transform: translate(3px, -1.5px) skewX(1deg);
+    filter: drop-shadow(2px 0 #FFE600) drop-shadow(-2px 0 #00F0FF);
+  }
+  45% {
+    transform: translate(-2px, 2px);
+  }
+  60% {
+    transform: translate(2px, -1px) skewX(-0.5deg);
+    filter: drop-shadow(-2px 0 #FF007A) drop-shadow(2px 0 #00F0FF);
+  }
+  75% {
+    transform: translate(-1px, 1px);
+  }
+  90% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+
+/* Glitch Hover Trigger for buttons & interactive elements */
+.hover-cyber-glitch:hover {
+  animation: cyber-glitch-anim 0.35s steps(2, end) infinite;
+}
+
+/* Card Glitch on Hover */
+@keyframes cyber-card-glitch {
+  0% {
+    transform: translate(0);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+  }
+  20% {
+    transform: translate(-2px, 1px) scale(1.008);
+    box-shadow: -5px 0 30px #00F0FF, 5px 0 30px #FF007A;
+  }
+  40% {
+    transform: translate(2px, -1px) scale(1.005);
+    box-shadow: 4px 0 30px #FFE600, -4px 0 30px #00F0FF;
+  }
+  60% {
+    transform: translate(-1px, 2px) scale(1.01);
+    box-shadow: 0 0 40px #FF007A;
+  }
+  80% {
+    transform: translate(1px, -1px) scale(1.008);
+  }
+  100% {
+    transform: translate(0) scale(1.01);
+    box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
+  }
+}
+
+.hover-card-glitch:hover {
+  animation: cyber-card-glitch 0.4s ease infinite alternate;
+}
+
+/* Mecha Scanline Beam */
+@keyframes hud-scanline-sweep {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(800%);
+    opacity: 0;
+  }
+}
+
+.animate-scanline {
+  animation: hud-scanline-sweep 4s linear infinite;
+}
+
+/* Glowing Neon Borders */
+.neon-border-cyan {
+  border-color: #00F0FF !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.55), inset 0 0 12px rgba(0, 240, 255, 0.2) !important;
+}
+
+.neon-border-green {
+  border-color: #10B981 !important;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.55), inset 0 0 12px rgba(16, 185, 129, 0.2) !important;
+}
+
+.neon-border-yellow {
+  border-color: #FFE600 !important;
+  box-shadow: 0 0 18px rgba(255, 230, 0, 0.55), inset 0 0 12px rgba(255, 230, 0, 0.2) !important;
+}
+
+.neon-border-purple {
+  border-color: #A855F7 !important;
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.55), inset 0 0 12px rgba(168, 85, 247, 0.2) !important;
+}
+
+.neon-border-red {
+  border-color: #E50914 !important;
+  box-shadow: 0 0 20px rgba(229, 9, 20, 0.65), inset 0 0 14px rgba(229, 9, 20, 0.25) !important;
+}
+
+/* Pulsing Neon Glow */
+@keyframes neon-pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(0, 240, 255, 1)) drop-shadow(0 0 25px rgba(255, 0, 122, 0.5));
+  }
+}
+
+.animate-neon-pulse {
+  animation: neon-pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* Mecha Targeting Reticle Radar Sweep */
+@keyframes hud-reticle-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-reticle-spin {
+  animation: hud-reticle-spin 12s linear infinite;
+}
+
+@keyframes hud-blink-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.animate-hud-blink {
+  animation: hud-blink-fast 1.2s steps(2, start) infinite;
+}
+
+/* Mecha Tech Corner Brackets */
+.hud-corner-bracket {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+.hud-corner-bracket-tl {
+  top: 0;
+  left: 0;
+  border-top: 2px solid #00F0FF;
+  border-left: 2px solid #00F0FF;
+}
+.hud-corner-bracket-tr {
+  top: 0;
+  right: 0;
+  border-top: 2px solid #00F0FF;
+  border-right: 2px solid #00F0FF;
+}
+.hud-corner-bracket-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid #00F0FF;
+  border-left: 2px solid #00F0FF;
+}
+.hud-corner-bracket-br {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid #00F0FF;
+  border-right: 2px solid #00F0FF;
+}
+
+/* Chamfered Cyber Panel Clip Paths */
+.clip-chamfer-corner {
+  clip-path: polygon(
+    14px 0%, 
+    100% 0%, 
+    100% calc(100% - 14px), 
+    calc(100% - 14px) 100%, 
+    0% 100%, 
+    0% 14px
+  );
+}
+
+/* ==========================================================================
+   MODERN ANIME LIVE CHARACTER MOTION & COMBAT SLASH FX
+   ========================================================================== */
+
+@keyframes anime-idle-breathe {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.018);
+  }
+}
+
+@keyframes anime-flame-surge {
+  0%, 100% {
+    filter: drop-shadow(0 0 25px rgba(229, 9, 20, 0.75)) drop-shadow(0 0 50px rgba(255, 230, 0, 0.4));
+    opacity: 0.95;
+  }
+  50% {
+    filter: drop-shadow(0 0 45px rgba(229, 9, 20, 0.95)) drop-shadow(0 0 80px rgba(255, 69, 0, 0.75));
+    opacity: 1;
+  }
+}
+
+@keyframes anime-slash-sweep {
+  0% {
+    opacity: 0;
+    transform: translate(-120%, 80%) rotate(-35deg) scaleY(0.1);
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+    transform: translate(0%, 0%) rotate(-35deg) scaleY(2.2);
+    filter: drop-shadow(0 0 25px #FFE600) drop-shadow(0 0 45px #E50914);
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(120%, -80%) rotate(-35deg) scaleY(0.2);
+  }
+}
+
+@keyframes anime-combo-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.6);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.25);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(-24px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-45px) scale(0.75);
+  }
+}
+
+@keyframes anime-ring-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.animate-anime-breathe {
+  animation: anime-idle-breathe 4.5s ease-in-out infinite;
+}
+
+.animate-anime-flame {
+  animation: anime-flame-surge 2.4s ease-in-out infinite;
+}
+
+.animate-anime-slash {
+  animation: anime-slash-sweep 0.45s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+.animate-anime-combo {
+  animation: anime-combo-pop 0.8s ease-out forwards;
+}
+
+.animate-anime-ring {
+  animation: anime-ring-rotate 16s linear infinite;
+}
+
+/* Katana Sword Strike & Blade Typography (Razor-Sharp Monochrome & Platinum Steel) */
+.katana-slash-text {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.katana-slash-spark {
+  position: absolute;
+  top: 50%;
+  left: -15%;
+  width: 130%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 25%, #ffffff 50%, rgba(200, 200, 215, 0.9) 75%, transparent 100%);
+  transform: translateY(-50%) rotate(-14deg);
+  opacity: 0.85;
+  box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(255, 255, 255, 0.9);
+  pointer-events-none;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS & ZERO HORIZONTAL OVERFLOW CONSTRAINTS
+   ========================================================================== */
+
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  -webkit-text-size-adjust: 100%;
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  position: relative;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Enforce strict viewport boundary on all flex and grid elements across screen sizes */
+.flex, [class*="flex"] {
+  max-width: 100%;
+}
+
+.grid, [class*="grid"] {
+  max-width: 100%;
+}
+
+/* Ensure media elements, svgs, and canvases never force container expansion */
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Enforce safe horizontal wrapping for long words and tokens */
+p, span, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+
+
