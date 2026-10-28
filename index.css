@@ -610,5 +610,31 @@ p, span, h1, h2, h3, h4, h5, h6 {
   word-break: break-word;
 }
 
+/* ==========================================================================
+   CINEMAGRAPH LIVING PHOTO BACKGROUND ANIMATION
+   ========================================================================== */
+@keyframes cinemagraph-breath {
+  0% {
+    transform: scale(1.0) translateY(0);
+  }
+  50% {
+    transform: scale(1.035) translateY(-0.8%);
+  }
+  100% {
+    transform: scale(1.0) translateY(0);
+  }
+}
+
+.cinemagraph-breathing-layer {
+  animation: cinemagraph-breath 26s ease-in-out infinite alternate;
+  transform-origin: center 25%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinemagraph-breathing-layer {
+    animation: none !important;
+  }
+}
+
 
 

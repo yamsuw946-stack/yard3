@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Mountain, Sparkles, Wind, Eye, EyeOff } from 'lucide-react';
+import { Mountain, Film, Sparkles, Wind, Eye, EyeOff } from 'lucide-react';
 import { Language } from '../i18n';
 
 interface ShaolinMonasteryBackgroundProps {
@@ -17,21 +17,24 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isEnabled, setIsEnabled] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('yard300_shaolin_bg');
+      const saved = localStorage.getItem('yard300_cinemagraph_bg');
       return saved !== null ? saved === 'true' : true;
     }
     return true;
   });
 
-  const [intensity, setIntensity] = useState<'calm' | 'dynamic'>('dynamic');
+  const [cinemagraphMode, setCinemagraphMode] = useState<'cinemagraph' | 'calm'>('cinemagraph');
   const isFr = currentLang === 'fr';
   const isEs = currentLang === 'es';
 
   useEffect(() => {
-    localStorage.setItem('yard300_shaolin_bg', String(isEnabled));
+    localStorage.setItem('yard300_cinemagraph_bg', String(isEnabled));
   }, [isEnabled]);
 
-  // Canvas particle simulation for atmospheric golden embers and drifting mountain mist
+  // Canvas particle simulation for living Cinemagraph elements:
+  // - Drifting mountain cloud mist layers
+  // - Warm temple lantern fire flickers & micro-embers
+  // - Rising golden martial aura motes
   useEffect(() => {
     if (!isEnabled) return;
     const canvas = canvasRef.current;
@@ -50,26 +53,35 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
     };
     window.addEventListener('resize', handleResize);
 
-    // Motes & Golden Temple Embers
-    const particleCount = intensity === 'dynamic' ? 45 : 20;
+    // Warm lantern coordinates relative to the courtyard and pavilions (cinemagraph points of living light)
+    const lanternFlickers = [
+      { rx: 0.36, ry: 0.85, baseRadius: 45, color: 'rgba(255, 175, 40, ' },
+      { rx: 0.46, ry: 0.74, baseRadius: 35, color: 'rgba(255, 160, 30, ' },
+      { rx: 0.53, ry: 0.68, baseRadius: 30, color: 'rgba(255, 185, 50, ' },
+      { rx: 0.78, ry: 0.90, baseRadius: 55, color: 'rgba(255, 170, 35, ' },
+      { rx: 0.80, ry: 0.59, baseRadius: 28, color: 'rgba(255, 180, 45, ' }
+    ];
+
+    // Cinemagraph Rising Embers from Lanterns & Courtyard
+    const particleCount = cinemagraphMode === 'cinemagraph' ? 50 : 25;
     const particles = Array.from({ length: particleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 2.5 + 0.8,
-      speedY: -(Math.random() * 0.4 + 0.15),
-      speedX: (Math.random() - 0.5) * 0.3 + 0.1, // subtle eastward breeze
+      size: Math.random() * 2.2 + 0.8,
+      speedY: -(Math.random() * 0.35 + 0.12),
+      speedX: (Math.random() - 0.45) * 0.25 + 0.08, // gentle eastward mountain draft
       opacity: Math.random() * 0.7 + 0.2,
-      pulseSpeed: Math.random() * 0.02 + 0.01,
-      color: Math.random() > 0.4 ? 'rgba(255, 230, 0, ' : 'rgba(255, 120, 40, '
+      pulseSpeed: Math.random() * 0.03 + 0.015,
+      color: Math.random() > 0.4 ? 'rgba(255, 225, 60, ' : 'rgba(255, 140, 40, '
     }));
 
-    // Soft drifting clouds / mist layers
-    const mistLayers = Array.from({ length: 4 }, (_, i) => ({
-      x: (i * width) / 4,
-      y: height * 0.3 + (i * height) * 0.15,
-      radius: Math.max(width, height) * 0.45,
-      speedX: 0.12 * (i + 1),
-      alpha: 0.04
+    // Volumetric Soft Mist Clouds drifting through granite valleys
+    const mistLayers = Array.from({ length: 5 }, (_, i) => ({
+      x: (i * width) / 5,
+      y: height * 0.25 + (i * height) * 0.14,
+      radius: Math.max(width, height) * 0.48,
+      speedX: 0.1 + i * 0.04,
+      alpha: 0.035 + i * 0.008
     }));
 
     let tick = 0;
@@ -78,7 +90,7 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
       tick++;
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Draw drifting misty cloud patches
+      // 1. Draw Living Volumetric Mountain Mist (Cinemagraph Cloud Drift)
       mistLayers.forEach((mist) => {
         mist.x += mist.speedX;
         if (mist.x - mist.radius > width) {
@@ -93,8 +105,8 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
           mist.y,
           mist.radius
         );
-        grad.addColorStop(0, `rgba(220, 235, 255, ${mist.alpha})`);
-        grad.addColorStop(0.6, `rgba(180, 200, 240, ${mist.alpha * 0.4})`);
+        grad.addColorStop(0, `rgba(225, 238, 255, ${mist.alpha})`);
+        grad.addColorStop(0.5, `rgba(180, 205, 245, ${mist.alpha * 0.45})`);
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
@@ -103,11 +115,31 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
         ctx.fill();
       });
 
-      // 2. Draw rising martial monastery embers & aura motes
+      // 2. Draw Living Lantern Flame Pulses (Cinemagraph Warm Fire Glow)
+      lanternFlickers.forEach((l, idx) => {
+        const lx = l.rx * width;
+        const ly = l.ry * height;
+        // Natural fire flicker frequency modulation
+        const flicker = Math.sin(tick * 0.08 + idx * 2.1) * 0.15 + Math.cos(tick * 0.13 + idx) * 0.1;
+        const currentRadius = l.baseRadius * (1 + flicker);
+        const alpha = Math.max(0.15, Math.min(0.45, 0.28 + flicker * 0.5));
+
+        const fireGrad = ctx.createRadialGradient(lx, ly, 0, lx, ly, currentRadius);
+        fireGrad.addColorStop(0, `${l.color}${alpha})`);
+        fireGrad.addColorStop(0.4, `${l.color}${alpha * 0.5})`);
+        fireGrad.addColorStop(1, 'rgba(255, 120, 0, 0)');
+
+        ctx.fillStyle = fireGrad;
+        ctx.beginPath();
+        ctx.arc(lx, ly, currentRadius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. Draw Rising Martial Aura & Lantern Embers
       particles.forEach((p) => {
         p.y += p.speedY;
         p.x += p.speedX;
-        p.opacity += Math.sin(tick * p.pulseSpeed) * 0.01;
+        p.opacity += Math.sin(tick * p.pulseSpeed) * 0.015;
 
         if (p.y < -10) {
           p.y = height + 10;
@@ -119,14 +151,14 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
           p.x = width + 10;
         }
 
-        const currentAlpha = Math.max(0.1, Math.min(0.9, p.opacity));
+        const currentAlpha = Math.max(0.12, Math.min(0.85, p.opacity));
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `${p.color}${currentAlpha})`;
         ctx.shadowColor = '#FFE600';
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 6;
         ctx.fill();
-        ctx.shadowBlur = 0; // reset
+        ctx.shadowBlur = 0;
       });
 
       animationFrameId = requestAnimationFrame(render);
@@ -138,7 +170,7 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isEnabled, intensity]);
+  }, [isEnabled, cinemagraphMode]);
 
   return (
     <>
@@ -148,31 +180,33 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
         aria-hidden="true"
         style={{ opacity: isEnabled ? 1 : 0 }}
       >
-        {/* Layer 1: High-Resolution Shaolin Mountain Sanctuary Image with subtle breathing pan */}
+        {/* Layer 1: Cinemagraph High-Definition Base Image with Seamless Living Breathing Motion */}
         <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[20000ms] ease-out will-change-transform"
+          className="absolute inset-0 w-full h-full bg-cover bg-center will-change-transform cinemagraph-breathing-layer"
           style={{
             backgroundImage: `url('/images/shaolin_mountain_monastery.jpg')`,
-            backgroundPosition: 'center 20%',
-            filter: 'brightness(0.38) contrast(1.15) saturate(1.1)',
-            transform: isEnabled ? 'scale(1.06)' : 'scale(1.0)'
+            backgroundPosition: 'center 22%',
+            filter: 'brightness(0.36) contrast(1.18) saturate(1.12)'
           }}
         />
 
-        {/* Layer 2: Deep Cyber-Obsidian Vignette & Atmospheric Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#040508]/90 via-[#040508]/70 to-[#040508]/95" />
+        {/* Layer 2: Deep Cyber-Obsidian Vignette & Atmospheric Contrast Mask */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#040508]/92 via-[#040508]/65 to-[#040508]/95" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#040508] via-transparent to-[#040508]/90" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#040508]/40 to-[#040508]/95" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#040508]/30 to-[#040508]/95" />
 
-        {/* Layer 3: Canvas for floating mist clouds & rising temple embers */}
+        {/* Layer 3: Canvas for Living Cinemagraph Elements (Flickering Lanterns, Drifting Fog, Rising Aura Embers) */}
         <canvas 
           ref={canvasRef} 
-          className="absolute inset-0 w-full h-full mix-blend-screen opacity-70"
+          className="absolute inset-0 w-full h-full mix-blend-screen opacity-75"
         />
+
+        {/* Layer 4: Authentic 35mm Motion Picture Subtle Film Grain */}
+        <div className="absolute inset-0 bg-speedlines mix-blend-overlay opacity-10 pointer-events-none" />
       </div>
 
-      {/* Floating Aesthetic Control Pill in Bottom-Right Corner */}
-      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center gap-1.5 p-1 rounded-2xl bg-[#0C0E18]/90 border border-emerald-500/40 backdrop-blur-xl shadow-[0_0_20px_rgba(16,185,129,0.25)] text-xs">
+      {/* Floating Cinemagraph Control Pill in Bottom-Right Corner */}
+      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center gap-1.5 p-1 rounded-2xl bg-[#0C0E18]/90 border border-emerald-500/40 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.25)] text-xs">
         <button
           type="button"
           onClick={() => setIsEnabled(!isEnabled)}
@@ -181,24 +215,24 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
               ? 'bg-emerald-500 text-black shadow-md' 
               : 'bg-black/60 text-gray-400 hover:text-white'
           }`}
-          title="Toggle Shaolin Training Monastery Background"
+          title="Toggle Cinemagraph Shaolin Background"
         >
-          <Mountain className="w-3.5 h-3.5" />
+          <Film className="w-3.5 h-3.5" />
           <span>
             {isEnabled 
-              ? (isFr ? 'Monastère Shaolin' : isEs ? 'Monasterio Shaolin' : 'Shaolin Monastery') 
-              : (isFr ? 'Fond Noir Pur' : isEs ? 'Fondo Negro' : 'Obsidian Pure')}
+              ? (isFr ? 'Cinemagraph Shaolin' : isEs ? 'Cinemagraph Shaolin' : 'Shaolin Cinemagraph') 
+              : (isFr ? 'Noir Pur' : isEs ? 'Negro Puro' : 'Pure Obsidian')}
           </span>
         </button>
 
         {isEnabled && (
           <button
             type="button"
-            onClick={() => setIntensity(prev => prev === 'dynamic' ? 'calm' : 'dynamic')}
+            onClick={() => setCinemagraphMode(prev => prev === 'cinemagraph' ? 'calm' : 'cinemagraph')}
             className="p-1.5 rounded-xl bg-black/60 hover:bg-black text-[#FFE600] transition-colors cursor-pointer"
-            title={intensity === 'dynamic' ? 'Calm Mist' : 'Dynamic Mist & Embers'}
+            title={cinemagraphMode === 'cinemagraph' ? 'Living Cinemagraph (Active)' : 'Calm Mist Mode'}
           >
-            {intensity === 'dynamic' ? <Wind className="w-3.5 h-3.5 animate-pulse" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {cinemagraphMode === 'cinemagraph' ? <Wind className="w-3.5 h-3.5 animate-pulse text-[#FFE600]" /> : <Sparkles className="w-3.5 h-3.5 text-gray-400" />}
           </button>
         )}
       </div>
