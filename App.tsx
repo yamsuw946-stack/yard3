@@ -28,6 +28,7 @@ import AppDownloadModal from './components/AppDownloadModal';
 import { SharedAuraModal } from './components/SharedAuraModal';
 import { FoundersAndCommunity } from './components/FoundersAndCommunity';
 import { AuthModal } from './components/AuthModal';
+import { GlobalSponsorsShowcase } from './components/GlobalSponsorsShowcase';
 
 // High-Performance Code-Split Lazy Loaded Subviews for Ultra-Fast Mobile & Desktop Loading
 const Checkout = React.lazy(() => import('./components/Checkout'));
@@ -486,6 +487,9 @@ function App() {
               
               {/* 1. Subscriber Tiers & Earned Credentials Showcase (4 Levels) */}
               <SubscriberTiersShowcase currentLang={currentLang} />
+
+              {/* Official Global Sponsors & Sports Performance Partners (Adidas, Red Bull, WHOOP, MMA Federation, Tiger Muay Thai) */}
+              <GlobalSponsorsShowcase currentLang={currentLang} />
 
               {/* 2. Interactive Clinical Algorithms Launcher (Sleep Studies & ACWR Injury Prediction) */}
               <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-[#121422] via-[#0E101A] to-[#161826] shadow-[0_0_40px_rgba(0,240,255,0.2)]">

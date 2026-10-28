@@ -10,15 +10,18 @@ export const HERO_IMAGE = '/images/anime_hero_demon_back_1788742125215.jpg';
 export const SHAOLIN_MONASTERY_IMAGE = '/images/shaolin_mountain_monastery.jpg';
 export const REALISTIC_ANIME_STRIKER_IMAGE = '/images/realistic_anime_striker.jpg';
 export const REALISTIC_VALKYRIE_IMAGE = '/images/realistic_valkyrie_fighter.jpg';
+export const REALISTIC_MMA_BRAWLER_IMAGE = '/images/realistic_mma_brawler.jpg';
+export const REALISTIC_TACTICAL_SHINOBI_IMAGE = '/images/realistic_tactical_shinobi.jpg';
+export const REALISTIC_VALKYRIE_APEX_IMAGE = '/images/realistic_valkyrie_apex.jpg';
+export const REALISTIC_FLAME_STRIKER_IMAGE = '/images/realistic_flame_striker.jpg';
 export const ABOUT_SQUAD_IMAGE = '/images/aura_champions_squad.jpg';
 export const LIVE_ARENA_IMAGE = '/images/live_arena_fighters_2050_1788741135197.jpg';
-export const VALKYRIE_NEON_IMAGE = '/images/realistic_valkyrie_fighter.jpg';
-export const TARIK_SAIYAN_IMAGE = '/images/realistic_anime_striker.jpg';
-export const REN_FLAME_IMAGE = '/images/ren_flame_hashira_1788741696531.jpg';
-export const TITAN_BRAWLER_IMAGE = '/images/titan_brawler_2050_1788741109327.jpg';
-export const CYBER_SHINOBI_IMAGE = '/images/cyber_shinobi_2050_1788741122150.jpg';
-export const KAREM_IRON_IMAGE = '/images/karem_iron_vanguard_1788741709635.jpg';
-export const SAMURAI_RONIN_IMAGE = '/images/cyber_ronin_blade.jpg';
+export const VALKYRIE_NEON_IMAGE = '/images/realistic_valkyrie_apex.jpg';
+export const TARIK_SAIYAN_IMAGE = '/images/realistic_mma_brawler.jpg';
+export const REN_FLAME_IMAGE = '/images/realistic_flame_striker.jpg';
+export const TITAN_BRAWLER_IMAGE = '/images/realistic_mma_brawler.jpg';
+export const CYBER_SHINOBI_IMAGE = '/images/realistic_tactical_shinobi.jpg';
+export const SAMURAI_RONIN_IMAGE = '/images/cyber_samurai_unique.jpg';
 export const CYBER_SAMURAI_UNIQUE_IMAGE = '/images/cyber_samurai_unique.jpg';
 export const CYBER_RONIN_BLADE_IMAGE = '/images/cyber_ronin_blade.jpg';
 export const NINJA_KUNOICHI_IMAGE = '/images/ninja_kunoichi_shadow_1790712603497.jpg';
@@ -72,7 +75,7 @@ export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event
       'valkyrie_neon': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80',
       'tarik_saiyan': 'https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?w=800&auto=format&fit=crop&q=80',
       'ren_flame': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'karem_iron': 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800&auto=format&fit=crop&q=80',
+      'realistic_mma': 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800&auto=format&fit=crop&q=80',
       'anime_ai_coach': 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80',
       'anime_challenger': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80',
       'anime_fast_recovery': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80',

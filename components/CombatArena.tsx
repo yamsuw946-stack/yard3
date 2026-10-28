@@ -36,7 +36,7 @@ import {
   YARD300_BRAND_LOGO,
   CYBER_RONIN_BLADE_IMAGE,
   TITAN_BRAWLER_IMAGE,
-  KAREM_IRON_IMAGE,
+  REALISTIC_MMA_BRAWLER_IMAGE,
   CYBER_SHINOBI_IMAGE,
   BOXING_VALKYRIE_IMAGE,
   handleImageError 
@@ -127,9 +127,9 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
   {
     id: 'b-04',
     fighterName: 'yam suw',
-    opponentName: 'Karem Iron Vanguard',
+    opponentName: 'Jin Titan Brawler',
     fighterAvatar: FOUNDER_YAM_SUW_IMAGE,
-    opponentAvatar: KAREM_IRON_IMAGE,
+    opponentAvatar: REALISTIC_MMA_BRAWLER_IMAGE,
     outcome: 'VICTORY',
     duration: '06:12',
     caloriesBurned: 420.5,

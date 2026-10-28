@@ -44,7 +44,6 @@ import {
   JOURNAL_GEAR_IMAGE,
   YARD_SHIRT_IMAGE,
   YARD_BRAND_HERO_BANNER,
-  KAREM_IRON_IMAGE,
   handleImageError
 } from '../constants';
 import ProductGrid from './ProductGrid';
