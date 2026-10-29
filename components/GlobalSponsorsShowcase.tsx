@@ -67,10 +67,14 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
       accentColor: '#FFFFFF',
       glowColor: 'rgba(255, 255, 255, 0.35)',
       logoSvg: (
-        <svg viewBox="0 0 100 65" className="w-16 h-10 fill-current text-white">
-          <polygon points="5,60 25,60 38,36 18,36" />
-          <polygon points="35,60 55,60 70,22 50,22" />
-          <polygon points="65,60 85,60 100,5 80,5" />
+        <svg viewBox="0 0 130 65" className="w-22 h-11" fill="none">
+          {/* Authentic Adidas 3-Stripes Performance Mountain Logo */}
+          <path d="M 22 36 L 33 36 L 22 22 L 11 22 Z" fill="#FFFFFF" />
+          <path d="M 38 36 L 49 36 L 33 13 L 22 13 Z" fill="#FFFFFF" />
+          <path d="M 54 36 L 65 36 L 44 4 L 33 4 Z" fill="#FFFFFF" />
+          {/* Official adidas wordmark */}
+          <text x="38" y="50" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.06em">adidas</text>
+          <text x="38" y="59" textAnchor="middle" fill="#9CA3AF" fontSize="6.2" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.16em">COMBAT SPORTS</text>
         </svg>
       ),
       mandateEn: 'Engineered in Herzogenaurach with custom nano-weave tensile compression, powering YARD 300 fighters across grueling Shaolin striking camps and multi-stage endurance gauntlets.',
@@ -118,14 +122,28 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
       accentColor: '#FFE600',
       glowColor: 'rgba(255, 230, 0, 0.45)',
       logoSvg: (
-        <svg viewBox="0 0 120 70" className="w-20 h-10">
-          <circle cx="60" cy="35" r="24" fill="#FFE600" />
-          {/* Left Bull Silhouette */}
-          <path d="M12 44 Q 25 22 42 32 Q 52 38 58 35 Q 52 46 40 48 Q 28 50 12 44 Z" fill="#E50914" />
-          <path d="M22 28 Q 15 18 10 22 Q 18 26 24 32 Z" fill="#E50914" />
-          {/* Right Bull Silhouette */}
-          <path d="M108 44 Q 95 22 78 32 Q 68 38 62 35 Q 68 46 80 48 Q 92 50 108 44 Z" fill="#E50914" />
-          <path d="M98 28 Q 105 18 110 22 Q 102 26 96 32 Z" fill="#E50914" />
+        <svg viewBox="0 0 140 70" className="w-24 h-12" fill="none">
+          {/* Radiant Yellow Sun */}
+          <circle cx="70" cy="28" r="20" fill="#FFCC00" />
+          {/* Left Charging Crimson Bull */}
+          <g fill="#D20A11">
+            <path d="M 12 36 C 14 30 20 28 26 25 C 28 21 34 18 42 19 C 48 20 54 24 60 26 C 65 27 68 31 70 33 C 66 35 62 33 58 32 C 54 35 50 41 46 44 C 42 46 36 45 32 46 C 28 47 24 53 22 55 L 20 55 L 23 46 C 20 47 16 45 13 42 C 10 39 10 37 12 36 Z" />
+            <path d="M 14 32 C 12 25 18 20 22 17 L 23 18 C 19 21 15 25 16 31 Z" />
+            <path d="M 54 36 L 58 48 L 54 48 L 50 38 Z" />
+          </g>
+          <path d="M 62 25 C 64 21 68 18 73 17 C 71 21 68 23 65 26 Z" fill="#FFCC00" />
+
+          {/* Right Charging Crimson Bull */}
+          <g fill="#D20A11">
+            <path d="M 128 36 C 126 30 120 28 114 25 C 112 21 106 18 98 19 C 92 20 86 24 80 26 C 75 27 72 31 70 33 C 74 35 78 33 82 32 C 86 35 90 41 94 44 C 98 46 104 45 108 46 C 112 47 116 53 118 55 L 120 55 L 117 46 C 120 47 124 45 127 42 C 130 39 130 37 128 36 Z" />
+            <path d="M 126 32 C 128 25 122 20 118 17 L 117 18 C 121 21 125 25 124 31 Z" />
+            <path d="M 86 36 L 82 48 L 86 48 L 90 38 Z" />
+          </g>
+          <path d="M 78 25 C 76 21 72 18 67 17 C 69 21 72 23 75 26 Z" fill="#FFCC00" />
+
+          {/* Official Red Bull Wordmark */}
+          <text x="70" y="56" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900" fontStyle="italic" fontFamily="sans-serif" letterSpacing="0.04em">Red Bull</text>
+          <text x="70" y="65" textAnchor="middle" fill="#FFE600" fontSize="6.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.16em">ATHLETE LAB</text>
         </svg>
       ),
       mandateEn: 'Collaborating through the Red Bull Diagnostics & Training Center to test neural reaction latencies under severe lactic acidosis in live combat sparring.',
@@ -173,10 +191,16 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
       accentColor: '#00F0FF',
       glowColor: 'rgba(0, 240, 255, 0.45)',
       logoSvg: (
-        <svg viewBox="0 0 110 50" className="w-18 h-9 fill-none stroke-current text-[#00F0FF]" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-          {/* WHOOP Signature Connected Waves */}
-          <path d="M10 25 C 20 10, 25 40, 35 25 C 45 10, 50 40, 60 25 C 70 10, 75 40, 85 25 C 95 10, 100 35, 105 25" />
-          <circle cx="60" cy="25" r="3" fill="#00F0FF" />
+        <svg viewBox="0 0 135 55" className="w-24 h-11" fill="none">
+          {/* Authentic WHOOP Connected Sensor Glyph */}
+          <g transform="translate(18, 25)">
+            <circle cx="0" cy="0" r="14" stroke="#00F0FF" strokeWidth="2.5" strokeDasharray="14 3 6 3" strokeLinecap="round" />
+            <circle cx="0" cy="0" r="4.5" fill="#00F0FF" />
+            <path d="M -8 0 L 8 0 M 0 -8 L 0 8" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          </g>
+          {/* Authentic WHOOP Bold Wordmark */}
+          <text x="78" y="30" textAnchor="middle" fill="#FFFFFF" fontSize="18" fontWeight="900" fontFamily="'Rajdhani', -apple-system, sans-serif" letterSpacing="0.22em">WHOOP</text>
+          <text x="78" y="44" textAnchor="middle" fill="#00F0FF" fontSize="7" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.24em">4.0 BIOMETRICS</text>
         </svg>
       ),
       mandateEn: 'Syncing live Heart Rate Variability (HRV), skin temperature, and sleep staging directly into the YARD 300 ACWR & Clinical Algorithm engine for real-time injury prevention.',
@@ -210,26 +234,32 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
       ]
     },
     {
-      id: 'immaf_mma',
-      name: 'WORLD MMA FEDERATION',
-      taglineEn: 'Sanctioned Combat Sports Testing & Title Arena Partner',
-      taglineAr: 'شريك ترخيص النزالات القتالية واختبارات الأداء الدولية الرسمية',
-      taglineEs: 'Pruebas de deportes de combate autorizadas y socio de arena de títulos',
-      taglineFr: 'Homologation des sports de combat et partenaire d’arène de titre',
-      categoryEn: 'Sanctioned Combat Sports',
-      categoryAr: 'رياضات القتال المعتمدة والتصنيف الدولي',
-      categoryEs: 'Deportes de Combate Sancionados',
-      categoryFr: 'Sports de Combat Homologués',
-      badge: 'OFFICIAL SANCTIONING BODY',
-      accentColor: '#E50914',
-      glowColor: 'rgba(229, 9, 20, 0.45)',
+      id: 'ufc_mma',
+      name: 'UFC · WORLD MMA',
+      taglineEn: 'Official Championship Octagon & Sanctioned Combat Partner',
+      taglineAr: 'شريك النزالات القتالية المعتمدة والبطولات العالمية في القفص المثمن',
+      taglineEs: 'Socio oficial del octágono de campeonato y combate sancionado',
+      taglineFr: 'Partenaire officiel de l’octogone de championnat et du combat homologué',
+      categoryEn: 'World Championship MMA',
+      categoryAr: 'بطولات الفنون القتالية المختلطة العالمية (MMA)',
+      categoryEs: 'Campeonato Mundial de MMA',
+      categoryFr: 'Championnat Mondial de MMA',
+      badge: 'OFFICIAL WORLD MMA PARTNER',
+      accentColor: '#D20A0A',
+      glowColor: 'rgba(210, 10, 10, 0.45)',
       logoSvg: (
-        <svg viewBox="0 0 90 90" className="w-12 h-12">
-          {/* Octagon Combat Cage Emblem */}
-          <polygon points="27,5 63,5 85,27 85,63 63,85 27,85 5,63 5,27" fill="#141624" stroke="#E50914" strokeWidth="4" />
-          <polygon points="30,14 60,14 76,30 76,60 60,76 30,76 14,60 14,30" fill="none" stroke="#FFE600" strokeWidth="2" strokeDasharray="4,2" />
-          <text x="45" y="44" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900" fontFamily="sans-serif">MMA</text>
-          <text x="45" y="58" textAnchor="middle" fill="#E50914" fontSize="9" fontWeight="900" fontFamily="sans-serif">GLOBAL</text>
+        <svg viewBox="0 0 130 55" className="w-24 h-11" fill="none">
+          {/* Authentic UFC Slanted Bold Geometry */}
+          <g transform="skewX(-10)">
+            {/* Letter U */}
+            <path d="M 16 8 L 27 8 L 27 26 C 27 31 30 33 35 33 C 40 33 43 31 43 26 L 43 8 L 54 8 L 54 26 C 54 38 46 43 35 43 C 24 43 16 38 16 26 Z" fill="#D20A0A" />
+            {/* Letter F */}
+            <path d="M 59 8 L 90 8 L 90 17 L 70 17 L 70 23 L 86 23 L 86 31 L 70 31 L 70 43 L 59 43 Z" fill="#D20A0A" />
+            {/* Letter C */}
+            <path d="M 120 16 L 110 22 C 108 17 105 16 101 16 C 95 16 91 20 91 25.5 C 91 31 95 35 101 35 C 105 35 108 33 111 29 L 121 34 C 116 41 110 43 101 43 C 89 43 80 35 80 25.5 C 80 16 89 8 101 8 C 110 8 116 11 120 16 Z" fill="#D20A0A" />
+          </g>
+          {/* Sub-label */}
+          <text x="65" y="52" textAnchor="middle" fill="#FFFFFF" fontSize="6.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.22em">OCTAGON SANCTIONED</text>
         </svg>
       ),
       mandateEn: 'Official sanctioning body ensuring YARD 300 combat tournaments adhere to international unified MMA safety codes, standardized judging, and professional division criteria.',
@@ -277,15 +307,38 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
       accentColor: '#FF6B00',
       glowColor: 'rgba(255, 107, 0, 0.45)',
       logoSvg: (
-        <svg viewBox="0 0 100 85" className="w-14 h-12">
-          {/* Stylized Roaring Tiger Head Emblem */}
-          <path d="M50 10 Q 75 5 85 28 Q 90 55 65 75 Q 50 82 35 75 Q 10 55 15 28 Q 25 5 50 10 Z" fill="#181410" stroke="#FF6B00" strokeWidth="3" />
-          <path d="M35 32 Q 40 40 32 45 Q 26 40 35 32 Z" fill="#FFE600" />
-          <path d="M65 32 Q 60 40 68 45 Q 74 40 65 32 Z" fill="#FFE600" />
-          <path d="M50 48 L 44 58 L 56 58 Z" fill="#E50914" />
-          <path d="M38 65 Q 50 72 62 65" stroke="#FFFFFF" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <line x1="22" y1="52" x2="10" y2="52" stroke="#FF6B00" strokeWidth="2" />
-          <line x1="78" y1="52" x2="90" y2="52" stroke="#FF6B00" strokeWidth="2" />
+        <svg viewBox="0 0 130 75" className="w-24 h-14" fill="none">
+          {/* Authentic Tiger Muay Thai Shield Crest */}
+          <path d="M 65 3 L 105 15 L 105 48 C 105 65 65 74 65 74 C 65 74 25 65 25 48 L 25 15 Z" fill="#0C0E18" stroke="#FF6B00" strokeWidth="2.5" />
+          <path d="M 65 7 L 100 18 L 100 46 C 100 60 65 68 65 68 C 65 68 30 60 30 46 L 30 18 Z" fill="#141724" stroke="#FFE600" strokeWidth="1" opacity="0.6" />
+          
+          {/* Fierce Tiger Head */}
+          <polygon points="38,22 46,12 52,24" fill="#FF6B00" />
+          <polygon points="92,22 84,12 78,24" fill="#FF6B00" />
+          <polygon points="42,21 47,15 50,22" fill="#FFFFFF" />
+          <polygon points="88,21 83,15 80,22" fill="#FFFFFF" />
+          
+          <path d="M 40 24 Q 65 18 90 24 Q 98 38 90 50 Q 65 60 40 50 Q 32 38 40 24 Z" fill="#FF6B00" />
+          
+          <path d="M 65 19 L 61 28 L 69 28 Z" fill="#000000" />
+          <path d="M 46 25 L 54 29 L 48 33 Z" fill="#000000" />
+          <path d="M 84 25 L 76 29 L 82 33 Z" fill="#000000" />
+          <path d="M 37 36 L 47 38 L 40 42 Z" fill="#000000" />
+          <path d="M 93 36 L 83 38 L 90 42 Z" fill="#000000" />
+          
+          <polygon points="48,34 56,36 54,40 46,38" fill="#FFE600" />
+          <circle cx="51" cy="37" r="1.5" fill="#000000" />
+          <polygon points="82,34 74,36 76,40 84,38" fill="#FFE600" />
+          <circle cx="79" cy="37" r="1.5" fill="#000000" />
+          
+          <ellipse cx="65" cy="45" rx="7" ry="5" fill="#FFFFFF" />
+          <polygon points="62,43 68,43 65,47" fill="#000000" />
+          <polygon points="58,46 61,46 59,52" fill="#FFFFFF" />
+          <polygon points="72,46 69,46 71,52" fill="#FFFFFF" />
+          
+          {/* Official Bottom Ribbon */}
+          <rect x="18" y="58" width="94" height="13" rx="3" fill="#FF6B00" stroke="#FFE600" strokeWidth="1" />
+          <text x="65" y="68" textAnchor="middle" fill="#000000" fontSize="7.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.08em">TIGER MUAY THAI</text>
         </svg>
       ),
       mandateEn: 'The world-famous Phuket academy where UFC, ONE Championship, and Bellator champions forge their striking, clinching, and high-altitude endurance. Partnered with YARD 300 to host exclusive fighter camp programs and cross-training certifications.',
