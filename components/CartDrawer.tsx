@@ -90,7 +90,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                   <div>
                     <div className="flex justify-between items-start">
                       <h3 className="font-black text-white text-base font-anime">{item.name}</h3>
-                      <span className="text-sm font-black text-[#FFE600] font-anime">${item.price}</span>
+                      <span className="text-sm font-black text-[#FFE600] font-mono" dir="ltr">${item.price}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-xs text-gray-400 font-bold">{item.category}</span>
@@ -137,7 +137,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             <span className="text-sm font-bold text-gray-300">
               {isFr ? 'COÛT TOTAL DU MATÉRIEL' : isEs ? 'COSTO TOTAL DEL EQUIPO' : 'TOTAL GEAR COST'}
             </span>
-            <span className="text-2xl font-black text-[#FFE600] font-anime neon-text-yellow">${total}</span>
+            <span className="text-2xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">${total}</span>
           </div>
           <p className="text-xs text-gray-400 mb-6 text-center">
             {isFr 

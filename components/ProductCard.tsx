@@ -348,11 +348,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-[#FFE600] font-anime neon-text-yellow">
+              <span className="text-2xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">
                 ${product.price}
               </span>
               {product.originalPrice && (
-                <span className="text-xs line-through text-gray-500 font-mono">
+                <span className="text-xs line-through text-gray-500 font-mono" dir="ltr">
                   ${product.originalPrice}
                 </span>
               )}

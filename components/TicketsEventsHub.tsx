@@ -399,7 +399,7 @@ export const TicketsEventsHub: React.FC<TicketsEventsHubProps> = ({
                 <div className="pt-4">
                   <div className="flex items-baseline justify-between mb-4">
                     <div>
-                      <span className="text-2xl sm:text-3xl font-black text-[#FFE600] font-anime">${event.price}</span>
+                      <span className="text-2xl sm:text-3xl font-black text-[#FFE600] font-mono tracking-tight" dir="ltr">${event.price}</span>
                       {event.originalPrice && (
                         <span className="text-sm line-through text-gray-500 ml-2">${event.originalPrice}</span>
                       )}
@@ -531,7 +531,7 @@ export const TicketsEventsHub: React.FC<TicketsEventsHubProps> = ({
 
               <div className="pt-4 flex items-center justify-between gap-4">
                 <div>
-                  <span className="text-3xl font-black text-white font-anime">$10</span>
+                  <span className="text-3xl font-black text-white font-mono tracking-tight" dir="ltr">$10</span>
                   <span className="text-xs text-gray-400 block font-bold">{isAr ? 'للمباراة الواحدة' : 'per single match'}</span>
                 </div>
                 <button
@@ -598,7 +598,7 @@ export const TicketsEventsHub: React.FC<TicketsEventsHubProps> = ({
               <div className="pt-4 flex items-center justify-between gap-4">
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-[#FFE600] font-anime neon-text-yellow">$120</span>
+                    <span className="text-3xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">$120</span>
                     <span className="text-xs line-through text-gray-500 font-bold">$280</span>
                   </div>
                   <span className="text-xs text-[#10B981] block font-bold">{isAr ? 'للبطولة كاملة بجميع مبارياتها' : 'all matches included'}</span>

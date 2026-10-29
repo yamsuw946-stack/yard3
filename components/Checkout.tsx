@@ -442,7 +442,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
                 <span className="text-[10px] text-gray-400 block font-mono">TOTAL PAID</span>
-                <span className="font-black text-[#FFE600] font-anime text-sm">${completedOrder.total}</span>
+                <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${completedOrder.total}</span>
               </div>
             </div>
 
@@ -483,7 +483,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
                         <span className="text-[10px] text-gray-400">{item.category} {item.size ? `• ${item.size}` : ''}</span>
                       </div>
                     </div>
-                    <span className="font-black text-[#FFE600] font-anime text-sm">${item.price}</span>
+                    <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${item.price}</span>
                   </div>
                 ))}
               </div>
@@ -925,7 +925,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
                     <h3 className="font-bold text-white text-xs truncate font-anime">{item.name}</h3>
                     <span className="text-[10px] text-gray-400 block">{item.category} {item.size ? `• ${item.size}` : ''}</span>
                   </div>
-                  <span className="font-black text-[#FFE600] font-anime text-sm">${item.price}</span>
+                  <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${item.price}</span>
                 </div>
               ))}
             </div>
@@ -941,7 +941,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
               </div>
               <div className="border-t border-gray-800/80 pt-2 flex justify-between items-center text-sm">
                 <span className="font-black font-anime text-white">{isFr ? 'TOTAL :' : isEs ? 'TOTAL:' : 'TOTAL:'}</span>
-                <span className="text-2xl font-black font-anime text-[#FFE600]">${total}</span>
+                <span className="text-2xl font-black font-mono text-[#FFE600]" dir="ltr">${total}</span>
               </div>
             </div>
 

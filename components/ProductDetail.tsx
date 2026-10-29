@@ -142,7 +142,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack, onAddToC
              </p>
 
              <div className="flex items-baseline gap-4 flex-wrap">
-               <span className="text-4xl font-black text-[#FFE600] font-anime neon-text-yellow">${currentProduct.price}</span>
+               <span className="text-4xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">${currentProduct.price}</span>
                {currentProduct.originalPrice && (
                  <>
                    <span className="text-xl line-through text-gray-500 font-mono">

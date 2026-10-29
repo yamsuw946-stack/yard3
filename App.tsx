@@ -582,16 +582,7 @@ function App() {
                 onExploreSection={(secId) => handleSelectHubSection(secId as SectionHubId)}
               />
 
-              {/* 5. YARD Bio-Recovery & Injury Therapy Resort (Bazaruto Archipelago Sanctuary) */}
-              <BazarutoResortSanctuary 
-                currentLang={currentLang} 
-                onExploreEvents={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'tickets' });
-                }}
-              />
-
-              {/* 6. The Visionary Founders Showcase (Yam Suw, MTK, ARB) */}
+              {/* 5. The Visionary Founders Showcase (Yam Suw, MTK, ARB) */}
               <FoundersAndCommunity currentLang={currentLang} />
 
             </div>

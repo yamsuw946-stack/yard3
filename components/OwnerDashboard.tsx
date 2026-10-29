@@ -831,7 +831,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             }`}
           >
             <ImageIcon className="w-4 h-4" />
-            <span>{isAr ? '1. الصور والوسائط' : '1. Photos & Media'}</span>
+            <span>{isAr ? 'القسم 1: الصور والوسائط' : '1. Photos & Media'}</span>
           </button>
 
           <button
@@ -846,7 +846,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             }`}
           >
             <Layers className="w-4 h-4" />
-            <span>{isAr ? '2. أقسام الموقع' : '2. Site Sections'}</span>
+            <span>{isAr ? 'القسم 2: أقسام الموقع' : '2. Site Sections'}</span>
           </button>
 
           <button
@@ -861,7 +861,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span>{isAr ? '3. طرق وبوابات الدفع' : '3. Payment Gateways'}</span>
+            <span>{isAr ? 'القسم 3: طرق وبوابات الدفع' : '3. Payment Gateways'}</span>
           </button>
 
           <button
@@ -876,7 +876,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             }`}
           >
             <Video className="w-4 h-4" />
-            <span>{isAr ? '4. الفيديوهات والعروض' : '4. Videos & Demos'}</span>
+            <span>{isAr ? 'القسم 4: الفيديوهات والعروض' : '4. Videos & Demos'}</span>
           </button>
 
           <button
@@ -891,7 +891,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>{isAr ? '5. كتابة وإدارة المقالات' : '5. Warrior Journal CMS'}</span>
+            <span>{isAr ? 'القسم 5: كتابة وإدارة المقالات' : '5. Warrior Journal CMS'}</span>
           </button>
         </div>
 

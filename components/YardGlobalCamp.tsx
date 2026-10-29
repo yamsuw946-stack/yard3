@@ -283,7 +283,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang = 'e
             </div>
 
             <div className="p-5 rounded-2xl bg-[#0D0E14] shadow-lg text-center space-y-1">
-              <span className="block text-3xl md:text-5xl font-black font-anime text-[#10B981]">100%</span>
+              <span className="block text-3xl md:text-5xl font-black font-mono text-[#10B981]" dir="ltr">100%</span>
               <span className="text-xs font-bold text-gray-300 block">
                 {isAr ? 'شامل الإقامة والعتاد والتغذية' : isFr ? 'Séjour & équipement inclus' : isEs ? 'Estancia y equipo incluido' : 'All-Inclusive Elite Villa'}
               </span>
@@ -407,7 +407,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang = 'e
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
               <div className="p-4 rounded-xl bg-black/50 space-y-1 text-center md:text-right">
                 <span className="text-xs font-black font-anime text-[#FFE600] uppercase block">
-                  {isAr ? '1. المؤسسون الثلاثة' : isFr ? '1. LES 3 FONDATEURS' : isEs ? '1. LOS 3 FUNDADORES' : '1. THE THREE FOUNDERS'}
+                  {isAr ? '• الركيزة الأولى: المؤسسون الثلاثة' : isFr ? '1. LES 3 FONDATEURS' : isEs ? '1. LOS 3 FUNDADORES' : '1. THE THREE FOUNDERS'}
                 </span>
                 <span className="text-xs font-bold text-white block">
                   {isAr ? 'القيادة التنفيذية ومعايير الانضباط' : isFr ? 'Leadership Exécutif & Standards Élevés' : isEs ? 'Liderazgo Ejecutivo y Altos Estándares' : 'Executive Leadership & High Standards'}
@@ -419,7 +419,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang = 'e
 
               <div className="p-4 rounded-xl bg-black/50 space-y-1 text-center md:text-right">
                 <span className="text-xs font-black font-anime text-[#10B981] uppercase block">
-                  {isAr ? '2. فريق المدربين حول العالم' : isFr ? "2. L'ÉQUIPE MONDIALE DE COACHS" : isEs ? '2. EL EQUIPO GLOBAL DE ENTRENADORES' : '2. GLOBAL COACHING CREW'}
+                  {isAr ? '• الركيزة الثانية: فريق المدربين حول العالم' : isFr ? "2. L'ÉQUIPE MONDIALE DE COACHS" : isEs ? '2. EL EQUIPO GLOBAL DE ENTRENADORES' : '2. GLOBAL COACHING CREW'}
                 </span>
                 <span className="text-xs font-bold text-white block">
                   {isAr ? 'الميكانيكا الحيوية والفسيولوجيا والقتال' : isFr ? 'Biomécanique, Physiologie & Combat' : isEs ? 'Biomecánica, Fisiología y Combate' : 'Biomechanics, Physiology & Combat'}
@@ -431,7 +431,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang = 'e
 
               <div className="p-4 rounded-xl bg-black/50 space-y-1 text-center md:text-right">
                 <span className="text-xs font-black font-anime text-[#00F0FF] uppercase block">
-                  {isAr ? '3. مجتمع الـ 300 رياضي' : isFr ? '3. LA COMMUNAUTÉ DES 300' : isEs ? '3. LA COMUNIDAD DE LOS 300' : '3. THE 300 ATHLETES COHORT'}
+                  {isAr ? '• الركيزة الثالثة: مجتمع الـ 300 رياضي' : isFr ? '3. LA COMMUNAUTÉ DES 300' : isEs ? '3. LA COMUNIDAD DE LOS 300' : '3. THE 300 ATHLETES COHORT'}
                 </span>
                 <span className="text-xs font-bold text-white block">
                   {isAr ? 'البيئة المحفزة والتناغم الفكري' : isFr ? "Synergie d'Élite & Esprit de Corps" : isEs ? 'Sinergia de Élite y Espíritu de Superación' : 'Elite Synergy & Shared Ambition'}

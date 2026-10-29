@@ -366,7 +366,7 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
                   <span className="text-[10px] font-black bg-white text-black px-2 py-0.5 rounded font-anime">
                     {userEffortLevel >= 90 ? 'S-RANK GOD' : userEffortLevel >= 75 ? 'A-RANK PRO' : 'CHALLENGER'}
                   </span>
-                  <span className="text-[10px] font-black text-[#FFE600] font-anime">
+                  <span className="text-[10px] font-black text-[#FFE600] font-mono font-black" dir="ltr">
                     {Math.round(userEffortLevel * 99.5)} AP
                   </span>
                 </div>
@@ -433,7 +433,7 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
             <div className="p-4 rounded-2xl bg-[#0A0B10] border border-gray-800 space-y-2">
               <div className="flex items-center gap-2 text-white font-black font-anime text-xs">
                 <CheckCircle2 className="w-4 h-4 text-white" />
-                <span>{isAr ? '1. استمرارية العرق والجهد' : '1. Relentless Sweat'}</span>
+                <span>{isAr ? '• الركيزة الأولى: استمرارية العرق والجهد' : '1. Relentless Sweat'}</span>
               </div>
               <p className="text-[11px] text-gray-400 font-bold">
                 {isAr ? 'الانضباط يتفوق على التحفيز اللحظي؛ الحلبة تنادي في كل الظروف.' : 'Consistency over fleeting motivation. The arena calls regardless of the weather.'}
@@ -443,7 +443,7 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
             <div className="p-4 rounded-2xl bg-[#0A0B10] border border-gray-800 space-y-2">
               <div className="flex items-center gap-2 text-[#FFE600] font-black font-anime text-xs">
                 <CheckCircle2 className="w-4 h-4 text-[#FFE600]" />
-                <span>{isAr ? '2. هدوء الزن والتنفس' : '2. Zen Composure'}</span>
+                <span>{isAr ? '• الركيزة الثانية: هدوء الزن والتنفس' : '2. Zen Composure'}</span>
               </div>
               <p className="text-[11px] text-gray-400 font-bold">
                 {isAr ? 'التنفس التكتيكي وتناغم الطاقة الحيوية لحماية الجسد وتفادي الاحتراق.' : 'Breathwork and bio-energy alchemical harmony to prevent physical and mental burnout.'}
@@ -453,7 +453,7 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
             <div className="p-4 rounded-2xl bg-[#0A0B10] border border-gray-800 space-y-2">
               <div className="flex items-center gap-2 text-zinc-200 font-black font-anime text-xs">
                 <CheckCircle2 className="w-4 h-4 text-zinc-200" />
-                <span>{isAr ? '3. أخوة الـ 300 محارب' : '3. Brotherhood of 300'}</span>
+                <span>{isAr ? '• الركيزة الثالثة: أخوة الـ 300 محارب' : '3. Brotherhood of 300'}</span>
               </div>
               <p className="text-[11px] text-gray-400 font-bold">
                 {isAr ? 'كل مقاتل يرتقي برفيقه؛ نحتفل بالأرقام القياسية والبطولات كفيلق موحد.' : 'Every warrior elevates their comrade. We celebrate PRs and championships as one unified legion.'}

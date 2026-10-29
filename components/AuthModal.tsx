@@ -114,7 +114,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (!password.trim()) {
       soundFX.playError();
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'كلمة المرور مطلوبة لتسجيل الدخول.'
+          : isFr 
           ? 'Le mot de passe est obligatoire.' 
           : isEs 
           ? 'La contraseña es obligatoria.' 
@@ -131,7 +133,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         soundFX.playPowerUp();
         setCurrentUser(res.user);
         setSuccessMsg(
-          isFr 
+          isAr
+            ? `أهلاً بعودتك يا ${res.user.name}!`
+            : isFr 
             ? `Bon retour, ${res.user.name} !` 
             : isEs 
             ? `¡Bienvenido de nuevo, ${res.user.name}!` 
@@ -148,7 +152,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setCurrentVerificationCode(res.verificationCode || '');
         setMode('verify');
         setErrorMsg(
-          isFr
+          isAr
+            ? 'يرجى تأكيد بريدك الإلكتروني برمز التحقق قبل تسجيل الدخول.'
+            : isFr
             ? 'Veuillez confirmer votre e-mail avant de vous connecter.'
             : isEs
             ? 'Por favor, confirma tu correo electrónico antes de iniciar sesión.'
@@ -161,7 +167,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         soundFX.playError();
         setErrorMsg(
           res.error || (
-            isFr 
+            isAr
+              ? 'بيانات الاعتماد أو كلمة المرور غير صحيحة.'
+              : isFr 
               ? 'Identifiants ou mot de passe incorrects.' 
               : isEs 
               ? 'Credenciales o contraseña incorrectas.' 
@@ -172,7 +180,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     } catch {
       soundFX.playError();
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة ثانية.'
+          : isFr 
           ? 'Une erreur est survenue lors de la connexion' 
           : isEs 
           ? 'Ocurrió un error al iniciar sesión' 
@@ -193,7 +203,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     if (!name.trim()) {
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'يرجى إدخال اسم الرياضي (حرفان على الأقل)'
+          : isFr 
           ? "Veuillez entrer le nom de l'athlète" 
           : isEs 
           ? 'Por favor, introduce el nombre del atleta' 
@@ -206,7 +218,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (!password || password.length < 6) {
       soundFX.playError();
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'يجب ألا تقل كلمة المرور عن 6 أحرف.'
+          : isFr 
           ? 'Le mot de passe doit comporter au moins 6 caractères.' 
           : isEs 
           ? 'La contraseña debe tener al menos 6 caracteres.' 
@@ -219,7 +233,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (password !== confirmPassword) {
       soundFX.playError();
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'كلمتا المرور غير متطابقتين.'
+          : isFr 
           ? 'Les deux mots de passe ne correspondent pas.' 
           : isEs 
           ? 'Las dos contraseñas no coinciden.' 
@@ -252,7 +268,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setEmailDispatch(mailRes);
 
         setSuccessMsg(
-          isFr 
+          isAr
+            ? 'تم إرسال رابط ورمز التأكيد! يرجى التحقق من بريدك الإلكتروني لتفعيل الحساب.'
+            : isFr 
             ? 'Code de confirmation envoyé ! Veuillez valider votre e-mail pour activer votre compte.' 
             : isEs 
             ? '¡Código de confirmación enviado! Verifica tu correo para activar tu cuenta.' 
@@ -291,7 +309,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (!clean || clean.length < 6) {
       soundFX.playError();
       setErrorMsg(
-        isFr 
+        isAr
+          ? 'يرجى إدخال رمز التأكيد كاملاً المكون من 6 أرقام.'
+          : isFr 
           ? 'Veuillez saisir le code complet à 6 chiffres.' 
           : isEs 
           ? 'Por favor, introduce el código completo de 6 dígitos.' 
@@ -307,7 +327,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       soundFX.playPowerUp();
       setCurrentUser(res.user);
       setSuccessMsg(
-        isFr 
+        isAr
+          ? `تم تفعيل وتأكيد الحساب بنجاح! مرحباً بك يا ${res.user.name}.`
+          : isFr 
           ? `Compte activé avec succès ! Bienvenue, ${res.user.name}.` 
           : isEs 
           ? `¡Cuenta activada con éxito! Bienvenido, ${res.user.name}.` 
@@ -321,7 +343,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       soundFX.playError();
       setErrorMsg(
         res.error || (
-          isFr 
+          isAr
+            ? 'رمز التأكيد غير صحيح أو منتهي الصلاحية.'
+            : isFr 
             ? 'Code de confirmation incorrect ou expiré.' 
             : isEs 
             ? 'Código de confirmación incorrecto o caducado.' 
@@ -344,10 +368,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const mailRes = await emailService.sendVerificationCode(verifyEmailAddress, name || 'Athlete', res.verificationCode);
       setEmailDispatch(mailRes);
       setSuccessMsg(
-        isFr ? 'Nouveau code envoyé !' : isEs ? '¡Nuevo código enviado!' : 'New confirmation code sent!'
+        isAr ? 'تم إرسال رمز جديد إلى بريدك!' : isFr ? 'Nouveau code envoyé !' : isEs ? '¡Nuevo código enviado!' : 'New confirmation code sent!'
       );
     } else {
-      setErrorMsg(res.error || 'Failed to resend code');
+      setErrorMsg(res.error || (isAr ? 'فشل إعادة إرسال الرمز' : 'Failed to resend code'));
     }
   };
 
@@ -417,12 +441,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </span>
             <h3 className="text-xl sm:text-2xl font-black font-anime text-white">
               {currentUser 
-                ? (isFr ? 'Gestion du Compte Athlète' : isEs ? 'Gestión de Cuenta' : 'Athlete Account & Session')
+                ? (isAr ? 'إدارة حساب الرياضي والجلسة' : isFr ? 'Gestion du Compte Athlète' : isEs ? 'Gestión de Cuenta' : 'Athlete Account & Session')
                 : mode === 'verify'
-                ? (isFr ? 'Validation de l’E-mail' : isEs ? 'Verificación de Correo' : 'Email Confirmation Required')
+                ? (isAr ? 'تأكيد الحساب وتفعيل البريد الإلكتروني' : isFr ? 'Validation de l’E-mail' : isEs ? 'Verificación de Correo' : 'Email Confirmation Required')
                 : mode === 'login'
-                ? (isFr ? 'Connexion Sécurisée' : isEs ? 'Iniciar Sesión Segura' : 'Secure Athlete Sign In')
-                : (isFr ? 'Créer un Compte Sécurisé' : isEs ? 'Crear Cuenta Segura' : 'Register Secure Profile')}
+                ? (isAr ? 'تسجيل الدخول الآمن' : isFr ? 'Connexion Sécurisée' : isEs ? 'Iniciar Sesión Segura' : 'Secure Athlete Sign In')
+                : (isAr ? 'إنشاء حساب رياضي جديد' : isFr ? 'Créer un Compte Sécurisé' : isEs ? 'Crear Cuenta Segura' : 'Register Secure Profile')}
             </h3>
           </div>
         </div>
@@ -461,11 +485,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-800/80 text-xs">
                 <div className="p-2 rounded-xl bg-black/40">
-                  <span className="text-[10px] text-gray-400 block">{isFr ? 'Niveau' : isEs ? 'Nivel' : 'Level'}</span>
+                  <span className="text-[10px] text-gray-400 block">{isAr ? 'المستوى' : isFr ? 'Niveau' : isEs ? 'Nivel' : 'Level'}</span>
                   <span className="font-black text-[#FFE600] font-anime">LVL {currentUser.level}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-black/40">
-                  <span className="text-[10px] text-gray-400 block">{isFr ? "Points d'Aura" : isEs ? 'Puntos de Aura' : 'Aura Points'}</span>
+                  <span className="text-[10px] text-gray-400 block">{isAr ? 'نقاط الهالة' : isFr ? "Points d'Aura" : isEs ? 'Puntos de Aura' : 'Aura Points'}</span>
                   <span className="font-black text-[#00F0FF] font-anime">{currentUser.totalAuraPoints} AU</span>
                 </div>
               </div>
@@ -483,7 +507,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <UserCheck className="w-4 h-4" />
-                <span>{isFr ? 'Ouvrir Mon Profil Complet' : isEs ? 'Abrir Mi Perfil Completo' : 'Open My Complete Profile'}</span>
+                <span>{isAr ? 'فتح ملفي الرياضي الكامل' : isFr ? 'Ouvrir Mon Profil Complet' : isEs ? 'Abrir Mi Perfil Completo' : 'Open My Complete Profile'}</span>
               </button>
 
               <button
@@ -492,7 +516,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 className="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/40 text-red-400 font-bold font-anime text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
-                <span>{isFr ? 'Se Déconnecter du Compte' : isEs ? 'Cerrar Sesión de la Cuenta' : 'Sign Out of Account'}</span>
+                <span>{isAr ? 'تسجيل الخروج من الحساب (Sign Out)' : isFr ? 'Se Déconnecter du Compte' : isEs ? 'Cerrar Sesión de la Cuenta' : 'Sign Out of Account'}</span>
               </button>
             </div>
           </div>

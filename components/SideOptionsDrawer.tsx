@@ -25,6 +25,7 @@ import {
   Share2,
   Crown,
   Compass,
+  Palmtree,
   LogIn,
   LogOut
 } from 'lucide-react';
@@ -56,6 +57,19 @@ interface DrawerOptionItem {
 }
 
 const DRAWER_OPTIONS: DrawerOptionItem[] = [
+  {
+    id: 'bazaruto',
+    category: 'core',
+    titleAr: 'منتجع يارد الصحي · أرخبيل بازاروتو (أكتوبر 2027)',
+    titleEn: 'YARD Bio-Recovery Resort · Bazaruto (Oct 2027)',
+    badgeAr: 'ملاذ خاص VIP',
+    badgeEn: 'VIP SANCTUARY',
+    descAr: '10 فيلل شاطئية فاخرة، فندق 30 غرفة و 4 VIP، مسبح ممرات المغامرة، ومستشفى لعلاج الإصابات والاكتئاب.',
+    descEn: '10 private villas, 30-room hotel + 4 VIP suites, adventure pool, and hospital for sports injury & depression recovery.',
+    icon: Palmtree,
+    accentColor: '#10B981',
+    badgeBg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50',
+  },
   {
     id: 'yardEngine',
     category: 'core',
