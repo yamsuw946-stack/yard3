@@ -1564,11 +1564,16 @@ const Profile: React.FC<ProfileProps> = ({
 
       {/* FULLSCREEN 24H STORY VIEWER WITH REACTION & COMMENTS */}
       {activeStoryViewer && (
-        <div className="fixed inset-0 z-[130] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 sm:p-4 touch-none">
-          <div className="w-full max-w-sm sm:max-w-md h-[100dvh] sm:h-[88vh] sm:max-h-[760px] rounded-none sm:rounded-3xl bg-black border-0 sm:border-2 sm:border-gray-800 relative overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(0,0,0,0.9)]">
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveStoryViewer(null);
+          }}
+          className="fixed inset-0 z-[140] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-2 sm:p-4 touch-none animate-fadeIn"
+        >
+          <div className="relative w-full max-w-[390px] h-[90dvh] sm:h-[86vh] max-h-[760px] rounded-3xl bg-[#07080E] border-2 border-gray-800 overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(0,0,0,0.9)] mx-auto my-auto">
             
-            {/* Story Background Media - Perfectly scaled for mobile */}
-            <div className="absolute inset-0 overflow-hidden bg-black flex items-center justify-center">
+            {/* Story Background Media - Perfectly contained for mobile */}
+            <div className="absolute inset-0 overflow-hidden bg-black flex items-center justify-center p-0">
               {/* Ambient blurred backdrop so portrait/landscape media looks seamless */}
               <img 
                 src={activeStoryViewer.mediaUrl} 
@@ -1576,7 +1581,7 @@ const Profile: React.FC<ProfileProps> = ({
                 className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none" 
                 aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-black/35 pointer-events-none" />
+              <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
               {activeStoryViewer.mediaType === 'video' || activeStoryViewer.mediaUrl.startsWith('data:video') || activeStoryViewer.mediaUrl.endsWith('.mp4') ? (
                 <video 
@@ -1585,21 +1590,21 @@ const Profile: React.FC<ProfileProps> = ({
                   loop
                   playsInline
                   controls={false}
-                  className="relative z-10 w-full h-full max-h-[100dvh] object-contain sm:object-cover"
+                  className="relative z-10 max-w-full max-h-full object-contain pointer-events-none"
                 />
               ) : (
                 <img 
                   src={activeStoryViewer.mediaUrl} 
                   alt={activeStoryViewer.title} 
-                  className="relative z-10 w-full h-full max-h-[100dvh] object-contain sm:object-cover"
+                  className="relative z-10 max-w-full max-h-full object-contain pointer-events-none select-none"
                   onError={handleImageError}
                 />
               )}
-              <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/30 to-black/75 pointer-events-none"></div>
+              <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#07080E] via-transparent to-[#07080E]/80 pointer-events-none"></div>
             </div>
 
             {/* Top Bar with Timer Progress */}
-            <div className="relative z-10 p-4 space-y-3">
+            <div className="relative z-20 p-3 sm:p-4 space-y-2.5">
               <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-[#A855F7] to-[#FFE600] transition-all duration-100 ease-linear"
@@ -1608,8 +1613,8 @@ const Profile: React.FC<ProfileProps> = ({
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-black/60 border border-white/40 flex items-center justify-center text-lg">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full bg-black/70 border border-white/40 flex items-center justify-center text-base shrink-0">
                     {activeStoryViewer.clubLogo || '👑'}
                   </div>
                   <div>
@@ -1624,7 +1629,8 @@ const Profile: React.FC<ProfileProps> = ({
 
                 <button
                   onClick={() => setActiveStoryViewer(null)}
-                  className="p-2 rounded-full bg-black/60 text-white hover:text-gray-300 cursor-pointer"
+                  className="p-1.5 rounded-full bg-black/70 text-white hover:text-gray-300 cursor-pointer hover:bg-black/90 transition-colors"
+                  aria-label="Close story"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -1632,9 +1638,8 @@ const Profile: React.FC<ProfileProps> = ({
             </div>
 
             {/* Bottom Content, Reactions & Comments */}
-            <div className="relative z-10 p-4 md:p-6 space-y-3 bg-gradient-to-t from-black via-black/95 to-transparent">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
+            <div className="relative z-20 p-3 sm:p-5 space-y-2.5 bg-gradient-to-t from-[#07080E] via-[#07080E]/95 to-transparent">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-full bg-[#E50914] text-white text-[10px] font-black font-anime">
                     {activeStoryViewer.badgeType}
                   </span>

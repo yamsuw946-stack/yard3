@@ -13,53 +13,50 @@ import {
   Sun, 
   Droplets, 
   CheckCircle2, 
-  ExternalLink,
   ChevronRight,
   Flame,
   X,
   Send,
-  UserCheck,
   Building2,
   Utensils,
-  Stethoscope,
-  Smile,
+  BrainCircuit,
   Compass,
-  BedDouble,
-  Dumbbell
+  Crown,
+  Dumbbell,
+  Stethoscope,
+  Smile
 } from 'lucide-react';
 import { Language } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { YARD_BAZARUTO_RESORT_IMAGE } from '../constants';
+import { emailService } from '../services/emailService';
 
 interface BazarutoResortSanctuaryProps {
   currentLang?: Language;
   onExploreEvents?: () => void;
 }
 
-interface ResortFacility {
+interface FacilityHighlight {
   id: string;
-  nameEn: string;
-  nameAr: string;
-  nameEs: string;
-  nameFr: string;
-  capacityEn: string;
-  capacityAr: string;
-  capacityEs: string;
-  capacityFr: string;
+  numberKey: string;
+  titleEn: string;
+  titleAr: string;
+  titleEs: string;
+  titleFr: string;
   badgeEn: string;
   badgeAr: string;
   badgeEs: string;
   badgeFr: string;
-  icon: React.ReactNode;
-  accentColor: string;
   descEn: string;
   descAr: string;
   descEs: string;
   descFr: string;
+  statsEn: string;
+  statsAr: string;
+  icon: React.ComponentType<{ className?: string }>;
+  accentColor: string;
   featuresEn: string[];
   featuresAr: string[];
-  featuresEs: string[];
-  featuresFr: string[];
 }
 
 export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = ({ 
@@ -70,311 +67,299 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
   const isEs = currentLang === 'es';
   const isFr = currentLang === 'fr';
 
-  const [selectedFacility, setSelectedFacility] = useState<ResortFacility | null>(null);
-  const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'hospital' | 'villas' | 'hotel' | 'pool' | 'gym' | 'dining'>('all');
+  const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
+  const [selectedFacilityForModal, setSelectedFacilityForModal] = useState<FacilityHighlight | null>(null);
+
+  // Registration Form States
   const [athleteName, setAthleteName] = useState('');
   const [athleteEmail, setAthleteEmail] = useState('');
-  const [interestTarget, setInterestTarget] = useState('Villas & Suites');
-  const [healthMentalNotes, setHealthMentalNotes] = useState('');
-  const [inquirySubmitted, setInquirySubmitted] = useState(false);
+  const [athleteDiscipline, setAthleteDiscipline] = useState('Combat Athlete / Striker 🥊');
+  const [preferredWindow, setPreferredWindow] = useState('October 2027 (Grand Opening Inauguration)');
+  const [healthAndInjuryNotes, setHealthAndInjuryNotes] = useState('');
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [confirmationNumber, setConfirmationNumber] = useState('');
 
-  // Official Facilities mandated by the Founder & Brief
-  const facilities: ResortFacility[] = [
+  // The 6 Signature Facilities requested by user
+  const facilities: FacilityHighlight[] = [
     {
-      id: 'luxury-villas',
-      nameEn: '10 Private Oceanfront Luxury Villas',
-      nameAr: '10 فيلل شاطئية فاخرة ومستقلة',
-      nameEs: '10 Villas de Lujo Frente al Océano',
-      nameFr: '10 Villas de Luxe Privées en Bord de Mer',
-      capacityEn: '10 Standalone Villas & Private Plunge Pools',
-      capacityAr: '10 فيلل مستقلة مع أحواض سباحة خاصة',
-      capacityEs: '10 Villas con piscinas privadas',
-      capacityFr: '10 Villas avec piscines privées',
+      id: 'hospital',
+      numberKey: '01',
+      titleEn: 'Specialized Sports Hospital & Depression Recovery Center',
+      titleAr: 'مستشفى متخصص في علاج الإصابات وفترات الاكتئاب والتأهيل النفسي والجسدي',
+      titleEs: 'Hospital Especializado en Lesiones y Recuperación de Depresión',
+      titleFr: 'Hôpital Spécialisé des Blessures et Dépression des Athlètes',
+      badgeEn: 'SPORTS MEDICINE & MENTAL WELLNESS',
+      badgeAr: 'طب رياضي متكامل وصحة نفسية',
+      badgeEs: 'MEDICINA DEPORTIVA Y SALUD MENTAL',
+      badgeFr: 'MÉDECINE DU SPORT ET BIEN-ÊTRE MENTAL',
+      descEn: 'Comprehensive clinical institute dedicated to acute sports trauma, kinematic tendon repair, and a specialized division treating athlete depression, psychological burnout, and emotional fatigue, providing everything required to restore physical resilience and mental vitality.',
+      descAr: 'مستشفى سريري متكامل مخصص للرياضيين لعلاج الإصابات الرياضية الحادة وإعادة تأهيل الأوتار والأربطة، مع قسم متخصص لعلاج فترات الاكتئاب والإجهاد النفسي والاحتراق الذهني التي يمر بها الأبطال، وتوفير كل ما يلزم لنهضتهم نفسياً وجسدياً.',
+      descEs: 'Clínica avanzada para traumatismos deportivos, tendones y una unidad especializada en depresión atlética y agotamiento mental, devolviendo el bienestar integral.',
+      descFr: 'Clinique de pointe dédiée aux traumatismes du sport, rééducation tendineuse et prise en charge de la dépression et du surmenage mental des athlètes.',
+      statsEn: 'Clinical Hospital Suite // Full Mind & Body Restoration',
+      statsAr: 'مستشفى سريري متكامل // علاج بدني ونفسي شامل',
+      icon: Stethoscope,
+      accentColor: '#00F0FF',
+      featuresEn: [
+        'Dedicated Department for Athlete Mental Health & Depression Rehabilitation',
+        'Kinematic ACWR Ultrasound & Musculoskeletal Soft-Tissue Regeneration',
+        'Hyperbaric Oxygen Chambers (2.0 ATA) & Whole-Body Cryotherapy (-110°C)',
+        'Cognitive Neuro-feedback, Sleep Therapy & High-Altitude Breathing Labs',
+        'Holistic Psychiatric & Physical Physiotherapy under World-Class Specialists'
+      ],
+      featuresAr: [
+        'قسم سريري متخصص لعلاج فترات الاكتئاب والإرهاق النفسي والاحتراق العصبي للرياضيين',
+        'فحص حركي شامل بالألتراساوند لمتابعة التئام العضلات، الأربطة والأوتار المتضررة',
+        'غرف أكسجين عالي الضغط 2.0 ATA مع تبريد فائق للجسم بالكامل عند -110° مئوية',
+        'مختبرات تنظيم النوم العميق NREM3 وتغذية الجهاز العصبي المركزي وتخفيف القلق',
+        'فريق طبي متكامل من استشاريي الطب الرياضي والعلاج النفسي السريري'
+      ]
+    },
+    {
+      id: 'villas',
+      numberKey: '02',
+      titleEn: '10 Private Oceanfront Luxury Villas',
+      titleAr: '10 فيلل شاطئية فاخرة مستقلة',
+      titleEs: '10 Villas Privadas de Lujo Frente al Océano',
+      titleFr: '10 Villas Privées de Luxe Face à l’Océan',
       badgeEn: 'EXCLUSIVE PRIVATE RESIDENCES',
-      badgeAr: 'إقامات شاطئية حصرية وفائقة الخصوصية',
+      badgeAr: 'خصوصية ملكية مطلقة',
       badgeEs: 'RESIDENCIAS EXCLUSIVAS',
-      badgeFr: 'RÉSIDENCES EXCLUSIVES',
-      icon: <Palmtree className="w-5 h-5 text-emerald-400" />,
+      badgeFr: 'RÉSIDENCES ULTRA EXCLUSIVES',
+      descEn: 'Ten architectural sanctuaries built directly upon the untouched dunes, featuring private ocean plunge pools, dedicated circadian circadian lighting, zero-EMF sleep architecture, and direct white-sand beach access.',
+      descAr: 'عشر فيلل مستقلة معمارية فاخرة مشيدة مباشرة فوق الكثبان الرملية العذراء، تضم كل فيلا مسبحاً خاصاً، وأجنحة نوم معزولة من الإشعاعات الكهرومغناطيسية لتعميق النوم، وإطلالة مباشرة على المياه الفيروزية.',
+      descEs: 'Diez villas privadas construidas sobre dunas vírgenes con piscina privada y arquitectura de sueño sin ondas electromagnéticas.',
+      descFr: 'Dix villas d’exception sur les dunes vierges avec piscines privées et architecture de sommeil sans ondes face aux lagons.',
+      statsEn: '10 Standalone Beachfront Villas // Private Plunge Pools',
+      statsAr: '10 فيلل مستقلة بالكامل // أحواض سباحة خاصة',
+      icon: Palmtree,
       accentColor: '#10B981',
-      descEn: 'Architecturally sublime standalone villas nestled directly on the white sand dunes, offering uninterrupted panoramic views of turquoise Indian Ocean waters, zero-EMF sleep sanctuaries, and direct beach access.',
-      descAr: 'فيلل معمارية استثنائية مستقلة تقع مباشرة على الكثبان الرملية البيضاء البكر، وتطل على المياه الفيروزية للمحيط الهندي، ومصممة بأجنحة نوم معزولة كهرومغناطيسياً لضمان أعمق درجات الاستشفاء.',
-      descEs: 'Villas independientes situadas en las dunas de arena blanca con vistas al océano Índico y arquitectura de descanso sin CEM.',
-      descFr: 'Villas indépendantes nichées sur les dunes de sable blanc avec vue sur l’océan Indien et sommeil protégé des ondes.',
       featuresEn: [
-        'Private infinity plunge pools facing the archipelago sunset',
-        'Circadian lighting and specialized recovery acoustics',
-        'Dedicated butler and private performance nutrition services'
+        'Standalone Beachfront Villas with Private Infinity Plunge Pools',
+        'Zero-EMF Shielded Master Suites for Deep NREM-3 Sleep Induction',
+        'Dedicated Butler & Biomechanics Physiotherapy Attendant',
+        'Direct Private Access to the White Dune Coastline of the Archipelago'
       ],
       featuresAr: [
-        'أحواض سباحة إنفينيتي خاصة تطل مباشرة على مشهد غروب الشمس فوق الأرخبيل',
-        'إضاءة بيولوجية يومية مدروسة وعزل صوتي كامل لتعزيز هرمون النمو',
-        'خدمة ضيافة خاصة وطهاة مخصصون للتغذية الرياضية العضوية'
-      ],
-      featuresEs: [
-        'Piscinas privadas infinitas frente al atardecer',
-        'Iluminación circadiana y aislamiento acústico para el descanso',
-        'Servicio de mayordomo y nutrición de rendimiento personalizada'
-      ],
-      featuresFr: [
-        'Piscines privées à débordement face au coucher de soleil',
-        'Éclairage circadien et insonorisation de pointe',
-        'Service hôtelier dédié et nutrition sportive sur mesure'
+        'فيلات مستقلة على شاطئ المحيط مع مسابح إنفينيتي خاصة لكل فيلا',
+        'أجنحة نوم معزولة تماماً كهرومغناطيسياً لتعميق مراحل النوم الحيوية NREM3',
+        'مساعد شخصي وأخصائي تأهيل حركي مخصص لكل فيلا على مدار الساعة',
+        'مدخل خاص مباشر لكثبان وشواطئ الأرخبيل البحرية العذراء'
       ]
     },
     {
-      id: 'boutique-hotel',
-      nameEn: 'Boutique Hotel: 30 Deluxe Rooms & 4 VIP Suites',
-      nameAr: 'فندق بوتيك: 30 غرفة ديلوكس و 4 أجنحة VIP ملكية',
-      nameEs: 'Hotel Boutique: 30 Habitaciones y 4 Suites VIP',
-      nameFr: 'Hôtel Boutique : 30 Chambres Deluxe & 4 Suites VIP',
-      capacityEn: '30 Deluxe Athlete Rooms • 4 VIP Sovereign Suites',
-      capacityAr: '30 غرفة رياضية فاخرة • 4 أجنحة كبار الشخصيات VIP',
-      capacityEs: '30 Habitaciones Deluxe • 4 Suites VIP',
-      capacityFr: '30 Chambres Deluxe • 4 Suites VIP',
-      badgeEn: 'PREMIUM HOSPITALITY',
-      badgeAr: 'ضيافة فندقية عالمية راقية',
-      badgeEs: 'HOSPEDAJE DE ÉLITE',
-      badgeFr: 'HÔTELLERIE D’ÉLITE',
-      icon: <BedDouble className="w-5 h-5 text-[#FFE600]" />,
+      id: 'hotel',
+      numberKey: '03',
+      titleEn: 'Boutique Hotel: 30 Athletic Rooms & 4 VIP Executive Suites',
+      titleAr: 'فندق بوتيكي: 30 غرفة راقية و 4 أجنحة VIP للمشاهير والأبطال',
+      titleEs: 'Hotel Boutique: 30 Habitaciones y 4 Suites VIP',
+      titleFr: 'Hôtel Boutique : 30 Chambres & 4 Suites VIP Exécutives',
+      badgeEn: '30 ROOMS + 4 VIP SUITES',
+      badgeAr: '30 غرفة فندقية + 4 أجنحة VIP',
+      badgeEs: '30 HABITACIONES + 4 SUITES VIP',
+      badgeFr: '30 CHAMBRES + 4 SUITES VIP',
+      descEn: 'A state-of-the-art boutique hotel engineered specifically for visiting athletes, featuring 30 high-spec ergonomic recovery rooms, plus 4 expansive VIP suites with private clinical therapy setups and panoramic ocean sunrise terraces.',
+      descAr: 'فندق استثنائي صُمم خصيصاً للرياضيين وكبار الزوار، يضم 30 غرفة مجهزة بأحدث أدوات قياس العلامات الحيوية، إلى جانب 4 أجنحة VIP ملكية للأبطال العالميين مجهزة بوحدات استشفاء خاصة وشرفات بانورامية.',
+      descEs: 'Hotel boutique de alto nivel con 30 habitaciones ergonómicas y 4 suites VIP con equipos de biorrecuperación integrados.',
+      descFr: 'Hôtel boutique de prestige avec 30 chambres ergonomiques et 4 suites VIP avec équipements de soins intégrés.',
+      statsEn: '30 High-Spec Rooms & 4 Luxury VIP Suites',
+      statsAr: '30 غرفة فندقية فائقة التجهيز + 4 أجنحة VIP ملكية',
+      icon: Building2,
       accentColor: '#FFE600',
-      descEn: 'A sanctuary hotel specifically calibrated for world champions, combining minimalist organic teak architecture, high-altitude oxygen control in suites, and immediate proximity to the training lagoon.',
-      descAr: 'فندق مخصص لأبطال العالم يجمع بين الخشب التيك العضوي الفاخر، والتحكم في نسبة الأكسجين داخل الغرف لمحاكاة المعسكرات المرتفعة، والقرب الفوري من حلبة النزال والممرات المائية.',
-      descEs: 'Hotel calibrado para campeones mundiales con control de oxígeno en suites y proximidad a la laguna deportiva.',
-      descFr: 'Hôtel conçu pour les champions avec contrôle d’oxygène en suite et accès direct à la lagune sportive.',
       featuresEn: [
-        '4 Presidential VIP Suites with panoramic 360° reef terraces',
-        '30 Deluxe ergonomic rooms with temperature-regulating mattresses',
-        'Direct elevator access to the medical wing and training arenas'
+        '30 Bio-optimized Guest Rooms with Orthopedic Athletic Bedding',
+        '4 Presidential VIP Suites with In-Room Cryo & Hydrotherapy Options',
+        'Biometric Check-in & Real-Time ACWR Health Monitoring Integration',
+        'Panoramic Rooftop Terraces Overlooking the Indian Ocean Lagoon'
       ],
       featuresAr: [
-        '4 أجنحة VIP رئاسية مع شرفات بانورامية 360 درجة تطل على الحيد المرجاني',
-        '30 غرفة ديلوكس مجهزة بمراتب ذكية منظمة للحرارة لتقليل التوتر العضلي',
-        'وصول مباشر إلى الجناح الطبي المتخصص وحلبة النزالات الرياضية'
-      ],
-      featuresEs: [
-        '4 Suites VIP con terrazas panorámicas al arrecife',
-        '30 Habitaciones con colchones de regulación térmica',
-        'Acceso directo al ala médica y a las zonas de combate'
-      ],
-      featuresFr: [
-        '4 Suites VIP avec terrasses panoramiques sur le récif',
-        '30 Chambres avec literie thermo-régulatrice',
-        'Accès direct à l’aile médicale et aux zones d’entraînement'
+        '30 غرفة فندقية مجهزة بأسرة طبية رياضية وأنظمة تهوية هيبا المنقاة',
+        '4 أجنحة VIP رئاسية تضم وحدات استشفاء مائي وكرايو داخل الجناح',
+        'ربط ذكي لحظي لمؤشرات الأداء الحيوي والتعافي اليومي مع أجهزة الرياضي',
+        'تراسات بانورامية علوية تطل على شروق الشمس والبحيرات الفيروزية'
       ]
     },
     {
-      id: 'specialized-hospital',
-      nameEn: 'Sports Injury & Mental Health Hospital',
-      nameAr: 'مستشفى متخصص في علاج الإصابات الرياضية وفترات الاكتئاب',
-      nameEs: 'Hospital Especializado en Lesiones y Salud Mental',
-      nameFr: 'Hôpital Spécialisé Blessures Sportives et Santé Mentale',
-      capacityEn: 'Clinical Sports Medicine & Psychological Restoration Wing',
-      capacityAr: 'قسم الطب الرياضي السريري وإعادة التأهيل النفسي والجسدي',
-      capacityEs: 'Ala de Medicina Deportiva y Restauración Psicológica',
-      capacityFr: 'Pôle de Médecine du Sport et Restauration Psychologique',
-      badgeEn: 'PHYSIO & PSYCHO RECOVERY',
-      badgeAr: 'الشفاء الجسدي والنفسي المتكامل',
-      badgeEs: 'RECUPERACIÓN INTEGRAL',
-      badgeFr: 'RÉGÉNÉRATION COMPLÈTE',
-      icon: <Stethoscope className="w-5 h-5 text-[#00F0FF]" />,
+      id: 'pool',
+      numberKey: '04',
+      titleEn: 'Adventure Watercourses Pool & Entertainment Sanctuary',
+      titleAr: 'مسبح متطور بممرات وقنوات مائية مغامراتية ومناطق ترفيهية',
+      titleEs: 'Piscina de Aventura con Corrientes de Agua y Zonas de Ocio',
+      titleFr: 'Piscine à Parcours d’Aventure et Zones de Divertissement',
+      badgeEn: 'AQUATIC ADVENTURE & LEISURE',
+      badgeAr: 'مغامرات مائية وترفيه فاخر',
+      badgeEs: 'AVENTURA ACUÁTICA Y OCIO',
+      badgeFr: 'AVENTURE AQUATIQUE ET DÉTENTE',
+      descEn: 'Expansive multi-tier swimming complex designed with thrilling adventure watercourses, natural hydro-resistance river trails, subterranean cavern lounges, and open-air athletic entertainment decks.',
+      descAr: 'مجمع مائي استثنائي متعدد المستويات مزود بممرات وقنوات مائية تشبه المغامرة وتيارات سباحة عكسية، وكهوف مائية للاسترخاء، ومناطق ترفيهية شاطئية للاحتفال وتجديد النشاط.',
+      descEs: 'Complejo de piscinas con canales de agua de aventura, corrientes contracorriente y áreas de entretenimiento al aire libre.',
+      descFr: 'Complexe aquatique spectaculaire avec couloirs d’aventure aquatique, contre-courant et espaces de divertissement.',
+      statsEn: 'Adventure River Trails // Hydrotherapy Currents',
+      statsAr: 'ممرات مائية مغامراتية // تيارات مقاومة وعلاج مائي',
+      icon: Waves,
       accentColor: '#00F0FF',
-      descEn: 'A world-leading hospital dedicated to accelerating the healing of sports injuries (ligament tears, tendonitis, concussion protocols) and treating athlete burnout and depression with complete psychological and physical restoration.',
-      descAr: 'مستشفى عالمي متخصص في التشخيص والعلاج المتطور للإصابات الرياضية الحادة والمزمنة، وعلاج فترات الاكتئاب والإجهاد النفسي والاحتراق الرياضي التي يمر بها الأبطال، لتمكينهم من العودة بأفضل حالة نفسية وجسدية.',
-      descEs: 'Centro hospitalario de vanguardia para lesiones deportivas y tratamiento de la depresión y el agotamiento en atletas.',
-      descFr: 'Hôpital de pointe pour le traitement des blessures et la prise en charge de la dépression et du surmenage sportif.',
       featuresEn: [
-        '2.0 ATA Multi-place Hyperbaric Oxygen & Targeted Cryo Suites',
-        'Specialized Sports Psychiatry & Neuro-Cognitive Reset Clinic',
-        'Ultrasound-guided tendon regeneration and kinematic joint therapy'
+        'Thrilling Adventure Watercourses & Resistance Training River Channels',
+        'Subterranean Ocean-Salt Cavern Pools with Circadian Mood Lighting',
+        'Sunken Lounge Cabanas & Open-Air Sunset Entertainment Pavilion',
+        'Contrast Hot-Cold Plunge Cascades for Rapid Lymphatic Drainage'
       ],
       featuresAr: [
-        'غرف أكسجين عالي الضغط 2.0 ATA وغرف كرايو متقدمة عند -110° مئوية لإصلاح الخلايا',
-        'عيادة متخصصة في الطب النفسي الرياضي وإعادة برمجة التوازن العصبي والانفعالي',
-        'تجديد الأوتار والأنسجة بالألتراساوند الدقيق واستعادة كامل المدى الحركي للمفاصل'
-      ],
-      featuresEs: [
-        'Cámaras hiperbáricas 2.0 ATA y crioterapia a -110°C',
-        'Psiquiatría deportiva especializada y reinicio neurocognitivo',
-        'Regeneración de tendones guiada por ecografía'
-      ],
-      featuresFr: [
-        'Caissons hyperbares 2.0 ATA et cryothérapie à -110°C',
-        'Psychiatrie du sport et rééquilibrage neuro-émotionnel',
-        'Régénération tendineuse assistée par échographie'
+        'ممرات وقنوات مائية مغامراتية تحاكي الأنهار الطبيعية لتدريبات السباحة والمقاومة',
+        'كهوف مياه بحرية دافئة مزودة بإضاءة عضوية لتهدئة الأعصاب وإزالة التوتر',
+        'جلسات ترفيهية مظللة وأجنحة كابانا مائية ومسرح شاطئي مفتوح للفعاليات',
+        'شلالات تباين حراري دافئ وبارد لتنشيط الدورة الدموية والتصريف اللمفاوي'
       ]
     },
     {
-      id: 'adventure-lagoon',
-      nameEn: 'Adventure Lagoon & Waterways with Entertainment',
-      nameAr: 'مسبح وممرات مائية مغامراتية ومناطق ترفيه استوائية',
-      nameEs: 'Laguna de Aventura, Canales Acuáticos y Entretenimiento',
-      nameFr: 'Lagune Aventure, Voies Aquatiques et Loisirs',
-      capacityEn: 'Expansive Waterways, Adventure Drifts & Ocean Beach Clubs',
-      capacityAr: 'ممرات مائية شاسعة وتدفق نهري ومناطق ترفيه شاطئية',
-      capacityEs: 'Canales acuáticos de aventura y zonas de relax',
-      capacityFr: 'Voies navigables d’aventure et espaces de détente',
-      badgeEn: 'AQUATIC ADVENTURE',
-      badgeAr: 'المغامرة والترفيه المائي الفريد',
-      badgeEs: 'AVENTURA ACUÁTICA',
-      badgeFr: 'AVENTURE AQUATIQUE',
-      icon: <Waves className="w-5 h-5 text-[#00F0FF]" />,
-      accentColor: '#00F0FF',
-      descEn: 'A magnificent lagoon pool weaving through natural coastal dunes with adventurous lazy river currents, aquatic obstacle courses, sun decks, and vibrant athlete entertainment lounges.',
-      descAr: 'مسبح ضخم بتصميم لاغون طبيعي يلتف حول الكثبان الساحلية بممرات مائية حركية تشبه المغامرة، وتيارات مائية للسباحة المقاومة، مع مناطق ترفيهية شاطئية للاسترخاء بين الحصص التدريبية.',
-      descEs: 'Piscina tipo laguna con canales de corriente de aventura, zonas de recreo y áreas de relajación.',
-      descFr: 'Piscine lagon spectaculaire avec canaux d’aventure, zones d’obstacles et espaces de détente.',
-      featuresEn: [
-        'Flowing adventure waterways connecting villas to the central reef lounge',
-        'Aquatic resistance swim lanes for low-impact joint recovery',
-        'Sunset entertainment pavilions with live acoustic music and chillout zones'
-      ],
-      featuresAr: [
-        'ممرات مائية متدفقة تربط الفلل باللاغون المركزي وتوفر متعة المغامرة المائية',
-        'مسارات سباحة بالمقاومة المائية لتعافي المفاصل دون أي ضغط وزني',
-        'أجنحة ترفيه شاطئية لعروض الغروب ومناطق الاسترخاء الموسيقي الهادئ'
-      ],
-      featuresEs: [
-        'Canales de corriente que conectan las villas con la laguna',
-        'Pistas de natación con resistencia para recuperación articular',
-        'Pabellones al atardecer con música acústica y zonas de descanso'
-      ],
-      featuresFr: [
-        'Canaux d’eau reliant les villas au lagon central',
-        'Lignes de nage à contre-courant pour rééducation articulaire',
-        'Pavillons de coucher de soleil avec ambiance musicale relaxante'
-      ]
-    },
-    {
-      id: 'elite-gym',
-      nameEn: 'Pinnacle Elite Athletic Gym & Combat Deck',
-      nameAr: 'نادي رياضي مميز ومنصة النزالات الشاطئية',
-      nameEs: 'Gimnasio Atlético de Élite y Plataforma de Combate',
-      nameFr: 'Gym Athlétique d’Élite & Pont de Combat Océanique',
-      capacityEn: 'State-of-the-Art Combat Gym & Open-Air Training Deck',
-      capacityAr: 'نادي رياضي متكامل ومنصة قتال مفتوحة على البحر',
-      capacityEs: 'Gimnasio de alto rendimiento y ring exterior',
-      capacityFr: 'Salle de sport de pointe et ring en plein air',
-      badgeEn: 'WORLD-CLASS TRAINING',
-      badgeAr: 'أعلى معايير التدريب العالمي',
-      badgeEs: 'ENTRENAMIENTO DE ÉLITE',
-      badgeFr: 'ENTRAÎNEMENT DE POINTE',
-      icon: <Dumbbell className="w-5 h-5 text-[#E50914]" />,
+      id: 'gym',
+      numberKey: '05',
+      titleEn: 'Elite High-Performance & Combat Training Gym',
+      titleAr: 'نادي رياضي مميز وتجهيزات قتالية عالمية',
+      titleEs: 'Gimnasio de Alto Rendimiento y Combate',
+      titleFr: 'Gym d’Élite et Dojo de Combat Océanique',
+      badgeEn: 'WORLD-CLASS ATHLETIC FACILITY',
+      badgeAr: 'نادي رياضي مميز بمعايير عالمية',
+      badgeEs: 'INSTALACIONES DEPORTIVAS DE ÉLITE',
+      badgeFr: 'CENTRE D’ENTRAÎNEMENT DE HAUT NIVEAU',
+      descEn: 'World-class strength & conditioning institute featuring Olympic platforms, biomechanics kinematic labs, sand-dune anaerobic gauntlets, and an open-air oceanfront combat deck for boxing, Muay Thai, and grappling.',
+      descAr: 'نادي رياضي عالمي مميز مجهز بأحدث منصات القوة الأولمبية، وأجهزة التحليل البيوميكانيكي، وحلبة نزال خشبية مفتوحة فوق مياه الشاطئ لتدريبات الملاكمة، الجودو، والمواي تاي، ومسارات تدريب على الكثبان الرملية.',
+      descEs: 'Gimnasio de fuerza con plataforma de combate sobre la playa, análisis biomecánico y circuitos en dunas.',
+      descFr: 'Centre de musculation d’élite avec ring océanique en plein air, analyse biomécanique et pistes de sable.',
+      statsEn: 'Ocean Combat Deck // Biomechanical Motion Trackers',
+      statsAr: 'حلبة نزالات شاطئية // أجهزة قياس حركة متقدمة',
+      icon: Dumbbell,
       accentColor: '#E50914',
-      descEn: 'Equipped with bespoke kinematic force plates, heavy bag lines overlooking the crystal tides, Olympic lifting platforms, and an open-air arena for sanctioned international martial arts summits.',
-      descAr: 'نادي رياضي رفيع المستوى مجهز بأحدث أجهزة قياس القوة الحركية، ومنصة أكياس ملاكمة مفتوحة على رذاذ المحيط، ومضمار هايروكس رملي، وحلبة فعاليات شاطئية للنزالات العالمية.',
-      descEs: 'Equipamiento cinemático de fuerza, zona de sacos de boxeo frente al mar y ring para torneos internacionales.',
-      descFr: 'Plateaux de force cinématiques, ligne de sacs de frappe face à l’océan et ring de compétition.',
       featuresEn: [
-        'Kinematic AI motion capture for striking and sprinting form',
-        'Open-air teak combat deck with ocean breeze cooling',
-        'Hosting sanctioned world martial arts and Hyrox beach championships'
+        'Open-Air Oceanfront Combat Sparring Ring & Heavy Bag Gantry',
+        'Olympic Lifting Stations with Smart Velocity-Based Training Sensors',
+        'Pneumatic Resistance Power Cages & Dune Sprint Track',
+        'Daily Masterclasses by Global MMA, Boxing & Strength Champions'
       ],
       featuresAr: [
-        'كاميرات ذكاء اصطناعي لتحليل الكينماتيكا الحركية للكمات والركلات والسرعة',
-        'منصة نزال خشبية مطلة على البحر تستفيد من هواء المحيط المنعش',
-        'استضافة بطولات الفنون القتالية الدولية وسباقات هايروكس الشاطئية'
-      ],
-      featuresEs: [
-        'Análisis cinemático por IA para golpeo y velocidad',
-        'Plataforma de combate al aire libre con brisa marina',
-        'Sede de torneos internacionales de artes marciales y Hyrox'
-      ],
-      featuresFr: [
-        'Captation de mouvement IA pour technique de frappe et sprint',
-        'Plateforme de combat en teck ouverte sur la brise marine',
-        'Accueil de compétitions internationales d’arts martiaux et Hyrox'
+        'حلبة قتال شاطئية مفتوحة ومظلات أكياس ملاكمة ثقيلة تطل مباشرة على المحيط',
+        'محطات رفع أثقال أولمبية مزودة بحساسات قياس سرعة الحركة البارومترية (VBT)',
+        'أجهزة مقاومة هوائية متطورة ومسار ركض رملي صاعد على كثبان الأرخبيل',
+        'ورش تدريبية وتدريبات مشتركة مع أبطال عالميين في الفنون القتالية والقوة'
       ]
     },
     {
-      id: 'global-restaurants',
-      nameEn: '4 World-Class Fine Dining Restaurants',
-      nameAr: '4 مطاعم عالمية راقية (سيتم الإعلان عنها في حينها)',
-      nameEs: '4 Restaurantes de Clase Mundial (Se anunciarán próximamente)',
-      nameFr: '4 Restaurants Gastronomiques Mondiaux (Annonce prochaine)',
-      capacityEn: '4 Curated International Culinary Concepts',
-      capacityAr: '4 مفاهيم طهي عالمية متميزة',
-      capacityEs: '4 Conceptos gastronómicos internacionales',
-      capacityFr: '4 Concepts culinaires internationaux d’exception',
-      badgeEn: 'ANNOUNCING SOON',
-      badgeAr: 'سيتم الإعلان عنها في حينها',
-      badgeEs: 'PRÓXIMO ANUNCIO',
-      badgeFr: 'ANNONCE PROCHAINE',
-      icon: <Utensils className="w-5 h-5 text-[#FFE600]" />,
+      id: 'dining',
+      numberKey: '06',
+      titleEn: '4 World-Class Gourmet Restaurants (To Be Announced)',
+      titleAr: '4 مطاعم عالمية رفيعة المستوى (سيتم الإعلان عنها في حينها)',
+      titleEs: '4 Restaurantes Gourmet Internacionales (Por Anunciar)',
+      titleFr: '4 Restaurants Gastronomiques Mondiaux (Annoncés Prochainement)',
+      badgeEn: '4 GOURMET DINING CONCEPTS',
+      badgeAr: '4 مطاعم عالمية راقية',
+      badgeEs: '4 CONCEPTOS GASTRONÓMICOS',
+      badgeFr: '4 EXPÉRIENCES GASTRONOMIQUES',
+      descEn: 'Four signature international fine-dining culinary destinations curated by globally celebrated chefs, dedicated to organic athletic gastronomy, ocean-to-table seafood, and circadian nutrition. Specific brand identities to be officially revealed closer to launch.',
+      descAr: 'أربعة مطاعم عالمية استثنائية تحت إشراف نخبة من الطهاة العالميين تقدم تجارب طهي راقية تركز على التغذية الرياضية العضوية والمأكولات البحرية الطازجة القادمة مباشرة من المحيط، وسيتم الإعلان عن أسمائها وقوائمها رسمياً في حينها.',
+      descEs: 'Cuatro restaurantes de clase mundial dirigidos por chefs de renombre, con gastronomía deportiva orgánica.',
+      descFr: 'Quatre concepts gastronomiques raffinés par des chefs étoilés, alliant haute nutrition du sport et délices marins.',
+      statsEn: '4 International Culinary Venues // Circadian Athletic Menus',
+      statsAr: '4 مطاعم راقية // قوائم تغذية عضوية تزامنية',
+      icon: Utensils,
       accentColor: '#FFE600',
-      descEn: 'Four prestigious world-class restaurant concepts crafted by Michelin-starred culinary teams, fusing organic fresh seafood, circadian performance nutrition, and global fine dining. Full brand details to be revealed in due course.',
-      descAr: 'أربعة مطاعم عالمية رفيعة المستوى يشرف عليها كبار الطهاة العالميين، تجمع بين المأكولات البحرية الطازجة العضوية، والتغذية الرياضية الدقيقة، والأطباق العالمية الفاخرة. سيتم الكشف عن أسماء المطاعم وشراكاتها في حينها.',
-      descEs: 'Cuatro conceptos gastronómicos dirigidos por chefs de renombre mundial combinando nutrición atlética orgánica y alta cocina.',
-      descFr: 'Quatre concepts gastronomiques d’élite alliant produits de la mer ultra-frais, nutrition sportive et haute cuisine.',
       featuresEn: [
-        'Oceanfront fine dining with locally sourced line-caught seafood',
-        'Personalized athlete metabolic nutrition menus for deep recovery',
-        'Full restaurant names and celebrity chef partnerships to be revealed'
+        'Four Bespoke Dining Venues: Seafood Coastal, Japanese Fusion, Farm Grill & Plant Bio-Bar',
+        'Full Macro & Micronutrient Profile on Every Dish Designed for Athletic Recovery',
+        '100% Organic Ocean-Caught Seafood & Locally Harvested Tropical Ingredients',
+        'Exclusive Founding Pre-Opening Tastings for October 2027 VIP Pass Holders'
       ],
       featuresAr: [
-        'إطلالات شاطئية ساحرة مع مأكولات بحرية طازجة يتم اصطيادها يومياً',
-        'قوائم طعام مدروسة تمريضياً لتعزيز سرعة تجدد الخلايا ومكافحة الالتهابات',
-        'الإعلان الرسمي عن أسماء المطاعم والشركاء العالميين سيعلن عنه في حينه'
-      ],
-      featuresEs: [
-        'Alta cocina frente al océano con pesca sostenible local',
-        'Menús personalizados para el metabolismo y la regeneración',
-        'Nombres y chefs colaboradores se revelarán oportunamente'
-      ],
-      featuresFr: [
-        'Haute cuisine en bord de mer avec poissons frais locaux',
-        'Menus métaboliques personnalisés pour régénération cellulaire',
-        'Les noms des établissements seront dévoilés prochainement'
+        'أربعة وجهات طعام راقية: مأكولات بحرية، نكهات يابانية فيوجن، شواء عضوي، وبار تغذية حيوية',
+        'تفصيل دقيق لجميع المغذيات الكبرى والدقيقة لكل طبق صُممت لتسريع تعافي العضلات',
+        'مأكولات بحرية عضوية 100% ومكونات طازجة من مزارع الجزر الاستوائية المستدامة',
+        'جلسات تذوق حصرية خاصة لرواد قائمة الانتظار الذهبية VIP قبل موعد الافتتاح الرسمي'
       ]
     }
   ];
 
-  const handleOpenFacility = (facility: ResortFacility) => {
+  const filteredFacilities = activeTab === 'all' 
+    ? facilities 
+    : facilities.filter(f => f.id === activeTab);
+
+  const handleOpenWaitlist = (facility?: FacilityHighlight) => {
     soundFX.playButtonClick();
-    setSelectedFacility(facility);
+    setSelectedFacilityForModal(facility || null);
+    setIsWaitlistModalOpen(true);
+    setBookingConfirmed(false);
   };
 
-  const handleSubmitInquiry = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!athleteName || !athleteEmail) return;
+    if (!athleteName.trim() || !athleteEmail.trim()) return;
+
+    setFormSubmitting(true);
+    soundFX.playButtonClick();
+
+    const code = `VIP-BAZ-${Math.floor(1000 + Math.random() * 9000)}`;
+    setConfirmationNumber(code);
+
+    try {
+      // Dispatch email notification packet
+      await emailService.sendVerificationCode(
+        athleteEmail, 
+        athleteName, 
+        `BAZARUTO-${code}`
+      );
+    } catch {}
+
     soundFX.playPowerUp();
-    setInquirySubmitted(true);
+    setFormSubmitting(false);
+    setBookingConfirmed(true);
   };
 
   return (
-    <section className="relative w-full py-16 overflow-hidden">
+    <section id="bazaruto-sanctuary" className="relative w-full py-16 overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#080910] via-[#05060A] to-[#0A0B12] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-to-r from-[#00F0FF]/15 via-[#FFE600]/10 to-[#10B981]/15 blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#080912] via-[#05060B] to-[#0A0B14] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-r from-[#00F0FF]/15 via-[#10B981]/15 to-[#FFE600]/10 blur-[140px] pointer-events-none" />
 
       <div className="relative z-10 space-y-12">
         
         {/* Section Header */}
         <div className={`space-y-4 ${isAr ? 'text-right' : 'text-left'}`}>
-          <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-black font-anime uppercase tracking-wider ${isAr ? 'flex-row-reverse' : ''}`}>
-            <Palmtree className="w-3.5 h-3.5 text-emerald-400" />
-            <span>
-              {isAr ? 'منتجع وملاذ يارد للاستشفاء الرياضي وعلاج الإصابات · أرخبيل بازاروتو' 
-                : isEs ? 'SANTUARIO YARD DE BIORRECUPERACIÓN Y HOSPITAL DE LESIONES · ARCHIPIÉLAGO DE BAZARUTO' 
-                : isFr ? 'SANCTUAIRE YARD DE BIORÉCUPÉRATION ET HÔPITAL DU SPORT · ARCHIPEL DE BAZARUTO' 
-                : 'YARD ATHLETIC BIO-RECOVERY RESORT & INJURY HOSPITAL · BAZARUTO ARCHIPELAGO'}
+          
+          {/* Grand Opening Badge: Starting October 2027 */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-500/20 via-[#00F0FF]/20 to-[#FFE600]/20 border border-emerald-400/50 text-emerald-300 text-xs font-black font-anime uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] ${isAr ? 'flex-row-reverse' : ''}`}>
+              <Sparkles className="w-3.5 h-3.5 text-[#FFE600] animate-spin" />
+              <span>
+                {isAr 
+                  ? 'منتجع وملاذ يارد للاستشفاء الرياضي · يستقبل الزوار بدءاً من أكتوبر 2027' 
+                  : isEs 
+                  ? 'SANTUARIO YARD DE BIORRECUPERACIÓN · APERTURA EN OCTUBRE 2027' 
+                  : isFr 
+                  ? 'SANCTUAIRE YARD DE BIORÉCUPÉRATION · OUVERTURE EN OCTOBRE 2027' 
+                  : 'YARD ATHLETIC BIO-RECOVERY RESORT & SANCTUARY · OPENING OCTOBER 2027'}
+              </span>
+            </div>
+
+            <span className="px-3 py-1 rounded-full bg-[#E50914]/20 border border-[#E50914]/40 text-[#FFE600] text-[11px] font-mono font-black">
+              🇲🇿 BAZARUTO ARCHIPELAGO // INDIAN OCEAN
             </span>
           </div>
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div className="space-y-2 max-w-3xl">
-              <h2 className="text-3xl md:text-5xl font-black font-anime text-white tracking-tight">
+            <div className="space-y-3 max-w-3xl">
+              <h2 className="text-3xl md:text-5xl font-black font-anime text-white tracking-tight leading-tight">
                 {isAr ? (
                   <>
-                    منتجع يارد الصحي ومستشفى الاستشفاء:{' '}
+                    منتجع يارد الصحي في أرخبيل بازاروتو —{' '}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] via-[#FFE600] to-emerald-400">
-                      يستقبل الزوار بدءاً من أكتوبر 2027
+                      ملاذ التعافي البدني والنفسي للأبطال
                     </span>
                   </>
                 ) : (
                   <>
-                    YARD Sanctuary & Sports Hospital:{' '}
+                    YARD Bio-Recovery Resort & Sanctuary —{' '}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] via-[#FFE600] to-emerald-400">
-                      Welcoming Visitors Starting October 2027
+                      Pinnacle Mind & Body Elevation
                     </span>
                   </>
                 )}
@@ -382,339 +367,396 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
 
               <p className="text-xs md:text-sm text-gray-300 font-bold leading-relaxed">
                 {isAr 
-                  ? 'صُمم هذا الصرح في أرخبيل بازاروتو— إحدى أروع جزر المحيط الهندي بمياهه الفيروزية وكثبانه البيضاء العذراء. يضم المنتجع 10 فيلل شاطئية فاخرة، وفندقاً يحتوي على 30 غرفة و 4 أجنحة VIP ملكية، ومسبحاً بممرات مائية للمغامرة، ونادياً رياضياً مميزاً، و 4 مطاعم عالمية سيتم الإعلان عنها في حينها، إلى جانب مستشفى متخصص لعلاج الإصابات الرياضية وفترات الاكتئاب التي يمر بها الرياضيون للارتقاء بهم نفسياً وجسدياً.'
+                  ? 'في واحدة من أجمل جزر المحيط الهندي العذراء في أرخبيل بازاروتو، يفتح منتجع يارد الصحي أبوابه رسمياً لاستقبال الزوار والرياضيين بدءاً من أكتوبر 2027. صُمم الملاذ كمنظومة متكاملة لا مثيل لها: 10 فيلل شاطئية فاخرة مستقلة، فندق بوتيكي يتضمن 30 غرفة و 4 أجنحة VIP للمشاهير، مسبح بممرات وقنوات مائية مغامراتية ومناطق ترفيه، نادي رياضي مميز وقتالي، 4 مطاعم عالمية رفيعة المستوى سيتم الإعلان عنها في حينها، ومستشفى سريري متخصص في علاج وتأهيل الإصابات الرياضية وفترات الاكتئاب والإرهاق النفسي ليعود المقاتل إلى قمة حضوره الذهني والبدني.'
                   : isEs
-                  ? 'Ubicado en el archipiélago de Bazaruto. Apertura en octubre de 2027 con 10 villas de lujo, hotel boutique de 30 habitaciones y 4 suites VIP, laguna con canales de aventura, gimnasio de élite, 4 restaurantes internacionales y hospital para lesiones y salud mental.'
+                  ? 'En el paradisíaco archipiélago de Bazaruto en el océano Índico, el resort YARD abrirá sus puertas a partir de octubre de 2027. Cuenta con 10 villas privadas frente a la playa, hotel boutique con 30 habitaciones y 4 suites VIP, piscina de aventura con canales de agua, gimnasio de élite, 4 restaurantes internacionales (por anunciar), y un hospital clínico especializado en rehabilitación de lesiones deportivas y depresión o agotamiento psicológico de los atletas.'
                   : isFr
-                  ? 'Niché dans l’archipel de Bazaruto. Ouverture en octobre 2027 avec 10 villas de luxe, hôtel de 30 chambres et 4 suites VIP, lagon d’aventure, salle de sport d’élite, 4 restaurants internationaux et hôpital dédié aux blessures et à la santé mentale.'
-                  : 'Nestled on the white dunes of Bazaruto Archipelago. Welcoming athletes and visitors starting October 2027. Featuring 10 luxury villas, boutique hotel with 30 rooms & 4 VIP suites, adventure lagoon waterways, world-class gym, 4 fine-dining restaurants, and a specialized sports injury & depression recovery hospital.'}
+                  ? 'Niché dans le cadre sublime de l’archipel de Bazaruto dans l’océan Indien, le sanctuaire YARD accueillera ses premiers visiteurs dès octobre 2027. Il réunit 10 villas privées en front de mer, un hôtel boutique de 30 chambres et 4 suites VIP, une piscine à parcours d’aventure aquatique, un gym d’élite, 4 restaurants gastronomiques internationaux (annoncés prochainement), ainsi qu’un hôpital spécialisé dans le traitement des blessures et des phases de dépression et surmenage des athlètes.'
+                  : 'Nestled on the pristine white sand dunes of the Bazaruto Archipelago in the Indian Ocean, the YARD Bio-Recovery Sanctuary officially welcomes athletes and guests starting October 2027. The development features 10 private oceanfront villas, a boutique hotel with 30 rooms & 4 VIP executive suites, an adventure watercourses swimming pool with entertainment decks, a signature high-performance combat gym, 4 world-class gourmet restaurants (to be announced in due course), and a specialized sports hospital for acute injury rehabilitation and athlete mental depression & psychological burnout recovery.'}
               </p>
             </div>
 
-            {/* Launch Window Badge */}
-            <div className="p-4 rounded-2xl bg-[#0D0F1C] border border-emerald-500/40 text-center shrink-0 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
-              <span className="text-[10px] font-black font-mono text-emerald-400 uppercase tracking-wider block">
-                {isAr ? 'موعد الافتتاح الرسمي' : 'OFFICIAL OPENING DATE'}
-              </span>
-              <span className="text-xl md:text-2xl font-black font-anime text-[#FFE600] block mt-0.5">
-                {isAr ? 'أكتوبر 2027' : 'OCTOBER 2027'}
-              </span>
-              <span className="text-[10px] font-bold text-gray-400 block mt-0.5">
-                {isAr ? 'قائمة التسجيل المبكر مفتوحة' : 'Priority Inquiries Open'}
-              </span>
+            {/* Quick Metrics (Zero Prices, Only Facilities & Date) */}
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <div className="p-3.5 rounded-2xl bg-[#0D0F1C] border border-emerald-500/30 text-center shadow-lg">
+                <span className="text-base font-black font-mono text-emerald-400 block">OCT 2027</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{isAr ? 'موعد الافتتاح' : 'Grand Opening'}</span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#0D0F1C] border border-cyan-500/30 text-center shadow-lg">
+                <span className="text-base font-black font-mono text-[#00F0FF] block">10 Villas</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{isAr ? '10 فيلل شاطئية' : 'Private Villas'}</span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#0D0F1C] border border-purple-500/30 text-center shadow-lg">
+                <span className="text-base font-black font-mono text-purple-400 block">30 + 4 VIP</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{isAr ? 'غرفة وجناح' : 'Hotel Rooms'}</span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-[#0D0F1C] border border-yellow-500/30 text-center shadow-lg">
+                <span className="text-base font-black font-mono text-[#FFE600] block">Hospital</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase">{isAr ? 'مستشفى الإصابات' : 'Depression Lab'}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Hero Resort Panoramic Image with Key Badges */}
-        <div className="relative rounded-3xl overflow-hidden border border-gray-800 shadow-[0_0_50px_rgba(0,240,255,0.15)] group">
-          <div className="relative h-[340px] md:h-[480px] w-full">
+        {/* Hero Resort Panoramic Banner with October 2027 Badge */}
+        <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/40 shadow-[0_0_50px_rgba(16,185,129,0.2)] group">
+          <div className="relative h-[360px] md:h-[500px] w-full">
             <img 
               src={YARD_BAZARUTO_RESORT_IMAGE} 
               alt="YARD Athletic Bio-Recovery Resort Bazaruto Archipelago" 
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000"
             />
-            {/* Ambient Overlays */}
+            {/* Atmospheric Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-[#06070B]/40 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#06070B]/80 via-transparent to-[#06070B]/80 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#06070B]/85 via-transparent to-[#06070B]/85 pointer-events-none" />
 
-            {/* Top Bar Location & Status */}
+            {/* Top Info Bar */}
             <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-xs">
-              <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white font-mono font-bold flex items-center gap-1.5">
+              <span className="px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-white font-mono font-bold flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Bazaruto Archipelago, Indian Ocean</span>
               </span>
 
-              <span className="px-3.5 py-1 rounded-full bg-emerald-500/25 backdrop-blur-md border border-emerald-400/50 text-emerald-300 font-anime font-black flex items-center gap-1.5 shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>{isAr ? 'الافتتاح: أكتوبر 2027' : 'LAUNCH: OCTOBER 2027'}</span>
+              <span className="px-4 py-1.5 rounded-full bg-emerald-500/30 backdrop-blur-md border border-emerald-400/60 text-emerald-300 font-anime font-black flex items-center gap-2 shadow-lg">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                <span>{isAr ? 'يستقبل الزوار بدءاً من أكتوبر 2027' : 'OPENING OCTOBER 2027 // PRIORITY PASS'}</span>
               </span>
             </div>
 
-            {/* Bottom Bar Info & Waitlist Button */}
-            <div className={`absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-4 ${isAr ? 'text-right' : 'text-left'}`}>
-              <div className="space-y-1.5 max-w-xl">
+            {/* Bottom Content on Hero Banner */}
+            <div className={`absolute bottom-6 left-6 right-6 flex flex-col md:flex-row md:items-end justify-between gap-6 ${isAr ? 'text-right' : 'text-left'}`}>
+              <div className="space-y-2 max-w-2xl">
                 <span className="text-[10px] font-black font-mono tracking-widest text-[#FFE600] uppercase block">
-                  {isAr ? 'ملاذ متكامل للجسد والروح' : 'HOLISTIC BODY & MIND RECOVERY'}
+                  {isAr ? 'الملاذ الرياضي الأكثر تقدماً في العالم' : 'THE WORLD’S PINNACLE ATHLETIC RECOVERY SANCTUARY'}
                 </span>
-                <h3 className="text-2xl md:text-3xl font-black font-anime text-white">
-                  {isAr ? '10 فيلل شاطئية • فندق فاخر • مستشفى تخصصي للإصابات والاكتئاب' : '10 Villas • Boutique Hotel • Injury & Mental Health Hospital'}
+                <h3 className="text-2xl md:text-4xl font-black font-anime text-white leading-tight">
+                  {isAr 
+                    ? '10 فيلل · فندق 30 غرفة و 4 أجنحة VIP · مسبح مغامرات · نادي قتالي · 4 مطاعم · مستشفى لعلاج الإصابات والاكتئاب' 
+                    : '10 Ocean Villas · 30-Room Hotel & 4 VIP Suites · Adventure Pool · Hospital for Injuries & Depression'}
                 </h3>
                 <p className="text-xs text-gray-200 font-bold leading-relaxed line-clamp-2">
                   {isAr 
-                    ? 'بيئة استوائية ساحرة مصممة خصيصاً للرياضيين؛ تجمع بين العلاج السريري للإصابات والأكسجين عالي الضغط والدعم النفسي الشامل لمواجهة الاكتئاب والضغوطات التنافسية.'
-                    : 'A world-class sanctuary built to heal athletic injuries, eradicate mental depression and burnout, and elevate physical prowess.'}
+                    ? 'أول منتجع رياضي متكامل يجمع بين أرقى درجات الفخامة الشاطئية، وأحدث بروتوكولات الطب الرياضي السريري وإعادة التأهيل النفسي لتجاوز فترات الإحباط والاكتئاب الرياضي واستعادة كامل العنفوان.' 
+                    : 'A world-first convergence of barefoot island luxury, clinical sports trauma rehabilitation, and dedicated psychological burnout restoration.'}
                 </p>
               </div>
 
               <button
-                onClick={() => {
-                  soundFX.playButtonClick();
-                  setInquiryModalOpen(true);
-                }}
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-400 via-[#FFE600] to-emerald-500 hover:opacity-95 text-black font-black font-anime text-xs shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all cursor-pointer shrink-0 flex items-center justify-center gap-2"
+                onClick={() => handleOpenWaitlist()}
+                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-400 via-[#FFE600] to-emerald-500 hover:opacity-95 text-black font-black font-anime text-xs shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all cursor-pointer shrink-0 flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4" />
-                <span>{isAr ? 'التسجيل في قائمة الانتظار المبكرة (أكتوبر 2027)' : 'Join October 2027 Priority Waitlist'}</span>
+                <span>{isAr ? 'حجز بطاقة الأولوية VIP (أكتوبر 2027)' : 'Request Priority Founding Pass (Oct 2027)'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* 6 Core Facilities Grid (Matching User Instructions Exactly - Zero Prices) */}
+        {/* Interactive Filter Tabs for the 6 Facilities */}
         <div className="space-y-4">
-          <div className={`flex items-center justify-between ${isAr ? 'flex-row-reverse text-right' : 'text-left'}`}>
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isAr ? 'text-right' : 'text-left'}`}>
             <div>
-              <span className="text-[10px] font-black font-mono uppercase text-gray-400 tracking-wider">
-                {isAr ? 'مرافق وأقسام منتجع يارد الصحي' : 'SANCTUARY RESORT & HOSPITAL FACILITIES'}
+              <span className="text-[10px] font-black font-mono text-emerald-400 uppercase tracking-wider block">
+                {isAr ? 'مرافق ومكونات منتجع يارد الصحي في بازاروتو' : 'SANCTUARY ARCHITECTURAL BLUEPRINT'}
               </span>
               <h3 className="text-xl md:text-2xl font-black font-anime text-white">
-                {isAr ? 'البنية التحتية والمرافق الاستشفائية والترفيهية المتكاملة' : 'Integrated Clinical, Residential & Entertainment Infrastructure'}
+                {isAr ? 'استكشف المرافق الستة الرئيسية للمنتجع (افتتاح أكتوبر 2027)' : 'Explore the 6 Pinnacle Facilities (Opening October 2027)'}
               </h3>
             </div>
-            <span className="text-xs font-mono text-emerald-400 font-bold hidden sm:inline">
-              BAZARUTO 2027 // ZERO COMPROMISE
+            
+            <span className="text-xs font-mono text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              {isAr ? 'حجز بدون رسوم مسبقة · قائمة الانتظار الذهبية' : 'No Upfront Fees · Priority Waiting List'}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {facilities.map((fac) => (
-              <div
-                key={fac.id}
-                onClick={() => handleOpenFacility(fac)}
-                className="rounded-2xl p-6 bg-[#0B0D18] border border-gray-800 hover:border-emerald-400/60 transition-all flex flex-col justify-between space-y-5 group hover:scale-[1.01] shadow-lg cursor-pointer"
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {[
+              { id: 'all', labelAr: 'كافة المرافق (6)', labelEn: 'All Facilities (6)' },
+              { id: 'hospital', labelAr: '🏥 مستشفى الإصابات والاكتئاب', labelEn: '🏥 Sports Hospital & Mental Lab' },
+              { id: 'villas', labelAr: '🏝️ 10 فيلل شاطئية', labelEn: '🏝️ 10 Ocean Villas' },
+              { id: 'hotel', labelAr: '🏨 فندق 30 غرفة و 4 VIP', labelEn: '🏨 Hotel: 30 Rooms & 4 VIP Suites' },
+              { id: 'pool', labelAr: '🌊 مسبح ممرات المغامرة والترفيه', labelEn: '🌊 Adventure Watercourses Pool' },
+              { id: 'gym', labelAr: '🥊 نادي رياضي وقتالي مميز', labelEn: '🥊 Elite Athletic Gym' },
+              { id: 'dining', labelAr: '🍽️ 4 مطاعم عالمية', labelEn: '🍽️ 4 Gourmet Restaurants' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  soundFX.playButtonClick();
+                  setActiveTab(tab.id as any);
+                }}
+                className={`px-3.5 py-1.5 rounded-xl font-anime font-black text-xs transition-all cursor-pointer ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-to-r from-emerald-500 to-[#FFE600] text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                    : 'bg-[#0E101D] text-gray-300 hover:text-white border border-gray-800 hover:border-gray-700'
+                }`}
               >
-                <div className="space-y-4">
-                  {/* Badge & Icon */}
-                  <div className="flex items-center justify-between">
-                    <span 
-                      className="text-[9px] font-black font-mono tracking-wider px-2.5 py-0.5 rounded-full border"
-                      style={{ 
-                        color: fac.accentColor, 
-                        borderColor: `${fac.accentColor}40`,
-                        backgroundColor: `${fac.accentColor}10` 
-                      }}
-                    >
-                      {isAr ? fac.badgeAr : isEs ? fac.badgeEs : isFr ? fac.badgeFr : fac.badgeEn}
-                    </span>
-                    <div className="p-2 rounded-xl bg-black/60 border border-gray-800">
-                      {fac.icon}
+                {isAr ? tab.labelAr : tab.labelEn}
+              </button>
+            ))}
+          </div>
+
+          {/* Cards Grid for the Facilities */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            {filteredFacilities.map((fac) => {
+              const IconComp = fac.icon;
+              return (
+                <div 
+                  key={fac.id}
+                  className="rounded-3xl p-6 bg-[#0B0D1A] border-2 border-gray-800 hover:border-emerald-400/60 transition-all flex flex-col justify-between space-y-6 group hover:scale-[1.01] shadow-xl relative overflow-hidden"
+                >
+                  {/* Subtle Accent Glow */}
+                  <div 
+                    className="absolute -top-12 -right-12 w-28 h-28 rounded-full blur-2xl opacity-20 pointer-events-none"
+                    style={{ backgroundColor: fac.accentColor }}
+                  />
+
+                  <div className="space-y-4 relative z-10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
+                          style={{ backgroundColor: `${fac.accentColor}18`, color: fac.accentColor }}
+                        >
+                          <IconComp className="w-5 h-5" />
+                        </div>
+                        <span className="text-xs font-mono font-black text-gray-500">
+                          FACILITY #{fac.numberKey}
+                        </span>
+                      </div>
+
+                      <span 
+                        className="text-[9px] font-black font-mono tracking-wider px-2.5 py-1 rounded-full border uppercase"
+                        style={{ 
+                          backgroundColor: `${fac.accentColor}15`, 
+                          borderColor: `${fac.accentColor}40`,
+                          color: fac.accentColor 
+                        }}
+                      >
+                        {isAr ? fac.badgeAr : isEs ? fac.badgeEs : isFr ? fac.badgeFr : fac.badgeEn}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-lg md:text-xl font-black font-anime text-white group-hover:text-emerald-300 transition-colors leading-tight">
+                        {isAr ? fac.titleAr : isEs ? fac.titleEs : isFr ? fac.titleFr : fac.titleEn}
+                      </h4>
+                      <p className="text-xs text-gray-300 font-bold mt-2 leading-relaxed">
+                        {isAr ? fac.descAr : isEs ? fac.descEs : isFr ? fac.descFr : fac.descEn}
+                      </p>
+                    </div>
+
+                    {/* Features List */}
+                    <div className="space-y-2 pt-3 border-t border-gray-800/80">
+                      <span className="text-[10px] font-mono font-black text-emerald-400 uppercase tracking-wider block">
+                        {isAr ? 'أهم التجهيزات والخصائص:' : 'KEY SPECIFICATIONS:'}
+                      </span>
+                      <ul className="space-y-1.5">
+                        {(isAr ? fac.featuresAr : fac.featuresEn).map((feat, i) => (
+                          <li key={i} className="flex items-start gap-2 text-[11px] text-gray-300 font-bold leading-snug">
+                            <span className="text-emerald-400 shrink-0 font-mono">✓</span>
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
 
-                  {/* Title & Capacity */}
-                  <div>
-                    <h4 className="text-lg font-black font-anime text-white group-hover:text-emerald-300 transition-colors">
-                      {isAr ? fac.nameAr : isEs ? fac.nameEs : isFr ? fac.nameFr : fac.nameEn}
-                    </h4>
-                    <span className="text-[11px] font-mono text-gray-400 font-bold block mt-1">
-                      {isAr ? fac.capacityAr : isEs ? fac.capacityEs : isFr ? fac.capacityFr : fac.capacityEn}
-                    </span>
-                    <p className="text-xs text-gray-400 font-bold mt-2 leading-relaxed line-clamp-3">
-                      {isAr ? fac.descAr : isEs ? fac.descEs : isFr ? fac.descFr : fac.descEn}
-                    </p>
-                  </div>
+                  {/* Bottom Action (NO PRICES!) */}
+                  <div className="pt-4 border-t border-gray-800 flex items-center justify-between relative z-10">
+                    <div>
+                      <span className="text-[10px] text-emerald-400 font-mono font-black block">
+                        {isAr ? 'الافتتاح الرسمي:' : 'Grand Opening:'}
+                      </span>
+                      <span className="text-xs font-black font-anime text-white">
+                        {isAr ? 'أكتوبر 2027' : 'October 2027'}
+                      </span>
+                    </div>
 
-                  {/* Highlights */}
-                  <div className="space-y-1.5 pt-3 border-t border-gray-800/80">
-                    <span className="text-[10px] font-mono font-black text-gray-500 uppercase tracking-wider block">
-                      {isAr ? 'أبرز المزايا والمواصفات:' : 'FACILITY HIGHLIGHTS:'}
-                    </span>
-                    <ul className="space-y-1.5">
-                      {(isAr ? fac.featuresAr : isEs ? fac.featuresEs : isFr ? fac.featuresFr : fac.featuresEn).map((f, i) => (
-                        <li key={i} className="flex items-start gap-2 text-[11px] text-gray-300 font-bold leading-snug">
-                          <span className="text-emerald-400 shrink-0 font-mono">✓</span>
-                          <span>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <button
+                      onClick={() => handleOpenWaitlist(fac)}
+                      className="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-200 text-black font-black font-anime text-xs transition-colors cursor-pointer shadow-md flex items-center gap-1.5"
+                    >
+                      <span>{isAr ? 'طلب بطاقة VIP' : 'VIP Priority Pass'}</span>
+                      <span>{isAr ? '←' : '→'}</span>
+                    </button>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
 
-                {/* Bottom Trigger */}
-                <div className="pt-3 border-t border-gray-800 flex items-center justify-between text-xs font-black font-anime">
-                  <span className="text-gray-400 group-hover:text-white transition-colors">
-                    {isAr ? 'عرض التفاصيل الكاملة' : isEs ? 'Ver Detalles' : isFr ? 'Voir Détails' : 'View Facility Details'}
-                  </span>
-                  <span className="text-emerald-400 transform group-hover:translate-x-1 transition-transform">
-                    {isAr ? '←' : '→'}
-                  </span>
-                </div>
+        {/* Special Spotlight Banner on Sports Hospital & Athlete Depression Clinic */}
+        <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#0C1024] via-[#0D1432] to-[#0A0D1E] border-2 border-cyan-500/40 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className={`relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 ${isAr ? 'text-right' : 'text-left'}`}>
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-xs font-mono font-bold">
+                <BrainCircuit className="w-3.5 h-3.5" />
+                <span>{isAr ? 'مستشفى يارد للطب الرياضي والعلاج النفسي السريري' : 'YARD SPORTS MEDICINE & MENTAL SANCTUARY'}</span>
               </div>
-            ))}
+              <h3 className="text-2xl md:text-3xl font-black font-anime text-white">
+                {isAr 
+                  ? 'بروتوكول متكامل لعلاج الإصابات الرياضية وتجاوز فترات الاكتئاب والاحتراق النفسي' 
+                  : 'Integrated Protocol for Sports Injuries, Tendon Repair & Mental Depression Relief'}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-300 font-bold leading-relaxed">
+                {isAr 
+                  ? 'يمر الرياضيون والأبطال بفترات عصيبة من الإحباط والاكتئاب والضغط العصبي جراء الإصابات أو فترات التوقف. يوفر مستشفانا المتخصص في أرخبيل بازاروتو أحدث تقنيات التشخيص الحركي، غرف الأكسجين عالي الضغط، مع رعاية نفسية وسريرية خاصة لإعادة شحن العزيمة والارتقاء بالمقاتل إلى أعلى مستويات القوة النفسية والجسدية.' 
+                  : 'Athletes encounter profound mental exhaustion, injury trauma, and depressive valleys throughout their careers. Our specialized hospital delivers kinesthetic regenerative care, hyperbaric cellular oxygen, and compassionate psychiatric coaching to elevate athletes back to supreme emotional and physical dominance.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <button
+                onClick={() => handleOpenWaitlist(facilities[0])}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black font-black font-anime text-xs shadow-[0_0_25px_rgba(0,240,255,0.4)] transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Stethoscope className="w-4 h-4" />
+                <span>{isAr ? 'التسجيل في القائمة السريرية VIP' : 'Register for Clinical Priority'}</span>
+              </button>
+            </div>
           </div>
         </div>
 
       </div>
 
-      {/* Facility Detail Modal */}
-      {selectedFacility && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-xl bg-[#0D0F1B] border border-gray-700 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+      {/* October 2027 VIP Founding Priority Waiting List Modal (Zero Price, Instant Email Confirmation) */}
+      {isWaitlistModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn">
+          <div className="relative w-full max-w-xl bg-[#0D0F1E] border-2 border-emerald-500/50 rounded-3xl p-6 md:p-8 shadow-[0_0_60px_rgba(16,185,129,0.3)] space-y-6 max-h-[92vh] overflow-y-auto">
+            
             {/* Close Button */}
             <button
               onClick={() => {
                 soundFX.playButtonClick();
-                setSelectedFacility(null);
+                setIsWaitlistModalOpen(false);
               }}
               className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className={`space-y-2 ${isAr ? 'text-right' : 'text-left'}`}>
-              <span 
-                className="text-[10px] font-black font-mono px-3 py-1 rounded-full border inline-block"
-                style={{
-                  color: selectedFacility.accentColor,
-                  borderColor: `${selectedFacility.accentColor}50`,
-                  backgroundColor: `${selectedFacility.accentColor}10`
-                }}
-              >
-                {isAr ? selectedFacility.badgeAr : selectedFacility.badgeEn}
-              </span>
-              <h3 className="text-2xl font-black font-anime text-white">
-                {isAr ? selectedFacility.nameAr : selectedFacility.nameEn}
-              </h3>
-              <p className="text-xs text-gray-400 font-mono font-bold">
-                {isAr ? selectedFacility.capacityAr : selectedFacility.capacityEn} &bull; Bazaruto Archipelago Sanctuary (October 2027)
-              </p>
-            </div>
-
-            <div className={`p-4 rounded-2xl bg-black/60 border border-gray-800 space-y-2 ${isAr ? 'text-right' : 'text-left'}`}>
-              <span className="text-[10px] font-mono font-black text-gray-400 uppercase">
-                {isAr ? 'الوصف المعماري والطبي:' : 'CLINICAL & ARCHITECTURAL CHARTER:'}
-              </span>
-              <p className="text-xs md:text-sm text-gray-200 font-bold leading-relaxed">
-                {isAr ? selectedFacility.descAr : selectedFacility.descEn}
-              </p>
-            </div>
-
-            <div className={`space-y-2.5 ${isAr ? 'text-right' : 'text-left'}`}>
-              <h4 className="text-xs font-black font-anime text-white">
-                {isAr ? 'المواصفات والخدمات المتاحة:' : 'Facility Specifications:'}
-              </h4>
-              <ul className="space-y-2">
-                {(isAr ? selectedFacility.featuresAr : selectedFacility.featuresEn).map((f, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-xs text-gray-300 font-bold">
-                    <span className="text-emerald-400 font-mono">✓</span>
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="pt-2 flex gap-3">
-              <button
-                onClick={() => {
-                  soundFX.playButtonClick();
-                  setSelectedFacility(null);
-                  setInquiryModalOpen(true);
-                }}
-                className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-[#FFE600] text-black font-black font-anime text-xs shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>{isAr ? 'التسجيل في قائمة الزوار (أكتوبر 2027)' : 'Join October 2027 Priority List'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Priority Waitlist & Health Inquiry Modal (Zero Price) */}
-      {inquiryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-xl bg-[#0D0F1B] border border-gray-700 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-            {/* Close Button */}
-            <button
-              onClick={() => {
-                soundFX.playButtonClick();
-                setInquiryModalOpen(false);
-                setInquirySubmitted(false);
-              }}
-              className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {!inquirySubmitted ? (
-              <form onSubmit={handleSubmitInquiry} className="space-y-4">
-                <div className={`space-y-1 ${isAr ? 'text-right' : 'text-left'}`}>
-                  <span className="text-[10px] font-black font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                    OPENING OCTOBER 2027 // REGISTRATION OPEN
-                  </span>
+            {!bookingConfirmed ? (
+              <form onSubmit={handleFormSubmit} className="space-y-5">
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-black uppercase">
+                    <Sparkles className="w-3 h-3 text-[#FFE600]" />
+                    <span>OCTOBER 2027 // VIP FOUNDING PASS</span>
+                  </div>
                   <h3 className="text-2xl font-black font-anime text-white">
-                    {isAr ? 'التسجيل في قائمة زوار منتجع يارد الصحي ومستشفى الإصابات' : 'Join October 2027 Sanctuary & Hospital Priority List'}
+                    {isAr 
+                      ? 'طلب بطاقة الأولوية وقائمة الانتظار التأسيسية — منتجع بازاروتو 2027' 
+                      : 'VIP Priority Founding Pass Application — Bazaruto 2027'}
                   </h3>
-                  <p className="text-xs text-gray-400 font-bold">
-                    {isAr ? 'أرخبيل بازاروتو، المحيط الهندي · استقبال الزوار بدءاً من أكتوبر 2027' : 'Bazaruto Archipelago, Indian Ocean · Welcoming Visitors from October 2027'}
+                  <p className="text-xs text-gray-300 font-bold">
+                    {isAr 
+                      ? 'التسجيل مجاني بالكامل بدون أي دفع مسبق. ستحصل على ميثاق الأولوية لتأكيد حجزك مع بداية استقبال الزوار في أكتوبر 2027.' 
+                      : 'Free priority registration with zero upfront cost. Receive your guaranteed VIP allocation for the October 2027 inaugural season.'}
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">
-                    {isAr ? 'اسم الرياضي / الزائر:' : 'Athlete / Visitor Full Name:'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={athleteName}
-                    onChange={(e) => setAthleteName(e.target.value)}
-                    placeholder="e.g. Victor Vance"
-                    className="w-full bg-[#141624] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none"
-                  />
-                </div>
+                {selectedFacilityForModal && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                      <selectedFacilityForModal.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-emerald-400 font-mono font-bold block">
+                        {isAr ? 'المرفق المختار:' : 'Selected Facility Interest:'}
+                      </span>
+                      <span className="text-xs font-black font-anime text-white">
+                        {isAr ? selectedFacilityForModal.titleAr : selectedFacilityForModal.titleEn}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">
-                    {isAr ? 'البريد الإلكتروني للإشعار والتأكيد:' : 'Email Address for Priority Notifications:'}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={athleteEmail}
-                    onChange={(e) => setAthleteEmail(e.target.value)}
-                    placeholder="athlete@example.com"
-                    className="w-full bg-[#141624] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none"
-                  />
-                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1">
+                      {isAr ? 'الاسم الكامل للرياضي / الضيف:' : 'Full Name of Athlete / Guest:'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={athleteName}
+                      onChange={(e) => setAthleteName(e.target.value)}
+                      placeholder="e.g. Victor Stone"
+                      className="w-full bg-[#14172B] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">
-                    {isAr ? 'المرفق أو الخدمة المراد الاستفادة منها:' : 'Primary Facility of Interest:'}
-                  </label>
-                  <select
-                    value={interestTarget}
-                    onChange={(e) => setInterestTarget(e.target.value)}
-                    className="w-full bg-[#141624] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none cursor-pointer"
-                  >
-                    <option value="Hospital & Injury Rehab">Hospital: Sports Injury Rehabilitation & Surgery (مستشفى الإصابات)</option>
-                    <option value="Mental Health & Burnout">Hospital: Sports Depression & Burnout Reset (علاج الاكتئاب والإجهاد النفسي)</option>
-                    <option value="Luxury Villas">10 Luxury Standalone Villas (فيلات شاطئية فاخرة)</option>
-                    <option value="Boutique Hotel">Boutique Hotel & VIP Suites (فندق 30 غرفة و 4 أجنحة VIP)</option>
-                    <option value="Gym & Combat Arena">Elite Gym & Ocean Combat Deck (النادي الرياضي وحلبة النزالات)</option>
-                    <option value="Lagoon & Waterways">Adventure Lagoon & Waterways (المسبح والممرات المائية)</option>
-                    <option value="All Facilities">Complete Holistic Athlete Retreat (البرنامج الشامل)</option>
-                  </select>
-                </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1">
+                      {isAr ? 'البريد الإلكتروني لإرسال بطاقة VIP ورابط المتابعة:' : 'Email Address for VIP Packet & Direct Link:'}
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={athleteEmail}
+                      onChange={(e) => setAthleteEmail(e.target.value)}
+                      placeholder="athlete@example.com"
+                      className="w-full bg-[#14172B] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1">
-                    {isAr ? 'ملاحظات الإصابات أو الحالة النفسية والبدنية (اختياري وسري بالكامل):' : 'Injury History, Mental Wellbeing or Goals (Strictly Confidential):'}
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={healthMentalNotes}
-                    onChange={(e) => setHealthMentalNotes(e.target.value)}
-                    placeholder={isAr ? 'مثال: تمزق أربطة، إجهاد ذهني بعد البطولات، إعادة تأهيل المفاصل، استشفاء نفسي...' : 'e.g. ACL rehabilitation, post-tournament burnout, tendon therapy, mental decompression...'}
-                    className="w-full bg-[#141624] border border-gray-800 focus:border-emerald-400 rounded-xl py-2 px-3 text-xs text-white outline-none resize-none"
-                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-300 mb-1">
+                        {isAr ? 'التخصص الرياضي:' : 'Athletic Discipline:'}
+                      </label>
+                      <select
+                        value={athleteDiscipline}
+                        onChange={(e) => setAthleteDiscipline(e.target.value)}
+                        className="w-full bg-[#14172B] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none cursor-pointer"
+                      >
+                        <option value="Combat Sports / MMA & Boxing">Combat Sports / MMA & Boxing 🥊</option>
+                        <option value="Endurance & Hyrox Athlete">Endurance & Hyrox Athlete ⚡</option>
+                        <option value="Football / Team Sport Pro">Football / Team Sport Pro ⚽</option>
+                        <option value="Elite Fitness & Body Recovery">Elite Fitness & Body Recovery 🧘</option>
+                        <option value="Executive / VIP Visitor">Executive / VIP Visitor 👑</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-300 mb-1">
+                        {isAr ? 'الفترة الزمنية المفضلة (بدءاً من أكتوبر 2027):' : 'Preferred Window (Starting Oct 2027):'}
+                      </label>
+                      <select
+                        value={preferredWindow}
+                        onChange={(e) => setPreferredWindow(e.target.value)}
+                        className="w-full bg-[#14172B] border border-gray-800 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none cursor-pointer"
+                      >
+                        <option value="October 2027 (Grand Opening Inauguration)">October 2027 (Grand Opening Inauguration)</option>
+                        <option value="November 2027 (Post-Season Bio-Reboot)">November 2027 (Post-Season Bio-Reboot)</option>
+                        <option value="December 2027 (Archipelago Grand Prix)">December 2027 (Archipelago Grand Prix)</option>
+                        <option value="Q1 2028 (Winter High-Altitude & Marine Camp)">Q1 2028 (Winter Marine Camp)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 mb-1">
+                      {isAr ? 'ملاحظات الإصابات، أهداف التأهيل أو التعافي النفسي والبدني:' : 'Injury History / Mental Wellness Goals (Optional):'}
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={healthAndInjuryNotes}
+                      onChange={(e) => setHealthAndInjuryNotes(e.target.value)}
+                      placeholder={isAr ? 'مثال: تمزق رباط صليبي، إجهاد نفسي واكتئاب ما بعد الموسم، رغبة في الإقامة بفيلا شاطئية...' : 'e.g. ACL rehabilitation, post-competition mental burnout relief, private villa preference...'}
+                      className="w-full bg-[#14172B] border border-gray-800 focus:border-emerald-400 rounded-xl py-2 px-3 text-xs text-white outline-none resize-none"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex gap-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => setInquiryModalOpen(false)}
+                    onClick={() => setIsWaitlistModalOpen(false)}
                     className="py-3 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-black font-anime text-xs cursor-pointer"
                   >
                     {isAr ? 'إلغاء' : 'Cancel'}
@@ -722,10 +764,11 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
 
                   <button
                     type="submit"
-                    className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-[#FFE600] text-black font-black font-anime text-xs shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                    disabled={formSubmitting}
+                    className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-[#FFE600] to-emerald-400 text-black font-black font-anime text-xs shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Send className="w-4 h-4" />
-                    <span>{isAr ? 'إرسال طلب التسجيل المبكر (أكتوبر 2027)' : 'Submit October 2027 Priority Registration'}</span>
+                    <span>{formSubmitting ? (isAr ? 'جاري التسجيل...' : 'Dispatching...') : (isAr ? 'تأكيد التسجيل في قائمة الأولوية الذهبية (مجاناً)' : 'Confirm VIP Priority Pass (Free)')}</span>
                   </button>
                 </div>
               </form>
@@ -736,46 +779,47 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[10px] font-black font-mono px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                    PRIORITY INTAKE CONFIRMED // OCT 2027
+                  <span className="text-[10px] font-black font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                    VIP FOUNDING PASS GRANTED
                   </span>
                   <h3 className="text-2xl font-black font-anime text-white">
-                    {isAr ? 'تم تأكيد تسجيلك في قائمة أسبقية منتجع يارد الصحي ومستشفى الإصابات!' : 'October 2027 Priority Registration Confirmed!'}
+                    {isAr ? 'تم تأكيد تسجيلك في قائمة الشرف لمنتجع بازاروتو 2027!' : 'Your VIP Founding Pass is Confirmed!'}
                   </h3>
                   <p className="text-xs text-gray-300 font-bold max-w-md mx-auto leading-relaxed">
                     {isAr 
-                      ? `شكراً لك يا ${athleteName}. تم حفظ طلبك وسجل اهتمامك (${interestTarget}). سيتم إرسال بطاقة الأسبقية الرسمية إلى بريدك الإلكتروني (${athleteEmail})، وسيتواصل معك الفريق الطبي واستشاريو الاستشفاء قبل موعد الافتتاح في أكتوبر 2027.`
-                      : `Thank you, ${athleteName}. Your interest in ${interestTarget} has been recorded. Your official priority voucher has been sent to ${athleteEmail}. Our medical and hospitality directors will contact you in advance of the October 2027 opening.`}
+                      ? `شكراً لك يا ${athleteName}. تم إرسال ميثاق الأولوية التأسيسي ورقم عضويتك (${confirmationNumber}) إلى بريدك الإلكتروني (${athleteEmail}). سيستقبل منتجع يارد الصحي زواره رسمياً بدءاً من أكتوبر 2027، وسيتواصل معك المنسق السريري مبكراً لترتيب كافة التفاصيل.` 
+                      : `Thank you, ${athleteName}. Your priority founding clearance #${confirmationNumber} has been dispatched to ${athleteEmail}. YARD Resort officially welcomes athletes starting October 2027.`}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-black/60 border border-gray-800 text-left font-mono text-xs space-y-1.5 max-w-sm mx-auto">
                   <div className="flex justify-between">
+                    <span className="text-gray-400">Sanctuary:</span>
+                    <span className="text-white font-bold">Bazaruto Archipelago, 2027</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-gray-400">Opening Window:</span>
-                    <span className="text-emerald-400 font-bold">OCTOBER 2027</span>
+                    <span className="text-emerald-400 font-bold">{preferredWindow.split(' ')[0]} 2027</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Location:</span>
-                    <span className="text-white font-bold">Bazaruto Archipelago</span>
+                    <span className="text-gray-400">Facilities:</span>
+                    <span className="text-cyan-400 font-bold">10 Villas · 34 Rooms · Hospital</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Facility:</span>
-                    <span className="text-[#FFE600] font-bold">{interestTarget}</span>
+                    <span className="text-gray-400">VIP Pass:</span>
+                    <span className="text-[#FFE600] font-bold">{confirmationNumber}</span>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => {
-                    soundFX.playButtonClick();
-                    setInquiryModalOpen(false);
-                    setInquirySubmitted(false);
-                  }}
+                  onClick={() => setIsWaitlistModalOpen(false)}
                   className="w-full py-3 rounded-xl bg-white text-black font-black font-anime text-xs hover:bg-gray-200 transition-colors cursor-pointer"
                 >
-                  {isAr ? 'العودة إلى الموقع الرئيسي' : 'Return to Arena'}
+                  {isAr ? 'إغلاق والعودة' : 'Close and Return'}
                 </button>
               </div>
             )}
+
           </div>
         </div>
       )}
