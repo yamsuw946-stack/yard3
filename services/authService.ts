@@ -166,9 +166,10 @@ export const authService = {
       };
     }
 
-    // Login successful
-    this.setCurrentUser(account.user);
-    return { success: true, user: account.user };
+    // Login successful - record daily streak & bonus
+    const dailyResult = this.recordDailyLogin(account.user);
+    this.setCurrentUser(dailyResult.user);
+    return { success: true, user: dailyResult.user };
   },
 
   // Register a new athlete account (requires email verification before site access)
@@ -307,9 +308,94 @@ export const authService = {
     delete account.verificationCodeExpiry;
     this.saveAccounts(accounts);
 
+    // Record daily login streak and bonus points
+    const dailyResult = this.recordDailyLogin(account.user);
+
     // Now securely grant access to the site
-    this.setCurrentUser(account.user);
-    return { success: true, user: account.user };
+    this.setCurrentUser(dailyResult.user);
+    return { success: true, user: dailyResult.user };
+  },
+
+  // Record and calculate daily login streak & aura bonus
+  recordDailyLogin(user: AuthUser): { user: AuthUser; bonusAwarded: boolean; streakMessage?: string } {
+    if (typeof window === 'undefined') return { user, bonusAwarded: false };
+    const dateKey = `yard300_last_login_date_${user.id}`;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const lastDate = localStorage.getItem(dateKey);
+
+    let bonusAwarded = false;
+    let updatedUser = { ...user };
+
+    if (!lastDate) {
+      // First time recording login
+      localStorage.setItem(dateKey, todayStr);
+      updatedUser.totalAuraPoints = (updatedUser.totalAuraPoints || 0) + 50;
+      bonusAwarded = true;
+    } else if (lastDate === todayStr) {
+      // Already logged in today, preserve streak
+      bonusAwarded = false;
+    } else {
+      // Check if last login was yesterday
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+      if (lastDate === yesterdayStr) {
+        // Consecutive daily streak!
+        updatedUser.streakDays = (updatedUser.streakDays || 1) + 1;
+        updatedUser.totalAuraPoints = (updatedUser.totalAuraPoints || 0) + 50;
+      } else {
+        // Broken streak, reset to 1
+        updatedUser.streakDays = 1;
+        updatedUser.totalAuraPoints = (updatedUser.totalAuraPoints || 0) + 50;
+      }
+      localStorage.setItem(dateKey, todayStr);
+      bonusAwarded = true;
+    }
+
+    // Persist user update
+    if (bonusAwarded) {
+      const accounts = this.getAllAccounts();
+      const idx = accounts.findIndex(a => a.user.id === updatedUser.id);
+      if (idx >= 0) {
+        accounts[idx].user = updatedUser;
+        this.saveAccounts(accounts);
+      }
+    }
+
+    return { 
+      user: updatedUser, 
+      bonusAwarded, 
+      streakMessage: bonusAwarded ? `🔥 Daily login recorded! +50 Aura Points added. Streak: ${updatedUser.streakDays} Days.` : undefined 
+    };
+  },
+
+  // Check and process 1-click confirmation links from URL hash (#verify=CODE&email=EMAIL)
+  checkAndProcessUrlVerification(): { success: boolean; user?: AuthUser; message?: string } {
+    if (typeof window === 'undefined') return { success: false };
+    const hash = window.location.hash || '';
+    if (!hash.includes('verify=') || !hash.includes('email=')) return { success: false };
+
+    try {
+      const params = new URLSearchParams(hash.replace(/^#\/?/, ''));
+      const code = params.get('verify');
+      const email = params.get('email');
+
+      if (code && email) {
+        const res = this.verifyEmailCode(email, code);
+        if (res.success && res.user) {
+          // Clean the hash from the URL
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          return {
+            success: true,
+            user: res.user,
+            message: `Account confirmed for ${res.user.name}! Welcome to YARD 300.`
+          };
+        }
+      }
+    } catch {}
+
+    return { success: false };
   },
 
   // Resend fresh 6-digit confirmation code

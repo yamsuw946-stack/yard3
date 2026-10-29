@@ -1639,6 +1639,7 @@ const Profile: React.FC<ProfileProps> = ({
 
             {/* Bottom Content, Reactions & Comments */}
             <div className="relative z-20 p-3 sm:p-5 space-y-2.5 bg-gradient-to-t from-[#07080E] via-[#07080E]/95 to-transparent">
+              <div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="px-2.5 py-0.5 rounded-full bg-[#E50914] text-white text-[10px] font-black font-anime">
                     {activeStoryViewer.badgeType}
