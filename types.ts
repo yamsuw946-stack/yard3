@@ -88,6 +88,7 @@ export type ViewState =
   | { type: 'championStory' }
   | { type: 'customClub' }
   | { type: 'yardCamp' }
+  | { type: 'bazaruto' }
   | { type: 'ownerDashboard'; initialTab?: 'photos' | 'sections' | 'payments' | 'videos' | 'articles' };
 
 export interface FitnessDataPoint {

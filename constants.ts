@@ -32,6 +32,7 @@ export const CHALLENGER_IMAGE = '/images/anime_challenger_rookie_1788741832986.j
 export const JOURNAL_RECOVERY_IMAGE = '/images/recovery_journal_lab.jpg';
 export const JOURNAL_MINDSET_IMAGE = '/images/athlete_mindset_track.jpg';
 export const JOURNAL_GEAR_IMAGE = '/images/journal_gear_tech.jpg';
+export const YARD_BAZARUTO_RESORT_IMAGE = '/images/yard_bazaruto_resort.jpg';
 
 // Live Tournaments, Community Founders & Hero Showcase
 export const YARD300_BRAND_LOGO = '/images/yard_official_logo.jpg';

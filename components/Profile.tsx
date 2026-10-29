@@ -1564,11 +1564,20 @@ const Profile: React.FC<ProfileProps> = ({
 
       {/* FULLSCREEN 24H STORY VIEWER WITH REACTION & COMMENTS */}
       {activeStoryViewer && (
-        <div className="fixed inset-0 z-[130] bg-black/95 backdrop-blur-lg flex items-center justify-center p-2 md:p-4">
-          <div className="w-full max-w-md h-[92vh] max-h-[780px] rounded-3xl bg-black border-2 border-gray-800 relative overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(0,0,0,0.9)]">
+        <div className="fixed inset-0 z-[130] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 sm:p-4 touch-none">
+          <div className="w-full max-w-sm sm:max-w-md h-[100dvh] sm:h-[88vh] sm:max-h-[760px] rounded-none sm:rounded-3xl bg-black border-0 sm:border-2 sm:border-gray-800 relative overflow-hidden flex flex-col justify-between shadow-[0_0_60px_rgba(0,0,0,0.9)]">
             
-            {/* Story Background Media */}
-            <div className="absolute inset-0">
+            {/* Story Background Media - Perfectly scaled for mobile */}
+            <div className="absolute inset-0 overflow-hidden bg-black flex items-center justify-center">
+              {/* Ambient blurred backdrop so portrait/landscape media looks seamless */}
+              <img 
+                src={activeStoryViewer.mediaUrl} 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none" 
+                aria-hidden="true"
+              />
+              <div className="absolute inset-0 bg-black/35 pointer-events-none" />
+
               {activeStoryViewer.mediaType === 'video' || activeStoryViewer.mediaUrl.startsWith('data:video') || activeStoryViewer.mediaUrl.endsWith('.mp4') ? (
                 <video 
                   src={activeStoryViewer.mediaUrl} 
@@ -1576,17 +1585,17 @@ const Profile: React.FC<ProfileProps> = ({
                   loop
                   playsInline
                   controls={false}
-                  className="w-full h-full object-cover"
+                  className="relative z-10 w-full h-full max-h-[100dvh] object-contain sm:object-cover"
                 />
               ) : (
                 <img 
                   src={activeStoryViewer.mediaUrl} 
                   alt={activeStoryViewer.title} 
-                  className="w-full h-full object-cover"
+                  className="relative z-10 w-full h-full max-h-[100dvh] object-contain sm:object-cover"
                   onError={handleImageError}
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80 pointer-events-none"></div>
+              <div className="absolute inset-0 z-10 bg-gradient-to-t from-black via-black/30 to-black/75 pointer-events-none"></div>
             </div>
 
             {/* Top Bar with Timer Progress */}

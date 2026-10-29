@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, Lock, Mail, User, ShieldCheck, Zap, LogOut, CheckCircle, 
-  Eye, EyeOff, UserCheck, ExternalLink, Send, KeyRound, RefreshCw, Copy, Check
+  Eye, EyeOff, UserCheck, ExternalLink, Send, KeyRound, RefreshCw, Copy, Check, Link2
 } from 'lucide-react';
 import { authService, AuthUser } from '../services/authService';
 import { emailService, EmailDispatchResult } from '../services/emailService';
@@ -26,6 +26,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   currentLang = 'en',
   onSuccess
 }) => {
+  const isAr = currentLang === 'ar';
   const isFr = currentLang === 'fr';
   const isEs = currentLang === 'es';
 
@@ -45,6 +46,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [currentVerificationCode, setCurrentVerificationCode] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Password visibility controls
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +56,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [emailDispatch, setEmailDispatch] = useState<EmailDispatchResult | null>(null);
+
+  // Auto-verify if user opened email direct activation link with #verify=CODE&email=EMAIL
+  useEffect(() => {
+    const handleUrlHashVerify = () => {
+      const hash = window.location.hash;
+      if (hash && hash.includes('verify=')) {
+        try {
+          const params = new URLSearchParams(hash.replace('#', ''));
+          const code = params.get('verify');
+          const emailParam = params.get('email');
+          if (code && emailParam) {
+            const res = authService.verifyEmailCode(emailParam, code);
+            if (res.success && res.user) {
+              soundFX.playSuccess();
+              soundFX.playPowerUp();
+              setCurrentUser(res.user);
+              setSuccessMsg(
+                isAr
+                  ? `تم تفعيل حسابك بنجاح عبر الرابط! أهلاً بك يا ${res.user.name}.`
+                  : `Account activated successfully via link! Welcome, ${res.user.name}.`
+              );
+              window.location.hash = '';
+              setTimeout(() => {
+                onSuccess?.(res.user!);
+                onClose();
+              }, 1400);
+            }
+          }
+        } catch {}
+      }
+    };
+    handleUrlHashVerify();
+    window.addEventListener('hashchange', handleUrlHashVerify);
+    return () => window.removeEventListener('hashchange', handleUrlHashVerify);
+  }, [isAr, onClose, onSuccess]);
 
   // Cooldown timer for resending code
   useEffect(() => {
@@ -537,8 +574,72 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       href={emailDispatch.directMailtoUrl}
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#181A2D] hover:bg-[#20243C] text-cyan-300 border border-cyan-500/30 text-[11px] font-bold transition-all cursor-pointer"
                     >
-                      <span>{isFr ? 'Ouvrir Messagerie' : isEs ? 'Abrir Correo' : 'Mail Client'}</span>
+                      <span>{isAr ? 'فتح تطبيق البريد' : isFr ? 'Ouvrir Messagerie' : isEs ? 'Abrir Correo' : 'Mail Client'}</span>
                     </a>
+                  </div>
+                )}
+
+                {/* Direct 1-Click Activation Link */}
+                {emailDispatch?.verificationLink && (
+                  <div className="mt-3 p-3 rounded-xl bg-black/70 border border-emerald-500/30 space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-black font-anime text-emerald-300">
+                      <span className="flex items-center gap-1.5">
+                        <Link2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>{isAr ? 'رابط تفعيل الحساب الفوري (مُرسل للبريد):' : isEs ? 'Enlace Directo de Activación:' : isFr ? 'Lien d’Activation Directe :' : 'Direct Email Activation Link:'}</span>
+                      </span>
+                      <span className="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded font-mono font-bold">1-CLICK</span>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <input 
+                        type="text" 
+                        readOnly 
+                        value={emailDispatch.verificationLink} 
+                        className="flex-1 bg-[#090C16] border border-gray-800 rounded-lg px-2.5 py-1.5 text-[10px] font-mono text-gray-300 outline-none truncate"
+                      />
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (emailDispatch?.verificationLink) {
+                              navigator.clipboard.writeText(emailDispatch.verificationLink);
+                              setCopiedLink(true);
+                              soundFX.playButtonClick();
+                              setTimeout(() => setCopiedLink(false), 2000);
+                            }
+                          }}
+                          className="flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-white text-[11px] font-bold cursor-pointer transition-all flex items-center justify-center gap-1"
+                        >
+                          {copiedLink ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedLink ? (isAr ? 'تم النسخ' : 'Copied') : (isAr ? 'نسخ' : 'Copy')}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleAutoFillCode();
+                            const res = authService.verifyEmailCode(verifyEmailAddress, currentVerificationCode);
+                            if (res.success && res.user) {
+                              soundFX.playSuccess();
+                              soundFX.playPowerUp();
+                              setCurrentUser(res.user);
+                              setSuccessMsg(
+                                isAr
+                                  ? `تم تفعيل حسابك بنجاح! أهلاً بك يا ${res.user.name}.`
+                                  : `Account activated successfully! Welcome, ${res.user.name}.`
+                              );
+                              setTimeout(() => {
+                                onSuccess?.(res.user!);
+                                onClose();
+                              }, 1200);
+                            }
+                          }}
+                          className="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-[#FFE600] text-black text-[11px] font-black font-anime cursor-pointer transition-all shadow-md flex items-center justify-center gap-1"
+                        >
+                          <Zap className="w-3 h-3" />
+                          <span>{isAr ? 'تفعيل فوري بالرابط ⚡' : 'Activate Instantly ⚡'}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

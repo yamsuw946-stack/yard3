@@ -9,6 +9,7 @@ export interface EmailDispatchResult {
   subject: string;
   timestamp: string;
   code?: string;
+  verificationLink?: string;
   previewUrl?: string;
   directMailtoUrl: string;
   gmailWebUrl: string;
@@ -16,7 +17,7 @@ export interface EmailDispatchResult {
 
 export const emailService = {
   /**
-   * Dispatches 6-digit email confirmation code with native notifications & web links
+   * Dispatches 6-digit email confirmation code and direct activation link with native notifications & web links
    */
   async sendVerificationCode(
     recipientEmail: string, 
@@ -26,8 +27,10 @@ export const emailService = {
     const cleanEmail = recipientEmail.trim();
     const cleanName = athleteName.trim() || 'Champion Athlete';
     const timestamp = new Date().toLocaleString();
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://yard300.club';
+    const verificationLink = `${origin}/#verify=${encodeURIComponent(code)}&email=${encodeURIComponent(cleanEmail)}`;
     const subject = `[YARD 300] Your Account Verification Code: ${code}`;
-    const bodyText = `Welcome to YARD 300, ${cleanName}!%0D%0A%0D%0AYour 6-digit confirmation code is: ${code}%0D%0A%0D%0AEnter this code in the activation window to verify your email address (${cleanEmail}) and activate your athlete credentials.%0D%0A%0D%0ADispatched at: ${timestamp}%0D%0AYARD 300 Combat Health & High Performance Arena.`;
+    const bodyText = `Welcome to YARD 300, ${cleanName}!%0D%0A%0D%0AYour 6-digit confirmation code is: ${code}%0D%0A%0D%0ADirect 1-Click Activation Link:%0D%0A${encodeURIComponent(verificationLink)}%0D%0A%0D%0AEnter this code or click the activation link to verify your email address (${cleanEmail}) and activate your athlete credentials.%0D%0A%0D%0ADispatched at: ${timestamp}%0D%0AYARD 300 Combat Health & High Performance Arena.`;
 
     const directMailtoUrl = `mailto:${encodeURIComponent(cleanEmail)}?subject=${encodeURIComponent(subject)}&body=${bodyText}`;
     const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(cleanEmail)}&su=${encodeURIComponent(subject)}&body=${bodyText}`;
@@ -36,15 +39,15 @@ export const emailService = {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       try {
         if (Notification.permission === 'granted') {
-          new Notification('YARD 300 - Email Verification Code', {
-            body: `Your activation code is: ${code}. Enter it to complete registration.`,
+          new Notification('YARD 300 - Email Verification Link & Code', {
+            body: `Your activation code is: ${code}. Click the notification or link to activate.`,
             icon: '/images/yam_suw_athlete.jpg'
           });
         } else if (Notification.permission !== 'denied') {
           Notification.requestPermission().then(permission => {
             if (permission === 'granted') {
-              new Notification('YARD 300 - Email Verification Code', {
-                body: `Your activation code is: ${code}. Enter it to complete registration.`,
+              new Notification('YARD 300 - Email Verification Link & Code', {
+                body: `Your activation code is: ${code}. Click the notification or link to activate.`,
                 icon: '/images/yam_suw_athlete.jpg'
               });
             }
@@ -60,6 +63,7 @@ export const emailService = {
       recipient: cleanEmail,
       subject,
       code,
+      verificationLink,
       timestamp,
       directMailtoUrl,
       gmailWebUrl

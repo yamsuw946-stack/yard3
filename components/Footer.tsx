@@ -13,12 +13,18 @@ import React, { useState, useEffect } from 'react';
 import { Mail, ExternalLink, Sparkles, Check, UserPlus, Globe } from 'lucide-react';
 import { soundFX } from '../services/soundFX';
 import { OwnerConfigService } from '../services/ownerConfigService';
+import { Language } from '../i18n';
 
 interface FooterProps {
+  currentLang?: Language;
   onLinkClick?: (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
+const Footer: React.FC<FooterProps> = ({ currentLang = 'en', onLinkClick }) => {
+  const isAr = currentLang === 'ar';
+  const isEs = currentLang === 'es';
+  const isFr = currentLang === 'fr';
+
   const [subscriptionType, setSubscriptionType] = useState<'news' | 'club'>('club');
   const [email, setEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -45,7 +51,7 @@ const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
   };
 
   return (
-    <footer className="bg-[#030406] pt-8 pb-6 px-4 md:px-8 text-gray-400 relative overflow-hidden text-left">
+    <footer className={`bg-[#030406] pt-8 pb-6 px-4 md:px-8 text-gray-400 relative overflow-hidden ${isAr ? 'text-right' : 'text-left'}`}>
       
       {/* Background Subtle Cyber Grid */}
       <div className="absolute inset-0 bg-cyber-grid opacity-5 pointer-events-none" />
@@ -55,35 +61,37 @@ const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
         {/* Column 1: Global Branches Presence */}
         <div className="md:col-span-4 space-y-3">
           <p className="font-semibold text-xs text-gray-300 leading-relaxed max-w-sm">
-            High-performance combat athletics, injury prediction algorithms, and athletic training protocols.
+            {isAr 
+              ? 'رياضات قتالية عالية الأداء، خوارزميات التنبؤ بالإصابات، ومنتجع الاستشفاء الحيوي في أرخبيل بازاروتو.'
+              : 'High-performance combat athletics, injury prediction algorithms, and bio-recovery protocols.'}
           </p>
 
           <div className="pt-1 space-y-1.5">
             <h4 className="text-[10px] font-black text-gray-300 uppercase tracking-wider font-anime flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-gray-500" />
-              <span>GLOBAL BRANCH LOCATIONS:</span>
+              <span>{isAr ? 'الفروع والمراكز الرياضية العالمية:' : 'GLOBAL BRANCH LOCATIONS & SANCTUARY:'}</span>
             </h4>
             
-            {/* Clean Compact Branches Card */}
+            {/* Clean Compact Branches Card - Strictly Non-Duplicated */}
             <div className="p-2.5 rounded-xl bg-[#07080D] border border-gray-900 text-[11px] text-gray-300 space-y-1.5">
-              <p className="text-white font-anime font-black text-xs">
-                Branches in Madrid, Sydney, London, Dubai <span className="text-[10px] text-gray-400 font-normal tracking-normal">(Al Quoz)</span>, and Tokyo — Coming Soon
-              </p>
               <div className="flex flex-wrap gap-1.5 pt-0.5">
-                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime">
+                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime" title="Madrid, Spain">
                   🇪🇸 Madrid
                 </span>
-                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime">
+                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime" title="Sydney, Australia">
                   🇦🇺 Sydney
                 </span>
-                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime">
+                <span className="px-2 py-0.5 rounded bg-[#10121A] text-gray-300 text-[10px] font-anime" title="London, United Kingdom">
                   🇬🇧 London
                 </span>
-                <span className="px-2 py-0.5 rounded bg-[#10121A] text-[#00F0FF] text-[10px] font-anime font-bold inline-flex items-center gap-1">
+                <span className="px-2 py-0.5 rounded bg-[#10121A] text-[#00F0FF] text-[10px] font-anime font-bold inline-flex items-center gap-1" title="Dubai Al Quoz, UAE">
                   <span>🇦🇪 Dubai</span>
                   <span className="text-[8px] text-gray-400 font-mono font-normal tracking-normal">(Al Quoz)</span>
                 </span>
-                <span className="px-2 py-0.5 rounded bg-[#10121A] text-[#FFE600] text-[10px] font-anime font-bold">
+                <span className="px-2 py-0.5 rounded bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 text-[10px] font-anime font-bold inline-flex items-center gap-1" title="Bazaruto Archipelago Sanctuary">
+                  <span>🇲🇿 Bazaruto Sanctuary</span>
+                </span>
+                <span className="px-2 py-0.5 rounded bg-[#10121A] text-[#FFE600] text-[10px] font-anime font-bold" title="Tokyo, Japan">
                   🇯🇵 Tokyo (Soon)
                 </span>
               </div>

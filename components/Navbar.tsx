@@ -14,6 +14,7 @@ import {
   Menu,
   Crown,
   Compass,
+  Palmtree,
   LogIn
 } from 'lucide-react';
 import { authService, AuthUser } from '../services/authService';
@@ -168,6 +169,22 @@ const Navbar: React.FC<NavbarProps> = ({
               </span>
               <span className="text-[8px] sm:text-[9px] bg-[#FFE600] text-black px-1 sm:px-1.5 py-0.2 rounded font-mono font-black shadow-md leading-tight">
                 300
+              </span>
+            </button>
+
+            {/* Bazaruto Bio-Recovery Resort Sanctuary */}
+            <button
+              type="button"
+              onClick={(e) => handleLinkClick(e, 'bazaruto')}
+              className="h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg bg-[#071318] hover:bg-[#0c1e26] border border-emerald-500/50 hover:border-emerald-400 text-white hover:text-emerald-300 transition-all duration-300 shadow-[0_0_14px_rgba(16,185,129,0.25)] flex items-center gap-1 sm:gap-1.5 cursor-pointer group"
+              title="YARD Bio-Recovery Resort & Sanctuary (Bazaruto Archipelago)"
+            >
+              <Palmtree className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+              <span className="font-anime font-black text-[11px] sm:text-xs tracking-wider text-emerald-100 group-hover:text-emerald-300 hidden sm:inline">
+                RESORT
+              </span>
+              <span className="text-[8px] sm:text-[9px] bg-emerald-400 text-black px-1 sm:px-1.5 py-0.2 rounded font-mono font-black shadow-md leading-tight">
+                VIP
               </span>
             </button>
           </div>

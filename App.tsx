@@ -29,6 +29,7 @@ import { SharedAuraModal } from './components/SharedAuraModal';
 import { FoundersAndCommunity } from './components/FoundersAndCommunity';
 import { AuthModal } from './components/AuthModal';
 import { GlobalSponsorsShowcase } from './components/GlobalSponsorsShowcase';
+import { BazarutoResortSanctuary } from './components/BazarutoResortSanctuary';
 
 // High-Performance Code-Split Lazy Loaded Subviews for Ultra-Fast Mobile & Desktop Loading
 const Checkout = React.lazy(() => import('./components/Checkout'));
@@ -295,6 +296,8 @@ function App() {
       club: { type: 'customClub' },
       yardCamp: { type: 'yardCamp' },
       camp: { type: 'yardCamp' },
+      bazaruto: { type: 'bazaruto' },
+      resort: { type: 'bazaruto' },
       owner: { type: 'ownerDashboard' },
       admin: { type: 'ownerDashboard' },
       dashboard: { type: 'ownerDashboard' },
@@ -328,6 +331,10 @@ function App() {
     }
     if (id === 'yardCamp') {
       setView({ type: 'yardCamp' });
+      return;
+    }
+    if (id === 'bazaruto' || id === 'resort') {
+      setView({ type: 'bazaruto' });
       return;
     }
     if (id === 'profile') {
@@ -575,7 +582,16 @@ function App() {
                 onExploreSection={(secId) => handleSelectHubSection(secId as SectionHubId)}
               />
 
-              {/* 5. The Visionary Founders Showcase (Yam Suw, MTK, ARB) */}
+              {/* 5. YARD Bio-Recovery & Injury Therapy Resort (Bazaruto Archipelago Sanctuary) */}
+              <BazarutoResortSanctuary 
+                currentLang={currentLang} 
+                onExploreEvents={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setView({ type: 'tickets' });
+                }}
+              />
+
+              {/* 6. The Visionary Founders Showcase (Yam Suw, MTK, ARB) */}
               <FoundersAndCommunity currentLang={currentLang} />
 
             </div>
@@ -941,6 +957,31 @@ function App() {
                 setView({ type: 'products' });
               }} 
             />
+          </div>
+        )}
+
+        {view.type === 'bazaruto' && (
+          <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden bg-black min-h-screen">
+            <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
+              <button 
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setView({ type: 'home' });
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
+              >
+                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+              </button>
+            </div>
+            <div className="max-w-[1800px] mx-auto px-4 md:px-8">
+              <BazarutoResortSanctuary 
+                currentLang={currentLang}
+                onExploreEvents={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setView({ type: 'tickets' });
+                }}
+              />
+            </div>
           </div>
         )}
 
