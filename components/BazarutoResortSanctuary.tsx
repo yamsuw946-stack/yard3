@@ -124,22 +124,22 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
       badgeAr: 'فيلات شاطئية خاصة',
       badgeEs: 'VILLAS PRIVADAS EXCLUSIVAS',
       badgeFr: 'VILLAS PRIVÉES EXCLUSIVES',
-      descEn: 'Ten architectural masterpiece villas inspired by Zaha Hadid fluid parametric curves, constructed entirely from rich organic natural wood and panoramic seamless glass walls. Each villa features an exquisite private plunge pool with crystal-clear lagoon waters, shaded ocean verandas, and direct barefoot access to the pristine white sand dunes.',
-      descAr: 'عشر فيلل فاخرة تمثل تحفة معمارية استثنائية مستوحاة من الانحناءات العضوية المعاصرة لأسلوب زها حديد، مبنية بالكامل بتناغم هندسي من الخشب الدافئ والواجهات الزجاجية البانورامية الممتدة من الأرض للسقف، وتضم كل فيلا حوض سباحة خاص (Plunge Pool) يطل على مياه اللاغون الفيروزية، مع تراسات استجمام خشبية وممرات خاصة نحو رمال الشاطئ البكر.',
-      descEs: 'Diez villas de diseño fluido inspiradas en Zaha Hadid, construidas íntegramente en madera noble curvada y cristal panorámico, con piscina privada integrada y vistas infinitas.',
-      descFr: 'Dix villas d’exception aux courbes paramétriques inspirées de Zaha Hadid, entièrement édifiées en bois noble et verre panoramique, avec bassin privé et accès direct aux dunes.',
+      descEn: 'Ten architectural masterpiece villas embodying contemporary fluid parametric curves, constructed entirely from rich organic natural wood and panoramic seamless glass walls. Each villa features an exquisite private plunge pool with crystal-clear lagoon waters, shaded ocean verandas, and direct barefoot access to the pristine white sand dunes.',
+      descAr: 'عشر فيلل فاخرة تمثل تحفة معمارية استثنائية بانحناءاتها العضوية الانسيابية وفلسفتها البارامترية المعاصرة، مبنية بالكامل بتناغم هندسي من الخشب الدافئ والواجهات الزجاجية البانورامية الممتدة من الأرض للسقف، وتضم كل فيلا حوض سباحة خاص (Plunge Pool) يطل على مياه اللاغون الفيروزية، مع تراسات استجمام خشبية وممرات خاصة نحو رمال الشاطئ البكر.',
+      descEs: 'Diez villas de diseño orgánico fluido y arquitectura paramétrica, construidas íntegramente en madera noble curvada y cristal panorámico, con piscina privada integrada y vistas infinitas.',
+      descFr: 'Dix villas d’exception aux courbes organiques fluides et architecture paramétrique, entièrement édifiées en bois noble et verre panoramique, avec bassin privé et accès direct aux dunes.',
       statsEn: '10 Parametric Wood & Glass Villas // Private Plunge Pools',
       statsAr: '10 فيلات خشب وزجاج بانورامي // أحواض سباحة خاصة',
       icon: Palmtree,
       accentColor: '#10B981',
       featuresEn: [
-        'Zaha Hadid Inspired Fluid Parametric Architecture Built of Natural Wood & Glass',
+        'Fluid Parametric Architecture Built of Curved Natural Wood & Panoramic Glass',
         'Private Cantilevered Plunge Pool Overlooking the Turquoise Lagoon',
         'Acoustically Refined Master Suites Engineered for Restful Sleep & Full Privacy',
         'Bespoke Private Butler & Personalized Hospitality Service 24/7'
       ],
       featuresAr: [
-        'عمارة انسيابية مستوحاة من فلسفة زها حديد مبنية بالكامل من الخشب والزجاج البانورامي',
+        'عمارة انسيابية بارامتريّة معاصرة مبنية بالكامل من الخشب والزجاج البانورامي',
         'حوض سباحة خاص (Plunge Pool) بإطلالة ساحرة ومباشرة على مياه البحر الصافية',
         'أجنحة نوم فندقية معزولة صوتياً ومصممة بأعلى معايير الخصوصية والراحة التامة',
         'خدمة كونسيرج ومساعد شخصي على مدار الساعة لتجربة إقامة لا تُضاهى'
@@ -448,7 +448,7 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
         </div>
 
         {/* ==================================================================== */}
-        {/* ZAHA HADID INSPIRED LUXURY VILLA ARCHITECTURAL SHOWCASE              */}
+        {/* CONTEMPORARY FLUID PARAMETRIC LUXURY VILLA ARCHITECTURAL SHOWCASE    */}
         {/* ==================================================================== */}
         <div className="rounded-3xl p-6 md:p-8 bg-[#0B0D18] border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative overflow-hidden group">
           <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
@@ -460,7 +460,7 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
               <div className="relative aspect-[16/9] w-full">
                 <img 
                   src={YARD_BAZARUTO_VILLA_IMAGE} 
-                  alt="Zaha Hadid Inspired Parametric Luxury Villa with Private Plunge Pool" 
+                  alt="Contemporary Fluid Parametric Luxury Villa with Private Plunge Pool" 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -471,7 +471,7 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
                 <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                   <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-emerald-400/50 text-emerald-300 text-[10px] font-mono font-black tracking-wider flex items-center gap-1.5 shadow-lg">
                     <Sparkles className="w-3 h-3 text-[#FFE600]" />
-                    <span>ZAHA HADID PARAMETRIC DESIGN</span>
+                    <span>ORGANIC PARAMETRIC DESIGN</span>
                   </span>
                   <span className="px-3 py-1 rounded-full bg-[#00F0FF]/20 backdrop-blur-md border border-[#00F0FF]/50 text-[#00F0FF] text-[10px] font-mono font-bold shadow-lg" dir="ltr">
                     PRIVATE PLUNGE POOL
@@ -503,15 +503,15 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
                   <>
                     فيلل شاطئية معمارية{' '}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-[#00F0FF] to-[#FFE600]">
-                      مستوحاة من زها حديد
+                      بانحناءات انسيابية عضوية
                     </span>{' '}
                     بالكامل من الخشب والزجاج
                   </>
                 ) : (
                   <>
-                    Zaha Hadid Inspired{' '}
+                    Contemporary{' '}
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-[#00F0FF] to-[#FFE600]">
-                      Fluid Wood & Glass Villas
+                      Fluid Parametric Villas
                     </span>{' '}
                     with Private Plunge Pools
                   </>
@@ -520,8 +520,8 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
 
               <p className="text-xs md:text-sm text-gray-300 font-medium leading-relaxed">
                 {isAr 
-                  ? 'صُممت الفلل الـ 10 المستقلة بجرأة معمارية عصرية مستوحاة من الانحناءات العضوية لأسلوب زها حديد؛ حيث شُيّدت بالكامل من خشب الساج المنحني بعناية فائقة والواجهات الزجاجية البانورامية العريضة الممتدة من السقف إلى الأرض لتذيب الحدود بين الفخامة الداخلية وسحر المحيط الهندي. تضم كل فيلا حوض سباحة خاص (Private Plunge Pool) متماهٍ مع الأفق الفيروزي، وتراسات استجمام شاطئية واسعة توفر أعلى درجات الخصوصية والاستشفاء التام.'
-                  : 'Ten bespoke standalone villas embodying contemporary fluid architecture inspired by Zaha Hadid. Built entirely of organic steam-bent teak wood frames and curved floor-to-ceiling glass walls, each villa boasts an elevated private infinity plunge pool overlooking the turquoise Indian Ocean, expansive sun terraces, and discreet barefoot access to pristine sand dunes.'}
+                  ? 'صُممت الفلل الـ 10 المستقلة بجرأة معمارية عصرية تعتمد على الانحناءات الانسيابية العضوية والفلسفة البارامترية المتقدمة؛ حيث شُيّدت بالكامل من خشب الساج المنحني بعناية فائقة والواجهات الزجاجية البانورامية العريضة الممتدة من السقف إلى الأرض لتذيب الحدود بين الفخامة الداخلية وسحر المحيط الهندي. تضم كل فيلا حوض سباحة خاص (Private Plunge Pool) متماهٍ مع الأفق الفيروزي، وتراسات استجمام شاطئية واسعة توفر أعلى درجات الخصوصية والاستشفاء التام.'
+                  : 'Ten bespoke standalone villas embodying contemporary fluid parametric architecture. Built entirely of organic steam-bent teak wood frames and curved floor-to-ceiling glass walls, each villa boasts an elevated private infinity plunge pool overlooking the turquoise Indian Ocean, expansive sun terraces, and discreet barefoot access to pristine sand dunes.'}
               </p>
 
               {/* Villa Spec Badges */}
@@ -648,14 +648,14 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
                         <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-3 border border-emerald-400/30 shadow-lg">
                           <img 
                             src={YARD_BAZARUTO_VILLA_IMAGE} 
-                            alt="Zaha Hadid Inspired Luxury Villa with Plunge Pool"
+                            alt="Contemporary Fluid Parametric Luxury Villa with Plunge Pool"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
                             decoding="async"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                           <span className="absolute bottom-2 left-2 right-2 text-[10px] font-mono font-bold text-emerald-300 bg-black/80 px-2.5 py-1 rounded backdrop-blur-md border border-emerald-500/30" dir="ltr">
-                            Zaha Hadid Fluid Architecture // Wood & Glass Villa
+                            Contemporary Fluid Architecture // Wood & Glass Villa
                           </span>
                         </div>
                       )}
