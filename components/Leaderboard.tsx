@@ -581,7 +581,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ currentLang = 'en' }) 
 
                     <td className="py-3 px-4 text-right">
                       <span className="font-anime font-black text-sm text-[#00F0FF] block">
-                        {ath.auraScore.toLocaleString()}
+                        {ath.auraScore.toLocaleString('en-US')}
                       </span>
                       <span className="text-[9px] text-gray-500 font-mono block">
                         AU POINTS

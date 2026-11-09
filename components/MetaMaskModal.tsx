@@ -192,7 +192,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
                   {isAr ? 'رصيد عملة YARDX:' : 'YARDX Combat Tokens:'}
                 </span>
                 <span className="text-lg font-black font-anime text-[#FFE600]">
-                  {yardxTokens.toLocaleString()} YARDX
+                  {yardxTokens.toLocaleString('en-US')} YARDX
                 </span>
               </div>
             </div>

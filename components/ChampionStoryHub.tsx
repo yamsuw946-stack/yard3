@@ -435,7 +435,7 @@ export const ChampionStoryHub: React.FC<ChampionStoryHubProps> = ({
               </span>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-[#FFE600]" />
-                <span className="text-2xl font-black font-anime text-[#FFE600]">{champion.powerScore.toLocaleString()} AU</span>
+                <span className="text-2xl font-black font-anime text-[#FFE600]">{champion.powerScore.toLocaleString('en-US')} AU</span>
               </div>
             </div>
 

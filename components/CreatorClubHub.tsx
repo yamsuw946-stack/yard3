@@ -576,7 +576,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 <span>{isEs ? 'Seguidores y Miembros' : isFr ? 'Followers & Membres' : 'Followers & Members'}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-white">
-                {club.followersCount.toLocaleString()}
+                {club.followersCount.toLocaleString('en-US')}
               </span>
               <span className="block text-[11px] text-emerald-400 font-mono mt-0.5">
                 +{club.members.length} verified roster
@@ -589,7 +589,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 <span>{isEs ? 'Puntos de Aura del Club' : isFr ? 'Points d\'Aura du Club' : 'Total Club Aura XP'}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-[#FFE600]">
-                {club.totalAuraScore.toLocaleString()}
+                {club.totalAuraScore.toLocaleString('en-US')}
               </span>
               <span className="block text-[11px] text-gray-400 font-mono mt-0.5">
                 Top 1% Global Ranking

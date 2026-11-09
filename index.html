@@ -343,18 +343,23 @@
         font-feature-settings: "lnum" 1;
       }
 
+      /* Universal enforcement of Western standard numerals: completely disables Arabic-Indic numeral substitution across Cairo and all web fonts */
+      *, *::before, *::after {
+        font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1;
+      }
+
       /* Clean, Standard Latin Numerals: Never stylized as Eastern Arabic or flipped */
       .font-mono, [class*="font-mono"], .num-latin, [dir="ltr"] {
         font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         font-variant-numeric: lining-nums tabular-nums !important;
-        font-feature-settings: "lnum" 1, "tnum" 1 !important;
+        font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1 !important;
       }
 
       /* Arabic Anime & Combat Styling: Sharp, Bold, Dynamic with Pure Latin Digits */
       [dir="rtl"], .dir-rtl {
         font-family: 'Cairo', 'Chakra Petch', sans-serif !important;
-        font-variant-numeric: lining-nums tabular-nums;
-        font-feature-settings: "lnum" 1;
+        font-variant-numeric: lining-nums tabular-nums !important;
+        font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1 !important;
       }
 
       [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] .font-anime,
@@ -364,15 +369,15 @@
         letter-spacing: normal;
         text-transform: none;
         font-variant-numeric: lining-nums tabular-nums !important;
-        font-feature-settings: "lnum" 1 !important;
+        font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1 !important;
       }
 
       [dir="rtl"] p, .dir-rtl p {
         font-family: 'Cairo', sans-serif;
         font-weight: 600;
         line-height: 1.7;
-        font-variant-numeric: lining-nums tabular-nums;
-        font-feature-settings: "lnum" 1;
+        font-variant-numeric: lining-nums tabular-nums !important;
+        font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1 !important;
       }
 
       /* Screaming Neon Glow Utilities */

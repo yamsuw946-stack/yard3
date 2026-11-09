@@ -31,6 +31,7 @@ import { soundFX } from '../services/soundFX';
 import { 
   LIVE_ARENA_IMAGE, 
   FOUNDER_YAM_SUW_IMAGE, 
+  FOUNDER_MTK_IMAGE,
   FOUNDER_ARB_IMAGE, 
   YARD300_BRAND_LOGO,
   CYBER_RONIN_BLADE_IMAGE,
@@ -105,6 +106,25 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
     specialMoveAr: 'هجمة كش ملك التكتيكية المرتدة'
   },
   {
+    id: 'b-03',
+    fighterName: 'مرام كساب (m.t.k)',
+    opponentName: 'Ninja Kunoichi Apex',
+    fighterAvatar: FOUNDER_MTK_IMAGE,
+    opponentAvatar: CYBER_SHINOBI_IMAGE,
+    outcome: 'VICTORY',
+    duration: '05:20',
+    caloriesBurned: 380.6,
+    maxHeartRate: 172,
+    combosLanded: 104,
+    powerAuraEarned: 580,
+    yardxReward: 180,
+    dateStr: 'Oct 1, 2026 // 18:30',
+    divisionEn: 'Functional Mobility & Conditioning Grand Slam',
+    divisionAr: 'بطولة اللياقة الوظيفية والاستشفاء القتالي الكبرى',
+    specialMoveEn: 'Valkyrie Core Kinetic Surge',
+    specialMoveAr: 'اندفاع طاقة الجذع الحركية الشاملة'
+  },
+  {
     id: 'b-04',
     fighterName: 'yam suw',
     opponentName: 'Jin Titan Brawler',
@@ -170,7 +190,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
 
   // Battle Log State
   const [battleLogs, setBattleLogs] = useState<BattleLogEntry[]>(INITIAL_BATTLE_LOGS);
-  const [logFilter, setLogFilter] = useState<'ALL' | 'YAM_SUW' | 'ARB'>('ALL');
+  const [logFilter, setLogFilter] = useState<'ALL' | 'YAM_SUW' | 'MTK' | 'ARB'>('ALL');
   const [selectedLog, setSelectedLog] = useState<BattleLogEntry | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -341,6 +361,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
 
   const filteredLogs = battleLogs.filter(log => {
     if (logFilter === 'YAM_SUW') return log.fighterName.toLowerCase().includes('yam suw');
+    if (logFilter === 'MTK') return log.fighterName.toLowerCase().includes('مرام') || log.fighterName.toLowerCase().includes('m.t.k');
     if (logFilter === 'ARB') return log.fighterName.toLowerCase().includes('a.r.b');
     return true;
   });
@@ -667,6 +688,12 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   className={`px-3 py-1 rounded-lg transition-all ${logFilter === 'YAM_SUW' ? 'bg-[#FF007A] text-white font-black' : 'text-gray-400 hover:text-white'}`}
                 >
                   yam suw
+                </button>
+                <button
+                  onClick={() => setLogFilter('MTK')}
+                  className={`px-3 py-1 rounded-lg transition-all ${logFilter === 'MTK' ? 'bg-[#00F0FF] text-black font-black' : 'text-gray-400 hover:text-white'}`}
+                >
+                  {isAr ? 'مرام (m.t.k)' : 'm.t.k'}
                 </button>
                 <button
                   onClick={() => setLogFilter('ARB')}

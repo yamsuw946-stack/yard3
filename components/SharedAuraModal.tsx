@@ -160,7 +160,7 @@ export const SharedAuraModal: React.FC<SharedAuraModalProps> = ({
           <div className="grid grid-cols-4 gap-2 pt-5 mt-5 border-t border-gray-800 text-center relative z-10">
             <div className="p-2.5 rounded-xl bg-[#0F111D] border border-gray-800">
               <span className="text-[10px] text-gray-400 block font-bold">{isAr ? 'أقصى قوة' : 'Peak Power'}</span>
-              <span className="text-xs md:text-sm font-black font-mono text-[#00F0FF]">{data.peakPower.toLocaleString()} AU</span>
+              <span className="text-xs md:text-sm font-black font-mono text-[#00F0FF]">{data.peakPower.toLocaleString('en-US')} AU</span>
             </div>
 
             <div className="p-2.5 rounded-xl bg-[#0F111D] border border-gray-800">
@@ -170,12 +170,12 @@ export const SharedAuraModal: React.FC<SharedAuraModalProps> = ({
 
             <div className="p-2.5 rounded-xl bg-[#0F111D] border border-gray-800">
               <span className="text-[10px] text-gray-400 block font-bold">{isAr ? 'حرق السعرات' : 'Calories'}</span>
-              <span className="text-xs md:text-sm font-black font-mono text-[#FF007A]">{data.calories.toLocaleString()}</span>
+              <span className="text-xs md:text-sm font-black font-mono text-[#FF007A]">{data.calories.toLocaleString('en-US')}</span>
             </div>
 
             <div className="p-2.5 rounded-xl bg-[#0F111D] border border-gray-800">
               <span className="text-[10px] text-gray-400 block font-bold">{isAr ? 'نقاط الهالة' : 'Aura AP'}</span>
-              <span className="text-xs md:text-sm font-black font-mono text-emerald-400">{data.totalAuraPoints.toLocaleString()}</span>
+              <span className="text-xs md:text-sm font-black font-mono text-emerald-400">{data.totalAuraPoints.toLocaleString('en-US')}</span>
             </div>
           </div>
 

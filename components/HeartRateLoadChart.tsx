@@ -206,7 +206,7 @@ export const HeartRateLoadChart: React.FC<HeartRateLoadChartProps> = ({
               {isAr ? 'إجمالي الحمل التدريبي (7 أيام)' : '7-Day Total Load'}
             </span>
             <span className="text-2xl font-black font-anime text-[#FF007A] drop-shadow-[0_0_10px_rgba(255,0,122,0.4)] block">
-              {totalLoad.toLocaleString()} <span className="text-xs font-normal text-gray-400">AU</span>
+              {totalLoad.toLocaleString('en-US')} <span className="text-xs font-normal text-gray-400">AU</span>
             </span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-[#FF007A]/10 border border-[#FF007A]/30 flex items-center justify-center">
@@ -338,8 +338,8 @@ export const HeartRateLoadChart: React.FC<HeartRateLoadChartProps> = ({
           </span>
           <p className="text-gray-300 leading-relaxed">
             {isAr 
-              ? `انخفاض نبض الراحة بمقدار ${rhrImprovement} bpm مع المحافظة على حمل تدريبي مرتفع (${totalLoad.toLocaleString()} AU) يمثل استجابة قلبية وبدنية ممتازة وتكيفاً مع التدريبات الشديدة.`
-              : `Your RHR drop of ${rhrImprovement} bpm despite sustained high training load (${totalLoad.toLocaleString()} AU) demonstrates superior stroke volume adaptation and parasympathetic nervous system recovery.`}
+              ? `انخفاض نبض الراحة بمقدار ${rhrImprovement} bpm مع المحافظة على حمل تدريبي مرتفع (${totalLoad.toLocaleString('en-US')} AU) يمثل استجابة قلبية وبدنية ممتازة وتكيفاً مع التدريبات الشديدة.`
+              : `Your RHR drop of ${rhrImprovement} bpm despite sustained high training load (${totalLoad.toLocaleString('en-US')} AU) demonstrates superior stroke volume adaptation and parasympathetic nervous system recovery.`}
           </p>
         </div>
       </div>

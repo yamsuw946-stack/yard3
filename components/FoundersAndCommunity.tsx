@@ -20,6 +20,7 @@ import { Language } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { 
   FOUNDER_YAM_SUW_IMAGE, 
+  FOUNDER_MTK_IMAGE,
   FOUNDER_ARB_IMAGE, 
   CHALLENGER_IMAGE,
   handleImageError 
@@ -83,6 +84,34 @@ const FOUNDERS: FounderProfile[] = [
     ]
   },
   {
+    id: 'mtk',
+    name: 'مرام كساب (m.t.k)',
+    nameAr: 'مرام كساب (m.t.k)',
+    fullName: 'مرام كساب • Maram Kassab (m.t.k)',
+    role: 'Co-Founder & Elite Conditioning & Recovery Coach',
+    roleAr: 'المؤسس المشارك وكوتش النخبة للياقة الوظيفية والاستشفاء',
+    discipline: 'Functional Fitness, Athletic Conditioning & Injury Recovery',
+    disciplineAr: 'اللياقة البدنية الوظيفية، الإعداد البدني الرياضي والاستشفاء من الإصابات',
+    specialization: 'Biomechanical load balance, functional athletic endurance, core stabilization, and post-match recovery',
+    specializationAr: 'توازن الأحمال الميكانيكية الحيوية، التحمل الوظيفي للرياضيين، استقرار الجذع، وبروتوكولات التعافي بعد النزالات',
+    badge: 'CO-FOUNDER',
+    badgeAr: 'مؤسس مشارك',
+    elementColor: '#00F0FF',
+    image: FOUNDER_MTK_IMAGE,
+    cardRank: 'PRO COACH',
+    cardRankAr: 'كوتش محترف',
+    credentials: [
+      'Functional Conditioning Specialist',
+      'Athletic Biomechanics & Injury Rehab',
+      'Endurance & Mobility Master Coach'
+    ],
+    credentialsAr: [
+      'أخصائية الإعداد البدني والوظيفي الرياضي',
+      'الميكانيكا الحيوية والوقاية من الإصابات',
+      'كوتش معتمد في التحمل والمرونة الديناميكية'
+    ]
+  },
+  {
     id: 'arb',
     name: 'A.R.B',
     nameAr: 'إي آر بي (A.R.B)',
@@ -138,23 +167,23 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
       <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181A28] border border-gray-800 text-xs font-black text-gray-300 font-anime">
           <Award className="w-3.5 h-3.5 text-[#FFE600]" />
-          <span>{isAr ? 'المؤسسون والقيادة التدريبية لـ YARD 300' : 'YARD 300 FOUNDERS & EXECUTIVE COACHING LEADERSHIP'}</span>
+          <span>{isAr ? 'المؤسسون الثلاثة والقيادة التدريبية لـ YARD 300' : 'YARD 300 THE THREE FOUNDERS & EXECUTIVE COACHING LEADERSHIP'}</span>
         </div>
 
         <h2 className="text-2xl md:text-4xl font-black font-anime text-white leading-tight">
-          {isAr ? 'المؤسسون ' : 'THE FOUNDERS '}
+          {isAr ? 'المؤسسون الثلاثة ' : 'THE THREE FOUNDERS '}
           <span className="text-[#FFE600] neon-text-yellow">{isAr ? '& التخصصات الرياضية القتالية' : '& ATHLETIC DISCIPLINES'}</span>
         </h2>
 
         <p className="text-xs md:text-sm text-gray-400 font-medium max-w-2xl mx-auto">
           {isAr 
-            ? 'تعرف على القيادة الملهمة والرياضيين المؤسسين وراء YARD 300: رواد هندسة الأداء البدني، فنون القتال للشاولين، والتنبؤ الاستباقي بالإصابات.'
-            : 'Meet the visionary leadership and founding athletes behind YARD 300: pioneering athletic performance engineering, martial arts mastery, and proactive injury prediction.'}
+            ? 'تعرف على القيادة الملهمة والرياضيين المؤسسين الثلاثة وراء YARD 300: رواد هندسة الأداء البدني، فنون القتال للشاولين، واللياقة الوظيفية والاستشفاء.'
+            : 'Meet the visionary leadership and founding athletes behind YARD 300: pioneering athletic performance engineering, martial arts mastery, functional conditioning, and proactive recovery.'}
         </p>
       </div>
 
-      {/* 2 Founders Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+      {/* 3 Founders Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
         {FOUNDERS.map((founder) => {
           const isSelected = founder.id === activeFounderId;
 

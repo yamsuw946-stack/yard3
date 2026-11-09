@@ -582,7 +582,7 @@ function App() {
                 onExploreSection={(secId) => handleSelectHubSection(secId as SectionHubId)}
               />
 
-              {/* 5. The Visionary Founders Showcase (Yam Suw, ARB) */}
+              {/* 5. The Visionary Founders Showcase (Yam Suw, Maram Kassab m.t.k, ARB) */}
               <FoundersAndCommunity currentLang={currentLang} />
 
             </div>

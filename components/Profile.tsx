@@ -688,7 +688,7 @@ const Profile: React.FC<ProfileProps> = ({
               <span className="text-2xl group-hover:scale-125 transition-transform">⚡</span>
             </div>
             <span className="text-3xl font-black font-anime text-[#A855F7] neon-text-purple block mb-1">
-              {totalCalories.toLocaleString()} <span className="text-xs text-gray-300 font-mono">kcal</span>
+              {totalCalories.toLocaleString('en-US')} <span className="text-xs text-gray-300 font-mono">kcal</span>
             </span>
             <span className="text-[11px] font-bold text-[#00F0FF] font-mono">{isAr ? '+18% مقارنة بالأسبوع الماضي' : '+18% vs Last Week // OVERLOAD'}</span>
           </div>
@@ -773,8 +773,8 @@ const Profile: React.FC<ProfileProps> = ({
               </h3>
               <p className="text-xs text-gray-300 font-bold max-w-2xl font-mono">
                 {isAr
-                  ? `قم بإنشاء رابط فريد مشفر يحتوي على رتبتك (${currentAuraData.tier})، أقصى قوة (${peakPower.toLocaleString()} AU)، ستريك القتال (${streakData.currentStreak || 14} يوم)، ومستوى شحن هالتك (${avgAura}%).`
-                  : `Generate a unique encrypted passport link embedding your live S-Rank tier (${currentAuraData.tier}), peak power (${peakPower.toLocaleString()} AU), streak (${streakData.currentStreak || 14}D), and aura charge (${avgAura}%).`}
+                  ? `قم بإنشاء رابط فريد مشفر يحتوي على رتبتك (${currentAuraData.tier})، أقصى قوة (${peakPower.toLocaleString('en-US')} AU)، ستريك القتال (${streakData.currentStreak || 14} يوم)، ومستوى شحن هالتك (${avgAura}%).`
+                  : `Generate a unique encrypted passport link embedding your live S-Rank tier (${currentAuraData.tier}), peak power (${peakPower.toLocaleString('en-US')} AU), streak (${streakData.currentStreak || 14}D), and aura charge (${avgAura}%).`}
               </p>
             </div>
 

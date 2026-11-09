@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../i18n';
 import { soundFX } from '../services/soundFX';
-import { YARD_BAZARUTO_RESORT_IMAGE } from '../constants';
+import { YARD_BAZARUTO_RESORT_IMAGE, YARD_BAZARUTO_VILLA_IMAGE } from '../constants';
 import { emailService } from '../services/emailService';
 
 interface BazarutoResortSanctuaryProps {
@@ -124,25 +124,25 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
       badgeAr: 'فيلات شاطئية خاصة',
       badgeEs: 'VILLAS PRIVADAS EXCLUSIVAS',
       badgeFr: 'VILLAS PRIVÉES EXCLUSIVES',
-      descEn: 'Ten standalone architectural residences built in harmony with the coastal sand dunes, utilizing natural teak, stone, and floor-to-ceiling glass pavilions. Each villa features a private plunge pool, shaded outdoor living verandas, and discreet private pathways to the pristine white-sand shoreline.',
-      descAr: 'عشر فيلل شاطئية مستقلة صُممت بعناية لتندمج مع التدرجات الطبيعية للكثبان الساحلية، تعتمد في بنائها على خشب الساج والأحجار المحلية والواجهات الزجاجية الممتدة من الأرض إلى السقف، وتضم كل فيلا حوض سباحة خاص (Plunge Pool)، ومساحات معيشة خارجية مظللة، ومدخلاً خاصاً إلى الشاطئ الرملي النقي.',
-      descEs: 'Diez villas privadas en sintonía con las dunas costeras, con piscina privada, terrazas de madera noble y acceso directo a la playa.',
-      descFr: 'Dix villas d’exception intégrées aux dunes côtières, dotées de piscines privées, varangues ombragées et accès exclusif à la plage.',
-      statsEn: '10 Standalone Coastal Pavilions // Private Plunge Pools',
-      statsAr: '10 فيلات ساحلية مستقلة // أحواض سباحة خاصة',
+      descEn: 'Ten architectural masterpiece villas inspired by Zaha Hadid fluid parametric curves, constructed entirely from rich organic natural wood and panoramic seamless glass walls. Each villa features an exquisite private plunge pool with crystal-clear lagoon waters, shaded ocean verandas, and direct barefoot access to the pristine white sand dunes.',
+      descAr: 'عشر فيلل فاخرة تمثل تحفة معمارية استثنائية مستوحاة من الانحناءات العضوية المعاصرة لأسلوب زها حديد، مبنية بالكامل بتناغم هندسي من الخشب الدافئ والواجهات الزجاجية البانورامية الممتدة من الأرض للسقف، وتضم كل فيلا حوض سباحة خاص (Plunge Pool) يطل على مياه اللاغون الفيروزية، مع تراسات استجمام خشبية وممرات خاصة نحو رمال الشاطئ البكر.',
+      descEs: 'Diez villas de diseño fluido inspiradas en Zaha Hadid, construidas íntegramente en madera noble curvada y cristal panorámico, con piscina privada integrada y vistas infinitas.',
+      descFr: 'Dix villas d’exception aux courbes paramétriques inspirées de Zaha Hadid, entièrement édifiées en bois noble et verre panoramique, avec bassin privé et accès direct aux dunes.',
+      statsEn: '10 Parametric Wood & Glass Villas // Private Plunge Pools',
+      statsAr: '10 فيلات خشب وزجاج بانورامي // أحواض سباحة خاصة',
       icon: Palmtree,
       accentColor: '#10B981',
       featuresEn: [
-        'Sustainable Open-Plan Architecture Offering Absolute Coastal Seclusion',
-        'Private Plunge Pools and Shaded Outdoor Living Pavilions',
-        'Acoustically Refined Master Suites Engineered for Restful Sleep',
-        'Bespoke Private Butler & Personalized Hospitality Service'
+        'Zaha Hadid Inspired Fluid Parametric Architecture Built of Natural Wood & Glass',
+        'Private Cantilevered Plunge Pool Overlooking the Turquoise Lagoon',
+        'Acoustically Refined Master Suites Engineered for Restful Sleep & Full Privacy',
+        'Bespoke Private Butler & Personalized Hospitality Service 24/7'
       ],
       featuresAr: [
-        'تصميم معماري مستدام مفتوح على المحيط يوفر أقصى درجات الخصوصية',
-        'أحواض سباحة خاصة ومجالس شاطئية مظللة لكل فيلا',
-        'غرف نوم فندقية صُممت بعزل صوتي وهندسي فائق لنوم هادئ وعميق',
-        'خدمة كونسيرج وضيافة خاصة على مدار الساعة'
+        'عمارة انسيابية مستوحاة من فلسفة زها حديد مبنية بالكامل من الخشب والزجاج البانورامي',
+        'حوض سباحة خاص (Plunge Pool) بإطلالة ساحرة ومباشرة على مياه البحر الصافية',
+        'أجنحة نوم فندقية معزولة صوتياً ومصممة بأعلى معايير الخصوصية والراحة التامة',
+        'خدمة كونسيرج ومساعد شخصي على مدار الساعة لتجربة إقامة لا تُضاهى'
       ]
     },
     {
@@ -447,6 +447,116 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
           </div>
         </div>
 
+        {/* ==================================================================== */}
+        {/* ZAHA HADID INSPIRED LUXURY VILLA ARCHITECTURAL SHOWCASE              */}
+        {/* ==================================================================== */}
+        <div className="rounded-3xl p-6 md:p-8 bg-[#0B0D18] border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative overflow-hidden group">
+          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-[#FFE600]/10 blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            {/* Left/Top: Villa Architectural Image with Plunge Pool */}
+            <div className="lg:col-span-7 relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 group-hover:border-emerald-400/50 transition-all duration-700">
+              <div className="relative aspect-[16/9] w-full">
+                <img 
+                  src={YARD_BAZARUTO_VILLA_IMAGE} 
+                  alt="Zaha Hadid Inspired Parametric Luxury Villa with Private Plunge Pool" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                
+                {/* Image Overlay Tags */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-emerald-400/50 text-emerald-300 text-[10px] font-mono font-black tracking-wider flex items-center gap-1.5 shadow-lg">
+                    <Sparkles className="w-3 h-3 text-[#FFE600]" />
+                    <span>ZAHA HADID PARAMETRIC DESIGN</span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-[#00F0FF]/20 backdrop-blur-md border border-[#00F0FF]/50 text-[#00F0FF] text-[10px] font-mono font-bold shadow-lg" dir="ltr">
+                    PRIVATE PLUNGE POOL
+                  </span>
+                </div>
+
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white">
+                  <div className="bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/15">
+                    <span className="text-[11px] font-bold text-gray-200 block">
+                      {isAr ? 'عمارة خشب وزجاج عضوية كاملة' : '100% Curved Teak Wood & Seamless Glass'}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold text-[#FFE600] bg-black/80 px-2.5 py-1 rounded-lg border border-yellow-500/30" dir="ltr">
+                    10 Standalone Villas
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right/Text: Architectural Details & Elite Luxury Narrative */}
+            <div className={`lg:col-span-5 space-y-4 ${isAr ? 'text-right' : 'text-left'}`}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-black font-anime uppercase tracking-wider">
+                <Palmtree className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{isAr ? 'تحفة الفيلل الشاطئية الفاخرة' : 'THE RESIDENTIAL MASTERPIECE // 10 VILLAS'}</span>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-black font-anime text-white leading-tight">
+                {isAr ? (
+                  <>
+                    فيلل شاطئية معمارية{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-[#00F0FF] to-[#FFE600]">
+                      مستوحاة من زها حديد
+                    </span>{' '}
+                    بالكامل من الخشب والزجاج
+                  </>
+                ) : (
+                  <>
+                    Zaha Hadid Inspired{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-[#00F0FF] to-[#FFE600]">
+                      Fluid Wood & Glass Villas
+                    </span>{' '}
+                    with Private Plunge Pools
+                  </>
+                )}
+              </h3>
+
+              <p className="text-xs md:text-sm text-gray-300 font-medium leading-relaxed">
+                {isAr 
+                  ? 'صُممت الفلل الـ 10 المستقلة بجرأة معمارية عصرية مستوحاة من الانحناءات العضوية لأسلوب زها حديد؛ حيث شُيّدت بالكامل من خشب الساج المنحني بعناية فائقة والواجهات الزجاجية البانورامية العريضة الممتدة من السقف إلى الأرض لتذيب الحدود بين الفخامة الداخلية وسحر المحيط الهندي. تضم كل فيلا حوض سباحة خاص (Private Plunge Pool) متماهٍ مع الأفق الفيروزي، وتراسات استجمام شاطئية واسعة توفر أعلى درجات الخصوصية والاستشفاء التام.'
+                  : 'Ten bespoke standalone villas embodying contemporary fluid architecture inspired by Zaha Hadid. Built entirely of organic steam-bent teak wood frames and curved floor-to-ceiling glass walls, each villa boasts an elevated private infinity plunge pool overlooking the turquoise Indian Ocean, expansive sun terraces, and discreet barefoot access to pristine sand dunes.'}
+              </p>
+
+              {/* Villa Spec Badges */}
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <div className="p-3 rounded-xl bg-black/60 border border-gray-800 text-center">
+                  <span className="text-sm font-black font-mono text-emerald-400 block" dir="ltr">100% Organic</span>
+                  <span className="text-[10px] text-gray-400 font-bold">{isAr ? 'خشب وزجاج بانورامي' : 'Wood & Glass Structure'}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-black/60 border border-gray-800 text-center">
+                  <span className="text-sm font-black font-mono text-[#00F0FF] block" dir="ltr">Private Pool</span>
+                  <span className="text-[10px] text-gray-400 font-bold">{isAr ? 'حوض سباحة خاص لكل فيلا' : 'Dedicated Plunge Pool'}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-black/60 border border-gray-800 text-center">
+                  <span className="text-sm font-black font-mono text-[#FFE600] block" dir="ltr">OCT 2027</span>
+                  <span className="text-[10px] text-gray-400 font-bold">{isAr ? 'استقبال الزوار' : 'Grand Opening'}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-black/60 border border-gray-800 text-center">
+                  <span className="text-sm font-black font-mono text-purple-400 block" dir="ltr">10 Units Only</span>
+                  <span className="text-[10px] text-gray-400 font-bold">{isAr ? '10 فيلل مستقلة فقط' : 'Exclusive Seclusion'}</span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => handleOpenWaitlist(facilities.find(f => f.id === 'villas'))}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-[#FFE600] hover:opacity-90 text-black font-black font-anime text-xs shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Crown className="w-4 h-4" />
+                  <span>{isAr ? 'حجز بطاقة الأولوية للفيلل الشاطئية' : 'Reserve Priority Villa Allocation'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Interactive Filter Tabs for the 6 Facilities */}
         <div className="space-y-4">
           <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isAr ? 'text-right' : 'text-left'}`}>
@@ -534,6 +644,21 @@ export const BazarutoResortSanctuary: React.FC<BazarutoResortSanctuaryProps> = (
                     </div>
 
                     <div>
+                      {fac.id === 'villas' && (
+                        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden mb-3 border border-emerald-400/30 shadow-lg">
+                          <img 
+                            src={YARD_BAZARUTO_VILLA_IMAGE} 
+                            alt="Zaha Hadid Inspired Luxury Villa with Plunge Pool"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <span className="absolute bottom-2 left-2 right-2 text-[10px] font-mono font-bold text-emerald-300 bg-black/80 px-2.5 py-1 rounded backdrop-blur-md border border-emerald-500/30" dir="ltr">
+                            Zaha Hadid Fluid Architecture // Wood & Glass Villa
+                          </span>
+                        </div>
+                      )}
                       <h4 className="text-lg font-black font-anime text-white group-hover:text-[#FFE600] transition-colors mb-2">
                         {isAr ? fac.titleAr : fac.titleEn}
                       </h4>

@@ -636,5 +636,11 @@ p, span, h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Strict Universal Digit Normalization - Never substitute Eastern Arabic digits */
+*, *::before, *::after {
+  font-feature-settings: "locl" 0, "lnum" 1, "tnum" 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
 
 

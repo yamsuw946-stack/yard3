@@ -173,7 +173,7 @@ export const LiveChallengesArena: React.FC<LiveChallengesArenaProps> = ({
                 </span>
                 <span className="flex items-center gap-1 text-[11px] font-black text-[#00F0FF] font-anime">
                   <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-ping"></span>
-                  {activeFightersCount.toLocaleString()} {isAr ? 'مقاتل متصل الآن' : isFr ? 'Combattants en direct' : isEs ? 'Luchadores en vivo' : 'Fighters Online'}
+                  {activeFightersCount.toLocaleString('en-US')} {isAr ? 'مقاتل متصل الآن' : isFr ? 'Combattants en direct' : isEs ? 'Luchadores en vivo' : 'Fighters Online'}
                 </span>
               </div>
               <h2 className="text-2xl md:text-4xl font-black font-anime text-white mt-1">
@@ -190,7 +190,7 @@ export const LiveChallengesArena: React.FC<LiveChallengesArenaProps> = ({
                 {isAr ? 'جائزة بطولات اليوم الكبرى' : isFr ? 'CAGNOTTE DU JOUR' : isEs ? 'GRAN BOTE DEL DÍA' : 'TODAY GRAND BOUNTY POT'}
               </span>
               <span className="text-xl md:text-2xl font-black font-anime text-[#FFE600] neon-text-yellow">
-                {livePot.toLocaleString()} <span className="text-xs text-white">YARDX</span>
+                {livePot.toLocaleString('en-US')} <span className="text-xs text-white">YARDX</span>
               </span>
             </div>
           </div>
