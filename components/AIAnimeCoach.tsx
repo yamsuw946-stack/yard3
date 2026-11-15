@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Sparkles, Bot, Zap, Flame, ShieldAlert, Award, RefreshCw, Send, CheckCircle, Volume2, VolumeX, MessageSquare, Heart, Dumbbell, Activity, Trophy, Moon, Clock, Bell, BellOff, Sliders, Play, X, ShieldCheck, AlertCircle } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { AI_COACH_IMAGE, HERO_IMAGE, handleImageError } from '../constants';
 import { getCoachAdviceFromGemini, sendMessageToGemini, CoachProgressContext } from '../services/geminiService';
 import { soundFX } from '../services/soundFX';
@@ -20,6 +20,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
   const isAr = currentLang === 'ar';
   const isFr = currentLang === 'fr';
   const isEs = currentLang === 'es';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
 
   // 1. Progress State (Synced with YardCombatEngine defaults or local storage)
   const [metrics, setMetrics] = useState({
@@ -55,10 +56,42 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
 
   // Daily Missions State
   const [missions, setMissions] = useState([
-    { id: 1, titleIsAr: 'إكمال جولة قتال 3 دقائق في محرك YARD300', titleEn: 'Complete 3-min YARD300 Combat Workout', completed: true, reward: '+50 YARDX' },
-    { id: 2, titleIsAr: 'الوصول إلى 50 لكمة متتالية (Combo)', titleEn: 'Reach 50 Combo Hits in Combat Mode', completed: false, reward: '+30 YARDX' },
-    { id: 3, titleIsAr: 'شرب 3 لتر ماء مع زجاجة Hydro Aura', titleEn: 'Drink 3L Hydration with Hydro Aura', completed: true, reward: '+20 YARDX' },
-    { id: 4, titleIsAr: 'تسجيل 8 ساعات نوم واستعادة معدل HRV', titleEn: 'Log 8 Hours Sleep & Restore HRV', completed: false, reward: '+40 YARDX' },
+    {
+      id: 1,
+      titleIsAr: 'إكمال جولة قتال 3 دقائق في محرك YARD300',
+      titleEn: 'Complete 3-min YARD300 Combat Workout',
+      titleEs: 'Completar combate de 3 min en YARD300',
+      titleFr: 'Compléter un combat de 3 min dans YARD300',
+      completed: true,
+      reward: '+50 YARDX',
+    },
+    {
+      id: 2,
+      titleIsAr: 'الوصول إلى 50 لكمة متتالية (Combo)',
+      titleEn: 'Reach 50 Combo Hits in Combat Mode',
+      titleEs: 'Alcanzar 50 golpes seguidos en Combate',
+      titleFr: 'Atteindre 50 coups combinés en Combat',
+      completed: false,
+      reward: '+30 YARDX',
+    },
+    {
+      id: 3,
+      titleIsAr: 'شرب 3 لتر ماء مع زجاجة Hydro Aura',
+      titleEn: 'Drink 3L Hydration with Hydro Aura',
+      titleEs: 'Beber 3L de hidratación con Hydro Aura',
+      titleFr: 'Boire 3L d\'hydratation avec Hydro Aura',
+      completed: true,
+      reward: '+20 YARDX',
+    },
+    {
+      id: 4,
+      titleIsAr: 'تسجيل 8 ساعات نوم واستعادة معدل HRV',
+      titleEn: 'Log 8 Hours Sleep & Restore HRV',
+      titleEs: 'Registrar 8 horas de sueño y restaurar HRV',
+      titleFr: 'Enregistrer 8h de sommeil et restaurer VRC',
+      completed: false,
+      reward: '+40 YARDX',
+    },
   ]);
 
   // Audio Synth FX
@@ -73,71 +106,68 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
   const calculateWindDown = (load: number) => {
     if (load >= 1300) {
       return {
-        intensityLevel: 'EXTREME S-RANK',
+        intensityLevel: t('EXTREME S-RANK', 'EXTREMO S-RANK', 'EXTRÊME S-RANK', 'أقصى إجهاد S-RANK'),
         intensityColor: 'text-[#FF007A]',
         intensityBg: 'bg-[#FF007A]/15 border-[#FF007A]',
-        windDownTime: '21:15', // 9:15 PM
-        sleepTarget: '22:30', // 10:30 PM
+        windDownTime: '21:15',
+        sleepTarget: '22:30',
         durationMinutes: 75,
-        cnsStatusAr: 'تنبيه: إجهاد عصبي وقوة هالة فائقة! يتطلب الجسد 75 دقيقة تهيئة قبل النوم لخفض الكورتيزول واستعادة HRV.',
-        cnsStatusEn: 'CRITICAL: Ultra High CNS arousal detected! Body requires 75 min wind-down to lower cortisol & reset HRV.',
-        protocolAr: [
-          'تعتيم الإضاءة بنسبة 80% وإطفاء الشاشات الزرقاء',
-          'شرب إلكتروليتات بوعاء Hydro Aura لاستعادة السوائل',
-          '15 دقيقة إطالات استرخائية وتنفس زين بطيء (4-7-8)'
-        ],
-        protocolEn: [
-          'Dim lighting by 80% & disable blue-light screens',
-          'Replenish electrolytes with Hydro Aura water bottle',
-          '15-min light static stretching & Zen 4-7-8 breathing'
+        cnsStatusText: t(
+          'CRITICAL: Ultra High CNS arousal detected! Body requires 75 min wind-down to lower cortisol & reset HRV.',
+          'CRÍTICO: ¡Activación SNC extrema! Tu cuerpo requiere 75 min de relajación para reducir cortisol y recuperar HRV.',
+          'CRITIQUE : Éveil SNC très élevé ! Le corps nécessite 75 min de retour au calme pour abaisser le cortisol.',
+          'تنبيه: إجهاد عصبي وقوة هالة فائقة! يتطلب الجسد 75 دقيقة تهيئة قبل النوم لخفض الكورتيزول واستعادة HRV.'
+        ),
+        protocolSteps: [
+          t('Dim lighting by 80% & disable blue-light screens', 'Atenuar luces 80% y apagar pantallas azules', 'Réduire la lumière de 80% et couper les écrans bleus', 'تعتيم الإضاءة بنسبة 80% وإطفاء الشاشات الزرقاء'),
+          t('Replenish electrolytes with Hydro Aura water bottle', 'Reponer electrolitos con Hydro Aura', 'Réhydrater avec électrolytes Hydro Aura', 'شرب إلكتروليتات بوعاء Hydro Aura لاستعادة السوائل'),
+          t('15-min light static stretching & Zen 4-7-8 breathing', '15 min de estiramientos y respiración Zen 4-7-8', '15 min d\'étirements légers et respiration Zen 4-7-8', '15 دقيقة إطالات استرخائية وتنفس زين بطيء (4-7-8)'),
         ]
       };
     } else if (load >= 1000) {
       return {
-        intensityLevel: 'HIGH INTENSITY',
+        intensityLevel: t('HIGH INTENSITY', 'ALTA INTENSIDAD', 'HAUTE INTENSITÉ', 'شدة عالية'),
         intensityColor: 'text-[#FFE600]',
         intensityBg: 'bg-[#FFE600]/15 border-[#FFE600]',
-        windDownTime: '21:45', // 9:45 PM
-        sleepTarget: '22:45', // 10:45 PM
+        windDownTime: '21:45',
+        sleepTarget: '22:45',
         durationMinutes: 60,
-        cnsStatusAr: 'تحذير: شدة تدريب عالية اليوم. يوصى ببدء التهيئة الساعة 9:45 مساءً للحصول على 8 ساعات نوم عميق.',
-        cnsStatusEn: 'ADVISORY: High workout intensity logged. Begin wind-down at 9:45 PM for 8 hours optimal REM recovery.',
-        protocolAr: [
-          'استخدام الإضاءة الدافئة الخافتة بدلاً من القوية',
-          'تناول وجبة استشفاء خفيفة بها مغنيسيوم وتفاح',
-          '10 دقائق تنفس بطني هادئ لتهدئة ضربات القلب'
-        ],
-        protocolEn: [
-          'Switch to ambient amber warm lighting',
-          'Light post-workout recovery snack with magnesium',
-          '10-min diaphragmatic breathing to stabilize RHR'
+        cnsStatusText: t(
+          'ADVISORY: High workout intensity logged. Begin wind-down at 9:45 PM for 8 hours optimal REM recovery.',
+          'AVISO: Alta intensidad registrada. Inicia relajación a las 21:45 para lograr 8 horas de recuperación óptima.',
+          'CONSEIL : Haute intensité enregistrée. Démarrez le retour au calme à 21h45 pour 8h de récupération REM.',
+          'تحذير: شدة تدريب عالية اليوم. يوصى ببدء التهيئة الساعة 9:45 مساءً للحصول على 8 ساعات نوم عميق.'
+        ),
+        protocolSteps: [
+          t('Switch to ambient amber warm lighting', 'Cambiar a luz ambiental cálida ámbar', 'Passer à un éclairage ambré tamisé', 'استخدام الإضاءة الدافئة الخافتة بدلاً من القوية'),
+          t('Light post-workout recovery snack with magnesium', 'Snack ligero post-entreno con magnesio', 'Collation légère avec magnésium', 'تناول وجبة استشفاء خفيفة بها مغنيسيوم وتفاح'),
+          t('10-min diaphragmatic breathing to stabilize RHR', '10 min respiración diafragmática', '10 min respiration diaphragmatique pour RHR', '10 دقائق تنفس بطني هادئ لتهدئة ضربات القلب'),
         ]
       };
     } else {
       return {
-        intensityLevel: 'MODERATE / RECOVERY',
+        intensityLevel: t('MODERATE / RECOVERY', 'MODERADO / RECUPERACIÓN', 'MODÉRÉ / RÉCUPÉRATION', 'معتدل / استشفاء'),
         intensityColor: 'text-[#00F0FF]',
         intensityBg: 'bg-[#00F0FF]/15 border-[#00F0FF]',
-        windDownTime: '22:15', // 10:15 PM
-        sleepTarget: '23:00', // 11:00 PM
+        windDownTime: '22:15',
+        sleepTarget: '23:00',
         durationMinutes: 45,
-        cnsStatusAr: 'شدة تدريب خفيفة إلى معتدلة. تهيئة قياسية لمدة 45 دقيقة تضمن لك استرخاء العضلات والصفاء الذهني.',
-        cnsStatusEn: 'Moderate training load logged. Standard 45-min wind-down window to ensure complete muscle relaxation.',
-        protocolAr: [
-          'مراجعة الإنجازات اليومية في محرك YARD300',
-          'شرب كوب ماء دافئ أو مشروب هادئ',
-          'جلسة استرخاء ذهني قصيرة وتجهيز عتاد الغد'
-        ],
-        protocolEn: [
-          'Review daily progress in YARD300 engine',
-          'Warm hydration and soothing ambiance',
-          'Short mental meditation and gear prep for tomorrow'
+        cnsStatusText: t(
+          'Moderate training load logged. Standard 45-min wind-down window to ensure complete muscle relaxation.',
+          'Carga moderada registrada. Ventana estándar de 45 min para relajación muscular completa.',
+          'Charge modérée enregistrée. Fenêtre standard de 45 min pour une détente musculaire complète.',
+          'شدة تدريب خفيفة إلى معتدلة. تهيئة قياسية لمدة 45 دقيقة تضمن لك استرخاء العضلات والصفاء الذهني.'
+        ),
+        protocolSteps: [
+          t('Review daily progress in YARD300 engine', 'Revisar progreso en motor YARD300', 'Vérifier vos progrès sur YARD300', 'مراجعة الإنجازات اليومية في محرك YARD300'),
+          t('Warm hydration and soothing ambiance', 'Hidratación tibia y ambiente calmado', 'Hydratation chaude et ambiance apaisante', 'شرب كوب ماء دافئ أو مشروب هادئ'),
+          t('Short mental meditation and gear prep for tomorrow', 'Meditación breve y preparar equipo de mañana', 'Courte méditation et préparation du matériel', 'جلسة استرخاء ذهني قصيرة وتجهيز عتاد الغد'),
         ]
       };
     }
   };
 
-  const currentWindDown = useMemo(() => calculateWindDown(activeLoad), [activeLoad]);
+  const currentWindDown = useMemo(() => calculateWindDown(activeLoad), [activeLoad, currentLang]);
 
   // Trigger automated notification whenever training load updates or user requests alert
   const triggerAutomatedNotification = (manual: boolean = false) => {
@@ -145,13 +175,19 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
 
     soundFX.playStartTrainingSound();
 
-    const title = isAr
-      ? `⏰ تنبيه كابتن أورا: وقت التهيئة للنوم (${currentWindDown.windDownTime})`
-      : `⏰ Captain Aura Alert: Optimal Sleep Wind-Down (${currentWindDown.windDownTime})`;
+    const title = t(
+      `Dr. Soren Cole Alert: Optimal Sleep Wind-Down (${currentWindDown.windDownTime})`,
+      `Alerta Dr. Soren Cole: Hora de Relajación (${currentWindDown.windDownTime})`,
+      `Alerte Dr Soren Cole : Retour au calme (${currentWindDown.windDownTime})`,
+      `تنبيه د. سورين كول: وقت التهيئة للنوم (${currentWindDown.windDownTime})`
+    );
 
-    const body = isAr
-      ? `تم تسجيل شدة تدريب (${activeLoad} AU). ابدأ بروتوكول التهيئة الآن لضمان 8 ساعات استشفاء عضلاتي وحصاد XP!`
-      : `Logged Training Intensity (${activeLoad} AU). Start your ${currentWindDown.durationMinutes}-min wind-down now for full recovery!`;
+    const body = t(
+      `Logged Training Intensity (${activeLoad} AU). Start your ${currentWindDown.durationMinutes}-min wind-down now for full recovery!`,
+      `Intensidad registrada (${activeLoad} AU). ¡Inicia tu fase de ${currentWindDown.durationMinutes} min ahora!`,
+      `Intensité enregistrée (${activeLoad} AU). Lancez votre phase de ${currentWindDown.durationMinutes} min pour récupérer !`,
+      `تم تسجيل شدة تدريب (${activeLoad} AU). ابدأ بروتوكول التهيئة الآن لضمان 8 ساعات استشفاء عضلاتي وحصاد XP!`
+    );
 
     setToastMessage({ title, body, time: currentWindDown.windDownTime });
     setShowNotificationToast(true);
@@ -347,82 +383,85 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
         {/* Header Title */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1128] border border-[#FF007A] text-xs font-black text-[#FF007A] uppercase tracking-widest mb-3">
-              <Bot className="w-4 h-4 text-[#FFE600] animate-pulse" />
-              <span>{isAr ? 'المدرب الشخصي بالذكاء الاصطناعي S-RANK' : isFr ? 'COACH PERSONNEL IA S-RANK' : isEs ? 'ENTRENADOR PERSONAL IA S-RANK' : 'AI ANIME COACH S-RANK'}</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#0C0E14] border border-[#D4AF37]/40 text-xs font-mono font-bold text-[#D4AF37] uppercase tracking-widest mb-3">
+              <Bot className="w-4 h-4 text-[#D4AF37]" />
+              <span>{isAr ? 'مدير الأداء بالذكاء الاصطناعي' : isFr ? 'DIRECTEUR PERFORMANCE IA' : isEs ? 'DIRECTOR DE RENDIMIENTO IA' : 'AI PERFORMANCE DIRECTOR'}</span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-black font-anime text-white">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white">
               {isAr ? (
                 <>
-                  كابتن أورا <span className="text-[#FFE600]">توجيه وحماس يومي مخصص</span>
+                  د. سورين كول <span className="text-[#D4AF37]">توجيه الأداء اليومي</span>
                 </>
               ) : isFr ? (
                 <>
-                  CAPTAIN AURA <span className="text-[#FFE600]">BRIEFING STRATÉGIQUE PERSONNALISÉ</span>
+                  DR. SOREN COLE <span className="text-[#D4AF37]">BRIEFING STRATÉGIQUE</span>
                 </>
               ) : isEs ? (
                 <>
-                  CAPTAIN AURA <span className="text-[#FFE600]">ORIENTACIÓN ESTRATÉGICA DIARIA</span>
+                  DR. SOREN COLE <span className="text-[#D4AF37]">ORIENTACIÓN DIARIA</span>
                 </>
               ) : (
                 <>
-                  CAPTAIN AURA <span className="text-[#FFE600]">PERSONALIZED DAILY BRIEFING</span>
+                  DR. SOREN COLE <span className="text-[#D4AF37]">DAILY PERFORMANCE BRIEFING</span>
                 </>
               )}
             </h2>
-            <p className="text-gray-300 font-bold text-sm md:text-base mt-2">
-              {isAr 
-                ? 'تحليل مباشر لبياناتك الحيوية من محرك YARD300 وإعطاؤك توجيهات الشونين اليومية لتجاوز حدودك البدنية.'
-                : 'Real-time biometric analysis from YARD300 engine providing tailored shonen training & recovery guidance.'}
+            <p className="text-slate-300 text-sm md:text-base mt-2">
+              {t(
+                'Real-time biometric analysis from the YARD 300 engine delivering clinical training and recovery guidance.',
+                'Análisis biométrico en tiempo real del motor YARD 300 con guía clínica de entrenamiento y recuperación.',
+                'Analyse biométrique en temps réel du moteur YARD 300 pour un pilotage clinique de la récupération.',
+                'تحليل مباشر لبياناتك الحيوية من محرك YARD 300 وتقديم توجيهات أداء واستشفاء دقيقة.'
+              )}
             </p>
           </div>
 
           {/* Persona Selector Buttons */}
-          <div className="flex items-center gap-2 bg-[#121422] p-2 rounded-2xl border border-gray-800">
+          <div className="flex items-center gap-2 bg-[#0C0E14] p-2 rounded-2xl border border-white/[0.08]">
             <button
               onClick={() => setPersona('hype')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 persona === 'hype' 
-                  ? 'bg-gradient-to-r from-emerald-500 to-[#FFE600] text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]' 
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-[#D4AF37] text-[#07080C]' 
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Flame className="w-4 h-4 text-[#FFE600]" />
-              <span>{isAr ? '🔥 الحماس الشديد' : isFr ? '🔥 Motivation Pure' : isEs ? '🔥 Motivación Total' : '🔥 All-Out Hype'}</span>
+              <Flame className="w-4 h-4" />
+              <span>{t('Peak Output', 'Rendimiento', 'Performance', 'دافع الأداء')}</span>
             </button>
 
             <button
               onClick={() => setPersona('zen')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 persona === 'zen' 
-                  ? 'bg-gradient-to-r from-[#00F0FF] to-[#7000FF] text-[#0A0B10] shadow-[0_0_20px_#00F0FF]' 
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-[#10B981] text-[#07080C]' 
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Activity className="w-4 h-4 text-black" />
-              <span>{isAr ? '🧘 حكيم الاستشفاء' : isFr ? '🧘 Maître Récupération' : isEs ? '🧘 Sabio de Recuperación' : '🧘 Zen Recovery'}</span>
+              <Activity className="w-4 h-4" />
+              <span>{t('Recovery Lab', 'Recuperación', 'Récupération', 'بروتوكول التعافي')}</span>
             </button>
 
             <button
               onClick={() => setPersona('speed')}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 persona === 'speed' 
-                  ? 'bg-gradient-to-r from-[#FFE600] to-[#FF007A] text-[#0A0B10] shadow-[0_0_20px_#FFE600]' 
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-white text-[#07080C]' 
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Zap className="w-4 h-4 text-black" />
-              <span>{isAr ? '⚡ بطل السرعة' : isFr ? '⚡ Vitesse Éclair' : isEs ? '⚡ Demonio de Velocidad' : '⚡ Speed Demon'}</span>
+              <Zap className="w-4 h-4" />
+              <span>{t('Velocity', 'Velocidad', 'Vitesse', 'السرعة الحركية')}</span>
             </button>
 
             {/* Sound Toggle */}
             <button 
               onClick={() => setSoundEnabled(!soundEnabled)} 
-              className="p-2.5 rounded-xl bg-[#1A1C2C] text-gray-300 hover:text-white border border-gray-700"
-              title={soundEnabled ? 'Disable Audio' : 'Enable Audio'}
+              className="p-2.5 rounded-xl bg-[#121622] text-slate-300 hover:text-white border border-white/[0.08] cursor-pointer"
+              title={soundEnabled ? t('Disable Audio', 'Silenciar Audio', 'Couper le Son', 'كتم الصوت') : t('Enable Audio', 'Activar Audio', 'Activer le Son', 'تفعيل الصوت')}
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00F0FF]" /> : <VolumeX className="w-4 h-4 text-gray-500" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#D4AF37]" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
             </button>
           </div>
         </div>
@@ -439,33 +478,33 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                 <div className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-[#00F0FF]" />
                   <h3 className="font-black font-anime text-white text-lg">
-                    {isAr ? 'مؤشرات YARD300 الحيوية' : isFr ? 'BIOMÉTRIE YARD300 EN DIRECT' : isEs ? 'BIOMETRÍA YARD300 EN VIVO' : 'YARD300 BIOMETRICS'}
+                    {t('YARD300 BIOMETRICS', 'BIOMETRÍA YARD300 EN VIVO', 'BIOMÉTRIE YARD300 EN DIRECT', 'مؤشرات YARD300 الحيوية')}
                   </h3>
                 </div>
                 <span className="text-[10px] font-black px-2.5 py-1 bg-[#1E2135] text-[#FFE600] rounded-full border border-[#FFE600]/40">
-                  LIVE TRACKING
+                  {t('LIVE TRACKING', 'EN VIVO', 'EN DIRECT', 'تتبع مباشر')}
                 </span>
               </div>
 
               {/* Metrics Grid */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-[#181A2A] p-3 rounded-2xl border border-gray-800">
-                  <span className="text-[10px] font-bold text-gray-400 block">{isAr ? 'طاقة الهالة القصوى' : isFr ? 'AURA MAXIMALE' : isEs ? 'AURA MÁXIMA' : 'PEAK AURA'}</span>
+                  <span className="text-[10px] font-bold text-gray-400 block">{t('PEAK AURA', 'AURA MÁXIMA', 'AURA MAXIMALE', 'طاقة الهالة القصوى')}</span>
                   <span className="text-xl font-black font-anime text-[#FFE600]">{metrics.powerLevel} AU</span>
                 </div>
 
                 <div className="bg-[#181A2A] p-3 rounded-2xl border border-gray-800">
-                  <span className="text-[10px] font-bold text-gray-400 block">{isAr ? 'نسبة الإجهاد ACWR' : 'ACWR LOAD'}</span>
+                  <span className="text-[10px] font-bold text-gray-400 block">{t('ACWR LOAD', 'CARGA ACWR', 'CHARGE ACWR', 'نسبة الإجهاد ACWR')}</span>
                   <span className="text-xl font-black font-anime text-[#00F0FF]">{acwr}</span>
                 </div>
 
                 <div className="bg-[#181A2A] p-3 rounded-2xl border border-gray-800">
-                  <span className="text-[10px] font-bold text-gray-400 block">{isAr ? 'استعادة HRV' : 'HRV RECOVERY'}</span>
+                  <span className="text-[10px] font-bold text-gray-400 block">{t('HRV RECOVERY', 'RECUPERACIÓN HRV', 'RÉCUPÉRATION VRC', 'استعادة HRV')}</span>
                   <span className="text-xl font-black font-anime text-[#FF007A]">{metrics.hrv} ms</span>
                 </div>
 
                 <div className="bg-[#181A2A] p-3 rounded-2xl border border-gray-800">
-                  <span className="text-[10px] font-bold text-gray-400 block">{isAr ? 'لكمات المتتالية Combo' : 'MAX COMBO'}</span>
+                  <span className="text-[10px] font-bold text-gray-400 block">{t('MAX COMBO', 'COMBO MÁX', 'COMBO MAX', 'لكمات المتتالية Combo')}</span>
                   <span className="text-xl font-black font-anime text-white">{metrics.comboHits} 🥊</span>
                 </div>
               </div>
@@ -475,8 +514,8 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                 <div className="flex items-center gap-3">
                   <Trophy className="w-6 h-6 text-[#FFE600] animate-bounce" />
                   <div>
-                    <span className="text-xs font-black text-white block">{isAr ? 'سلسلة التدريب المتواصل' : 'ACTIVE STREAK'}</span>
-                    <span className="text-xs font-bold text-gray-400">{metrics.streakDays} {isAr ? 'أيام متتالية' : 'Days Strong'}</span>
+                    <span className="text-xs font-black text-white block">{t('ACTIVE STREAK', 'RACHA ACTIVA', 'SÉRIE ACTIVE', 'سلسلة التدريب المتواصل')}</span>
+                    <span className="text-xs font-bold text-gray-400">{metrics.streakDays} {t('Days Strong', 'Días Seguidos', 'Jours Consécutifs', 'أيام متتالية')}</span>
                   </div>
                 </div>
                 <span className="text-lg font-black font-anime text-[#FFE600]">+1400 XP</span>
@@ -489,9 +528,9 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
               {/* Card Header */}
               <div className="flex justify-between items-center border-b border-gray-800 pb-3">
                 <div className="flex items-center gap-2">
-                  <Moon className="w-5 h-5 text-[#FFE600] animate-pulse" />
+                  <Moon className="w-5 h-5 text-[#FFE600]" />
                   <h3 className="font-black font-anime text-white text-base">
-                    {isAr ? 'توصيات التهيئة التلقائية للنوم' : 'AUTO SLEEP WIND-DOWN'}
+                    {t('AUTO SLEEP WIND-DOWN', 'DESCANSO AUTOMÁTICO', 'RETOUR AU CALME AUTO', 'توصيات التهيئة التلقائية للنوم')}
                   </h3>
                 </div>
 
@@ -503,10 +542,9 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                       ? 'bg-[#22C55E]/20 text-[#22C55E] border-[#22C55E]/50 shadow-[0_0_10px_rgba(34,197,94,0.3)]'
                       : 'bg-gray-800 text-gray-400 border-gray-700'
                   }`}
-                  title={autoNotifyEnabled ? 'Auto-Notifications ON' : 'Auto-Notifications OFF'}
                 >
                   {autoNotifyEnabled ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
-                  <span>{autoNotifyEnabled ? (isAr ? 'التنبيه التلقائي مفعل' : 'AUTO NOTIFY ON') : (isAr ? 'التنبيه معطل' : 'NOTIFY OFF')}</span>
+                  <span>{autoNotifyEnabled ? t('AUTO NOTIFY ON', 'AVISO ACTIVO', 'ALERTE ACTIVE', 'التنبيه التلقائي مفعل') : t('NOTIFY OFF', 'AVISO INACTIVO', 'ALERTE COUPÉE', 'التنبيه معطل')}</span>
                 </button>
               </div>
 
@@ -516,7 +554,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#FFE600]" />
                     <span className="text-xs font-black text-white font-anime uppercase">
-                      {isAr ? 'موعد التهيئة الموصى به:' : 'RECOMMENDED WIND-DOWN:'}
+                      {t('RECOMMENDED WIND-DOWN:', 'RELAJACIÓN SUGERIDA:', 'RETOUR AU CALME :', 'موعد التهيئة الموصى به:')}
                     </span>
                   </div>
                   <span className={`text-xs font-black px-2 py-0.5 rounded ${currentWindDown.intensityColor} border border-current`}>
@@ -530,25 +568,25 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                       {currentWindDown.windDownTime}
                     </span>
                     <span className="text-[10px] font-bold text-gray-300">
-                      {isAr ? `مدة التهيئة: ${currentWindDown.durationMinutes} دقيقة` : `${currentWindDown.durationMinutes} min wind-down phase`}
+                      {t(`${currentWindDown.durationMinutes} min wind-down phase`, `${currentWindDown.durationMinutes} min de relajación`, `${currentWindDown.durationMinutes} min de transition`, `مدة التهيئة: ${currentWindDown.durationMinutes} دقيقة`)}
                     </span>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-xs font-bold text-gray-400 block">{isAr ? 'وقت النوم المستهدف:' : 'Sleep Target:'}</span>
+                    <span className="text-xs font-bold text-gray-400 block">{t('Sleep Target:', 'Hora Objetivo:', 'Heure Cible :', 'وقت النوم المستهدف:')}</span>
                     <span className="text-lg font-black font-anime text-[#00F0FF]">{currentWindDown.sleepTarget}</span>
                   </div>
                 </div>
 
                 <p className="text-xs font-bold text-gray-200 leading-relaxed pt-2 border-t border-white/10">
-                  {isAr ? currentWindDown.cnsStatusAr : currentWindDown.cnsStatusEn}
+                  {currentWindDown.cnsStatusText}
                 </p>
               </div>
 
               {/* Training Load Simulator / Override Selector */}
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider block">
-                  {isAr ? 'محاكاة شدة التمرين لتعديل وقت التهيئة:' : 'TEST TRAINING INTENSITY LOAD:'}
+                  {t('TEST TRAINING INTENSITY LOAD:', 'PROBAR CARGA DE INTENSIDAD:', 'TESTER INTENSITÉ :', 'محاكاة شدة التمرين لتعديل وقت التهيئة:')}
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <button
@@ -562,7 +600,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                         : 'bg-[#181A2A] text-gray-400 border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'خفيف (750 AU)' : 'Light (750 AU)'}
+                    {t('Light (750 AU)', 'Suave (750 AU)', 'Léger (750 AU)', 'خفيف (750 AU)')}
                   </button>
 
                   <button
@@ -576,7 +614,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                         : 'bg-[#181A2A] text-gray-400 border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'مسجّل (1175 AU)' : 'Logged (1175 AU)'}
+                    {t('Logged (1175 AU)', 'Actual (1175 AU)', 'Actuel (1175 AU)', 'مسجّل (1175 AU)')}
                   </button>
 
                   <button
@@ -590,7 +628,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                         : 'bg-[#181A2A] text-gray-400 border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'خارق (1450 AU)' : 'Extreme (1450 AU)'}
+                    {t('Extreme (1450 AU)', 'Extremo (1450 AU)', 'Extrême (1450 AU)', 'خارق (1450 AU)')}
                   </button>
                 </div>
               </div>
@@ -598,10 +636,10 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
               {/* Step-by-Step Wind-down Protocol checklist */}
               <div className="space-y-2 pt-1">
                 <span className="text-[10px] font-black text-[#FFE600] uppercase tracking-wider block">
-                  {isAr ? 'بروتوكول التهيئة للنوم اليومي:' : 'DAILY WIND-DOWN CHECKLIST:'}
+                  {t('DAILY WIND-DOWN CHECKLIST:', 'PROTOCOLO DIARIO DE DESCANSO:', 'CHECKLIST RETOUR AU CALME :', 'بروتوكول التهيئة للنوم اليومي:')}
                 </span>
                 <div className="space-y-1.5">
-                  {(isAr ? currentWindDown.protocolAr : currentWindDown.protocolEn).map((step, idx) => (
+                  {currentWindDown.protocolSteps.map((step, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-xs font-bold text-gray-300">
                       <ShieldCheck className="w-3.5 h-3.5 text-[#00F0FF] shrink-0" />
                       <span>{step}</span>
@@ -617,7 +655,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                   className="px-3 py-2.5 rounded-xl bg-[#181A2A] hover:bg-[#20243C] border border-[#FFE600]/60 text-[#FFE600] font-black text-xs font-anime flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Bell className="w-3.5 h-3.5" />
-                  <span>{isAr ? 'تأكيد التنبيه 🔔' : 'TEST ALERT 🔔'}</span>
+                  <span>{t('TEST ALERT 🔔', 'PROBAR ALERTA 🔔', 'TESTER ALERTE 🔔', 'تأكيد التنبيه 🔔')}</span>
                 </button>
 
                 <button
@@ -629,7 +667,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                   className="px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#7000FF] to-[#00F0FF] text-white font-black text-xs font-anime flex items-center justify-center gap-1.5 shadow-[0_0_15px_#00F0FF] transition-all cursor-pointer"
                 >
                   <Moon className="w-3.5 h-3.5" />
-                  <span>{isAr ? 'بدء التهيئة 🌙' : 'START NOW 🌙'}</span>
+                  <span>{t('START NOW 🌙', 'INICIAR YA 🌙', 'DÉMARRER 🌙', 'بدء التهيئة 🌙')}</span>
                 </button>
               </div>
 
@@ -640,7 +678,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
               <div className="flex items-center gap-2 border-b border-gray-800 pb-3">
                 <Award className="w-5 h-5 text-[#FFE600]" />
                 <h3 className="font-black font-anime text-white text-lg">
-                  {isAr ? 'مهام البطل اليومية' : 'DAILY WARRIOR MISSIONS'}
+                  {t('DAILY WARRIOR MISSIONS', 'MISIONES DIARIAS', 'MISSIONS QUOTIDIENNES', 'مهام البطل اليومية')}
                 </h3>
               </div>
 
@@ -658,7 +696,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                     <div className="flex items-center gap-3">
                       <CheckCircle className={`w-5 h-5 ${m.completed ? 'text-[#22C55E]' : 'text-gray-600'}`} />
                       <span className={`text-xs font-bold ${m.completed ? 'line-through text-gray-400' : ''}`}>
-                        {isAr ? m.titleIsAr : m.titleEn}
+                        {isAr ? m.titleIsAr : isEs ? m.titleEs : isFr ? m.titleFr : m.titleEn}
                       </span>
                     </div>
                     <span className="text-[10px] font-black px-2 py-0.5 rounded bg-[#0A0B10] text-[#FFE600]">
@@ -672,39 +710,39 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
           </div>
 
           {/* Right / Main Column: AI Coach Interactive Dialogue Box */}
-          <div className="lg:col-span-8 bg-[#121422] border-2 border-[#00F0FF]/40 rounded-3xl p-6 md:p-8 shadow-[0_0_40px_rgba(0,240,255,0.2)] flex flex-col justify-between space-y-6 relative overflow-hidden">
+          <div className="lg:col-span-8 bg-[#0C0E14] border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col justify-between space-y-6 relative overflow-hidden">
             
             {/* Top Coach Header Avatar & Status */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
               
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(255,0,122,0.4)] relative bg-[#181A2A]">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden border border-[#D4AF37]/40 relative bg-[#121622]">
                   <img loading="lazy" decoding="async" 
                     src={AI_COACH_IMAGE} 
-                    alt="Captain Aura AI Coach" 
+                    alt="Dr. Soren Cole AI Performance Director" 
                     onError={handleImageError}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                  <span className="absolute bottom-1 right-1 text-[9px] font-black bg-[#FF007A] text-white px-1.5 py-0.2 rounded">
+                  <span className="absolute bottom-1 right-1 text-[9px] font-mono font-bold bg-[#D4AF37] text-[#07080C] px-1.5 py-0.2 rounded">
                     S-RANK
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-black font-anime text-white flex items-center gap-2">
-                    <span>{isAr ? 'كابتن أورا (Captain Aura AI)' : 'Captain Aura AI'}</span>
-                    <Sparkles className="w-5 h-5 text-[#FFE600] animate-spin" />
+                  <h3 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                    <span>{t('Dr. Soren Cole · AI Performance Director', 'Dr. Soren Cole · Director de Rendimiento IA', 'Dr Soren Cole · Directeur Performance IA', 'د. سورين كول · مدير الأداء الذكي')}</span>
                   </h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00F0FF]/15 border border-[#00F0FF]/40 text-[10px] font-black text-[#00F0FF] font-anime">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse"></span>
-                      <span>{isAr ? '⚡ متصل بمحرك Google Gemini AI' : '⚡ POWERED BY GOOGLE GEMINI'}</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#10B981]/15 border border-[#10B981]/35 text-[10px] font-mono font-bold text-[#10B981]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                      <span>{t('POWERED BY GOOGLE GEMINI', 'IMPULSADO POR GOOGLE GEMINI', 'PROPULSÉ PAR GOOGLE GEMINI', 'مدعوم بمحرك Google Gemini')}</span>
                     </span>
-                    <span className="text-xs font-bold text-gray-300">
-                      {persona === 'hype' && (isAr ? '🔥 وضع الشونين' : '🔥 Hype Mode')}
-                      {persona === 'zen' && (isAr ? '🧘 وضع الاستشفاء' : '🧘 Zen Mode')}
-                      {persona === 'speed' && (isAr ? '⚡ وضع السرعة' : '⚡ Speed Mode')}
+                    <span className="text-xs font-medium text-slate-300">
+                      {persona === 'hype' && t('Peak Output', 'Rendimiento Máx', 'Performance Max', 'دافع الأداء')}
+                      {persona === 'zen' && t('Recovery Lab', 'Lab. Recuperación', 'Labo Récupération', 'بروتوكول الاستشفاء')}
+                      {persona === 'speed' && t('Velocity Mode', 'Modo Velocidad', 'Mode Vitesse', 'السرعة الحركية')}
                     </span>
                   </div>
                 </div>
@@ -715,69 +753,52 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                 {chatMessages.length > 0 && (
                   <button 
                     onClick={() => setChatMessages([])}
-                    className="px-3 py-2.5 rounded-xl bg-[#1A1C2C] hover:bg-gray-800 border border-gray-700 text-gray-400 hover:text-white text-xs font-bold transition-all"
+                    className="px-3 py-2.5 rounded-xl bg-[#121622] hover:bg-gray-800 border border-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold transition-all cursor-pointer"
                   >
-                    {isAr ? 'مسح المحادثة' : 'Clear Chat'}
+                    {t('Clear Chat', 'Limpiar Chat', 'Effacer Chat', 'مسح المحادثة')}
                   </button>
                 )}
                 <button 
                   onClick={() => fetchAdvice()}
                   disabled={isLoading}
-                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-[#A855F7] hover:brightness-110 text-white font-black text-xs font-anime flex items-center gap-1.5 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all disabled:opacity-50"
+                  className="px-4 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-                  <span>{isAr ? 'توجيهات جديدة ⚡' : 'NEW BRIEFING ⚡'}</span>
+                  <span>{t('NEW BRIEFING', 'NUEVO ANÁLISIS', 'NOUVEAU BRIEFING', 'توجيهات جديدة')}</span>
                 </button>
               </div>
 
             </div>
 
             {/* AI Response & Chat Dialogue Box */}
-            <div className="bg-[#0E0F1A] border border-gray-800 p-6 rounded-2xl min-h-[260px] max-h-[460px] overflow-y-auto flex flex-col justify-between space-y-4 shadow-inner relative">
+            <div className="bg-[#07080C] border border-white/[0.07] p-6 rounded-2xl min-h-[260px] max-h-[460px] overflow-y-auto flex flex-col justify-between space-y-4 relative">
               
-              <div className="absolute top-3 right-3 text-2xl opacity-10 font-anime text-[#00F0FF]">
-                GEMINI // AI
+              <div className="absolute top-3 right-3 text-xs opacity-20 font-mono text-[#D4AF37]">
+                GEMINI // TELEMETRY
               </div>
 
               {chatMessages.length === 0 ? (
                 /* Initial Daily Briefing State */
                 isLoading ? (
-                  <div className="space-y-4 py-2 w-full animate-pulse">
-                    <div className="flex items-center justify-between pb-3 border-b border-gray-800/80">
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded-lg bg-[#00F0FF]/30 animate-pulse" />
-                        <div className="h-4 w-44 rounded-md bg-gradient-to-r from-[#00F0FF]/30 via-[#FFE600]/30 to-[#FF007A]/30" />
-                      </div>
-                      <div className="h-4 w-28 rounded-full bg-[#1F2438]" />
+                  <div className="space-y-4 py-2 w-full">
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#0C0E14] border border-[#D4AF37]/30 text-xs font-mono text-[#D4AF37]">
+                      <div className="w-2 h-2 rounded-full bg-[#10B981]" />
+                      <span>{t('ANALYZING WORKLOAD TELEMETRY...', 'ANALIZANDO TELEMETRÍA DE CARGA...', 'ANALYSE DE LA CHARGE...', 'جاري تحليل الحمل الحركي وتحضير التوجيه اليومي...')}</span>
                     </div>
 
-                    {/* Neural telemetry scanning simulation */}
-                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#141626] border border-[#00F0FF]/40 text-xs font-mono text-[#00F0FF]">
-                      <div className="w-2 h-2 rounded-full bg-[#00F0FF] animate-ping" />
-                      <span>{isAr ? 'جاري الاتصال السريع بمحرك Gemini وتحليل الحمل الحركي...' : 'TELEMETRY STREAM ACTIVE // CALIBRATING S-RANK DIRECTIVE...'}</span>
-                    </div>
-
-                    {/* Shimmer skeleton bars */}
-                    <div className="space-y-3 pt-2">
-                      <div className="h-4 bg-gradient-to-r from-[#181D30] via-[#2A3150] to-[#181D30] rounded-md w-11/12 animate-pulse" />
-                      <div className="h-4 bg-gradient-to-r from-[#181D30] via-[#2A3150] to-[#181D30] rounded-md w-full animate-pulse" />
-                      <div className="h-4 bg-gradient-to-r from-[#181D30] via-[#2A3150] to-[#181D30] rounded-md w-4/5 animate-pulse" />
-                      <div className="h-4 bg-gradient-to-r from-[#181D30] via-[#2A3150] to-[#181D30] rounded-md w-2/3 animate-pulse" />
-                    </div>
-
-                    <div className="flex items-center gap-2 pt-3">
-                      <div className="h-7 w-28 rounded-xl bg-[#181D30]" />
-                      <div className="h-7 w-32 rounded-xl bg-[#181D30]" />
-                      <div className="h-7 w-24 rounded-xl bg-[#181D30]" />
+                    <div className="space-y-3 pt-2 opacity-60">
+                      <div className="h-4 bg-[#141824] rounded-md w-11/12" />
+                      <div className="h-4 bg-[#141824] rounded-md w-full" />
+                      <div className="h-4 bg-[#141824] rounded-md w-4/5" />
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="inline-flex items-center gap-1.5 text-xs font-black text-[#FFE600] font-anime">
-                      <Zap className="w-3.5 h-3.5 text-[#FFE600]" />
-                      <span>{isAr ? 'توجيه كابتن أورا اليومي (Google Gemini):' : isFr ? 'BRIEFING QUOTIDIEN DE CAPTAIN AURA (GEMINI AI) :' : isEs ? 'ORIENTACIÓN DIARIA DE CAPTAIN AURA (GEMINI AI):' : 'CAPTAIN AURA DAILY BRIEFING (GEMINI AI):'}</span>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#D4AF37]">
+                      <Zap className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      <span>{t('DAILY BRIEFING (DR. SOREN COLE):', 'ORIENTACIÓN DIARIA (DR. SOREN COLE):', 'BRIEFING QUOTIDIEN (DR. SOREN COLE) :', 'توجيه الأداء اليومي (د. سورين كول):')}</span>
                     </div>
-                    <div className="prose prose-invert max-w-none text-gray-200 text-sm md:text-base font-bold leading-relaxed whitespace-pre-line">
+                    <div className="prose prose-invert max-w-none text-slate-200 text-sm md:text-base leading-relaxed whitespace-pre-line">
                       {adviceText}
                     </div>
                   </div>
@@ -790,16 +811,16 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                       key={msg.id} 
                       className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                     >
-                      <div className="flex items-center gap-1 text-[10px] text-gray-400 mb-1 font-mono">
-                        <span>{msg.sender === 'user' ? (isAr ? 'أنت' : 'You') : (isAr ? 'كابتن أورا ⚡ (Gemini)' : 'Captain Aura ⚡ (Gemini)')}</span>
+                      <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1 font-mono">
+                        <span>{msg.sender === 'user' ? t('You', 'Tú', 'Vous', 'أنت') : t('Dr. Soren Cole (AI)', 'Dr. Soren Cole (IA)', 'Dr Soren Cole (IA)', 'د. سورين كول (AI)')}</span>
                         <span>•</span>
                         <span>{msg.time}</span>
                       </div>
                       <div 
-                        className={`max-w-[85%] rounded-2xl p-4 text-sm font-bold leading-relaxed ${
+                        className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed ${
                           msg.sender === 'user'
-                            ? 'bg-gradient-to-r from-[#182038] to-[#1E2748] border border-[#00F0FF]/40 text-white'
-                            : 'bg-[#151726] border border-[#FF007A]/40 text-gray-200 whitespace-pre-line shadow-[0_0_15px_rgba(255,0,122,0.15)]'
+                            ? 'bg-[#121622] border border-[#D4AF37]/40 text-white'
+                            : 'bg-[#0C0E14] border border-white/[0.08] text-slate-200 whitespace-pre-line'
                         }`}
                       >
                         {msg.text}
@@ -808,15 +829,10 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                   ))}
 
                   {isLoading && (
-                    <div className="space-y-3 p-4 bg-[#151726] rounded-2xl border border-gray-800 text-xs text-[#FFE600] font-bold animate-pulse">
+                    <div className="space-y-3 p-4 bg-[#0C0E14] rounded-2xl border border-white/[0.08] text-xs text-[#D4AF37] font-semibold">
                       <div className="flex items-center gap-3">
-                        <div className="w-4 h-4 border-2 border-[#00F0FF] border-t-transparent rounded-full animate-spin"></div>
-                        <span className="font-mono">{isAr ? 'كابتن أورا يحلل البيانات عبر محرك Google Gemini...' : 'Captain Aura is thinking via Google Gemini...'}</span>
-                      </div>
-                      {/* Chat response skeleton bar */}
-                      <div className="space-y-2 pt-1">
-                        <div className="h-3 bg-gradient-to-r from-[#1F253D] to-[#2B3454] rounded w-3/4"></div>
-                        <div className="h-3 bg-gradient-to-r from-[#1F253D] to-[#2B3454] rounded w-1/2"></div>
+                        <div className="w-4 h-4 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+                        <span className="font-mono">{t('Synthesizing telemetry via Gemini AI...', 'Sintetizando telemetría con Gemini IA...', 'Synthèse télémétrique via Gemini IA...', 'جاري تحليل البيانات عبر Gemini AI...')}</span>
                       </div>
                     </div>
                   )}
@@ -893,7 +909,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
             <p className="text-xs font-bold text-gray-300 leading-relaxed">{toastMessage.body}</p>
             <div className="pt-2 flex justify-between items-center">
               <span className="text-[10px] font-black text-[#00F0FF] font-anime">AURA SLEEP ENGINE // ACTIVE</span>
-              <button
+                <button
                 onClick={() => {
                   setShowNotificationToast(false);
                   setIsWindDownActive(true);
@@ -902,7 +918,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
                 }}
                 className="px-3 py-1 bg-[#FFE600] text-black font-black text-[10px] font-anime rounded-lg hover:bg-white transition-all"
               >
-                {isAr ? 'بدء التهيئة الان' : 'START WIND-DOWN'}
+                {t('START WIND-DOWN', 'INICIAR RELAJACIÓN', 'DÉMARRER RETOUR', 'بدء التهيئة الآن')}
               </button>
             </div>
           </div>
@@ -922,20 +938,20 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
 
             <div className="text-center space-y-2">
               <div className="inline-flex p-3 bg-[#00F0FF]/15 rounded-2xl text-[#00F0FF] mb-1">
-                <Moon className="w-8 h-8 animate-spin" style={{ animationDuration: '10s' }} />
+                <Moon className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-black font-anime text-white">
-                {isAr ? 'جلسة تهيئة وسكون العضلات (Zen Mode)' : 'ZEN WIND-DOWN SESSION'}
+                {t('ZEN WIND-DOWN SESSION', 'SESIÓN ZEN DE RELAJACIÓN', 'SESSION ZEN DE RÉCUPÉRATION', 'جلسة تهيئة وسكون العضلات (Zen Mode)')}
               </h3>
               <p className="text-xs font-bold text-gray-300">
-                {isAr ? 'تهدئة الحواس وتجهيز الجهاز العصبي للنوم العميق' : 'Calming CNS arousal & preparing for deep recovery sleep'}
+                {t('Calming CNS arousal & preparing for deep recovery sleep', 'Calmando el sistema nervioso para sueño profundo', 'Apaisement du SNC et préparation au sommeil profond', 'تهدئة الحواس وتجهيز الجهاز العصبي للنوم العميق')}
               </p>
             </div>
 
             {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-black font-anime">
-                <span className="text-[#00F0FF]">{isAr ? 'تقدم الجلسة الاسترخائية:' : 'Wind-Down Progress:'}</span>
+                <span className="text-[#00F0FF]">{t('Wind-Down Progress:', 'Progreso:', 'Progression :', 'تقدم الجلسة الاسترخائية:')}</span>
                 <span className="text-[#FFE600]">{windDownProgress}%</span>
               </div>
               <div className="w-full bg-[#181A2A] h-3 rounded-full overflow-hidden border border-gray-800">
@@ -950,12 +966,27 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
             <div className="bg-[#181A2A] p-4 rounded-2xl border border-gray-800 space-y-3">
               <div className="flex items-center gap-2 text-xs font-black text-[#FFE600] font-anime">
                 <Sparkles className="w-4 h-4" />
-                <span>{isAr ? 'توجيه كابتن أورا المباشر:' : 'CAPTAIN AURA LIVE GUIDANCE:'}</span>
+                <span>{t('CAPTAIN AURA LIVE GUIDANCE:', 'GUÍA EN VIVO CAPTAIN AURA:', 'GUIDAGE EN DIRECT CAPTAIN AURA :', 'توجيه كابتن أورا المباشر:')}</span>
               </div>
               <p className="text-sm font-bold text-gray-200 leading-relaxed">
-                {windDownProgress < 35 && (isAr ? 'خذ نفساً عميقاً من الأنف (4 ثوانٍ)، ثم احبس أنفاسك (7 ثوانٍ)، ثم أخرج الهواء ببطء (8 ثوانٍ).' : 'Inhale deeply through your nose for 4s, hold for 7s, and exhale slowly for 8s.')}
-                {windDownProgress >= 35 && windDownProgress < 75 && (isAr ? 'قم بإرخاء الكتفين، إغلاق الشاشات البراقة، والتأكد من إطفاء الأنوار القوية.' : 'Drop shoulders, dim all high-intensity blue light screens, and sip hydration.')}
-                {windDownProgress >= 75 && (isAr ? 'ممتاز! جسدك الآن مستعد تماماً لدخول مرحلة النوم العميق وحصاد أقصى استشفاء.' : 'Excellent! Your CNS is calibrated for maximum muscle recovery and deep sleep.')}
+                {windDownProgress < 35 && t(
+                  'Inhale deeply through your nose for 4s, hold for 7s, and exhale slowly for 8s.',
+                  'Inhala profundamente por la nariz 4s, mantén 7s y exhala lento 8s.',
+                  'Inspirez par le nez 4s, retenez 7s et expirez lentement 8s.',
+                  'خذ نفساً عميقاً من الأنف (4 ثوانٍ)، ثم احبس أنفاسك (7 ثوانٍ)، ثم أخرج الهواء ببطء (8 ثوانٍ).'
+                )}
+                {windDownProgress >= 35 && windDownProgress < 75 && t(
+                  'Drop shoulders, dim all high-intensity blue light screens, and sip hydration.',
+                  'Relaja los hombros, atenúa pantallas azules e hidrátate suavemente.',
+                  'Relâchez les épaules, réduisez les écrans bleus et hydratez-vous.',
+                  'قم بإرخاء الكتفين، إغلاق الشاشات البراقة، والتأكد من إطفاء الأنوار القوية.'
+                )}
+                {windDownProgress >= 75 && t(
+                  'Excellent! Your CNS is calibrated for maximum muscle recovery and deep sleep.',
+                  '¡Excelente! Tu SNC está calibrado para máxima recuperación muscular.',
+                  'Excellent ! Votre SNC est calibré pour une récupération optimale.',
+                  'ممتاز! جسدك الآن مستعد تماماً لدخول مرحلة النوم العميق وحصاد أقصى استشفاء.'
+                )}
               </p>
             </div>
 
@@ -963,7 +994,7 @@ export const AIAnimeCoach: React.FC<AIAnimeCoachProps> = ({ currentLang = 'en' }
               onClick={() => setIsWindDownActive(false)}
               className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-[#A855F7] rounded-2xl text-white font-black text-sm font-anime shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-[1.02] transition-all cursor-pointer"
             >
-              {isAr ? 'إغلاق ومتابعة الاسترخاء' : 'CLOSE & ENTER RECOVERY'}
+              {t('CLOSE & ENTER RECOVERY', 'CERRAR Y DESCANSAR', 'FERMER ET RÉCUPÉRER', 'إغلاق ومتابعة الاسترخاء')}
             </button>
           </div>
         </div>

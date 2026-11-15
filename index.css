@@ -278,40 +278,16 @@
   }
 }
 
-/* Glitch Hover Trigger for buttons & interactive elements */
+/* Refined Enterprise Hover Settle (Zero jarring glitches) */
 .hover-cyber-glitch:hover {
-  animation: cyber-glitch-anim 0.35s steps(2, end) infinite;
-}
-
-/* Card Glitch on Hover */
-@keyframes cyber-card-glitch {
-  0% {
-    transform: translate(0);
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
-  }
-  20% {
-    transform: translate(-2px, 1px) scale(1.008);
-    box-shadow: -5px 0 30px #00F0FF, 5px 0 30px #FF007A;
-  }
-  40% {
-    transform: translate(2px, -1px) scale(1.005);
-    box-shadow: 4px 0 30px #FFE600, -4px 0 30px #00F0FF;
-  }
-  60% {
-    transform: translate(-1px, 2px) scale(1.01);
-    box-shadow: 0 0 40px #FF007A;
-  }
-  80% {
-    transform: translate(1px, -1px) scale(1.008);
-  }
-  100% {
-    transform: translate(0) scale(1.01);
-    box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
-  }
+  transform: translateY(-1px);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hover-card-glitch:hover {
-  animation: cyber-card-glitch 0.4s ease infinite alternate;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.75);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Mecha Scanline Beam */

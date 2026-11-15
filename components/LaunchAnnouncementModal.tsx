@@ -11,7 +11,7 @@ import {
   CheckCircle2, 
   Bell 
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { SAMURAI_RONIN_IMAGE, NINJA_KUNOICHI_IMAGE, YARD300_BRAND_LOGO, handleImageError } from '../constants';
 import { getLaunchTargetTimestamp, calculateLaunchTimeRemaining, LaunchTimeRemaining } from '../utils/launchCountdown';
@@ -22,6 +22,7 @@ interface LaunchAnnouncementModalProps {
 
 export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
   const [isOpen, setIsOpen] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -81,14 +82,14 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-[#181A24] border border-gray-700 hover:border-[#E50914] text-gray-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-lg hover:scale-110 active:scale-95"
-          title={isAr ? 'إغلاق الإعلان' : 'Close Ad'}
+          title={t('Close Ad', 'Cerrar Anuncio', 'Fermer l\'Annonce', 'إغلاق الإعلان')}
         >
           <X className="w-5 h-5 text-[#FFE600]" />
         </button>
 
         {/* Ad Tag Badge */}
         <div className="absolute top-4 left-4 z-30 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#181A24]/90 border border-gray-800 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-          <span>{isAr ? 'إعلان الإطلاق الرسمي' : 'OFFICIAL ANNOUNCEMENT'}</span>
+          <span>{t('OFFICIAL ANNOUNCEMENT', 'ANUNCIO OFICIAL', 'ANNONCE OFFICIELLE', 'إعلان الإطلاق الرسمي')}</span>
         </div>
 
         <div className="p-6 md:p-8 pt-12 md:pt-14">
@@ -108,7 +109,7 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0B10] via-transparent to-transparent"></div>
                 <div className="absolute bottom-2 left-2 right-2 text-center">
                   <span className="text-[10px] font-black font-anime text-[#FFE600] tracking-widest uppercase bg-black/70 px-2 py-0.5 rounded border border-[#FFE600]/40">
-                    {isAr ? 'محارب الساموراي 2050' : 'CYBER SAMURAI 2050'}
+                    {t('CYBER SAMURAI 2050', 'SAMURÁI CIBERNÉTICO 2050', 'SAMOURAÏ CYBER 2050', 'محارب الساموراي 2050')}
                   </span>
                 </div>
               </div>
@@ -123,42 +124,48 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
                 </div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E50914]/20 border border-[#E50914] text-[#FFE600] text-xs font-black font-anime uppercase tracking-wider">
                   <Flame className="w-3.5 h-3.5 fill-[#E50914] text-[#E50914] animate-bounce" />
-                  <span>{isAr ? `الإطلاق الرسمي بعد ${timeLeft.days} يوماً` : `OFFICIAL LAUNCH IN ${timeLeft.days} DAYS`}</span>
+                  <span>{t(`OFFICIAL LAUNCH IN ${timeLeft.days} DAYS`, `LANZAMIENTO EN ${timeLeft.days} DÍAS`, `LANCEMENT DANS ${timeLeft.days} JOURS`, `الإطلاق الرسمي بعد ${timeLeft.days} يوماً`)}</span>
                 </div>
               </div>
 
               <h3 className="text-2xl md:text-3xl font-black font-anime text-white leading-tight">
                 {isAr ? (
                   <>تطبيق <span className="text-[#E50914] neon-text-red">YARD300</span> على App Store & Google Play!</>
+                ) : currentLang === 'es' ? (
+                  <>LA APP <span className="text-[#E50914] neon-text-red">YARD300</span> LLEGA A iOS & ANDROID</>
+                ) : currentLang === 'fr' ? (
+                  <>L'APP <span className="text-[#E50914] neon-text-red">YARD300</span> ARRIVE SUR iOS & ANDROID</>
                 ) : (
                   <>THE <span className="text-[#E50914] neon-text-red">YARD300</span> APP IS COMING TO iOS & ANDROID!</>
                 )}
               </h3>
 
               <p className="text-xs md:text-sm text-gray-300 font-bold leading-relaxed">
-                {isAr
-                  ? 'اربط ساعتك الذكية (Apple Watch, Garmin, WHOOP) لمراقبة المؤشرات الحيوية بالذكاء الاصطناعي وتفادي الإصابات قبل حدوثها.'
-                  : 'Sync your Apple Watch, Garmin or WHOOP to harness real-time AI injury prevention & combat bio-metrics.'
-                }
+                {t(
+                  'Sync your Apple Watch, Garmin or WHOOP to harness real-time AI injury prevention & combat bio-metrics.',
+                  'Sincroniza tu Apple Watch, Garmin o WHOOP para prevención de lesiones por IA y biométrica en tiempo real.',
+                  'Synchronisez Apple Watch, Garmin ou WHOOP pour la prévention des blessures par IA et biométrie en temps réel.',
+                  'اربط ساعتك الذكية (Apple Watch, Garmin, WHOOP) لمراقبة المؤشرات الحيوية بالذكاء الاصطناعي وتفادي الإصابات قبل حدوثها.'
+                )}
               </p>
 
-              {/* 17-Day Countdown Cards */}
+              {/* Countdown Cards */}
               <div className="grid grid-cols-4 gap-2 text-center py-1">
                 <div className="p-2 rounded-xl bg-[#141624] border border-[#E50914]/40">
                   <span className="block text-xl font-black font-anime text-[#FFE600]">{timeLeft.days}</span>
-                  <span className="text-[9px] font-bold text-gray-400 uppercase">{isAr ? 'يوم' : 'DAYS'}</span>
+                  <span className="text-[9px] font-bold text-gray-400 uppercase">{t('DAYS', 'DÍAS', 'JOURS', 'يوم')}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-[#141624] border border-gray-800">
                   <span className="block text-xl font-black font-anime text-white">{timeLeft.hours}</span>
-                  <span className="text-[9px] font-bold text-gray-400 uppercase">{isAr ? 'ساعة' : 'HRS'}</span>
+                  <span className="text-[9px] font-bold text-gray-400 uppercase">{t('HRS', 'HRS', 'HRS', 'ساعة')}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-[#141624] border border-gray-800">
                   <span className="block text-xl font-black font-anime text-white">{timeLeft.minutes}</span>
-                  <span className="text-[9px] font-bold text-gray-400 uppercase">{isAr ? 'دقيقة' : 'MIN'}</span>
+                  <span className="text-[9px] font-bold text-gray-400 uppercase">{t('MIN', 'MIN', 'MIN', 'دقيقة')}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-[#141624] border border-[#E50914]/40">
                   <span className="block text-xl font-black font-anime text-[#E50914]">{timeLeft.seconds}</span>
-                  <span className="text-[9px] font-bold text-gray-400 uppercase">{isAr ? 'ثانية' : 'SEC'}</span>
+                  <span className="text-[9px] font-bold text-gray-400 uppercase">{t('SEC', 'SEG', 'SEC', 'ثانية')}</span>
                 </div>
               </div>
 
@@ -169,7 +176,7 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
                     type="email"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
-                    placeholder={isAr ? 'بريدك الإلكتروني للتسجيل المبكر...' : 'Enter email for VIP early access...'}
+                    placeholder={t('Enter email for VIP early access...', 'Tu email para acceso VIP anticipado...', 'Votre e-mail pour l\'accès VIP anticipé...', 'بريدك الإلكتروني للتسجيل المبكر...')}
                     className="flex-1 bg-[#141624] border border-gray-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E50914]"
                     required
                   />
@@ -177,25 +184,25 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
                     type="submit"
                     className="px-4 py-2.5 rounded-xl bg-[#E50914] hover:bg-[#b00710] text-white font-black font-anime text-xs transition-all shadow-[0_0_15px_rgba(229,9,20,0.5)] shrink-0 cursor-pointer"
                   >
-                    {isAr ? 'سجّلني ⚡' : 'NOTIFY ME'}
+                    {t('NOTIFY ME', 'AVÍSAME', 'M\'AVERTIR', 'سجّلني ⚡')}
                   </button>
                 </form>
               ) : (
                 <div className="p-3 rounded-xl bg-[#141624] border border-[#FFE600] flex items-center gap-2 text-xs font-bold text-[#FFE600]">
                   <CheckCircle2 className="w-4 h-4 shrink-0 text-[#FFE600]" />
-                  <span>{isAr ? 'تم تسجيل بريدك بنجاح! ستكون أول المحاربين تجربة للتطبيق.' : 'VIP Access Confirmed! You are on the priority beta list.'}</span>
+                  <span>{t('VIP Access Confirmed! You are on the priority beta list.', '¡Acceso VIP confirmado! Estás en la lista prioritaria.', 'Accès VIP confirmé ! Vous êtes sur la liste bêta prioritaire.', 'تم تسجيل بريدك بنجاح! ستكون أول المحاربين تجربة للتطبيق.')}</span>
                 </div>
               )}
 
               {/* Bottom Quick Disclaimer */}
               <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1">
-                <span>{isAr ? '⚡ احصل على 500 YARDX مجانية عند التحميل' : '⚡ 500 Free YARDX on Day 1 download'}</span>
+                <span>{t('⚡ 500 Free YARDX on Day 1 download', '⚡ 500 YARDX gratis al descargar el Día 1', '⚡ 500 YARDX gratuits dès le 1er jour', '⚡ احصل على 500 YARDX مجانية عند التحميل')}</span>
                 <button
                   type="button"
                   onClick={handleClose}
                   className="text-gray-400 hover:text-white underline cursor-pointer"
                 >
-                  {isAr ? 'المتابعة للموقع' : 'Continue to site'}
+                  {t('Continue to site', 'Continuar al sitio', 'Continuer sur le site', 'المتابعة للموقع')}
                 </button>
               </div>
 

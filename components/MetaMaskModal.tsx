@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Wallet, X, CheckCircle, ExternalLink, AlertTriangle, ShieldCheck, ArrowRight, Copy } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 
 interface MetaMaskModalProps {
@@ -28,6 +28,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
   onWalletConnected
 }) => {
   const isAr = currentLang === 'ar';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
   const [walletAddress, setWalletAddress] = useState<string | null>(() => {
     return localStorage.getItem('yard300_wallet_address');
   });
@@ -78,7 +79,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
       }
     } catch (err: any) {
       console.error('Wallet connection error:', err);
-      setErrorMessage(isAr ? 'تم رفض الاتصال أو حدث خطأ أثناء المحاولة.' : (err?.message || 'Connection request rejected.'));
+      setErrorMessage(t(err?.message || 'Connection request rejected.', 'Solicitud de conexión rechazada.', 'Demande de connexion refusée.', 'تم رفض الاتصال أو حدث خطأ أثناء المحاولة.'));
     } finally {
       setIsConnecting(false);
     }
@@ -135,11 +136,11 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-xl md:text-2xl font-black font-anime text-white">
-                {isAr ? 'ربط محفظة ميتاماسك (MetaMask)' : 'CONNECT METAMASK WALLET'}
+                {t('CONNECT METAMASK WALLET', 'CONECTAR CARTERA METAMASK', 'CONNECTER PORTEFEUILLE METAMASK', 'ربط محفظة ميتاماسك (MetaMask)')}
               </h3>
             </div>
             <p className="text-xs text-gray-400 font-bold">
-              {isAr ? 'بوابة Web3 الرسمية لمجتمع YARD300 لحفظ أرباح التحديات وعملة YARDX' : 'Official YARD300 Web3 portal to claim bounty tokens & tournament rewards'}
+              {t('Official YARD300 Web3 portal to claim bounty tokens & tournament rewards', 'Portal Web3 oficial de YARD300 para reclamar recompensas y tokens', 'Portail Web3 officiel YARD300 pour réclamer vos récompenses et jetons', 'بوابة Web3 الرسمية لمجتمع YARD300 لحفظ أرباح التحديات وعملة YARDX')}
             </p>
           </div>
         </div>
@@ -151,7 +152,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
               <div className="flex items-center justify-between mb-3">
                 <span className="flex items-center gap-2 text-xs font-black text-[#00F0FF]">
                   <CheckCircle className="w-4 h-4 text-[#00F0FF]" />
-                  {isAr ? 'المحفظة متصلة بنجاح' : 'Wallet Connected'}
+                  {t('Wallet Connected', 'Cartera Conectada', 'Portefeuille Connecté', 'المحفظة متصلة بنجاح')}
                 </span>
                 <span className="text-[10px] bg-[#00F0FF]/15 text-[#00F0FF] border border-[#00F0FF]/30 px-2 py-0.5 rounded font-black">
                   Ethereum / Polygon Mainnet
@@ -164,14 +165,14 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
                 <button
                   onClick={handleCopy}
                   className="p-1.5 rounded-lg bg-[#141622] hover:bg-[#1f2238] text-gray-400 hover:text-white transition-all ml-2 shrink-0 cursor-pointer"
-                  title="Copy Address"
+                  title={t('Copy Address', 'Copiar Dirección', 'Copier Adresse', 'نسخ العنوان')}
                 >
                   <Copy className="w-3.5 h-3.5" />
                 </button>
               </div>
               {copied && (
                 <p className="text-[10px] text-[#FFE600] font-bold mt-1 text-center">
-                  {isAr ? 'تم نسخ العنوان بنجاح!' : 'Address copied to clipboard!'}
+                  {t('Address copied to clipboard!', '¡Dirección copiada al portapapeles!', 'Adresse copiée dans le presse-papiers !', 'تم نسخ العنوان بنجاح!')}
                 </p>
               )}
             </div>
@@ -180,7 +181,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3.5 rounded-xl bg-[#121422] border border-gray-800">
                 <span className="text-[10px] font-bold text-gray-400 block mb-1">
-                  {isAr ? 'رصيد ETH:' : 'ETH Balance:'}
+                  {t('ETH Balance:', 'Saldo ETH:', 'Solde ETH :', 'رصيد ETH:')}
                 </span>
                 <span className="text-lg font-black font-anime text-white">
                   {balance} ETH
@@ -189,7 +190,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
 
               <div className="p-3.5 rounded-xl bg-[#121422] border border-[#FFE600]/40">
                 <span className="text-[10px] font-bold text-[#FFE600] block mb-1">
-                  {isAr ? 'رصيد عملة YARDX:' : 'YARDX Combat Tokens:'}
+                  {t('YARDX Combat Tokens:', 'Tokens YARDX:', 'Jetons YARDX :', 'رصيد عملة YARDX:')}
                 </span>
                 <span className="text-lg font-black font-anime text-[#FFE600]">
                   {yardxTokens.toLocaleString('en-US')} YARDX
@@ -203,13 +204,13 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
                 onClick={handleDisconnect}
                 className="flex-1 py-3 px-4 rounded-xl bg-[#181A28] border border-gray-700 hover:border-red-500 text-gray-300 hover:text-red-400 font-black font-anime text-xs transition-all cursor-pointer"
               >
-                {isAr ? 'قطع الاتصال' : 'Disconnect Wallet'}
+                {t('Disconnect Wallet', 'Desconectar', 'Déconnecter', 'قطع الاتصال')}
               </button>
               <button
                 onClick={onClose}
                 className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#E50914] to-[#FFE600] text-black font-black font-anime text-xs hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_#E50914] cursor-pointer"
               >
-                {isAr ? 'تأكيد ودخول الحلبات ⚡' : 'Enter Arenas ⚡'}
+                {t('Enter Arenas ⚡', 'Entrar a Arenas ⚡', 'Entrer dans l\'Arène ⚡', 'تأكيد ودخول الحلبات ⚡')}
               </button>
             </div>
           </div>
@@ -218,12 +219,15 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
             <div className="p-5 rounded-2xl bg-[#141622] border border-gray-800 text-center space-y-3">
               <Wallet className="w-12 h-12 text-[#F6851B] mx-auto animate-pulse" />
               <h4 className="text-base font-black font-anime text-white">
-                {isAr ? 'اتصل بحساب ميتاماسك لبدء كسب نقاط وجوائز يارد' : 'Connect Your MetaMask to Claim Web3 Bounties'}
+                {t('Connect Your MetaMask to Claim Web3 Bounties', 'Conecta MetaMask para Reclamar Recompensas Web3', 'Connectez MetaMask pour Réclamer vos Primes Web3', 'اتصل بحساب ميتاماسك لبدء كسب نقاط وجوائز يارد')}
               </h4>
               <p className="text-xs text-gray-300 font-bold leading-relaxed max-w-sm mx-auto">
-                {isAr 
-                  ? 'بمجرد الربط ستتمكن من تحويل انتصاراتك في تحديات الهايروكس والشاولين والملاكمة إلى عملات YARDX ونقاط هالة معتمدة.'
-                  : 'Link your Web3 wallet to earn real combat bounty tokens, unlock NFT tournament passes, and climb the S-Rank Hall of Fame.'}
+                {t(
+                  'Link your Web3 wallet to earn real combat bounty tokens, unlock NFT tournament passes, and climb the S-Rank Hall of Fame.',
+                  'Vincula tu cartera Web3 para ganar tokens de recompensa reales, pases NFT y subir en el Salón de la Fama S-Rank.',
+                  'Liez votre portefeuille Web3 pour gagner de vrais jetons, débloquer des pass NFT et grimper au classement S-Rank.',
+                  'بمجرد الربط ستتمكن من تحويل انتصاراتك في تحديات الهايروكس والشاولين والملاكمة إلى عملات YARDX ونقاط هالة معتمدة.'
+                )}
               </p>
             </div>
 
@@ -242,8 +246,8 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
               <Wallet className="w-5 h-5 text-black" />
               <span>
                 {isConnecting 
-                  ? (isAr ? 'جاري الاتصال بميتاماسك...' : 'Connecting to MetaMask...') 
-                  : (isAr ? 'ربط محفظة MetaMask الآن 🦊' : 'CONNECT METAMASK NOW 🦊')
+                  ? t('Connecting to MetaMask...', 'Conectando a MetaMask...', 'Connexion à MetaMask...', 'جاري الاتصال بميتاماسك...')
+                  : t('CONNECT METAMASK NOW 🦊', 'CONECTAR METAMASK AHORA 🦊', 'CONNECTER METAMASK 🦊', 'ربط محفظة MetaMask الآن 🦊')
                 }
               </span>
             </button>
@@ -251,7 +255,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
             <div className="flex items-center justify-between text-[11px] text-gray-400 font-bold pt-1">
               <span className="flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#00F0FF]" />
-                {isAr ? 'آمن ومشفّر 100%' : '100% Secure Web3 Auth'}
+                {t('100% Secure Web3 Auth', 'Autenticación Web3 100% Segura', 'Auth Web3 100% Sécurisée', 'آمن ومشفّر 100%')}
               </span>
               <a 
                 href="https://metamask.io/download/" 
@@ -259,7 +263,7 @@ export const MetaMaskModal: React.FC<MetaMaskModalProps> = ({
                 rel="noopener noreferrer"
                 className="text-[#FFE600] hover:underline flex items-center gap-1"
               >
-                <span>{isAr ? 'تحميل إضافة MetaMask' : 'Install MetaMask'}</span>
+                <span>{t('Install MetaMask', 'Instalar MetaMask', 'Installer MetaMask', 'تحميل إضافة MetaMask')}</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>

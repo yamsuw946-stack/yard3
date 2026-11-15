@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Smartphone, Watch, ShieldAlert, Sparkles, Activity, CheckCircle2, Clock, Zap } from 'lucide-react';
-import { Language } from '../i18n';
+import { Smartphone, ShieldAlert, CheckCircle2, Clock, Zap } from 'lucide-react';
+import { Language, tr } from '../i18n';
 import { getLaunchTargetTimestamp, calculateLaunchTimeRemaining, LaunchTimeRemaining } from '../utils/launchCountdown';
 
 interface MobileAppNoticeProps {
@@ -10,7 +10,6 @@ interface MobileAppNoticeProps {
 export const MobileAppNotice: React.FC<MobileAppNoticeProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
 
-  // 28 days automatic real-time countdown
   const [targetMs] = useState<number>(() => getLaunchTargetTimestamp());
   const [timeLeft, setTimeLeft] = useState<LaunchTimeRemaining>(() => calculateLaunchTimeRemaining(targetMs));
 
@@ -22,147 +21,185 @@ export const MobileAppNotice: React.FC<MobileAppNoticeProps> = ({ currentLang = 
   }, [targetMs]);
 
   const supportedDevices = [
-    { name: 'Apple Watch', icon: '⌚' },
-    { name: 'Garmin', icon: '📡' },
-    { name: 'WHOOP 4.0', icon: '⚡' },
-    { name: 'Galaxy Watch', icon: '🌌' },
-    { name: 'Fitbit Sense', icon: '💚' },
-    { name: 'Aura / Oura Ring', icon: '💍' },
+    'Apple Watch',
+    'Garmin',
+    'WHOOP 4.0',
+    'Galaxy Watch',
+    'Fitbit Sense',
+    'Oura Ring'
   ];
 
   return (
-    <section className={`my-12 px-6 md:px-12 max-w-[1800px] mx-auto ${isAr ? 'text-right' : 'text-left'}`}>
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#121422] via-[#0A0B10] to-[#180A22] border-2 border-[#00F0FF]/50 p-8 md:p-12 shadow-[0_0_50px_rgba(0,240,255,0.25)]">
-        
-        {/* Background Ambient Glow */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF007A]/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#00F0FF]/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
+    <section className={`my-4 px-3 sm:px-5 md:px-6 max-w-[1680px] mx-auto ${isAr ? 'text-right' : 'text-left'}`}>
+      <div className="relative rounded-2xl overflow-hidden bg-[#0C0E14] border border-white/[0.08] p-4 sm:p-6 shadow-xl">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
           {/* Main Info */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#141622] border border-[#FF007A] text-xs font-black text-[#FF007A] uppercase tracking-widest">
-              <Sparkles className="w-4 h-4 animate-spin text-[#FFE600]" />
-              <span>{isAr ? 'إطلاق التطبيق الرسمي قريبًا' : 'OFFICIAL MOBILE APP LAUNCH'}</span>
+          <div className="lg:col-span-7 space-y-3">
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#D4AF37] uppercase tracking-[0.2em]">
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>
+                {tr(currentLang, {
+                  en: 'OFFICIAL MOBILE APP LAUNCH',
+                  es: 'LANZAMIENTO OFICIAL DE LA APP MÓVIL',
+                  fr: 'LANCEMENT OFFICIEL DE L’APPLICATION',
+                  ar: 'إطلاق التطبيق الرسمي قريبًا'
+                })}
+              </span>
             </div>
 
-            <h3 className="text-3xl md:text-5xl font-black font-anime text-white leading-tight">
-              {isAr ? (
-                <>
-                  تطبيق <span className="text-[#FFE600] font-black">YARD300 AURA</span> سينطلق على Google Play و App Store خلال {timeLeft.days} يومًا!
-                </>
-              ) : (
-                <>
-                  <span className="text-[#FFE600] font-black">YARD300 AURA</span> App Launching on Google Play & App Store in {timeLeft.days} Days!
-                </>
-              )}
+            <h3 className="text-xl md:text-2xl font-extrabold text-white leading-snug">
+              {tr(currentLang, {
+                en: `YARD300 AURA App Launching on iOS & Android in ${timeLeft.days} Days`,
+                es: `La App YARD300 AURA llega a iOS y Android en ${timeLeft.days} días`,
+                fr: `L’app YARD300 AURA arrive sur iOS & Android dans ${timeLeft.days} jours`,
+                ar: `تطبيق YARD300 AURA سينطلق على Google Play و App Store خلال ${timeLeft.days} يومًا`
+              })}
             </h3>
 
-            <p className="text-gray-300 font-bold text-base md:text-lg leading-relaxed">
-              {isAr 
-                ? 'يتصل التطبيق مباشرة وبشكل لحظي بكافة الأجهزة والساعات الرياضية الذكية لقياس المؤشرات الحيوية وحساب طاقة الهالة ومخاطر الإصابة أثناء القتال والتمارين.'
-                : 'Connects directly and in real-time with all major wearables and smart health devices to measure bio-indicators, aura power, and injury risks live.'}
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {tr(currentLang, {
+                en: 'Syncs in real time with major wearables and smart health sensors to measure bio-indicators, aura power, and ACWR injury risk live.',
+                es: 'Se conecta en tiempo real con relojes inteligentes y sensores biométricos para medir tu rendimiento y riesgo ACWR al instante.',
+                fr: 'Se connecte en temps réel aux montres et capteurs biométriques pour mesurer vos indicateurs vitaux et risques ACWR.',
+                ar: 'يتصل التطبيق مباشرة بكافة الأجهزة والساعات الرياضية الذكية لقياس المؤشرات الحيوية ومخاطر الإصابة لحظياً.'
+              })}
             </p>
 
             {/* Supported Wearables Badges */}
-            <div className="space-y-3 pt-2">
-              <span className="text-xs font-black uppercase text-[#00F0FF] tracking-wider block">
-                {isAr ? '🌐 الأجهزة والمستشعرات المعتمدة للقراءات الحيوية المباشرة:' : '🌐 Compatible Live Biometric Devices & Sensors:'}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-mono uppercase text-[#10B981] tracking-wider block">
+                {tr(currentLang, {
+                  en: 'COMPATIBLE LIVE BIOMETRIC SENSORS:',
+                  es: 'SENSORES BIOMÉTRICOS COMPATIBLES:',
+                  fr: 'CAPTEURS BIOMÉTRIQUES COMPATIBLES :',
+                  ar: 'الأجهزة والمستشعرات المعتمدة للقراءات الحيوية:'
+                })}
               </span>
-              <div className="flex flex-wrap gap-2">
-                {supportedDevices.map((dev, idx) => (
-                  <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-[#1A1D2E] border border-gray-700 hover:border-[#00F0FF] rounded-xl text-xs font-bold text-white transition-all shadow-sm">
-                    <span>{dev.icon}</span>
-                    <span>{dev.name}</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00F0FF]" />
+              <div className="flex flex-wrap gap-1.5">
+                {supportedDevices.map((name) => (
+                  <div
+                    key={name}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-[#12151E] border border-white/[0.08] rounded-lg text-[11px] font-semibold text-slate-200"
+                  >
+                    <CheckCircle2 className="w-3 h-3 text-[#10B981]" />
+                    <span>{name}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* 7-Day Baseline Data Warning Callout */}
-            <div className="p-5 rounded-2xl bg-[#1A1024] border-l-4 border-[#FFE600] text-gray-200 space-y-2 shadow-lg">
-              <div className="flex items-center gap-2 text-[#FFE600] font-black text-sm uppercase">
-                <ShieldAlert className="w-5 h-5 text-[#FFE600]" />
-                <span>{isAr ? 'ملاحظة هامة لحساب النتائج والدقة الحيوية:' : 'CRITICAL BIOMETRIC NOTICE:'}</span>
+            {/* 7-Day Baseline Data Callout (Hairline border, no heavy border-l-4) */}
+            <div className="p-3 rounded-xl bg-[#07080C] border border-[#D4AF37]/35 text-slate-200 space-y-1">
+              <div className="flex items-center gap-1.5 text-[#D4AF37] font-bold text-[11px] uppercase">
+                <ShieldAlert className="w-4 h-4 text-[#D4AF37]" />
+                <span>
+                  {tr(currentLang, {
+                    en: '7-DAY BIOMETRIC CALIBRATION PROTOCOL',
+                    es: 'PROTOCOLO DE CALIBRACIÓN DE 7 DÍAS',
+                    fr: 'PROTOCOLE DE CALIBRATION 7 JOURS',
+                    ar: 'بروتوكول المعايرة الحيوية لمدة 7 أيام'
+                  })}
+                </span>
               </div>
-              <p className="text-xs md:text-sm font-bold text-gray-300 leading-relaxed">
-                {isAr
-                  ? 'لا يمكن إعطاء أول نتيجة تقييم وتحديد طاقة الهالة الحيوية الخاصة بك إلا بعد متابعة وتحليل بياناتك الحيوية بشكل مستمر لمدة 7 أيام متواصلة لضمان دقة خوارزمية الذكاء الاصطناعي.'
-                  : 'Your initial S-Rank aura evaluation & baseline performance analysis can only be issued after 7 consecutive days of active biometric data tracking.'}
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                {tr(currentLang, {
+                  en: 'Initial S-Rank evaluation is issued after 7 consecutive days of continuous wearable telemetry.',
+                  es: 'La evaluación inicial S-Rank se emite tras 7 días consecutivos de telemetría biométrica activa.',
+                  fr: 'L’évaluation initiale S-Rank est délivrée après 7 jours consécutifs de suivi biométrique.',
+                  ar: 'تُصدر أول نتيجة تقييم متكاملة بعد متابعة بياناتك الحيوية لمدة 7 أيام متواصلة لضمان الدقة السريرية.'
+                })}
               </p>
             </div>
           </div>
 
-          {/* Right Column: Countdown Box & App Store Badges */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center space-y-6 bg-[#0E0F1A] p-6 md:p-8 rounded-2xl border border-gray-800 shadow-2xl text-center">
-            
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00F0FF]">
-              <Clock className="w-4 h-4 text-[#FF007A]" />
-              <span>{isAr ? 'العد التنازلي للإطلاق' : 'OFFICIAL COUNTDOWN TO LAUNCH'}</span>
+          {/* Right Column: Compact Countdown Box & Store Links */}
+          <div className="lg:col-span-5 flex flex-col items-center justify-center space-y-3.5 bg-[#07080C] p-4 sm:p-5 rounded-xl border border-white/[0.08] text-center">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]">
+              <Clock className="w-3.5 h-3.5" />
+              <span>
+                {tr(currentLang, {
+                  en: 'OFFICIAL LAUNCH COUNTDOWN',
+                  es: 'CUENTA REGRESIVA OFICIAL',
+                  fr: 'COMPTE À REBOURS OFFICIEL',
+                  ar: 'العد التنازلي للإطلاق'
+                })}
+              </span>
             </div>
 
             {/* Countdown Grid */}
-            <div className="grid grid-cols-4 gap-3 w-full">
-              <div className="bg-[#181A2A] border border-[#FF007A]/50 p-3 rounded-xl flex flex-col items-center">
-                <span className="text-2xl md:text-3xl font-black font-anime text-[#FFE600]">{timeLeft.days}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase">{isAr ? 'يوم' : 'DAYS'}</span>
+            <div className="grid grid-cols-4 gap-2 w-full">
+              <div className="bg-[#12151E] border border-white/[0.08] p-2.5 rounded-lg flex flex-col items-center">
+                <span className="text-xl md:text-2xl font-bold font-mono tabular-nums text-[#D4AF37]">{timeLeft.days}</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  {tr(currentLang, { en: 'DAYS', es: 'DÍAS', fr: 'JOURS', ar: 'يوم' })}
+                </span>
               </div>
-              <div className="bg-[#181A2A] border border-[#FF007A]/50 p-3 rounded-xl flex flex-col items-center">
-                <span className="text-2xl md:text-3xl font-black font-anime text-[#00F0FF]">{timeLeft.hours}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase">{isAr ? 'ساعة' : 'HRS'}</span>
+              <div className="bg-[#12151E] border border-white/[0.08] p-2.5 rounded-lg flex flex-col items-center">
+                <span className="text-xl md:text-2xl font-bold font-mono tabular-nums text-[#10B981]">{timeLeft.hours}</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  {tr(currentLang, { en: 'HRS', es: 'HRS', fr: 'HRS', ar: 'ساعة' })}
+                </span>
               </div>
-              <div className="bg-[#181A2A] border border-[#FF007A]/50 p-3 rounded-xl flex flex-col items-center">
-                <span className="text-2xl md:text-3xl font-black font-anime text-[#FF007A]">{timeLeft.minutes}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase">{isAr ? 'دقيقة' : 'MINS'}</span>
+              <div className="bg-[#12151E] border border-white/[0.08] p-2.5 rounded-lg flex flex-col items-center">
+                <span className="text-xl md:text-2xl font-bold font-mono tabular-nums text-white">{timeLeft.minutes}</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  {tr(currentLang, { en: 'MINS', es: 'MIN', fr: 'MIN', ar: 'دقيقة' })}
+                </span>
               </div>
-              <div className="bg-[#181A2A] border border-[#FF007A]/50 p-3 rounded-xl flex flex-col items-center">
-                <span className="text-2xl md:text-3xl font-black font-anime text-white animate-pulse">{timeLeft.seconds}</span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase">{isAr ? 'ثانية' : 'SECS'}</span>
-              </div>
-            </div>
-
-            {/* Store Buttons Links */}
-            <div className="w-full space-y-3 pt-2">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a 
-                  href="https://apps.apple.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 py-3 px-4 bg-[#1B1D2E] hover:bg-[#25283E] border border-gray-700 hover:border-[#00F0FF] rounded-xl flex items-center justify-center gap-3 cursor-pointer transition-all group"
-                >
-                  <span className="text-2xl">🍏</span>
-                  <div className="text-left">
-                    <span className="text-[10px] text-gray-400 uppercase block font-bold">App Store</span>
-                    <span className="text-xs font-black text-white group-hover:text-[#00F0FF]">Download iOS</span>
-                  </div>
-                </a>
-
-                <a 
-                  href="https://play.google.com/store" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 py-3 px-4 bg-[#1B1D2E] hover:bg-[#25283E] border border-gray-700 hover:border-[#00F0FF] rounded-xl flex items-center justify-center gap-3 cursor-pointer transition-all group"
-                >
-                  <span className="text-2xl">🤖</span>
-                  <div className="text-left">
-                    <span className="text-[10px] text-gray-400 uppercase block font-bold">Google Play</span>
-                    <span className="text-xs font-black text-white group-hover:text-[#00F0FF]">Download Android</span>
-                  </div>
-                </a>
-              </div>
-
-              <div className="p-3 bg-[#141624] rounded-xl border border-[#00F0FF]/30 flex items-center justify-center gap-2 text-xs font-bold text-[#00F0FF]">
-                <Zap className="w-4 h-4 text-[#FFE600]" />
-                <span>{isAr ? 'سجل بريدك الآن لتفعيل اشتراك الأبطال التجريبي!' : 'Pre-register now for 30-day Free S-Rank Access!'}</span>
+              <div className="bg-[#12151E] border border-white/[0.08] p-2.5 rounded-lg flex flex-col items-center">
+                <span className="text-xl md:text-2xl font-bold font-mono tabular-nums text-slate-300">{timeLeft.seconds}</span>
+                <span className="text-[9px] font-mono text-slate-400 uppercase">
+                  {tr(currentLang, { en: 'SECS', es: 'SEG', fr: 'SEC', ar: 'ثانية' })}
+                </span>
               </div>
             </div>
 
+            {/* Store Links */}
+            <div className="w-full space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="https://apps.apple.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-3 bg-[#12151E] hover:bg-[#191E2D] border border-white/[0.1] hover:border-[#D4AF37]/50 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <div className="text-start">
+                    <span className="text-[9px] text-slate-400 uppercase block font-mono">App Store</span>
+                    <span className="text-[11px] font-bold text-white">
+                      {tr(currentLang, { en: 'Download iOS', es: 'Descargar iOS', fr: 'Télécharger iOS', ar: 'تنزيل iOS' })}
+                    </span>
+                  </div>
+                </a>
+
+                <a
+                  href="https://play.google.com/store"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2.5 px-3 bg-[#12151E] hover:bg-[#191E2D] border border-white/[0.1] hover:border-[#10B981]/50 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <div className="text-start">
+                    <span className="text-[9px] text-slate-400 uppercase block font-mono">Google Play</span>
+                    <span className="text-[11px] font-bold text-white">
+                      {tr(currentLang, { en: 'Download Android', es: 'Descargar Android', fr: 'Télécharger Android', ar: 'تنزيل أندرويد' })}
+                    </span>
+                  </div>
+                </a>
+              </div>
+
+              <div className="p-2.5 bg-[#12151E] rounded-lg border border-white/[0.08] flex items-center justify-center gap-1.5 text-[11px] font-medium text-[#D4AF37]">
+                <Zap className="w-3.5 h-3.5 shrink-0" />
+                <span>
+                  {tr(currentLang, {
+                    en: 'Pre-register for 30-day Free S-Rank Access',
+                    es: 'Pre-regístrate para 30 días gratis S-Rank',
+                    fr: 'Préinscrivez-vous pour 30 jours S-Rank gratuits',
+                    ar: 'سجل بريدك لتفعيل 30 يوم اشتراك تجريبي مجاني'
+                  })}
+                </span>
+              </div>
+            </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );

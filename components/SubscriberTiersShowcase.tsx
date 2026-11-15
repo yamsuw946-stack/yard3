@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
-import { 
-  Award, 
-  Sparkles, 
-  Zap, 
-  RotateCw, 
-  Download, 
-  Check, 
-  CheckCircle2, 
+import React, { useState, useEffect } from 'react';
+import {
+  RotateCw,
+  Download,
+  Check,
+  CheckCircle2,
   Crown,
   Eye,
   X,
   CreditCard,
   ShieldCheck,
-  ChevronRight
+  RefreshCw,
+  ArrowUpRight
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { YARD300_BRAND_LOGO, handleImageError } from '../constants';
+import { OwnerConfigService } from '../services/ownerConfigService';
+
+import goldenDragonArt from '../src/assets/images/card_golden_dragon_1794697100851.jpg';
+import crimsonMeteorArt from '../src/assets/images/card_crimson_meteor_1794697101889.jpg';
+import medusaEmeraldArt from '../src/assets/images/card_medusa_emerald_1794697101547.jpg';
+import waterGoddessArt from '../src/assets/images/card_water_goddess_1794697102754.jpg';
 
 interface SubscriberTiersShowcaseProps {
   currentLang?: Language;
@@ -24,740 +28,900 @@ interface SubscriberTiersShowcaseProps {
 }
 
 interface TierCardModel {
-  level: number;
+  level: 1 | 2 | 3 | 4;
+  roman: string;
   id: string;
-  nameEn: string;
-  nameAr: string;
-  titleEn: string;
-  titleAr: string;
-  cardRank: string;
-  accentColor: string;
-  borderColor: string;
-  bgGradient: string;
-  holographicClass: string;
-  auraScore: string;
+  name: { en: string; es: string; fr: string; ar: string };
+  mythicTag: { en: string; es: string; fr: string; ar: string };
+  subtitle: { en: string; es: string; fr: string; ar: string };
+  accentHex: string;
+  glowHex: string;
+  artwork: string;
+  artworkAlt: string;
   yardxTokens: string;
-  privilegesEn: string[];
-  privilegesAr: string[];
-  quoteEn: string;
-  quoteAr: string;
+  serialPrefix: string;
+  privileges: { en: string[]; es: string[]; fr: string[]; ar: string[] };
+  oath: { en: string; es: string; fr: string; ar: string };
 }
 
 const TIERS: TierCardModel[] = [
   {
     level: 1,
-    id: 'tier-iron',
-    nameEn: 'IRON INITIATE',
-    nameAr: 'محارب الحديد — المستوى 1',
-    titleEn: 'Foundational Endurance & Habit Formation',
-    titleAr: 'تأسيس التحمل وبناء الانضباط القتالي',
-    cardRank: 'TIER 1 // VERIFIED INITIATE',
-    accentColor: '#00F0FF',
-    borderColor: '#00F0FF',
-    bgGradient: 'from-[#0B0D15] via-[#101424] to-[#181D33]',
-    holographicClass: 'hover:shadow-[0_0_50px_rgba(0,240,255,0.4)]',
-    auraScore: '4,200',
+    roman: 'TIER I',
+    id: 'golden-dragon',
+    name: {
+      en: 'GOLDEN DRAGON',
+      es: 'DRAGÓN DORADO',
+      fr: 'DRAGON D’OR',
+      ar: 'التنين الذهبي'
+    },
+    mythicTag: {
+      en: 'Obsidian · 24K Dragon Gold',
+      es: 'Obsidiana · Oro Dragón 24K',
+      fr: 'Obsidienne · Or Dragon 24K',
+      ar: 'أسود أوبسيديان · ذهب عيار 24'
+    },
+    subtitle: {
+      en: 'Foundational Conditioning & Biometric Ledger',
+      es: 'Acondicionamiento Base y Registro Biométrico',
+      fr: 'Conditionnement Fondamental & Registre Biométrique',
+      ar: 'التأسيس البدني والسجل البيومتري الموثق'
+    },
+    accentHex: '#D4AF37',
+    glowHex: 'rgba(212, 175, 55, 0.32)',
+    artwork: goldenDragonArt,
+    artworkAlt: 'Black Obsidian Card with Golden Dragon Crest',
     yardxTokens: '4,200 YARDX',
-    privilegesEn: [
-      'Official YARD Digital Identity & Biometric Record',
-      'Instant 4,200 YARDX Combat Tokens Welcome Drop',
-      'Access to Level 1 Combat Conditioning Library',
-      'Live Leaderboard Weekly Qualification',
-      'Exclusive Physical Iron Tier Patch (Delivered on Milestone)'
-    ],
-    privilegesAr: [
-      'هوية رياضية رقمية موثقة وسجل بيومتري دائم',
-      'منحة فورية بقيمة 4,200 عملة YARDX قتالية لحسابك',
-      'دخول مكتبة التمارين الوظيفية والتأسيس البدني',
-      'التصنيف الأسبوعي المعتمد في لوحة الأبطال',
-      'شارة حديدية مطرزة تُرسل للمشترك عند إتمام أول شهر'
-    ],
-    quoteEn: '“Discipline is choosing between what you want now and what you want most.”',
-    quoteAr: '«الانضباط هو الاختيار بين ما تريده الآن، وما تريده أكثر من أي شيء آخر.»'
+    serialPrefix: 'GD-100',
+    privileges: {
+      en: [
+        'Official YARD 300 Verified Digital Identity & Biometric Ledger',
+        'Welcome Grant of 4,200 YARDX Athletic Utility Tokens',
+        'Full Access to Level 1 Calisthenics & Mobility Library',
+        'Weekly Qualification on the Global Combat Leaderboard',
+        'Obsidian & 24K Gold Dragon Collector Pass Edition'
+      ],
+      es: [
+        'Identidad Digital Verificada YARD 300 y Registro Biométrico',
+        'Asignación Inicial de 4,200 Tokens Atléticos YARDX',
+        'Acceso Completo a Biblioteca de Calistenia y Movilidad Nivel 1',
+        'Clasificación Semanal en el Ranking Mundial de Combate',
+        'Edición de Coleccionista Obsidiana y Oro 24K'
+      ],
+      fr: [
+        'Identité Numérique Vérifiée YARD 300 & Registre Biométrique',
+        'Dotation de Bienvenue de 4 200 Jetons Athlétiques YARDX',
+        'Accès Complet à la Bibliothèque Callisthénie & Mobilité Niveau 1',
+        'Qualification Hebdomadaire au Classement Mondial de Combat',
+        'Édition Collector Obsidienne & Or Dragon 24K'
+      ],
+      ar: [
+        'هوية YARD 300 الرقمية المعتمدة وسجل بيومتري دائم للأداء',
+        'منحة ترحيبية فورية بقيمة 4,200 عملة YARDX الرياضية',
+        'وصول كامل لمكتبة التأسيس البدني والمرونة الحركية',
+        'التأهل الأسبوعي في قائمة المتصدرين العالمية للأبطال',
+        'إصدار التنين الذهبي على قاعدة سوداء مطفية مرقمة'
+      ]
+    },
+    oath: {
+      en: 'Precision and patience forge sovereign gold under pressure.',
+      es: 'La precisión y la paciencia forjan oro soberano bajo presión.',
+      fr: 'La précision et la patience forgent l’or souverain sous pression.',
+      ar: 'الانضباط والصبر يصنعان القوة الذهبية قبل أن تبدأ المواجهة.'
+    }
   },
   {
     level: 2,
-    id: 'tier-kinetic',
-    nameEn: 'KINETIC STRIKER',
-    nameAr: 'المقاتل الحركي — المستوى 2',
-    titleEn: 'High Velocity Aerobic Power & ACWR Mastery',
-    titleAr: 'السرعة الانفجارية والتحكم بمؤشرات الحمل',
-    cardRank: 'TIER 2 // KINETIC PRO',
-    accentColor: '#FFE600',
-    borderColor: '#FFE600',
-    bgGradient: 'from-[#111218] via-[#1C180C] to-[#2B2308]',
-    holographicClass: 'hover:shadow-[0_0_55px_rgba(255,230,0,0.45)]',
-    auraScore: '7,450',
+    roman: 'TIER II',
+    id: 'crimson-meteor',
+    name: {
+      en: 'CRIMSON METEOR',
+      es: 'METEORO CARMESÍ',
+      fr: 'MÉTÉORE POURPRE',
+      ar: 'النيزك الأحمر'
+    },
+    mythicTag: {
+      en: 'Obsidian · Crimson Impact',
+      es: 'Obsidiana · Impacto Carmesí',
+      fr: 'Obsidienne · Impact Pourpre',
+      ar: 'أسود أوبسيديان · نيزك أحمر متوهج'
+    },
+    subtitle: {
+      en: 'Explosive Velocity, ACWR Shield & Arena Priority',
+      es: 'Velocidad Explosiva, Escudo ACWR y Prioridad Arena',
+      fr: 'Vélocité Explosive, Bouclier ACWR & Priorité Arène',
+      ar: 'السرعة الانفجارية، درع الإصابات وأولوية الحلبة'
+    },
+    accentHex: '#EF4444',
+    glowHex: 'rgba(239, 68, 68, 0.35)',
+    artwork: crimsonMeteorArt,
+    artworkAlt: 'Black Obsidian Card with Crimson Red Meteor Impact',
     yardxTokens: '7,450 YARDX',
-    privilegesEn: [
-      'All Tier 1 Privileges + Automated ACWR Injury Alerts',
-      'Grant of 7,450 YARDX Tokens & 2x Multiplier on Gauntlets',
-      'Access to Advanced Hyrox & Calisthenics Gauntlets',
-      'Priority Seating Access for Tournament Arena Tickets',
-      'Exclusive Gold Kinetic Foil Holographic Digital Credential'
-    ],
-    privilegesAr: [
-      'جميع مزايا المستوى 1 + تنبيهات خوارزمية ACWR الذكية لتفادي الإصابات',
-      'رصيد 7,450 عملة YARDX ومضاعف مكافآت 2x في النزالات',
-      'دخول حصري لتحديات الهايروكس والكاليستنكس المتقدمة',
-      'أولوية المقاعد في بطولات النزالات الحية ومدرجات التذاكر',
-      'بطاقة ذهبية حركية ثلاثية الأبعاد مشفرة'
-    ],
-    quoteEn: '“Velocity without precision is chaos. True power is controlled fire.”',
-    quoteAr: '«السرعة بلا دقة فوضى، والقوة الحقيقية نار موجهة بدقة متناهية.»'
+    serialPrefix: 'CM-200',
+    privileges: {
+      en: [
+        'All Tier I Privileges + Continuous ACWR & Sleep Debt Risk Alerts',
+        'Allocation of 7,450 YARDX Tokens + 2x Challenge Multiplier',
+        'Unrestricted Access to Hyrox Velocity & Sand Combat Drills',
+        'Priority Ringside Ticket Allocation for World Tour Events',
+        'Crimson Meteor Impact Edition Serialized Credential'
+      ],
+      es: [
+        'Todos los privilegios Nivel I + Alertas Continuas ACWR y Sueño',
+        'Asignación de 7,450 Tokens YARDX + Multiplicador 2x en Retos',
+        'Acceso Total a Velocidad Hyrox y Entrenamiento en Arena',
+        'Prioridad en Entradas Ringside del Tour Mundial',
+        'Credencial Serializada Edición Meteoro Carmesí'
+      ],
+      fr: [
+        'Tous les privilèges Niveau I + Alertes ACWR & Dette de Sommeil',
+        'Allocation de 7 450 Jetons YARDX + Multiplicateur Défis 2x',
+        'Accès Illimité aux Programmes Vélocité Hyrox & Sable',
+        'Priorité Billets Ringside pour la Tournée Mondiale',
+        'Accréditation Numérotée Édition Météore Pourpre'
+      ],
+      ar: [
+        'جميع مزايا المستوى الأول + تنبيهات خوارزمية الإصابات والنوم المباشرة',
+        'رصيد 7,450 عملة YARDX مع مضاعف 2x في التحديات',
+        'دخول كامل لبرامج السرعة والهايروكس وتمارين الرمال القتالية',
+        'أولوية حجز تذاكر الصفوف الأولى لبطولات YARD العالمية',
+        'إصدار النيزك الأحمر المتوهج بواجهة قتالية سوداء'
+      ]
+    },
+    oath: {
+      en: 'Strike with meteoric force; never waste a single motion.',
+      es: 'Golpea con fuerza meteórica; nunca desperdicies un movimiento.',
+      fr: 'Frappe avec une force météorique ; ne gaspille aucun mouvement.',
+      ar: 'اضرب بقوة النيزك وبدقة لا تهدر أي حركة في الميدان.'
+    }
   },
   {
     level: 3,
-    id: 'tier-titan',
-    nameEn: 'TITAN APEX',
-    nameAr: 'تيتان القمة — المستوى 3',
-    titleEn: 'Neuromuscular Mastery & Competition Ready',
-    titleAr: 'القمة العصبية والجاهزية التنافسية الدولية',
-    cardRank: 'TIER 3 // TITAN APEX MASTER',
-    accentColor: '#FF007A',
-    borderColor: '#FF007A',
-    bgGradient: 'from-[#150912] via-[#210D1D] to-[#330A2A]',
-    holographicClass: 'hover:shadow-[0_0_60px_rgba(255,0,122,0.5)]',
-    auraScore: '9,120',
+    roman: 'TIER III',
+    id: 'medusa-emerald',
+    name: {
+      en: 'MEDUSA POWER',
+      es: 'PODER MEDUSA',
+      fr: 'PUISSANCE MÉDUSE',
+      ar: 'قوة الميدوسا'
+    },
+    mythicTag: {
+      en: 'Obsidian · Emerald Medusa',
+      es: 'Obsidiana · Medusa Esmeralda',
+      fr: 'Obsidienne · Méduse Émeraude',
+      ar: 'أسود أوبسيديان · ميدوسا الزمردية'
+    },
+    subtitle: {
+      en: 'Private Club Ownership Key & AI Recovery Lab',
+      es: 'Licencia de Club Privado y Laboratorio IA',
+      fr: 'Licence Club Privé & Laboratoire Récupération IA',
+      ar: 'مفتاح ملكية النادي الخاص وبروتوكول الاستشفاء الذكي'
+    },
+    accentHex: '#10B981',
+    glowHex: 'rgba(16, 185, 129, 0.35)',
+    artwork: medusaEmeraldArt,
+    artworkAlt: 'Black Obsidian Card with Emerald Green Medusa Crest',
     yardxTokens: '9,120 YARDX',
-    privilegesEn: [
-      '👑 Exclusive Custom Athletic Club Ownership (Name, Custom Logo & Colors)',
-      '📱 Broadcast 24-Hour Club Stories & Daily Squad Combat Drills',
-      '🔗 Recruit Followers Inside & Outside App with Unique URL & QR Code',
-      'All Tier 2 Privileges + 1-on-1 AI Biometric Prescription',
-      'Direct 9,120 YARDX Staked Combat Currency Allocation',
-      'Serialized Metallic Titanium Member Pass with NFC Chip'
-    ],
-    privilegesAr: [
-      '👑 امتلاك وإدارة ناديك الرياضي الخاص (اسم مخصص، شعار وألوان خاصة)',
-      '📱 نشر ستوريات يومية 24 ساعة وتحديات تمارين قتالية للأعضاء',
-      '🔗 إضافة متابعين لناديك من داخل وخارج التطبيق عبر رابط ودعوات QR',
-      'جميع مزايا المستوى 2 + بروتوكولات استشفاء بيومتري ذكية مخصصة',
-      'رصيد 9,120 عملة YARDX موثقة ومربوطة بمحفظتك',
-      'بطاقة تيتانيوم حقيقية مرقمة بشريحة NFC مشفرة'
-    ],
-    quoteEn: '“The apex is reserved only for those who endure what others refuse to feel.”',
-    quoteAr: '«لا يصعد القمة إلا من تحمل ما عجز الآخرون عن مجرد مواجهته.»'
+    serialPrefix: 'MP-300',
+    privileges: {
+      en: [
+        'Full Private Athletic Club Ownership License (Custom Name & Squad)',
+        'Broadcast 24-Hour Training Stories & Daily Member Combat Drills',
+        'Direct Invite URL & QR Matrix to Recruit Global Squad Members',
+        'Staked Allocation of 9,120 YARDX Utility Tokens',
+        'Emerald Medusa Basalt Edition with Encrypted NFC Key'
+      ],
+      es: [
+        'Licencia Completa de Club Atlético Privado (Nombre y Escuadrón)',
+        'Emisión de Stories 24h y Rutinas Diarias para Miembros',
+        'Enlace Directo y Matriz QR para Reclutar Miembros Globales',
+        'Asignación Bloqueada de 9,120 Tokens YARDX',
+        'Edición Basalto Medusa Esmeralda con Llave NFC Cifrada'
+      ],
+      fr: [
+        'Licence Complète de Club Athlétique Privé (Nom & Équipe)',
+        'Diffusion Stories 24h & Séances Quotidiennes des Membres',
+        'Lien d’Invitation Direct & Matrice QR pour Recruter Partout',
+        'Allocation Stakée de 9 120 Jetons YARDX',
+        'Édition Basalte Méduse Émeraude avec Clé NFC Chiffrée'
+      ],
+      ar: [
+        'ترخيص كامل لامتلاك ناديك الرياضي الخاص (اسم، شعار وألوان مخصصة)',
+        'بث ستوريات التمارين اليومية لمدة 24 ساعة وجدولة تحديات الأعضاء',
+        'رابط دعوة مباشر ورمز QR لضم متابعين من داخل وخارج المنصة',
+        'رصيد موثق بقيمة 9,120 عملة YARDX مدمج في المحفظة',
+        'إصدار قوة الميدوسا الأخضر الزمردي مع شريحة NFC مشفرة'
+      ]
+    },
+    oath: {
+      en: 'Command the arena with unwavering focus that freezes all doubt.',
+      es: 'Domina la arena con una concentración que congela toda duda.',
+      fr: 'Domine l’arène avec une concentration absolue qui fige tout doute.',
+      ar: 'امتلك زمام الميدان بتركيز صلب يجمّد كل تردد أمامك.'
+    }
   },
   {
     level: 4,
-    id: 'tier-overdrive',
-    nameEn: 'GOD-TIER OVERDRIVE',
-    nameAr: 'أوفر درايف الأساطير — المستوى 4',
-    titleEn: 'Living Legend • Supreme Athletic Sovereignty',
-    titleAr: 'الأسطورة الحية • السيادة الرياضية المطلقة',
-    cardRank: 'TIER 4 // GOD-TIER OVERDRIVE',
-    accentColor: '#E50914',
-    borderColor: '#E50914',
-    bgGradient: 'from-[#180507] via-[#27090C] to-[#3D080E]',
-    holographicClass: 'hover:shadow-[0_0_70px_rgba(229,9,20,0.65)]',
-    auraScore: '9,999',
+    roman: 'TIER IV',
+    id: 'water-goddess',
+    name: {
+      en: 'WATER GODDESS',
+      es: 'DIOSA DEL AGUA',
+      fr: 'DÉESSE DE L’EAU',
+      ar: 'إلهة الماء'
+    },
+    mythicTag: {
+      en: 'Obsidian · Azure Sovereign',
+      es: 'Obsidiana · Azul Soberano',
+      fr: 'Obsidienne · Azur Souverain',
+      ar: 'أسود أوبسيديان · إلهة الماء الزرقاء'
+    },
+    subtitle: {
+      en: 'Bazaruto Sanctuary Concierge, Camps VIP & Sovereign Seal',
+      es: 'Concierge Santuario Bazaruto, Campamentos VIP y Sello Soberano',
+      fr: 'Conciergerie Sanctuaire Bazaruto, Camps VIP & Sceau Souverain',
+      ar: 'كونسيرج منتجع بازاروتو، معسكرات يارد والعضوية السيادية'
+    },
+    accentHex: '#38BDF8',
+    glowHex: 'rgba(56, 189, 248, 0.38)',
+    artwork: waterGoddessArt,
+    artworkAlt: 'Black Obsidian Card with Azure Water Goddess',
     yardxTokens: '9,999 YARDX',
-    privilegesEn: [
-      'Permanent Induction into the All-Time Hall of Fame',
-      'Maximum 9,999 YARDX Sovereign Token Treasury Allocation',
-      'VIP Lifetime Access to All Global YARD Combat Events',
-      'Co-Design Input on Next-Gen Limited Edition Drops',
-      'Heavyweight Serialized Obsidian & Gold Emblem Plaque'
-    ],
-    privilegesAr: [
-      'تخليد دائم في لوحة شرف أبطال كل الأوقات (Hall of Fame)',
-      'تخصيص خزينة 9,999 عملة YARDX سيادية الأعلى في المنظومة',
-      'تذاكر VIP ملكية دائمة لجميع بطولات ومهرجانات YARD العالمية',
-      'المشاركة في اختبار واعتماد تصاميم العتاد المحدود الجديد',
-      'درع تذكاري أسود مرصع بالذهب الخالص يحمل اسم البطل'
-    ],
-    quoteEn: '“Beyond human boundaries lies the realm of relentless will.”',
-    quoteAr: '«خلف حدود المستحيل يقبع عالم الإرادة التي لا تنكسر.»'
+    serialPrefix: 'WG-001',
+    privileges: {
+      en: [
+        'Priority Villa & Suite Reservation for Bazaruto Island Sanctuary (Oct 2027)',
+        'Guaranteed Invitation Slot in YARD 300 Global Expedition Camps (300 Cap)',
+        'Maximum 9,999 YARDX Sovereign Allocation + All Custom Club Rights',
+        'Lifetime VIP Access to Global Events & Next-Gen Gear Council',
+        'Abyssal Azure Water Goddess Edition (Serialized X / 300)'
+      ],
+      es: [
+        'Reserva Prioritaria de Villas en Santuario Bazaruto (Oct 2027)',
+        'Plaza Garantizada en Campamentos Globales YARD 300 (Máx. 300)',
+        'Máxima Asignación Soberana de 9,999 YARDX + Derechos de Club',
+        'Acceso VIP Vitalicio a Eventos Mundiales y Consejo de Diseño',
+        'Edición Azul Abisal Diosa del Agua (Numerada X / 300)'
+      ],
+      fr: [
+        'Réservation Prioritaire Villas au Sanctuaire Bazaruto (Oct 2027)',
+        'Place Garantie aux Camps d’Expédition YARD 300 (Cap 300)',
+        'Allocation Souveraine Maximale 9 999 YARDX + Droits Club',
+        'Accès VIP à Vie aux Événements Mondiaux & Conseil Équipement',
+        'Édition Azur Abyssal Déesse de l’Eau (Numérotée X / 300)'
+      ],
+      ar: [
+        'أولوية الكونسيرج لحجز الفيلل والأجنحة الملكية في جزيرة بازاروتو (أكتوبر 2027)',
+        'مقعد أولوية مضمون في معسكرات يارد 300 الدولية المغلقة (سعة 300 فقط)',
+        'أعلى تخصيص بقيمة 9,999 عملة YARDX سيادية + جميع صلاحيات النادي الخاص',
+        'دخول VIP مدى الحياة لجميع البطولات والمشاركة في تصميم الإصدارات القادمة',
+        'إصدار إلهة الماء الأزرق على معدن أسود فاحم مرقم من 300 نسخة فقط'
+      ]
+    },
+    oath: {
+      en: 'Boundless like the ocean; serene in stillness, unstoppable in motion.',
+      es: 'Sin límites como el océano; serena en calma, imparable en acción.',
+      fr: 'Sans limites comme l’océan ; sereine au calme, imparable en mouvement.',
+      ar: 'بلا حدود كالمحيط؛ هدوء مطلق في السكون وقوة لا تُقهر عند الحركة.'
+    }
   }
 ];
+
+const DISCIPLINES = ['HYROX PRO', 'COMBAT BOXING', 'REFORMER PILATES', 'ENDURANCE'];
 
 export const SubscriberTiersShowcase: React.FC<SubscriberTiersShowcaseProps> = ({
   currentLang = 'en',
   onNavigateToClub
 }) => {
   const isAr = currentLang === 'ar';
-  const [selectedLevel, setSelectedLevel] = useState<number>(1);
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+  const [selectedLevel, setSelectedLevel] = useState<1 | 2 | 3 | 4>(1);
+  const [flippedMap, setFlippedMap] = useState<Record<number, boolean>>({});
   const [athleteName, setAthleteName] = useState<string>('YAM SUW');
-  const [memberId, setMemberId] = useState<string>('YD-300-8842');
-  const [cardEdition, setCardEdition] = useState<'men' | 'women'>('men');
+  const [discipline, setDiscipline] = useState<string>('COMBAT BOXING');
+  const [serialSuffix, setSerialSuffix] = useState<string>('001/300');
   const [downloading, setDownloading] = useState<boolean>(false);
   const [downloadSuccess, setDownloadSuccess] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<boolean>(false);
   const [showPrivilegesModal, setShowPrivilegesModal] = useState<boolean>(false);
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const [activatedLevels, setActivatedLevels] = useState<Record<number, boolean>>({});
+  const [clubFee, setClubFee] = useState<number>(
+    () => OwnerConfigService.getConfig().siteSettings?.clubMembershipPrice ?? 30
+  );
 
-  const activeTier = TIERS.find(t => t.level === selectedLevel) || TIERS[0];
-  const isWomen = cardEdition === 'women';
+  useEffect(() => {
+    return OwnerConfigService.subscribe((cfg) => {
+      setClubFee(cfg.siteSettings?.clubMembershipPrice ?? 30);
+    });
+  }, []);
 
-  const handleSelectLevel = (level: number) => {
-    soundFX.playButtonClick();
-    setSelectedLevel(level);
-    setIsFlipped(false);
+  const getTierText = (obj: { en: string; es: string; fr: string; ar: string }) =>
+    tr(currentLang, obj);
+
+  const getTierPrivileges = (privs: { en: string[]; es: string[]; fr: string[]; ar: string[] }) => {
+    if (currentLang === 'ar') return privs.ar;
+    if (currentLang === 'es') return privs.es;
+    if (currentLang === 'fr') return privs.fr;
+    return privs.en;
   };
 
-  const handleFlipCard = () => {
+  const activeTier = TIERS.find((t) => t.level === selectedLevel) || TIERS[0];
+  const fullSerial = `${activeTier.serialPrefix}-${serialSuffix}`;
+  const isSubscribed = Boolean(activatedLevels[activeTier.level]);
+
+  const handleSelectTier = (lvl: 1 | 2 | 3 | 4) => {
     soundFX.playButtonClick();
-    setIsFlipped(!isFlipped);
+    setSelectedLevel(lvl);
   };
 
-  const handleDownloadCard = () => {
+  const handleToggleFlip = (lvl: 1 | 2 | 3 | 4, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    soundFX.playButtonClick();
+    setSelectedLevel(lvl);
+    setFlippedMap((prev) => ({ ...prev, [lvl]: !prev[lvl] }));
+  };
+
+  const handleRandomizeSerial = () => {
+    soundFX.playButtonClick();
+    const num = String(Math.floor(Math.random() * 299) + 1).padStart(3, '0');
+    setSerialSuffix(`${num}/300`);
+  };
+
+  const handleDownloadCardImage = async (tierToExport: TierCardModel = activeTier) => {
     soundFX.playButtonClick();
     setDownloading(true);
-    setTimeout(() => {
-      setDownloading(false);
-      setDownloadSuccess(true);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1012;
+      canvas.height = 638;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#050507';
+        ctx.fillRect(0, 0, 1012, 638);
+
+        await new Promise<void>((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            ctx.save();
+            ctx.globalAlpha = 0.78;
+            ctx.drawImage(img, 0, 0, 1012, 638);
+            ctx.restore();
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = tierToExport.artwork;
+        });
+
+        const scrim = ctx.createLinearGradient(0, 0, 1012, 638);
+        scrim.addColorStop(0, 'rgba(5, 5, 7, 0.85)');
+        scrim.addColorStop(0.55, 'rgba(5, 5, 7, 0.45)');
+        scrim.addColorStop(1, 'rgba(5, 5, 7, 0.88)');
+        ctx.fillStyle = scrim;
+        ctx.fillRect(0, 0, 1012, 638);
+
+        ctx.strokeStyle = tierToExport.accentHex;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(20, 20, 972, 598);
+
+        ctx.fillStyle = tierToExport.accentHex;
+        ctx.font = 'bold 20px monospace';
+        ctx.fillText(`YARD 300 · ${tierToExport.roman}`, 52, 74);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 42px sans-serif';
+        ctx.fillText(tierToExport.name.en, 52, 128);
+
+        ctx.fillStyle = '#CBD5E1';
+        ctx.font = '19px sans-serif';
+        ctx.fillText(tierToExport.mythicTag.en, 52, 162);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 34px monospace';
+        ctx.fillText(athleteName || 'YARD ATHLETE', 52, 524);
+
+        ctx.fillStyle = tierToExport.accentHex;
+        ctx.font = 'bold 22px monospace';
+        ctx.fillText(`${tierToExport.serialPrefix}-${serialSuffix}`, 52, 562);
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = tierToExport.accentHex;
+        ctx.font = 'bold 28px monospace';
+        ctx.fillText(tierToExport.yardxTokens, 956, 524);
+        ctx.fillStyle = '#CBD5E1';
+        ctx.font = '20px monospace';
+        ctx.fillText(discipline, 956, 562);
+
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `YARD300_${tierToExport.id}_${(athleteName || 'PASS').replace(/\s+/g, '_')}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
       soundFX.playSuccess();
-      setTimeout(() => setDownloadSuccess(false), 3500);
-    }, 1000);
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch {
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } finally {
+      setDownloading(false);
+    }
   };
 
-  const handleCopyId = () => {
+  const handleCopySerial = () => {
     soundFX.playButtonClick();
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(memberId).catch(() => {});
+      navigator.clipboard.writeText(fullSerial).catch(() => {});
     }
     setCopiedId(true);
-    setTimeout(() => setCopiedId(false), 2500);
-  };
-
-  const handleShareOnX = () => {
-    soundFX.playButtonClick();
-    const text = isAr 
-      ? `تحققت من بطاقتي الاستثنائية في YARD300 (${isWomen ? 'إصدار بطلات يارد' : 'إصدار أبطال يارد'}) — المستوى ${activeTier.level}: ${activeTier.nameAr.split('—')[0]}! 🔥`
-      : `My YARD300 Elite Digital Credential (${isWomen ? 'Women’s Edition' : 'Men’s Edition'}) — Tier ${activeTier.level}: ${activeTier.nameEn}! 🔥`;
-    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&via=YAMSUW300`, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleSubscribeToggle = () => {
-    soundFX.playStartTrainingSound();
-    setIsSubscribed(true);
-    setShowPrivilegesModal(true);
+    setTimeout(() => setCopiedId(false), 2200);
   };
 
   return (
-    <section id="subscriber-tiers" className="py-16 sm:py-20 px-3 sm:px-4 md:px-8 max-w-[1400px] w-full max-w-full mx-auto relative overflow-hidden overflow-x-hidden">
-      
-      {/* Background Ambient Glow */}
-      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] blur-[150px] rounded-full pointer-events-none transition-colors duration-700 ${
-        isWomen ? 'bg-[#FF007A]/12' : 'bg-[#00F0FF]/10'
-      }`} />
-
-      {/* Sleek Minimalist Header */}
-      <div className="text-center max-w-3xl mx-auto mb-10 space-y-3 relative z-10">
-        {/* Mecha HUD Telemetry Bar */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0E111C] shadow-[0_0_20px_rgba(0,240,255,0.35)] relative overflow-hidden">
-          <div className="w-2 h-2 rounded-full bg-[#00F0FF] animate-hud-blink" />
-          <Sparkles className="w-3.5 h-3.5 text-[#FFE600] animate-pulse" />
-          <span className="text-[10px] md:text-[11px] font-black font-mono tracking-widest text-[#00F0FF] uppercase">
-            {isAr ? 'بروتوكول الهوية القتالية // YARD300 MECHA SUBSCRIBER HUD' : 'TAC.PROTOCOL // YARD300 MECHA SUBSCRIBER HUD'}
-          </span>
-          <span className="hidden sm:inline-block text-[9px] font-mono text-gray-400 border-l border-gray-700 pl-2">
-            GRID://TOKYO-CYBER-01
+    <section
+      id="subscriber-tiers"
+      className={`py-5 sm:py-6 px-3 sm:px-5 md:px-6 max-w-[1440px] mx-auto relative overflow-hidden ${
+        isAr ? 'text-right' : 'text-left'
+      }`}
+    >
+      {/* Compact Header */}
+      <div className="max-w-2xl mx-auto text-center mb-5 space-y-1.5">
+        <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#D4AF37] uppercase tracking-[0.2em]">
+          <Crown className="w-3 h-3" />
+          <span>
+            {tr(currentLang, {
+              en: 'OBSIDIAN BLACK CREDENTIALS · 4 MYTHIC EDITIONS',
+              es: 'CREDENCIALES NEGRO OBSIDIANA · 4 EDICIONES',
+              fr: 'ACCRÉDITATIONS NOIR OBSIDIENNE · 4 ÉDITIONS',
+              ar: 'بطاقات العضوية السوداء · 4 مستويات أسطورية مستقلة'
+            })}
           </span>
         </div>
 
-        <h2 className="text-3xl md:text-5xl font-black font-anime text-white tracking-tight relative">
-          <span className="inline-block hover-cyber-glitch cursor-default">
-            {isAr ? 'بطاقة النخبة ' : 'THE EXCEPTIONAL '}
-            <span className="text-[#FFE600] neon-text-yellow">{isAr ? 'الاستثنائية' : 'CREDENTIAL'}</span>
+        <h2
+          className="text-2xl md:text-3xl font-extrabold text-white tracking-tight"
+          style={{ textWrap: 'balance' }}
+        >
+          {tr(currentLang, {
+            en: 'YARD 300 ',
+            es: 'SERIE ',
+            fr: 'SÉRIE ',
+            ar: 'بطاقات المشتركين '
+          })}
+          <span className="text-[#D4AF37]">
+            {tr(currentLang, {
+              en: 'OBSIDIAN SERIES',
+              es: 'OBSIDIANA YARD 300',
+              fr: 'OBSIDIENNE YARD 300',
+              ar: 'الرباعية السوداء'
+            })}
           </span>
         </h2>
-        
-        <p className="text-xs md:text-sm text-gray-300 font-bold max-w-xl mx-auto leading-relaxed">
-          {isAr 
-            ? 'تصميم قتالي ميكا مستقبلي يجسد هيبة الأبطال. واجهة HUD تفاعلية ومزايا استثنائية تُكشف للمشتركين فقط عند الانضمام.' 
-            : 'Futuristic Mecha-HUD credential engineered for elite athletes. Interactive biometric display with unlocked privileges revealed upon activation.'}
+
+        <p className="text-[11px] md:text-xs text-slate-400 max-w-xl mx-auto leading-relaxed">
+          {tr(currentLang, {
+            en: 'Four matte obsidian membership cards: Golden Dragon, Crimson Meteor, Emerald Medusa, and Azure Water Goddess.',
+            es: 'Cuatro tarjetas negro obsidiana: Dragón Dorado, Meteoro Carmesí, Medusa Esmeralda y Diosa del Agua.',
+            fr: 'Quatre cartes noir obsidienne : Dragon d’Or, Météore Pourpre, Méduse Émeraude et Déesse de l’Eau.',
+            ar: 'أربع بطاقات باللون الأسود الفاحم بتصاميم مستقلة: التنين الذهبي، النيزك الأحمر، قوة الميدوسا، وإلهة الماء.'
+          })}
         </p>
-
-        {/* Division Switcher (Men vs Women) */}
-        <div className="flex items-center justify-center gap-3 pt-3">
-          <button
-            type="button"
-            onClick={() => {
-              soundFX.playButtonClick();
-              setCardEdition('men');
-            }}
-            className={`px-4 py-2 rounded-xl border font-anime font-black text-xs transition-all cursor-pointer flex items-center gap-2 hover-cyber-glitch relative ${
-              cardEdition === 'men'
-                ? 'border-[#00F0FF] bg-[#00F0FF]/20 text-white neon-border-cyan scale-105'
-                : 'border-gray-800 bg-[#10121C] text-gray-400 hover:text-white hover:border-[#00F0FF]/50'
-            }`}
-          >
-            <span>⚔️</span>
-            <span>{isAr ? 'أوبسيديان وتيتانيوم (رجالي)' : 'OBSIDIAN TITANIUM (MEN)'}</span>
-            {cardEdition === 'men' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-ping" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              soundFX.playButtonClick();
-              setCardEdition('women');
-            }}
-            className={`px-3.5 py-1.5 rounded-xl border font-anime font-black text-xs transition-all cursor-pointer flex items-center gap-2 hover-cyber-glitch relative ${
-              cardEdition === 'women'
-                ? 'border-[#A855F7] bg-[#A855F7]/25 text-white scale-105 shadow-[0_0_15px_rgba(168,85,247,0.45)]'
-                : 'border-gray-800 bg-[#10121C] text-gray-400 hover:text-white hover:border-[#A855F7]/50'
-            }`}
-          >
-            <span>💜</span>
-            <span>{isAr ? 'أسود وبنفسجي ملكي (نسائي)' : 'OBSIDIAN & PURPLE (WOMEN)'}</span>
-            {cardEdition === 'women' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#A855F7] animate-ping" />
-            )}
-          </button>
-        </div>
-
-        {/* Minimalist 4 Tiers Level Selector with glowing neon anime currency badges */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-1.5">
-          {TIERS.map(tier => (
-            <button
-              key={tier.level}
-              type="button"
-              onClick={() => handleSelectLevel(tier.level)}
-              className={`px-3 py-1.5 rounded-xl border font-anime font-black text-xs transition-all cursor-pointer flex items-center gap-1.5 hover-cyber-glitch ${
-                selectedLevel === tier.level
-                  ? 'bg-[#181A28] scale-105 ' + (isWomen ? 'border-[#A855F7] text-[#C084FC] shadow-[0_0_12px_rgba(168,85,247,0.4)]' : 'neon-border-yellow text-[#FFE600]')
-                  : 'bg-[#0E1018] border-gray-800 text-gray-400 hover:text-white hover:border-gray-600'
-              }`}
-              style={{
-                borderColor: selectedLevel === tier.level ? (isWomen ? '#A855F7' : tier.borderColor) : undefined,
-                color: selectedLevel === tier.level ? (isWomen ? '#C084FC' : tier.accentColor) : undefined
-              }}
-            >
-              <Award className="w-3.5 h-3.5 shrink-0" />
-              <span>LVL {tier.level}</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/60 border border-white/20 text-[#FFE600] font-black">
-                {tier.yardxTokens}
-              </span>
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Main Focus: The Exceptional Compact Card Display in Mecha Cockpit HUD Frame */}
-      <div className="flex flex-col items-center justify-center max-w-md mx-auto space-y-3.5 relative">
-        
-        {/* Mecha HUD Reticle Frame Surrounding The Card */}
-        <div className="w-full relative p-2.5 md:p-3.5 rounded-2xl bg-[#090A12]/85 shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-xl">
-          {/* Tactical Mecha Corner Brackets */}
-          <div className="hud-corner-bracket hud-corner-bracket-tl !w-3.5 !h-3.5 !border-t-2 !border-l-2" style={{ borderColor: isWomen ? '#A855F7' : '#00F0FF' }} />
-          <div className="hud-corner-bracket hud-corner-bracket-tr !w-3.5 !h-3.5 !border-t-2 !border-r-2" style={{ borderColor: isWomen ? '#A855F7' : '#00F0FF' }} />
-          <div className="hud-corner-bracket hud-corner-bracket-bl !w-3.5 !h-3.5 !border-b-2 !border-l-2" style={{ borderColor: isWomen ? '#A855F7' : '#00F0FF' }} />
-          <div className="hud-corner-bracket hud-corner-bracket-br !w-3.5 !h-3.5 !border-b-2 !border-r-2" style={{ borderColor: isWomen ? '#A855F7' : '#00F0FF' }} />
+      {/* The 4 Compact Obsidian Black Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mb-5">
+        {TIERS.map((tier) => {
+          const isSelected = selectedLevel === tier.level;
+          const isCardFlipped = Boolean(flippedMap[tier.level]);
+          const cardSerial = `${tier.serialPrefix}-${serialSuffix}`;
+          const cardActive = Boolean(activatedLevels[tier.level]);
 
-          {/* Top Mecha HUD Telemetry Bar */}
-          <div className="flex items-center justify-between pb-2 px-1 border-b border-white/10 text-[9px] font-mono font-bold text-gray-400">
-            <span className="flex items-center gap-1.5" style={{ color: isWomen ? '#C084FC' : '#00F0FF' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping inline-block" />
-              [ HUD.TARGET // LOCKED ]
-            </span>
-            <span className="text-gray-400 hidden sm:inline">
-              SYS.SYNC: 99.8% • ARMOR: COMPOSITE TITANIUM
-            </span>
-            <span className="text-[#FFE600] font-anime flex items-center gap-1">
-              <span>🪙 {activeTier.yardxTokens}</span>
-              <span className="text-gray-500">|</span>
-              <span>LVL {activeTier.level}</span>
-            </span>
-          </div>
+          return (
+            <div key={tier.id} className="flex flex-col gap-2">
+              {/* Compact Pitch-Black Physical Card (1.68:1 Ratio for sleek profile) */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSelectTier(tier.level)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelectTier(tier.level);
+                  }
+                }}
+                className={`group relative w-full aspect-[1.68/1] rounded-xl overflow-hidden bg-[#050507] border transition-all duration-200 cursor-pointer select-none ${
+                  isSelected
+                    ? '-translate-y-0.5 ring-1 ring-offset-1 ring-offset-[#07080C]'
+                    : 'border-white/[0.12] hover:border-white/30'
+                }`}
+                style={{
+                  borderColor: isSelected ? tier.accentHex : undefined,
+                  boxShadow: isSelected
+                    ? `0 16px 32px -12px ${tier.glowHex}`
+                    : '0 10px 22px -10px rgba(0,0,0,0.8)'
+                }}
+              >
+                <img
+                  src={tier.artwork}
+                  alt={tier.artworkAlt}
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                  decoding="async"
+                  className={`absolute inset-0 w-full h-full object-cover transition-transform duration-300 ${
+                    isCardFlipped ? 'opacity-20 scale-105' : 'opacity-85 group-hover:scale-[1.03]'
+                  }`}
+                />
 
-          {/* Flip Hint & Status */}
-          <div className="flex items-center justify-between w-full px-1 py-1.5 text-xs">
-            <button
-              type="button"
-              onClick={handleFlipCard}
-              className="inline-flex items-center gap-1.5 text-gray-300 hover:text-white font-black font-anime cursor-pointer transition-colors hover-cyber-glitch"
-            >
-              <RotateCw className={`w-3 h-3 ${isWomen ? 'text-[#A855F7]' : 'text-[#00F0FF]'}`} />
-              <span>{isAr ? (isFlipped ? 'عرض وجه البطاقة' : 'اقلب البطاقة للظهر') : (isFlipped ? 'Show Front Side' : 'Flip to Back')}</span>
-            </button>
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: isCardFlipped
+                      ? 'linear-gradient(145deg, rgba(5,5,7,0.94), rgba(5,5,7,0.88))'
+                      : 'linear-gradient(135deg, rgba(5,5,7,0.86) 0%, rgba(5,5,7,0.38) 52%, rgba(5,5,7,0.88) 100%)'
+                  }}
+                />
 
-            <span className="font-mono text-[10px] text-gray-400 flex items-center gap-1.5">
-              <span className={`w-1.5 h-1.5 rounded-full ${isSubscribed ? 'bg-emerald-400 animate-ping' : 'bg-[#FFE600]'}`}></span>
-              <span className="font-bold">{isSubscribed ? (isAr ? 'عضوية مفعلة ✓' : 'ACTIVE MEMBER ✓') : (isAr ? 'جاهزة للاشتراك' : 'READY TO ACTIVATE')}</span>
-            </span>
-          </div>
+                <div
+                  className="absolute inset-1.5 rounded-lg border pointer-events-none"
+                  style={{ borderColor: `${tier.accentHex}44` }}
+                />
 
-          {/* 3D Exceptional Compact Card Canvas with Hover Glitch & Glowing Neon Borders */}
-          <div 
-            className={`w-full aspect-[1.586/1] rounded-2xl p-4 md:p-5 relative overflow-hidden transition-all duration-700 transform border-2 cursor-pointer select-none hover-card-glitch group ${
-              isWomen 
-                ? 'bg-gradient-to-br from-[#0B0714] via-[#1B0B33] to-[#0A0416] border-[#A855F7] shadow-[0_0_30px_rgba(168,85,247,0.45),inset_0_0_15px_rgba(168,85,247,0.2)]' 
-                : `bg-gradient-to-br ${activeTier.bgGradient} shadow-[0_0_35px_rgba(0,240,255,0.4),inset_0_0_15px_rgba(0,240,255,0.18)]`
-            }`}
-            style={{ 
-              borderColor: isWomen ? '#A855F7' : activeTier.borderColor,
-              boxShadow: isWomen 
-                ? '0 0 25px rgba(168,85,247,0.45), inset 0 0 15px rgba(168,85,247,0.2)' 
-                : `0 0 25px ${activeTier.accentColor}80, inset 0 0 15px ${activeTier.accentColor}33`
-            }}
-            onClick={handleFlipCard}
-          >
-            {/* Holographic Iridescent Sheen & CRT Scanline */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent pointer-events-none opacity-60 mix-blend-overlay" />
-            <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none animate-scanline opacity-50" />
-            
-            <div 
-              className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-35 animate-neon-pulse" 
-              style={{ backgroundColor: isWomen ? '#A855F7' : activeTier.accentColor }} 
-            />
+                {!isCardFlipped ? (
+                  <div className="relative z-10 h-full p-3.5 flex flex-col justify-between">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <img
+                          src={YARD300_BRAND_LOGO}
+                          alt="YARD 300"
+                          referrerPolicy="no-referrer"
+                          onError={handleImageError}
+                          className="w-6 h-6 rounded-md object-cover border border-white/20 shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <span className="text-[10px] font-extrabold text-white tracking-wide block leading-tight">
+                            YARD 300
+                          </span>
+                          <span
+                            className="text-[9px] font-mono font-bold tracking-wider uppercase block truncate"
+                            style={{ color: tier.accentHex }}
+                          >
+                            {tier.roman} · {getTierText(tier.name)}
+                          </span>
+                        </div>
+                      </div>
 
-            {!isFlipped ? (
-              /* CARD FRONT */
-              <div className="h-full flex flex-col justify-between relative z-10">
-                
-                {/* Card Top: Brand Emblem & Prestige Badge */}
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-2.5">
-                    <img loading="lazy" decoding="async" 
-                      src={YARD300_BRAND_LOGO} 
-                      alt="YARD300" 
-                      onError={handleImageError} 
-                      className="w-8 h-8 rounded-lg border border-white/30 object-cover shadow-lg group-hover:rotate-3 transition-transform" 
-                    />
-                    <div>
-                      <span className="font-black font-anime text-xs md:text-sm tracking-wider text-white flex items-center gap-1.5">
-                        <span>YARD300 {isWomen ? 'OBSIDIAN PURPLE' : 'TITANIUM BLACK'}</span>
-                        <Sparkles className={`w-3 h-3 ${isWomen ? 'text-[#C084FC]' : 'text-[#FFE600]'}`} />
-                      </span>
-                      <span className="text-[8px] font-mono text-gray-300 uppercase tracking-widest block font-bold">
-                        {isWomen ? '💜 S-RANK WOMEN’S CREDENTIAL' : '⚔️ S-RANK TITANIUM CREDENTIAL'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Metallic Seal */}
-                  <div className={`px-2 py-0.5 rounded-lg border text-[8px] font-black font-anime tracking-wider flex items-center gap-1 backdrop-blur-md ${
-                    isWomen 
-                      ? 'border-[#A855F7] bg-black/70 text-[#C084FC] shadow-[0_0_10px_#A855F7]' 
-                      : 'border-[#FFE600] bg-black/60 text-[#FFE600] shadow-[0_0_10px_#FFE600]'
-                  }`}>
-                    <Crown className="w-2.5 h-2.5" />
-                    <span>VIP MERIT</span>
-                  </div>
-                </div>
-
-                {/* Card Middle: Gold Smart Chip, NFC & Anime 4,200 YARDX Currency Pod */}
-                <div className="my-auto flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    {/* Metallic Holographic EMV Chip */}
-                    <div className={`w-9 h-6 rounded-md border-2 relative overflow-hidden shadow-xl flex items-center justify-center shrink-0 ${
-                      isWomen 
-                        ? 'bg-gradient-to-br from-[#2D0652] via-[#6B21A8] to-[#A855F7] border-purple-300/60 shadow-[0_0_12px_rgba(168,85,247,0.5)]' 
-                        : 'bg-gradient-to-br from-[#FFE600] via-[#C9A227] to-[#7A5B00] border-amber-200/60 shadow-[0_0_15px_rgba(255,230,0,0.35)]'
-                    }`}>
-                      <div className="w-full h-px bg-black/40" />
-                      <div className="absolute w-px h-full bg-black/40" />
-                      <div className="absolute w-3.5 h-3.5 rounded-full border border-black/30" />
-                    </div>
-
-                    {/* Contactless NFC Waves */}
-                    <div className="flex flex-col items-center gap-0.5 opacity-90 shrink-0">
-                      <svg className="w-3 h-3 text-white/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M8.5 16.5a5 5 0 0 1 0-9" strokeLinecap="round" />
-                        <path d="M12 19a8.5 8.5 0 0 0 0-14" strokeLinecap="round" />
-                        <path d="M15.5 21.5a12 12 0 0 0 0-19" strokeLinecap="round" />
-                      </svg>
-                      <span className="text-[6px] font-mono text-gray-300 font-black">NFC</span>
-                    </div>
-
-                    <div>
-                      <span className="text-[8px] font-bold text-gray-300 block font-mono">
-                        {isWomen ? 'DIVISION: OBSIDIAN PURPLE' : 'DIVISION: TITANIUM WARRIOR'}
-                      </span>
-                      <span className="text-xs md:text-sm font-black font-anime tracking-wide text-white block group-hover:neon-text-cyan transition-all" style={{ color: isWomen ? '#C084FC' : activeTier.accentColor }}>
-                        {isAr ? activeTier.nameAr.split('—')[0] : activeTier.nameEn}
+                      <span
+                        className="text-[9px] font-mono font-bold tabular-nums shrink-0 bg-black/75 px-1.5 py-0.5 rounded border"
+                        style={{ color: tier.accentHex, borderColor: `${tier.accentHex}55` }}
+                      >
+                        {tier.yardxTokens}
                       </span>
                     </div>
-                  </div>
 
-                  {/* Anime Cyber Currency Pod (Prominently displaying 4,200 YARDX) */}
-                  <div className="text-right shrink-0">
-                    <div className="px-2.5 py-1 rounded-lg bg-black/75 border border-[#FFE600]/80 shadow-[0_0_15px_rgba(255,230,0,0.4)] backdrop-blur-md group-hover:scale-105 transition-all text-right">
-                      <div className="flex items-center justify-end gap-1 mb-0.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#FFE600] animate-ping" />
-                        <span className="text-[7px] font-mono text-[#00F0FF] uppercase font-black tracking-wider">
-                          OFFICIAL CURRENCY
+                    <div className="pt-1.5 border-t border-white/[0.14] flex items-end justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[8px] font-mono text-slate-400 uppercase tracking-widest block">
+                          {discipline}
+                        </span>
+                        <span className="font-mono font-bold text-[11px] text-white tracking-[0.1em] uppercase truncate block">
+                          {athleteName || 'YARD ATHLETE'}
                         </span>
                       </div>
-                      <div className="flex items-center justify-end gap-1">
-                        <span className="text-xs">🪙</span>
-                        <span className="text-xs md:text-sm font-black font-anime text-[#FFE600] tracking-wider drop-shadow-[0_0_8px_rgba(255,230,0,0.9)]">
-                          {activeTier.yardxTokens}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-0.5 flex items-center justify-end gap-1.5 text-[8px] font-mono">
-                      <span className="text-white/50 font-black font-anime">LVL {activeTier.level}</span>
-                      <span className="text-[#00F0FF] font-bold">AURA {activeTier.auraScore}</span>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Card Bottom: Athlete Name & Serial */}
-                <div className="pt-2 border-t border-white/15 flex justify-between items-end">
-                  <div>
-                    <span className="text-[7px] font-mono text-gray-400 block tracking-widest">AUTHORIZED ATHLETE</span>
-                    <span className="font-mono font-black text-[11px] md:text-xs text-white tracking-widest drop-shadow-md">
-                      {athleteName}
-                    </span>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="text-[7px] font-mono text-gray-400 block tracking-widest">SERIAL NUMBER</span>
-                    <span className={`font-mono text-[11px] md:text-xs font-black tracking-wider ${isWomen ? 'text-[#C084FC]' : 'text-[#00F0FF]'}`}>
-                      {memberId}
-                    </span>
-                  </div>
-                </div>
-
-              </div>
-            ) : (
-              /* CARD BACK */
-              <div className="h-full flex flex-col justify-between relative z-10">
-                {/* Magnetic Strip */}
-                <div className="-mx-4 md:-mx-5 -mt-2 h-9 bg-black/95 border-y border-white/10 flex items-center px-3 justify-between">
-                  <span className="text-[7px] font-mono text-gray-400 tracking-widest">
-                    YARD300 BIOMETRIC PASS • ISO/IEC 7810 • 2026
-                  </span>
-                  <span className="text-[7px] font-mono text-emerald-400 font-bold">● ACTIVE CHIP</span>
-                </div>
-
-                {/* Anime Cryptographic Vault & 4,200 YARDX Ledger */}
-                <div className="px-3 py-2 rounded-xl bg-black/70 border border-[#FFE600]/40 flex items-center justify-between">
-                  <div>
-                    <span className="text-[7px] font-mono text-gray-400 block tracking-widest uppercase">
-                      {isAr ? 'خزينة العملة المودعة' : 'STAKED COMBAT TREASURY'}
-                    </span>
-                    <span className="text-xs md:text-sm font-black font-anime text-[#FFE600] flex items-center gap-1.5">
-                      <span>🪙 {activeTier.yardxTokens}</span>
-                      <span className="text-[8px] font-mono text-[#00F0FF]">
-                        ≈ ${(parseInt(activeTier.yardxTokens.replace(/\D/g, '')) * 0.15).toFixed(0)} USD
+                      <span
+                        className="font-mono font-bold text-[10px] tabular-nums shrink-0"
+                        style={{ color: tier.accentHex }}
+                      >
+                        {cardSerial}
                       </span>
-                    </span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-[7px] font-mono text-gray-400 block tracking-widest uppercase">
-                      CONTRACT STATUS
-                    </span>
-                    <span className="text-[8px] font-mono text-emerald-400 font-black">
-                      VAULT VERIFIED ✓
-                    </span>
+                ) : (
+                  <div className="relative z-10 h-full p-3.5 flex flex-col justify-between">
+                    <div className="-mx-3.5 -mt-1 h-6 bg-black/95 border-y border-white/15 flex items-center justify-between px-3.5 text-[9px] font-mono text-slate-400">
+                      <span>{tier.roman} · NFC SEAL</span>
+                      <span style={{ color: tier.accentHex }}>
+                        {cardActive
+                          ? tr(currentLang, { en: 'ACTIVE', es: 'ACTIVA', fr: 'ACTIVE', ar: 'مفعلة' })
+                          : 'YARD300.CLUB'}
+                      </span>
+                    </div>
+
+                    <p className="text-[10px] text-slate-200 text-center leading-relaxed px-1 my-auto">
+                      “{getTierText(tier.oath)}”
+                    </p>
+
+                    <div className="pt-1.5 border-t border-white/[0.12] flex items-center justify-between text-[9px] font-mono text-slate-400 tabular-nums">
+                      <span>{tier.yardxTokens}</span>
+                      <span style={{ color: tier.accentHex }}>{cardSerial}</span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Back Center Engraved Quote */}
-                <div className="my-auto p-2.5 rounded-xl bg-black/50 border border-white/10 text-center">
-                  <span className="text-[8px] font-black font-anime text-[#FFE600] uppercase block">
-                    {isAr ? 'عزيمة البطل الاستثنائية' : 'WARRIOR CODE OF MERIT'}
-                  </span>
-                  <p className="text-[10px] md:text-[11px] text-gray-300 font-bold leading-relaxed mt-0.5">
-                    {isAr ? activeTier.quoteAr : activeTier.quoteEn}
-                  </p>
-                </div>
-
-                {/* Signature Strip */}
-                <div className="pt-2 border-t border-white/15 flex justify-between items-center">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse" />
-                    <span className="text-[9px] font-mono text-gray-300 font-bold">
-                      BIOMETRIC CERTIFIED
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-black font-anime text-[#FFE600]">
-                    YARD300 OFFICIAL
-                  </span>
-                </div>
-
+                )}
               </div>
-            )}
 
-          </div>
+              {/* Compact Tier Action Bar */}
+              <div
+                className={`rounded-xl p-2.5 bg-[#0A0B10] border transition-colors ${
+                  isSelected ? 'border-white/25' : 'border-white/[0.08]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-extrabold text-white truncate">
+                      {getTierText(tier.name)}
+                    </h3>
+                    <span className="text-[9px] font-mono text-slate-400 block truncate">
+                      {getTierText(tier.mythicTag)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleFlip(tier.level, e)}
+                    title={tr(currentLang, { en: 'Flip Card', es: 'Voltear', fr: 'Retourner', ar: 'اقلب البطاقة' })}
+                    className="p-1.5 rounded-lg bg-[#12141E] hover:bg-[#1B1F2E] border border-white/[0.1] text-slate-300 hover:text-white transition-colors cursor-pointer shrink-0"
+                  >
+                    <RotateCw className="w-3 h-3" style={{ color: tier.accentHex }} />
+                  </button>
+                </div>
 
-          {/* Bottom Mecha HUD Status Telemetry */}
-          <div className="flex items-center justify-between pt-3 px-1 border-t border-white/10 text-[8px] font-mono text-gray-400">
-            <span>COORDINATES: LAT 35.6762 / LON 139.6503</span>
-            <span className="text-[#00F0FF]">CORE STABILITY: 100%</span>
-            <span>SEC-ID: #YD300-TAC-MK4</span>
-          </div>
-        </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFX.playStartTrainingSound();
+                      setSelectedLevel(tier.level);
+                      setActivatedLevels((prev) => ({ ...prev, [tier.level]: true }));
+                      setShowPrivilegesModal(true);
+                    }}
+                    className="flex-1 py-1.5 px-2.5 rounded-lg text-[10px] font-bold text-black transition-opacity hover:opacity-90 cursor-pointer whitespace-nowrap"
+                    style={{ backgroundColor: tier.accentHex }}
+                  >
+                    {cardActive
+                      ? tr(currentLang, { en: 'Active · View', es: 'Activa · Ver', fr: 'Active · Voir', ar: 'مفعلة · المزايا' })
+                      : tr(currentLang, { en: 'Activate & View', es: 'Activar y Ver', fr: 'Activer & Voir', ar: 'تفعيل والمزايا' })}
+                  </button>
 
-        {/* Minimalist Interactive Action Suite with Cyber-Sci-Fi Neon Borders & Glitch Effects */}
-        <div className="w-full space-y-3">
-          
-          {/* Inline Name Customizer with Cyber HUD styling */}
-          <div className="flex items-center justify-between gap-3 bg-[#10121C] px-4 py-2.5 rounded-2xl border border-[#00F0FF]/40 text-xs shadow-[0_0_15px_rgba(0,240,255,0.15)] relative">
-            <span className="text-gray-300 font-bold font-mono text-[11px] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-[#FFE600] rounded-full animate-ping" />
-              {isAr ? 'اسم البطل المنقوش على البطاقة:' : 'Athlete Name on Card:'}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedLevel(tier.level);
+                      handleDownloadCardImage(tier);
+                    }}
+                    disabled={downloading}
+                    title={tr(currentLang, { en: 'Download PNG', es: 'Descargar PNG', fr: 'Télécharger PNG', ar: 'تنزيل PNG' })}
+                    className="py-1.5 px-2 rounded-lg bg-[#12141E] hover:bg-[#1B1F2E] border border-white/[0.1] text-slate-200 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors shrink-0"
+                  >
+                    <Download className="w-3 h-3" style={{ color: tier.accentHex }} />
+                    <span>PNG</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Compact Shared Engraver & Active Tier Privileges Bar */}
+      <div className="bg-[#0A0B10] border border-white/[0.08] rounded-xl p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+        <div className="lg:col-span-6 space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-white">
+              {tr(currentLang, {
+                en: 'Engrave All 4 Black Cards Live',
+                es: 'Grabar las 4 Tarjetas en Vivo',
+                fr: 'Graver les 4 Cartes en Direct',
+                ar: 'نقش وتخصيص البطاقات الأربع مباشرة'
+              })}
             </span>
+            <span className="text-[10px] font-mono tabular-nums" style={{ color: activeTier.accentHex }}>
+              {getTierText(activeTier.name)} · {fullSerial}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <input
               type="text"
               value={athleteName}
               onChange={(e) => setAthleteName(e.target.value.toUpperCase())}
-              maxLength={18}
-              className="bg-transparent text-[#FFE600] font-mono font-bold text-xs outline-none w-36 uppercase text-right rtl:text-left border-b border-[#00F0FF]/40 focus:border-[#FFE600] focus:shadow-[0_0_10px_#FFE600]"
+              maxLength={20}
+              placeholder="YAM SUW"
+              aria-label={tr(currentLang, { en: 'Cardholder Name', es: 'Titular', fr: 'Titulaire', ar: 'الاسم المنقوش' })}
+              className="w-full px-3 py-2 rounded-lg bg-[#12141E] border border-white/[0.12] text-white font-mono text-xs uppercase outline-none focus:border-[#D4AF37]"
             />
+
+            <select
+              value={discipline}
+              onChange={(e) => setDiscipline(e.target.value)}
+              aria-label={tr(currentLang, { en: 'Discipline', es: 'Disciplina', fr: 'Discipline', ar: 'التخصص' })}
+              className="w-full px-3 py-2 rounded-lg bg-[#12141E] border border-white/[0.12] text-white font-mono text-xs outline-none focus:border-[#D4AF37] cursor-pointer"
+            >
+              {DISCIPLINES.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Clean Action Buttons with Glowing Neon Borders and Glitch Animations on Hover */}
-          <div className="grid grid-cols-2 gap-3">
-            {/* Discover Privileges Trigger */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => handleDownloadCardImage(activeTier)}
+              disabled={downloading}
+              className="py-1.5 px-3 rounded-lg bg-[#12141E] hover:bg-[#1B1F2E] border border-white/[0.12] text-slate-200 text-[11px] font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            >
+              <Download className="w-3 h-3" style={{ color: activeTier.accentHex }} />
+              <span>
+                {downloadSuccess
+                  ? tr(currentLang, { en: 'Saved PNG', es: 'PNG Guardado', fr: 'PNG Enregistré', ar: 'تم الحفظ PNG' })
+                  : tr(currentLang, { en: 'Export Selected PNG', es: 'Exportar PNG', fr: 'Exporter PNG', ar: 'حفظ المحددة PNG' })}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCopySerial}
+              className="py-1.5 px-3 rounded-lg bg-[#12141E] hover:bg-[#1B1F2E] border border-white/[0.12] text-slate-200 text-[11px] font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            >
+              <Check className={`w-3 h-3 ${copiedId ? 'text-emerald-400' : 'text-slate-400'}`} />
+              <span>
+                {copiedId
+                  ? tr(currentLang, { en: 'Copied', es: 'Copiado', fr: 'Copié', ar: 'تم النسخ' })
+                  : tr(currentLang, { en: 'Copy Serial', es: 'Copiar Serie', fr: 'Copier Série', ar: 'نسخ التسلسلي' })}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleRandomizeSerial}
+              className="py-1.5 px-3 rounded-lg bg-[#12141E] hover:bg-[#1B1F2E] border border-white/[0.12] text-slate-200 text-[11px] font-semibold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            >
+              <RefreshCw className="w-3 h-3 text-slate-400" />
+              <span>{tr(currentLang, { en: 'New Serial', es: 'Nueva Serie', fr: 'Nouvelle Série', ar: 'رقم تسلسلي جديد' })}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Concise Active Tier Privileges & Actions */}
+        <div className="lg:col-span-6 space-y-2 border-t lg:border-t-0 lg:border-s border-white/[0.08] pt-3 lg:pt-0 lg:ps-5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-white">
+              {getTierText(activeTier.name)}{' '}
+              {tr(currentLang, { en: 'Privileges', es: '· Privilegios', fr: '· Privilèges', ar: '· المزايا' })}
+            </span>
             <button
               type="button"
               onClick={() => {
                 soundFX.playButtonClick();
                 setShowPrivilegesModal(true);
               }}
-              className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#181A28] to-[#1E2238] hover:from-[#1E2238] hover:to-[#282E4E] border border-[#FFE600] neon-border-yellow text-[#FFE600] font-anime font-black text-xs flex items-center justify-center gap-2 cursor-pointer transition-all hover-cyber-glitch active:scale-95"
+              className="text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer hover:underline"
+              style={{ color: activeTier.accentHex }}
             >
-              <Eye className="w-4 h-4 text-[#FFE600]" />
-              <span>{isAr ? 'اكشف مزايا وأسرار البطاقة ⚡' : 'REVEAL TIER PRIVILEGES ⚡'}</span>
-            </button>
-
-            {/* Subscribe / Activate Button */}
-            <button
-              type="button"
-              onClick={handleSubscribeToggle}
-              className="py-3.5 px-4 rounded-2xl bg-[#10B981] hover:bg-[#059669] text-black font-anime font-black text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95"
-            >
-              <CreditCard className="w-4 h-4 text-black" />
-              <span>{isAr ? (isSubscribed ? 'تم الاشتراك وتفعيل البطاقة ✓' : 'اشترك واكتشف المزايا فوراً') : (isSubscribed ? 'Membership Active ✓' : 'Subscribe & Unlock Now')}</span>
+              <Eye className="w-3.5 h-3.5" />
+              <span>{tr(currentLang, { en: 'Full Certificate', es: 'Certificado', fr: 'Certificat', ar: 'الشهادة الكاملة' })}</span>
             </button>
           </div>
 
-          {/* Quick Utility Actions: Wallet, Copy ID, Share to X with HUD Borders */}
-          <div className="grid grid-cols-3 gap-2 pt-1">
+          <ul className="space-y-1">
+            {getTierPrivileges(activeTier.privileges).slice(0, 3).map((priv, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-[11px] text-slate-300 leading-snug">
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: activeTier.accentHex }} />
+                <span>{priv}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <button
               type="button"
-              onClick={handleDownloadCard}
-              disabled={downloading}
-              className="py-2.5 px-2 rounded-xl bg-[#121422] hover:bg-[#1A1D2E] border border-gray-700 hover:border-[#00F0FF] text-gray-300 hover:text-white text-[10px] font-black font-anime flex items-center justify-center gap-1.5 cursor-pointer transition-all hover-cyber-glitch"
+              onClick={() => {
+                soundFX.playStartTrainingSound();
+                setActivatedLevels((prev) => ({ ...prev, [activeTier.level]: true }));
+                setShowPrivilegesModal(true);
+              }}
+              className="py-2 px-3.5 rounded-lg text-black font-bold text-[11px] inline-flex items-center gap-1.5 cursor-pointer transition-opacity hover:opacity-90"
+              style={{ backgroundColor: activeTier.accentHex }}
             >
-              {downloading ? <span className="animate-spin text-xs">⚡</span> : <Download className="w-3.5 h-3.5 text-[#00F0FF]" />}
-              <span>{isAr ? (downloadSuccess ? 'تم الحفظ ✓' : 'حفظ بالمحفظة') : (downloadSuccess ? 'Saved ✓' : 'Save to Wallet')}</span>
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>
+                {isSubscribed
+                  ? tr(currentLang, { en: 'Credential Active', es: 'Credencial Activa', fr: 'Accréditation Active', ar: 'البطاقة مفعلة' })
+                  : `${tr(currentLang, { en: 'Activate', es: 'Activar', fr: 'Activer', ar: 'تفعيل' })} ${getTierText(activeTier.name)}`}
+              </span>
             </button>
 
-            <button
-              type="button"
-              onClick={handleCopyId}
-              className="py-2.5 px-2 rounded-xl bg-[#121422] hover:bg-[#1A1D2E] border border-gray-700 hover:border-[#FFE600] text-gray-300 hover:text-white text-[10px] font-black font-anime flex items-center justify-center gap-1.5 cursor-pointer transition-all hover-cyber-glitch"
-            >
-              <Check className={`w-3.5 h-3.5 ${copiedId ? 'text-emerald-400' : 'text-[#FFE600]'}`} />
-              <span>{isAr ? (copiedId ? 'تم النسخ ✓' : 'نسخ الرمز') : (copiedId ? 'Copied ✓' : 'Copy ID')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleShareOnX}
-              className="py-2.5 px-2 rounded-xl bg-[#121422] hover:bg-[#1A1D2E] border border-gray-700 hover:border-[#FF007A] text-gray-300 hover:text-white text-[10px] font-black font-anime flex items-center justify-center gap-1.5 cursor-pointer transition-all hover-cyber-glitch"
-            >
-              <svg className="w-3 h-3 text-[#FF007A] shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-              <span>{isAr ? 'مشاركة عبر 𝕏' : 'Share on 𝕏'}</span>
-            </button>
-          </div>
-
-          {/* Level 3 Custom Club Direct Shortcut Button */}
-          {selectedLevel >= 3 && onNavigateToClub && (
-            <div className="pt-2">
+            {activeTier.level >= 3 && onNavigateToClub && (
               <button
                 type="button"
                 onClick={onNavigateToClub}
-                className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#A855F7] via-emerald-400 to-[#FFE600] text-black font-black font-anime text-xs shadow-[0_0_25px_rgba(168,85,247,0.5)] hover:scale-[1.02] active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="py-2 px-3.5 rounded-lg bg-[#12141E] hover:bg-[#1A1D2B] border border-white/[0.15] text-white font-bold text-[11px] inline-flex items-center gap-1.5 cursor-pointer transition-colors tabular-nums"
               >
-                <Crown className="w-4 h-4 text-black" />
-                <span>{isAr ? 'إدارة ناديك الخاص ونشر الستوريات ⚡' : 'OPEN MY CUSTOM CLUB & BROADCAST STORIES ⚡'}</span>
+                <span>
+                  {tr(currentLang, {
+                    en: `Launch Private Club ($${clubFee})`,
+                    es: `Abrir Club Privado ($${clubFee})`,
+                    fr: `Lancer Club Privé ($${clubFee})`,
+                    ar: `نادي خاص مدمج ($${clubFee})`
+                  })}
+                </span>
+                <ArrowUpRight className="w-3.5 h-3.5" style={{ color: activeTier.accentHex }} />
               </button>
-            </div>
-          )}
-
-          {/* Success Banner */}
-          {downloadSuccess && (
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-[0_0_15px_#10B981]">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{isAr ? 'تمت إضافة بطاقة YARD300 الرقمية لمحفظتك بنجاح!' : 'YARD300 Digital Pass added to your electronic wallet!'}</span>
-            </div>
-          )}
-
+            )}
+          </div>
         </div>
-
       </div>
 
-      {/* Discovery Modal / Drawer: Mecha Cockpit Privileges HUD */}
+      {/* Certificate / Activation Modal */}
       {showPrivilegesModal && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0F111D] border-2 border-[#FFE600] neon-border-yellow rounded-3xl max-w-lg w-full p-6 md:p-8 space-y-6 shadow-[0_0_60px_rgba(255,230,0,0.4)] relative animate-in fade-in zoom-in-95 duration-200">
-            {/* Corner brackets */}
-            <div className="hud-corner-bracket hud-corner-bracket-tl !border-[#FFE600]" />
-            <div className="hud-corner-bracket hud-corner-bracket-tr !border-[#FFE600]" />
-            <div className="hud-corner-bracket hud-corner-bracket-bl !border-[#FFE600]" />
-            <div className="hud-corner-bracket hud-corner-bracket-br !border-[#FFE600]" />
-            
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0A0B10] border border-white/[0.14] rounded-2xl max-w-lg w-full p-6 space-y-4 relative shadow-2xl">
             <button
+              type="button"
               onClick={() => setShowPrivilegesModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-full bg-[#181A2A] hover-cyber-glitch cursor-pointer"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-lg bg-[#141724] cursor-pointer"
             >
-              <X className="w-5 h-5 text-[#FFE600]" />
+              <X className="w-4 h-4" />
             </button>
 
-            <div className="text-center space-y-2">
-              <div className="inline-flex p-3 bg-[#FFE600]/15 rounded-2xl text-[#FFE600] mb-1 neon-border-yellow">
-                <Crown className="w-8 h-8 animate-bounce" />
-              </div>
-              <h3 className="text-2xl md:text-3xl font-black font-anime text-white">
-                {isAr ? 'أسرار وامتيازات العضوية الحصرية' : 'EXCLUSIVE SUBSCRIBER PRIVILEGES'}
+            <div className="space-y-1">
+              <span
+                className="text-[10px] font-mono uppercase tracking-widest block tabular-nums"
+                style={{ color: activeTier.accentHex }}
+              >
+                {activeTier.roman} · {fullSerial}
+              </span>
+              <h3 className="text-xl font-extrabold text-white">
+                {getTierText(activeTier.name)}
               </h3>
-              <p className="text-xs font-bold text-gray-300 font-mono">
-                {isAr ? `امتيازات المستوى ${activeTier.level}: ${activeTier.nameAr.split('—')[0]}` : `Privileges for Tier ${activeTier.level}: ${activeTier.nameEn}`}
+              <p className="text-xs text-slate-400">
+                {tr(currentLang, {
+                  en: `Authorized Holder: ${athleteName}`,
+                  es: `Titular Autorizado: ${athleteName}`,
+                  fr: `Titulaire Autorisé : ${athleteName}`,
+                  ar: `حامل البطاقة: ${athleteName}`
+                })}
               </p>
             </div>
 
-            {/* List of Privileges Revealed Upon Subscription */}
-            <div className="space-y-3">
-              {(isAr ? activeTier.privilegesAr : activeTier.privilegesEn).map((priv, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#151828] border border-[#00F0FF]/30 text-xs font-bold text-gray-200 shadow-[0_0_10px_rgba(0,240,255,0.1)]">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{priv}</span>
+            <div className="space-y-2">
+              {getTierPrivileges(activeTier.privileges).map((priv, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start gap-2.5 p-2.5 rounded-xl bg-[#121520] border border-white/[0.06] text-xs text-slate-200"
+                >
+                  <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" style={{ color: activeTier.accentHex }} />
+                  <span>{priv}</span>
                 </div>
               ))}
             </div>
 
-            {/* Status confirmation */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#1E2338] to-[#121526] border border-[#00F0FF]/50 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-black font-mono text-[#00F0FF] uppercase block">
-                  {isAr ? 'حالة البطاقة البيومترية' : 'BIOMETRIC CREDENTIAL STATUS'}
-                </span>
-                <span className="text-sm font-black font-mono text-white">
-                  {isSubscribed ? (isAr ? 'مفعلة ونشطة ⚡' : 'VERIFIED & ACTIVE ⚡') : (isAr ? 'جاهزة للتأكيد' : 'READY TO CONFIRM')}
-                </span>
-              </div>
+            <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
+              <span className="text-xs font-mono tabular-nums text-slate-400">{activeTier.yardxTokens}</span>
               <button
+                type="button"
                 onClick={() => {
                   soundFX.playSuccess();
-                  setIsSubscribed(true);
+                  setActivatedLevels((prev) => ({ ...prev, [activeTier.level]: true }));
                   setShowPrivilegesModal(false);
                 }}
-                className="px-5 py-2.5 bg-[#FFE600] hover:bg-white text-black font-black font-anime text-xs rounded-xl transition-all shadow-[0_0_20px_#FFE600] hover-cyber-glitch cursor-pointer"
+                className="px-4 py-2 rounded-lg text-black font-bold text-xs cursor-pointer"
+                style={{ backgroundColor: activeTier.accentHex }}
               >
-                {isAr ? 'تأكيد وحفظ البطاقة' : 'CONFIRM & SAVE'}
+                {tr(currentLang, {
+                  en: 'Confirm & Save Credential',
+                  es: 'Confirmar y Guardar',
+                  fr: 'Confirmer & Enregistrer',
+                  ar: 'تأكيد واعتماد البطاقة'
+                })}
               </button>
             </div>
-
           </div>
         </div>
       )}
-
     </section>
   );
 };
-
 export default SubscriberTiersShowcase;

@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Language, translations } from '../i18n';
+import { Language, translations, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { HydrationTracker } from './HydrationTracker';
 import { HeartRateLoadChart } from './HeartRateLoadChart';
@@ -266,17 +266,18 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
     setVoiceError(null);
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRec) {
-      setVoiceError(
-        currentLang === 'ar'
-          ? 'متصفحك لا يدعم التعرف الصوتي المباشر. يرجى تجربة الخيارات الجاهزة المتاحة بالأسفل.'
-          : 'Web Speech API is not supported in this browser. Please use the voice presets below.'
-      );
+      setVoiceError(tr(currentLang, {
+        en: 'Web Speech API is not supported in this browser. Please use the voice presets below.',
+        es: 'Tu navegador no soporta reconocimiento de voz en vivo. Usa los ajustes predefinidos abajo.',
+        fr: 'Votre navigateur ne prend pas en charge la reconnaissance vocale. Utilisez les préréglages ci-dessous.',
+        ar: 'متصفحك لا يدعم التعرف الصوتي المباشر. يرجى تجربة الخيارات الجاهزة المتاحة بالأسفل.'
+      }));
       return;
     }
 
     try {
       const recognition = new SpeechRec();
-      recognition.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
+      recognition.lang = currentLang === 'ar' ? 'ar-SA' : currentLang === 'es' ? 'es-ES' : currentLang === 'fr' ? 'fr-FR' : 'en-US';
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
 
@@ -292,7 +293,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
       recognition.onerror = (event: any) => {
         setIsListening(false);
-        setVoiceError(currentLang === 'ar' ? `خطأ في الصوت: ${event.error}` : `Voice recognition error: ${event.error}`);
+        setVoiceError(tr(currentLang, {
+          en: `Voice recognition error: ${event.error}`,
+          es: `Error de reconocimiento de voz: ${event.error}`,
+          fr: `Erreur de reconnaissance vocale : ${event.error}`,
+          ar: `خطأ في الصوت: ${event.error}`
+        }));
       };
 
       recognition.onend = () => {
@@ -375,28 +381,88 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
   // Phase 3: 90 - 30   (1:30 - 2:30) -> Furious Combat Strikes
   // Phase 4: 30 - 0    (2:30 - 3:00) -> Final Aura Blast & Recovery
   let phaseNumber = 1;
-  let phaseTitle = currentLang === 'ar' ? 'المرحلة 1: اشتعال الهالة (اشعل طاقتك)' : 'PHASE 1: AURA IGNITION';
-  let phaseExercise = currentLang === 'ar' ? 'ركض عالي بالركبتين ووضع قتالي' : 'Shadow High Knees & Combat Stance';
-  let phaseQuote = currentLang === 'ar' ? '覚悟を決めろ！ جهز روحك القتالية! اشعل هالتك الداخلية!' : '覚悟を決めろ！ Prepare your spirit! Fire up your inner aura!';
+  let phaseTitle = tr(currentLang, {
+    en: 'PHASE 1: AURA IGNITION',
+    es: 'FASE 1: IGNICIÓN DE AURA',
+    fr: 'PHASE 1 : IGNITION D’AURA',
+    ar: 'المرحلة 1: اشتعال الهالة (اشعل طاقتك)'
+  });
+  let phaseExercise = tr(currentLang, {
+    en: 'Shadow High Knees & Combat Stance',
+    es: 'Rodillas Altas en Sombra y Guardia de Combate',
+    fr: 'Montées de Genoux Shadow & Garde de Combat',
+    ar: 'ركض عالي بالركبتين ووضع قتالي'
+  });
+  let phaseQuote = tr(currentLang, {
+    en: '覚悟を決めろ！ Prepare your spirit! Fire up your inner aura!',
+    es: '覚悟を決めろ！ ¡Prepara tu espíritu! ¡Enciende tu aura interior!',
+    fr: '覚悟を決めろ！ Préparez votre esprit ! Enflammez votre aura intérieure !',
+    ar: '覚悟を決めろ！ جهز روحك القتالية! اشعل هالتك الداخلية!'
+  });
   let phaseColor = '#00F0FF';
 
   if (timeLeft <= 30) {
     phaseNumber = 4;
-    phaseTitle = currentLang === 'ar' ? 'المرحلة 4: الانفجار النهائي والتعافي' : 'PHASE 4: FINAL AURA BLAST & RECOVERY';
-    phaseExercise = currentLang === 'ar' ? 'تنفس القوة والوقوف المتزن' : 'Power Isometric Breathing & Victory Stance';
-    phaseQuote = currentLang === 'ar' ? '勝者！ تم تحقيق تركيز البطل! إتقان رتبة S-Rank!' : '勝者！ Champion Focus Achieved! S-Rank Mastery!';
+    phaseTitle = tr(currentLang, {
+      en: 'PHASE 4: FINAL AURA BLAST & RECOVERY',
+      es: 'FASE 4: RÁFAGA FINAL DE AURA Y RECUPERACIÓN',
+      fr: 'PHASE 4 : EXPLOSION D’AURA FINALE & RÉCUPÉRATION',
+      ar: 'المرحلة 4: الانفجار النهائي والتعافي'
+    });
+    phaseExercise = tr(currentLang, {
+      en: 'Power Isometric Breathing & Victory Stance',
+      es: 'Respiración Isométrica de Poder y Postura de Victoria',
+      fr: 'Respiration Isométrique & Posture de Victoire',
+      ar: 'تنفس القوة والوقوف المتزن'
+    });
+    phaseQuote = tr(currentLang, {
+      en: '勝者！ Champion Focus Achieved! S-Rank Mastery!',
+      es: '勝者！ ¡Enfoque de Campeón Alcanzado! ¡Maestría Rango S!',
+      fr: '勝者！ Concentration de Champion Atteinte ! Maîtrise Rang S !',
+      ar: '勝者！ تم تحقيق تركيز البطل! إتقان رتبة S-Rank!'
+    });
     phaseColor = '#22C55E';
   } else if (timeLeft <= 90) {
     phaseNumber = 3;
-    phaseTitle = currentLang === 'ar' ? 'المرحلة 3: ضربات القتال الضارية' : 'PHASE 3: FURIOUS COMBAT STRIKES';
-    phaseExercise = currentLang === 'ar' ? 'لكمات سريعة وضربات متتالية' : 'Burst Punches & Front Kicks';
-    phaseQuote = currentLang === 'ar' ? '無駄無駄無駄！ موضا موضا! أطلق وابل 100 ضربة متتالية!' : '無駄無駄無駄！ MUDA MUDA! Unleash a barrage of 100 strikes!';
+    phaseTitle = tr(currentLang, {
+      en: 'PHASE 3: FURIOUS COMBAT STRIKES',
+      es: 'FASE 3: GOLPES DE COMBATE FURIOSOS',
+      fr: 'PHASE 3 : FRAPPES DE COMBAT FURIEUSES',
+      ar: 'المرحلة 3: ضربات القتال الضارية'
+    });
+    phaseExercise = tr(currentLang, {
+      en: 'Burst Punches & Front Kicks',
+      es: 'Puños en Ráfaga y Patadas Frontales',
+      fr: 'Enchaînements de Poings & Coups de Pied Frontaux',
+      ar: 'لكمات سريعة وضربات متتالية'
+    });
+    phaseQuote = tr(currentLang, {
+      en: '無駄無駄無駄！ MUDA MUDA! Unleash a barrage of 100 strikes!',
+      es: '無駄無駄無駄！ ¡MUDA MUDA! ¡Desata una ráfaga de 100 golpes!',
+      fr: '無駄無駄無駄！ MUDA MUDA ! Déchaînez une rafale de 100 frappes !',
+      ar: '無駄無駄無駄！ موضا موضا! أطلق وابل 100 ضربة متتالية!'
+    });
     phaseColor = '#FF007A';
   } else if (timeLeft <= 135) {
     phaseNumber = 2;
-    phaseTitle = currentLang === 'ar' ? 'المرحلة 2: سكوات كسر الحدود' : 'PHASE 2: LIMIT BREAK SQUATS';
-    phaseExercise = currentLang === 'ar' ? 'سكوات قفز وانفجار عضلي' : 'Jump Squats & Explosive Core';
-    phaseQuote = currentLang === 'ar' ? '限界突破! اكسر حدودك وتجاوز الألم!' : '限界突破! Break past your limits! No pain, no champion!';
+    phaseTitle = tr(currentLang, {
+      en: 'PHASE 2: LIMIT BREAK SQUATS',
+      es: 'FASE 2: SENTADILLAS LÍMITE CERO',
+      fr: 'PHASE 2 : SQUATS BRÈCHE-LIMITE',
+      ar: 'المرحلة 2: سكوات كسر الحدود'
+    });
+    phaseExercise = tr(currentLang, {
+      en: 'Jump Squats & Explosive Core',
+      es: 'Sentadillas con Salto y Core Explosivo',
+      fr: 'Squats Sautés & Gainage Explosif',
+      ar: 'سكوات قفز وانفجار عضلي'
+    });
+    phaseQuote = tr(currentLang, {
+      en: '限界突破! Break past your limits! No pain, no champion!',
+      es: '限界突破! ¡Rompe tus límites! ¡Sin esfuerzo no hay campeón!',
+      fr: '限界突破! Brisez vos limites ! Pas de champion sans dépassement !',
+      ar: '限界突破! اكسر حدودك وتجاوز الألم!'
+    });
     phaseColor = '#FFE600';
   }
 
@@ -445,17 +511,32 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
   // Sleep Factor (20%)
   if (sleepHours < 5) {
     riskScore += 20;
-    warnings.push(currentLang === 'ar' ? "نوم حرج — أقل من 5 ساعات (Critical Sleep Deficit)" : "Critical Sleep Deficit (<5 hours)");
+    warnings.push(tr(currentLang, {
+      en: "Critical Sleep Deficit (<5 hours)",
+      es: "Déficit Crítico de Sueño (<5 horas)",
+      fr: "Déficit Critique de Sommeil (<5 heures)",
+      ar: "نوم حرج — أقل من 5 ساعات (Critical Sleep Deficit)"
+    }));
   } else if (sleepHours < 6.5) {
     riskScore += 12;
-    warnings.push(currentLang === 'ar' ? "نوم غير كافٍ للتعافي العضلي (Insufficient Sleep)" : "Insufficient Sleep for Muscle Recovery");
+    warnings.push(tr(currentLang, {
+      en: "Insufficient Sleep for Muscle Recovery",
+      es: "Sueño Insuficiente para Recuperación Muscular",
+      fr: "Sommeil Insuffisant pour la Récupération Musculaire",
+      ar: "نوم غير كافٍ للتعافي العضلي (Insufficient Sleep)"
+    }));
   }
   if (sleepScore < 50) {
     riskScore += 8;
   }
   if (deepSleepPercent < 13) {
     riskScore += 5;
-    warnings.push(currentLang === 'ar' ? "نقص في النوم العميق — تعافي عضلي ضعيف (Low Deep Sleep)" : "Low Deep Sleep — Impaired Muscle Recovery");
+    warnings.push(tr(currentLang, {
+      en: "Low Deep Sleep — Impaired Muscle Recovery",
+      es: "Sueño Profundo Bajo — Recuperación Muscular Reducida",
+      fr: "Sommeil Profond Faible — Récupération Musculaire Altérée",
+      ar: "نقص في النوم العميق — تعافي عضلي ضعيف (Low Deep Sleep)"
+    }));
   }
 
   // Skin Temp Factor (10%)
@@ -480,11 +561,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
   if (userPainScore >= 5 || userFatigueScore >= 6) {
     const zoneTxt = reportedZone ? ` (${reportedZone.toUpperCase()})` : '';
-    warnings.push(
-      currentLang === 'ar'
-        ? `🎙️ إفادة صوتية مباشرة: ألم ${userPainScore}/10 وإجهاد ${userFatigueScore}/10${zoneTxt} - تم تعديل الخطورة بـ +${voiceRiskImpact}%`
-        : `🎙️ Live Voice Feedback: Pain ${userPainScore}/10 & Fatigue ${userFatigueScore}/10${zoneTxt} - Risk adjusted +${voiceRiskImpact}%`
-    );
+    warnings.push(tr(currentLang, {
+      en: `🎙️ Live Voice Feedback: Pain ${userPainScore}/10 & Fatigue ${userFatigueScore}/10${zoneTxt} - Risk adjusted +${voiceRiskImpact}%`,
+      es: `🎙️ Voz en Vivo: Dolor ${userPainScore}/10 y Fatiga ${userFatigueScore}/10${zoneTxt} - Riesgo ajustado +${voiceRiskImpact}%`,
+      fr: `🎙️ Retour Vocal Direct : Douleur ${userPainScore}/10 & Fatigue ${userFatigueScore}/10${zoneTxt} - Risque ajusté +${voiceRiskImpact}%`,
+      ar: `🎙️ إفادة صوتية مباشرة: ألم ${userPainScore}/10 وإجهاد ${userFatigueScore}/10${zoneTxt} - تم تعديل الخطورة بـ +${voiceRiskImpact}%`
+    }));
   }
 
   const finalRisk = Math.min(Math.round(riskScore), 100);
@@ -573,26 +655,38 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
   // Dynamic AI Coach Voice Advice Generator
   const getAICoachVoiceAdvice = () => {
     if (userPainScore === 0 && userFatigueScore === 0) {
-      return currentLang === 'ar'
-        ? "✅ كابتن أورا: تم تأكيد الاستقرار البدني بالكامل! صمام الأمان يعمل بكفاءة والجهوزية قتالية عالية."
-        : "✅ Captain Aura: Full physical stability confirmed! Safety valves green and combat readiness optimal.";
+      return tr(currentLang, {
+        en: "✅ Captain Aura: Full physical stability confirmed! Safety valves green and combat readiness optimal.",
+        es: "✅ Capitán Aura: ¡Estabilidad física total confirmada! Válvulas en verde y preparación óptima.",
+        fr: "✅ Capitaine Aura : Stabilité physique totale confirmée ! Indicateurs verts et préparation optimale.",
+        ar: "✅ كابتن أورا: تم تأكيد الاستقرار البدني بالكامل! صمام الأمان يعمل بكفاءة والجهوزية قتالية عالية."
+      });
     }
 
     if (userPainScore >= 7) {
-      return currentLang === 'ar'
-        ? `🚨 تحذير حاد من كابتن أورا: تم تسجيل ألم شديد (${userPainScore}/10) في منطقة [${reportedZone?.toUpperCase() || 'الجسم'}]. تم تفعيل تقليل الحمل الفوري وتقصير فترة الاستراحة النشطة لـ 15 دقيقة.`
-        : `🚨 Captain Aura Alert: Severe pain (${userPainScore}/10) detected in [${reportedZone?.toUpperCase() || 'Body'}]. Auto-reducing workout intensity and shortening active recovery interval to 15 mins.`;
+      return tr(currentLang, {
+        en: `🚨 Captain Aura Alert: Severe pain (${userPainScore}/10) detected in [${reportedZone?.toUpperCase() || 'Body'}]. Auto-reducing workout intensity and shortening active recovery interval to 15 mins.`,
+        es: `🚨 Alerta Capitán Aura: Dolor severo (${userPainScore}/10) en [${reportedZone?.toUpperCase() || 'Cuerpo'}]. Reducción automática de carga e intervalo de recuperación a 15 min.`,
+        fr: `🚨 Alerte Capitaine Aura : Douleur sévère (${userPainScore}/10) dans [${reportedZone?.toUpperCase() || 'Corps'}]. Réduction automatique de charge et pause active à 15 min.`,
+        ar: `🚨 تحذير حاد من كابتن أورا: تم تسجيل ألم شديد (${userPainScore}/10) في منطقة [${reportedZone?.toUpperCase() || 'الجسم'}]. تم تفعيل تقليل الحمل الفوري وتقصير فترة الاستراحة النشطة لـ 15 دقيقة.`
+      });
     }
 
     if (userFatigueScore >= 7) {
-      return currentLang === 'ar'
-        ? `⚠️ توجيه كابتن أورا: تم الإبلاغ عن إجهاد مرتفع (${userFatigueScore}/10). يُنصح بإنهاء الجولة الحالية فوراً وتلقي استراحة الحركة.`
-        : `⚠️ Captain Aura Guidance: High fatigue (${userFatigueScore}/10) reported. Terminate current round immediately and execute movement break.`;
+      return tr(currentLang, {
+        en: `⚠️ Captain Aura Guidance: High fatigue (${userFatigueScore}/10) reported. Terminate current round immediately and execute movement break.`,
+        es: `⚠️ Guía Capitán Aura: Alta fatiga (${userFatigueScore}/10) reportada. Finaliza la ronda de inmediato y realiza una pausa de movilidad.`,
+        fr: `⚠️ Conseil Capitaine Aura : Fatigue élevée (${userFatigueScore}/10) signalée. Arrêtez le round immédiatement et faites une pause mobilité.`,
+        ar: `⚠️ توجيه كابتن أورا: تم الإبلاغ عن إجهاد مرتفع (${userFatigueScore}/10). يُنصح بإنهاء الجولة الحالية فوراً وتلقي استراحة الحركة.`
+      });
     }
 
-    return currentLang === 'ar'
-      ? `💡 ملاحظة كابتن أورا: تم تسجيل ألم/تصلب خفيف (${userPainScore}/10) في [${reportedZone?.toUpperCase() || 'الجسم'}]. استمر بالتدريب بـ 75% مع إطالة وقائية.`
-      : `💡 Captain Aura Note: Mild pain/stiffness (${userPainScore}/10) logged in [${reportedZone?.toUpperCase() || 'Body'}]. Continue at 75% load with preventative stretches.`;
+    return tr(currentLang, {
+      en: `💡 Captain Aura Note: Mild pain/stiffness (${userPainScore}/10) logged in [${reportedZone?.toUpperCase() || 'Body'}]. Continue at 75% load with preventative stretches.`,
+      es: `💡 Nota Capitán Aura: Molestia leve (${userPainScore}/10) registrada en [${reportedZone?.toUpperCase() || 'Cuerpo'}]. Continúa al 75% con estiramientos preventivos.`,
+      fr: `💡 Note Capitaine Aura : Gêne légère (${userPainScore}/10) enregistrée [${reportedZone?.toUpperCase() || 'Corps'}]. Poursuivez à 75% avec étirements préventifs.`,
+      ar: `💡 ملاحظة كابتن أورا: تم تسجيل ألم/تصلب خفيف (${userPainScore}/10) في [${reportedZone?.toUpperCase() || 'الجسم'}]. استمر بالتدريب بـ 75% مع إطالة وقائية.`
+    });
   };
 
   // Active Recovery Interval Calculation based on finalRisk
@@ -622,69 +716,87 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
     
     if (maxZoneRisk === kneeRisk && kneeRisk > 20) {
       return {
-        zone: currentLang === 'ar' ? 'الركبة' : 'Knee Joint',
+        zone: tr(currentLang, { en: 'Knee Joint', es: 'Articulación de Rodilla', fr: 'Articulation du Genou', ar: 'الركبة' }),
         icon: '🦵',
-        title: currentLang === 'ar' ? 'تمديد الركبة VMO وتفكيك وتر الصابونة' : 'Patellar VMO Extensions & Quad Release',
-        duration: currentLang === 'ar' ? '45 ثانية' : '45 Seconds',
-        instructions: currentLang === 'ar' 
-          ? 'قم بإجراء 10 تكرارات لفرد الركبة بالرباط المطاطي (TKE) مع تدليك الفخذ ببطء لتخفيف الضغط عن الصابونة.'
-          : 'Perform 10 Terminal Knee Extensions (TKE) and 30 seconds of quad foam rolling to relieve patellar pressure.',
-        benefit: currentLang === 'ar' ? 'تخفيف إجهاد الوتر الصابوني بنسبة 35%' : 'Relieves patellar tendon stress by ~35%'
+        title: tr(currentLang, { en: 'Patellar VMO Extensions & Quad Release', es: 'Extensiones VMO Rotulianas y Descarga Cuádriceps', fr: 'Extensions VMO Rotuliennes & Relâchement Quad', ar: 'تمديد الركبة VMO وتفكيك وتر الصابونة' }),
+        duration: tr(currentLang, { en: '45 Seconds', es: '45 Segundos', fr: '45 Secondes', ar: '45 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Perform 10 Terminal Knee Extensions (TKE) and 30 seconds of quad foam rolling to relieve patellar pressure.',
+          es: 'Realiza 10 extensiones terminales de rodilla (TKE) y 30 s de rodillo en cuádriceps para aliviar la presión rotuliana.',
+          fr: 'Effectuez 10 extensions terminales du genou (TKE) et 30 s de rouleau sur quadriceps pour soulager la rotule.',
+          ar: 'قم بإجراء 10 تكرارات لفرد الركبة بالرباط المطاطي (TKE) مع تدليك الفخذ ببطء لتخفيف الضغط عن الصابونة.'
+        }),
+        benefit: tr(currentLang, { en: 'Relieves patellar tendon stress by ~35%', es: 'Reduce la tensión del tendón rotuliano ~35%', fr: 'Réduit la tension du tendon rotulien d’env. 35%', ar: 'تخفيف إجهاد الوتر الصابوني بنسبة 35%' })
       };
     } else if (maxZoneRisk === ankleRisk && ankleRisk > 20) {
       return {
-        zone: currentLang === 'ar' ? 'الكاحل' : 'Ankle Joint',
+        zone: tr(currentLang, { en: 'Ankle Joint', es: 'Articulación de Tobillo', fr: 'Articulation de la Cheville', ar: 'الكاحل' }),
         icon: '🦶',
-        title: currentLang === 'ar' ? 'تحريك الكاحل الدائري وإطالة وتر الأكيلس' : 'Ankle Mobility Circles & Calf Stretch',
-        duration: currentLang === 'ar' ? '45 ثانية' : '45 Seconds',
-        instructions: currentLang === 'ar'
-          ? 'قم برسم حروف في الهواء بكل قدم مع إطالة عضلة الساق الخلفية ضد الحائط لـ 20 ثانية لكل قدم.'
-          : 'Draw full alphabets with each ankle in mid-air and hold a standing wall calf stretch for 20 seconds.',
-        benefit: currentLang === 'ar' ? 'حماية وتر الأكيلس وتنشيط السائل المفصلي' : 'Protects Achilles tendon & restores joint fluid'
+        title: tr(currentLang, { en: 'Ankle Mobility Circles & Calf Stretch', es: 'Círculos de Movilidad de Tobillo y Estiramiento Gemelos', fr: 'Cercles de Mobilité Cheville & Étirement Mollets', ar: 'تحريك الكاحل الدائري وإطالة وتر الأكيلس' }),
+        duration: tr(currentLang, { en: '45 Seconds', es: '45 Segundos', fr: '45 Secondes', ar: '45 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Draw full alphabets with each ankle in mid-air and hold a standing wall calf stretch for 20 seconds.',
+          es: 'Dibuja el alfabeto en el aire con cada tobillo y mantén estiramiento de gemelos en pared 20 segundos.',
+          fr: 'Dessinez l’alphabet en l’air avec chaque cheville et maintenez un étirement du mollet au mur 20 s.',
+          ar: 'قم برسم حروف في الهواء بكل قدم مع إطالة عضلة الساق الخلفية ضد الحائط لـ 20 ثانية لكل قدم.'
+        }),
+        benefit: tr(currentLang, { en: 'Protects Achilles tendon & restores joint fluid', es: 'Protege el tendón de Aquiles y lubrica la articulación', fr: 'Protège le tendon d’Achille et restaure le liquide synovial', ar: 'حماية وتر الأكيلس وتنشيط السائل المفصلي' })
       };
     } else if (maxZoneRisk === backRisk && backRisk > 20) {
       return {
-        zone: currentLang === 'ar' ? 'أسفل الظهر' : 'Lumbar Spine',
+        zone: tr(currentLang, { en: 'Lumbar Spine', es: 'Columna Lumbar', fr: 'Colonne Lombaire', ar: 'أسفل الظهر' }),
         icon: '🔙',
-        title: currentLang === 'ar' ? 'فك ضغط الفقرات وتمرين القطة والجمل' : 'Spinal Decompression & Cat-Cow Flow',
-        duration: currentLang === 'ar' ? '60 ثانية' : '60 Seconds',
-        instructions: currentLang === 'ar'
-          ? 'نفذ 30 ثانية من تمرين القطة والجمل ببطء يعقبها التعلق الساكن على العقلة لفك ضغط أقراص الفقرات القطنية.'
-          : 'Execute 30 seconds of Cat-Cow spinal flows followed by a gentle dead hang to decompress lumbar discs.',
-        benefit: currentLang === 'ar' ? 'تخفيف ضغط الفقرات ومرونة العمود الفقري' : 'Decompresses spinal discs & relieves lumbar tension'
+        title: tr(currentLang, { en: 'Spinal Decompression & Cat-Cow Flow', es: 'Descompresión Espinal y Flujo Gato-Vaca', fr: 'Décompression Vertébrale & Mobilisation Chat-Vache', ar: 'فك ضغط الفقرات وتمرين القطة والجمل' }),
+        duration: tr(currentLang, { en: '60 Seconds', es: '60 Segundos', fr: '60 Secondes', ar: '60 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Execute 30 seconds of Cat-Cow spinal flows followed by a gentle dead hang to decompress lumbar discs.',
+          es: 'Ejecuta 30 s de flujo Gato-Vaca seguido de suspensión suave en barra para descomprimir discos lumbares.',
+          fr: 'Réalisez 30 s de mobilisation Chat-Vache suivie d’une suspension passive pour décompresser les disques.',
+          ar: 'نفذ 30 ثانية من تمرين القطة والجمل ببطء يعقبها التعلق الساكن على العقلة لفك ضغط أقراص الفقرات القطنية.'
+        }),
+        benefit: tr(currentLang, { en: 'Decompresses spinal discs & relieves lumbar tension', es: 'Descomprime discos espinales y alivia tensión lumbar', fr: 'Décompresse les disques et soulage la tension lombaire', ar: 'تخفيف ضغط الفقرات ومرونة العمود الفقري' })
       };
     } else if (maxZoneRisk === shoulderRisk && shoulderRisk > 20) {
       return {
-        zone: currentLang === 'ar' ? 'الكتف' : 'Shoulder Cuff',
+        zone: tr(currentLang, { en: 'Shoulder Cuff', es: 'Manguito del Hombro', fr: 'Coiffe de l’Épaule', ar: 'الكتف' }),
         icon: '💪',
-        title: currentLang === 'ar' ? 'انزلاق لوحي الكتف على الحائط والتدوير' : 'Scapular Wall Slides & Rotator Circles',
-        duration: currentLang === 'ar' ? '45 ثانية' : '45 Seconds',
-        instructions: currentLang === 'ar'
-          ? 'ثبت ظهرك على الحائط وقم بإجراء 12 انزلاق للكتفين لأعلى ولأسفل مع دوران خفيف للذراعين.'
-          : 'Keep back flat against the wall, perform 12 scapular wall slides and gentle rotator cuff circles.',
-        benefit: currentLang === 'ar' ? 'توسيع القفص الصدري ومحاذاة لوح الكتف' : 'Prevents shoulder impingement & improves posture'
+        title: tr(currentLang, { en: 'Scapular Wall Slides & Rotator Circles', es: 'Deslizamientos Escapulares en Pared y Rotaciones', fr: 'Glissades Scapulaires au Mur & Rotations', ar: 'انزلاق لوحي الكتف على الحائط والتدوير' }),
+        duration: tr(currentLang, { en: '45 Seconds', es: '45 Segundos', fr: '45 Secondes', ar: '45 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Keep back flat against the wall, perform 12 scapular wall slides and gentle rotator cuff circles.',
+          es: 'Mantén la espalda pegada a la pared, realiza 12 deslizamientos escapulares y círculos suaves de hombro.',
+          fr: 'Dos plaqué au mur, réalisez 12 glissades scapulaires et cercles doux de la coiffe des rotateurs.',
+          ar: 'ثبت ظهرك على الحائط وقم بإجراء 12 انزلاق للكتفين لأعلى ولأسفل مع دوران خفيف للذراعين.'
+        }),
+        benefit: tr(currentLang, { en: 'Prevents shoulder impingement & improves posture', es: 'Previene pinzamiento de hombro y mejora postura', fr: 'Prévient le conflit d’épaule et améliore la posture', ar: 'توسيع القفص الصدري ومحاذاة لوح الكتف' })
       };
     } else if (maxZoneRisk === hamstringRisk && hamstringRisk > 20) {
       return {
-        zone: currentLang === 'ar' ? 'الفخذ الخلفي' : 'Hamstrings',
+        zone: tr(currentLang, { en: 'Hamstrings', es: 'Isquiotibiales', fr: 'Ischio-jambiers', ar: 'الفخذ الخلفي' }),
         icon: '🏃',
-        title: currentLang === 'ar' ? 'مسحات الفخذ الخلفية الديناميكية RDL' : 'Standing Dynamic Hamstring Sweeps',
-        duration: currentLang === 'ar' ? '45 ثانية' : '45 Seconds',
-        instructions: currentLang === 'ar'
-          ? 'أنجز 10 مسحات ديناميكية للفخذ الخلفي لكل ساق مع الانحناء من الورك لاستعادة مرونة الألياف العضلية.'
-          : 'Perform 10 active hamstring sweeps per leg to restore tissue elasticity after high acute load.',
-        benefit: currentLang === 'ar' ? 'حماية ألياف الفخذ الخلفي من التمزق' : 'Protects hamstring fibers from high-speed strain'
+        title: tr(currentLang, { en: 'Standing Dynamic Hamstring Sweeps', es: 'Barridos Dinámicos de Isquiotibiales', fr: 'Balayages Dynamiques des Ischio-jambiers', ar: 'مسحات الفخذ الخلفية الديناميكية RDL' }),
+        duration: tr(currentLang, { en: '45 Seconds', es: '45 Segundos', fr: '45 Secondes', ar: '45 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Perform 10 active hamstring sweeps per leg to restore tissue elasticity after high acute load.',
+          es: 'Realiza 10 barridos activos de isquiotibiales por pierna para restaurar elasticidad tras carga alta.',
+          fr: 'Effectuez 10 balayages actifs par jambe pour restaurer l’élasticité tissulaire après charge élevée.',
+          ar: 'أنجز 10 مسحات ديناميكية للفخذ الخلفي لكل ساق مع الانحناء من الورك لاستعادة مرونة الألياف العضلية.'
+        }),
+        benefit: tr(currentLang, { en: 'Protects hamstring fibers from high-speed strain', es: 'Protege fibras isquiotibiales frente a roturas en sprint', fr: 'Protège les fibres ischio-jambières lors des sprints', ar: 'حماية ألياف الفخذ الخلفي من التمزق' })
       };
     } else {
       return {
-        zone: currentLang === 'ar' ? 'الجسم بالكامل' : 'Full Body Reset',
+        zone: tr(currentLang, { en: 'Full Body Reset', es: 'Reinicio Corporal Total', fr: 'Réinitialisation Corps Complet', ar: 'الجسم بالكامل' }),
         icon: '🧘',
-        title: currentLang === 'ar' ? 'تنفس القوة وتغطية الحركة الشاملة' : 'Champion Mobility & Diaphragmatic Reset',
-        duration: currentLang === 'ar' ? '60 ثانية' : '60 Seconds',
-        instructions: currentLang === 'ar'
-          ? 'خذ 5 أنفاس عميقة بالبطن مع رفع اليدين لأعلى ومد الجذع لتنشيط الجهاز العصبي وتحسين مؤشر HRV.'
-          : 'Take 5 deep box breaths with overhead arm reaches to release spinal tension and optimize HRV.',
-        benefit: currentLang === 'ar' ? 'تحسين مؤشر HRV وتنشيط التعافي' : 'Optimizes HRV score & activates parasympathetic state'
+        title: tr(currentLang, { en: 'Champion Mobility & Diaphragmatic Reset', es: 'Movilidad de Campeón y Reinicio Diafragmático', fr: 'Mobilité Champion & Réinitialisation Diaphragmatique', ar: 'تنفس القوة وتغطية الحركة الشاملة' }),
+        duration: tr(currentLang, { en: '60 Seconds', es: '60 Segundos', fr: '60 Secondes', ar: '60 ثانية' }),
+        instructions: tr(currentLang, {
+          en: 'Take 5 deep box breaths with overhead arm reaches to release spinal tension and optimize HRV.',
+          es: 'Toma 5 respiraciones profundas con elevación de brazos para liberar tensión espinal y optimizar HRV.',
+          fr: 'Prenez 5 grandes respirations en boîte bras levés pour libérer la colonne et optimiser la VFC.',
+          ar: 'خذ 5 أنفاس عميقة بالبطن مع رفع اليدين لأعلى ومد الجذع لتنشيط الجهاز العصبي وتحسين مؤشر HRV.'
+        }),
+        benefit: tr(currentLang, { en: 'Optimizes HRV score & activates parasympathetic state', es: 'Optimiza HRV y activa recuperación parasimpática', fr: 'Optimise la VFC et active la récupération parasympathique', ar: 'تحسين مؤشر HRV وتنشيط التعافي' })
       };
     }
   };
@@ -715,41 +827,65 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
   const disorders: { title: string; desc: string; severity: 'high' | 'med' }[] = [];
   if (minSpo2 < 90) {
     disorders.push({
-      title: currentLang === 'ar' ? '🚨 انقطاع التنفس الحاد (Severe Apnea Alert)' : '🚨 Severe Sleep Apnea Alert (SpO₂ Critical)',
-      desc: currentLang === 'ar' 
-        ? `انخفض SpO₂ إلى ${minSpo2}% أثناء الليل. يُنصح باستشارة طبيب فوراً.`
-        : `Nighttime SpO₂ dropped to ${minSpo2}%. Immediate medical consultation is advised.`,
+      title: tr(currentLang, {
+        en: '🚨 Severe Sleep Apnea Alert (SpO₂ Critical)',
+        es: '🚨 Alerta de Apnea Severa (SpO₂ Crítico)',
+        fr: '🚨 Alerte Apnée Sévère du Sommeil (SpO₂ Critique)',
+        ar: '🚨 انقطاع التنفس الحاد (Severe Apnea Alert)'
+      }),
+      desc: tr(currentLang, {
+        en: `Nighttime SpO₂ dropped to ${minSpo2}%. Immediate medical consultation is advised.`,
+        es: `El SpO₂ nocturno cayó a ${minSpo2}%. Se recomienda consulta médica inmediata.`,
+        fr: `La SpO₂ nocturne est tombée à ${minSpo2}%. Consultation médicale immédiate conseillée.`,
+        ar: `انخفض SpO₂ إلى ${minSpo2}% أثناء الليل. يُنصح باستشارة طبيب فوراً.`
+      }),
       severity: 'high'
     });
   } else if (minSpo2 < 94) {
     disorders.push({
-      title: currentLang === 'ar' ? '🟡 تنبيه انخفاض أكسجين النوم (Low SpO₂ Alert)' : '🟡 Low Nocturnal SpO₂ Alert',
-      desc: currentLang === 'ar'
-        ? `وصل أدنى أكسجين إلى ${minSpo2}%. حافظ على تهوية جيدة وتجنب النوم على الظهر.`
-        : `Lowest nighttime SpO₂ reached ${minSpo2}%. Ensure proper bedroom airflow and avoid supine sleep.`,
+      title: tr(currentLang, {
+        en: '🟡 Low Nocturnal SpO₂ Alert',
+        es: '🟡 Alerta de SpO₂ Nocturno Bajo',
+        fr: '🟡 Alerte SpO₂ Nocturne Basse',
+        ar: '🟡 تنبيه انخفاض أكسجين النوم (Low SpO₂ Alert)'
+      }),
+      desc: tr(currentLang, {
+        en: `Lowest nighttime SpO₂ reached ${minSpo2}%. Ensure proper bedroom airflow and avoid supine sleep.`,
+        es: `El SpO₂ mínimo nocturno llegó a ${minSpo2}%. Asegura ventilación y evita dormir boca arriba.`,
+        fr: `La SpO₂ minimale nocturne a atteint ${minSpo2}%. Aérez la chambre et évitez de dormir sur le dos.`,
+        ar: `وصل أدنى أكسجين إلى ${minSpo2}%. حافظ على تهوية جيدة وتجنب النوم على الظهر.`
+      }),
       severity: 'med'
     });
   }
 
   if (sleepHours < 6) {
     disorders.push({
-      title: currentLang === 'ar' ? '🟠 نمط نوم متقطع ونقص الساعات (Fragmented Sleep)' : '🟠 Fragmented Sleep & Deficit',
-      desc: currentLang === 'ar'
-        ? `ساعات النوم ${sleepHours}h أقل من المستوى المطلوب للتعافي العضلي.`
-        : `Total sleep (${sleepHours}h) is below the threshold needed for cellular muscle repair.`,
+      title: tr(currentLang, {
+        en: '🟠 Fragmented Sleep & Deficit',
+        es: '🟠 Sueño Fragmentado y Déficit',
+        fr: '🟠 Sommeil Fragmenté & Déficit',
+        ar: '🟠 نمط نوم متقطع ونقص الساعات (Fragmented Sleep)'
+      }),
+      desc: tr(currentLang, {
+        en: `Total sleep (${sleepHours}h) is below the threshold needed for cellular muscle repair.`,
+        es: `El sueño total (${sleepHours}h) está por debajo del umbral de reparación muscular celular.`,
+        fr: `Le sommeil total (${sleepHours}h) est sous le seuil requis pour la réparation musculaire.`,
+        ar: `ساعات النوم ${sleepHours}h أقل من المستوى المطلوب للتعافي العضلي.`
+      }),
       severity: 'med'
     });
   }
 
   // Simulated Weekly Chart Data
   const sleepChartData = [
-    { day: currentLang === 'ar' ? 'الإثنين' : 'Mon', score: 55, hrv: 58, recovery: 50 },
-    { day: currentLang === 'ar' ? 'الثلاثاء' : 'Tue', score: 65, hrv: 62, recovery: 60 },
-    { day: currentLang === 'ar' ? 'الأربعاء' : 'Wed', score: 82, hrv: 70, recovery: 85 },
-    { day: currentLang === 'ar' ? 'الخميس' : 'Thu', score: 78, hrv: 68, recovery: 78 },
-    { day: currentLang === 'ar' ? 'الجمعة' : 'Fri', score: 60, hrv: 60, recovery: 55 },
-    { day: currentLang === 'ar' ? 'السبت' : 'Sat', score: 88, hrv: 74, recovery: 90 },
-    { day: currentLang === 'ar' ? 'الأحد' : 'Sun', score: sleepScore, hrv: hrv, recovery: muscleRecoveryScore },
+    { day: tr(currentLang, { en: 'Mon', es: 'Lun', fr: 'Lun', ar: 'الإثنين' }), score: 55, hrv: 58, recovery: 50 },
+    { day: tr(currentLang, { en: 'Tue', es: 'Mar', fr: 'Mar', ar: 'الثلاثاء' }), score: 65, hrv: 62, recovery: 60 },
+    { day: tr(currentLang, { en: 'Wed', es: 'Mié', fr: 'Mer', ar: 'الأربعاء' }), score: 82, hrv: 70, recovery: 85 },
+    { day: tr(currentLang, { en: 'Thu', es: 'Jue', fr: 'Jeu', ar: 'الخميس' }), score: 78, hrv: 68, recovery: 78 },
+    { day: tr(currentLang, { en: 'Fri', es: 'Vie', fr: 'Ven', ar: 'الجمعة' }), score: 60, hrv: 60, recovery: 55 },
+    { day: tr(currentLang, { en: 'Sat', es: 'Sáb', fr: 'Sam', ar: 'السبت' }), score: 88, hrv: 74, recovery: 90 },
+    { day: tr(currentLang, { en: 'Sun', es: 'Dom', fr: 'Dim', ar: 'الأحد' }), score: sleepScore, hrv: hrv, recovery: muscleRecoveryScore },
   ];
 
   return (
@@ -829,9 +965,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
           </h2>
 
           <p className="max-w-2xl text-gray-300 font-bold text-base md:text-lg leading-relaxed">
-            {currentLang === 'ar' 
-              ? "محرك التنبؤ بالإصابات والتحليل الحيوي الشامل v2.0 ومدعوم بخوارزميات ACWR، HRV، والنوم العميق لضمان أداء الأبطال." 
-              : "Comprehensive Biometric & Injury Prediction Engine v2.0 powered by ACWR, HRV, and Deep Sleep algorithms to guarantee champion peak performance."}
+            {tr(currentLang, {
+              en: "Comprehensive Biometric & Injury Prediction Engine v2.0 powered by ACWR, HRV, and Deep Sleep algorithms to guarantee champion peak performance.",
+              es: "Motor Biométrico y de Predicción de Lesiones v2.0 impulsado por algoritmos ACWR, HRV y Sueño Profundo para garantizar máximo rendimiento.",
+              fr: "Moteur Biométrique et de Prédiction de Blessures v2.0 propulsé par ACWR, VFC et Sommeil Profond pour une performance optimale.",
+              ar: "محرك التنبؤ بالإصابات والتحليل الحيوي الشامل v2.0 ومدعوم بخوارزميات ACWR، HRV، والنوم العميق لضمان أداء الأبطال."
+            })}
           </p>
 
           {/* Featured Anime Hero Champion Visual Banner */}
@@ -849,7 +988,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   🔥 CAPTAIN AURA S-RANK ATHLETE
                 </span>
                 <h3 className="text-xl md:text-2xl font-black text-white font-anime mt-1">
-                  {currentLang === 'ar' ? 'كابتن أورا - قائد فريق القتال بالذكاء الاصطناعي' : 'Captain Aura — AI Combat Squad Commander'}
+                  {tr(currentLang, {
+                    en: 'Captain Aura — AI Combat Squad Commander',
+                    es: 'Capitán Aura — Comandante de Escuadrón IA',
+                    fr: 'Capitaine Aura — Commandant d’Escouade IA',
+                    ar: 'كابتن أورا - قائد فريق القتال بالذكاء الاصطناعي'
+                  })}
                 </h3>
               </div>
               <span className="text-xs font-black font-anime text-[#FFE600] bg-[#181A28]/90 px-3 py-1.5 rounded-xl border border-[#FFE600]/40">
@@ -878,17 +1022,30 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               
               <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
                 <div className="inline-block px-4 py-1 rounded-full bg-[#FFE600] text-[#0A0B10] font-black font-anime text-xs uppercase tracking-widest shadow-[0_0_15px_#FFE600]">
-                  🔥 NEW HIGH-INTENSITY FEATURE // WORKOUT OVERDRIVE
+                  🔥 {tr(currentLang, {
+                    en: 'NEW HIGH-INTENSITY FEATURE // WORKOUT OVERDRIVE',
+                    es: 'NUEVA FUNCIÓN DE ALTA INTENSIDAD // MODO OVERDRIVE',
+                    fr: 'NOUVEAU MODE HAUTE INTENSITÉ // OVERDRIVE',
+                    ar: 'ميزة عالية الكثافة // وضع التدريب القتالي الفائق'
+                  })}
                 </div>
 
                 <h3 className="text-3xl md:text-5xl font-black font-anime text-white leading-tight">
-                  ⚡ ANIME TRAINING MODE (3-MIN WORKOUT)
+                  ⚡ {tr(currentLang, {
+                    en: 'ANIME TRAINING MODE (3-MIN WORKOUT)',
+                    es: 'MODO ENTRENAMIENTO ANIME (3 MIN)',
+                    fr: 'MODE ENTRAÎNEMENT ANIME (3 MIN)',
+                    ar: 'وضع التدريب الأنمي (3 دقائق)'
+                  })}
                 </h3>
 
                 <p className="text-gray-300 font-bold text-sm md:text-base leading-relaxed">
-                  {currentLang === 'ar'
-                    ? 'خض تجربة تدريبية حماسية لمدة 3 دقائق بنمط الأنمي القتالي! ارفع طاقتك لأكثر من 9000، سدد لكمات متتالية، وفكّر كأبطال الأنمي الخارقين مع تعزيز تلقائي لمؤشرات حمولتك اليومية (+75 AU).'
-                    : 'Experience an exhilarating 3-minute anime combat workout! Break past power level 9000, land rapid punch combos, and channel supernatural warrior focus with automatic daily training load sync (+75 AU).'}
+                  {tr(currentLang, {
+                    en: 'Experience an exhilarating 3-minute anime combat workout! Break past power level 9000, land rapid punch combos, and channel supernatural warrior focus with automatic daily training load sync (+75 AU).',
+                    es: '¡Vive un intenso entrenamiento anime de 3 minutos! Supera el nivel de poder 9000, conecta combos rápidos y sincroniza automáticamente +75 AU a tu carga diaria.',
+                    fr: 'Vivez un entraînement combat anime de 3 minutes ! Dépassez 9000 de puissance, enchaînez les combos et synchronisez automatiquement +75 AU à votre charge.',
+                    ar: 'خض تجربة تدريبية حماسية لمدة 3 دقائق بنمط الأنمي القتالي! ارفع طاقتك لأكثر من 9000، سدد لكمات متتالية، وفكّر كأبطال الأنمي الخارقين مع تعزيز تلقائي لمؤشرات حمولتك اليومية (+75 AU).'
+                  })}
                 </p>
 
                 <div className="pt-2 flex flex-wrap justify-center gap-4">
@@ -896,7 +1053,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     onClick={startWorkout}
                     className="px-8 py-4 rounded-2xl bg-[#FF007A] hover:bg-[#FF007A]/80 text-white font-black font-anime text-lg shadow-[0_0_30px_#FF007A] hover:scale-105 transition-all flex items-center gap-3 border-2 border-white/20"
                   >
-                    <span>⚡ STARTS ANIME TRAINING MODE (3 MINUTES)</span>
+                    <span>⚡ {tr(currentLang, {
+                      en: 'START ANIME TRAINING MODE (3 MINUTES)',
+                      es: 'INICIAR MODO ANIME (3 MINUTOS)',
+                      fr: 'LANCER LE MODE ANIME (3 MINUTES)',
+                      ar: 'بدء وضع التدريب القتالي (3 دقائق)'
+                    })}</span>
                     <span className="text-xl">➔</span>
                   </button>
                 </div>
@@ -990,7 +1152,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   {/* Exercise Box */}
                   <div className="p-4 rounded-xl bg-[#181A28] border-r-4 shadow-inner" style={{ borderColor: phaseColor }}>
                     <div className="text-xs font-black font-anime mb-1" style={{ color: phaseColor }}>
-                      🎯 CURRENT EXERCISE {currentLang === 'ar' ? '// الحركة الحالية' : ''}
+                      🎯 {tr(currentLang, { en: 'CURRENT EXERCISE', es: 'EJERCICIO ACTUAL', fr: 'EXERCICE ACTUEL', ar: 'التمرين الحالي' })}
                     </div>
                     <div className="text-lg md:text-xl font-black text-white mb-2">
                       {phaseExercise}
@@ -1005,11 +1167,11 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     <div className="flex justify-between items-center">
                       <span className="text-[11px] font-black font-anime text-[#FF007A] flex items-center gap-1.5">
                         <span className="animate-pulse">🎙️ VOICE COACH FEED</span>
-                        <span>(SPEAK PAIN / FATIGUE)</span>
+                        <span>({tr(currentLang, { en: 'SPEAK PAIN / FATIGUE', es: 'DI DOLOR / FATIGA', fr: 'DIRE DOULEUR / FATIGUE', ar: 'انطق الألم / الإجهاد' })})</span>
                       </span>
                       {userPainScore > 0 && (
                         <span className="text-[10px] font-anime font-black text-[#FFE600] bg-[#181A28] px-2 py-0.5 rounded border border-[#FFE600]/30">
-                          PAIN: {userPainScore}/10
+                          {tr(currentLang, { en: 'PAIN', es: 'DOLOR', fr: 'DOULEUR', ar: 'الألم' })}: {userPainScore}/10
                         </span>
                       )}
                     </div>
@@ -1025,11 +1187,16 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                             : 'bg-[#FF007A]/20 hover:bg-[#FF007A]/40 text-[#FF007A] border border-[#FF007A]/50'
                         }`}
                       >
-                        <span>{isListening ? '🎙️ LISTENING...' : '🎙️ SPEAK NOW'}</span>
+                        <span>{isListening ? `🎙️ ${tr(currentLang, { en: 'LISTENING...', es: 'ESCUCHANDO...', fr: 'ÉCOUTE...', ar: 'جاري الاستماع...' })}` : `🎙️ ${tr(currentLang, { en: 'SPEAK NOW', es: 'HABLAR AHORA', fr: 'PARLER', ar: 'تحدث الآن' })}`}</span>
                       </button>
 
                       <div className="flex-1 text-[11px] font-bold text-gray-300 truncate bg-[#181A28] px-2.5 py-1.5 rounded-lg border border-gray-800">
-                        {voiceTranscript ? `"${voiceTranscript}"` : (currentLang === 'ar' ? 'تحدث عن الألم كـ "ألم ركبة 7"' : 'Speak e.g. "Knee pain 7"')}
+                        {voiceTranscript ? `"${voiceTranscript}"` : tr(currentLang, {
+                          en: 'Speak e.g. "Knee pain 7"',
+                          es: 'Di ej. "Dolor rodilla 7"',
+                          fr: 'Dites ex. "Douleur genou 7"',
+                          ar: 'تحدث عن الألم كـ "ألم ركبة 7"'
+                        })}
                       </div>
                     </div>
 
@@ -1037,24 +1204,24 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     <div className="flex flex-wrap gap-1 pt-1">
                       <button
                         type="button"
-                        onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'ألم ركبة 7' : 'Knee pain 7')}
+                        onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Knee pain 7', es: 'Dolor rodilla 7', fr: 'Douleur genou 7', ar: 'ألم ركبة 7' }))}
                         className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-300 border border-gray-700"
                       >
-                        🦵 Knee 7
+                        🦵 {tr(currentLang, { en: 'Knee 7', es: 'Rodilla 7', fr: 'Genou 7', ar: 'الركبة 7' })}
                       </button>
                       <button
                         type="button"
-                        onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'ألم ظهر 8' : 'Back pain 8')}
+                        onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Back pain 8', es: 'Dolor espalda 8', fr: 'Douleur dos 8', ar: 'ألم ظهر 8' }))}
                         className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-300 border border-gray-700"
                       >
-                        🔙 Back 8
+                        🔙 {tr(currentLang, { en: 'Back 8', es: 'Espalda 8', fr: 'Dos 8', ar: 'الظهر 8' })}
                       </button>
                       <button
                         type="button"
-                        onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'تعب شديد 9' : 'High fatigue 9')}
+                        onClick={() => processVoiceTranscript(tr(currentLang, { en: 'High fatigue 9', es: 'Fatiga alta 9', fr: 'Fatigue élevée 9', ar: 'تعب شديد 9' }))}
                         className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-300 border border-gray-700"
                       >
-                        ⚡ Fatigue 9
+                        ⚡ {tr(currentLang, { en: 'Fatigue 9', es: 'Fatiga 9', fr: 'Fatigue 9', ar: 'إجهاد 9' })}
                       </button>
                     </div>
                   </div>
@@ -1084,7 +1251,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider">
-                        🔥 POWER LEVEL {currentLang === 'ar' ? '(مستوى الهالة):' : ':'}
+                        🔥 {tr(currentLang, { en: 'POWER LEVEL:', es: 'NIVEL DE PODER:', fr: 'NIVEAU D’AURA :', ar: 'مستوى الهالة:' })}
                       </span>
                       <span className="text-2xl font-black font-anime text-[#FFE600] neon-text-yellow">
                         {powerLevel > 9000 ? 'OVER 9000!!' : `${powerLevel} / 9000`}
@@ -1104,7 +1271,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   {/* Combo Hits Count */}
                   <div className="p-4 rounded-2xl bg-[#181A28] border border-gray-800">
                     <span className="text-xs font-black font-anime text-gray-400 block mb-1">
-                      🥊 COMBOS LANDED {currentLang === 'ar' ? '(الضربات المكتسبة)' : ''}
+                      🥊 {tr(currentLang, { en: 'COMBOS LANDED', es: 'COMBOS CONECTADOS', fr: 'COMBOS RÉUSSIS', ar: 'الضربات المكتسبة' })}
                     </span>
                     <span className="text-5xl md:text-7xl font-black font-anime text-[#FF007A] neon-text-pink">
                       {comboHits} <span className="text-2xl text-white">STRIKES</span>
@@ -1116,9 +1283,14 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     onClick={handleStrike}
                     className="w-full py-8 md:py-10 rounded-2xl bg-[#10B981] hover:bg-[#059669] hover:brightness-110 active:scale-95 transition-all text-black font-black font-anime text-2xl md:text-4xl shadow-[0_0_50px_rgba(16,185,129,0.8)] border-4 border-white flex flex-col items-center justify-center gap-1 cursor-pointer"
                   >
-                    <span>💥 TAP TO LAND STRIKES // 拳を打て!</span>
+                    <span>💥 {tr(currentLang, { en: 'TAP TO LAND STRIKES // 拳を打て!', es: 'TOCA PARA GOLPEAR // 拳を打て!', fr: 'APPUYEZ POUR FRAPPER // 拳を打て!', ar: 'اضغط لتوجيه الضربات // 拳を打て!' })}</span>
                     <span className="text-xs text-black/80 font-mono font-bold uppercase tracking-widest">
-                      (PRESS OR CLICK REPEATEDLY FOR MAX AURA COMBO)
+                      {tr(currentLang, {
+                        en: '(PRESS OR CLICK REPEATEDLY FOR MAX AURA COMBO)',
+                        es: '(PULSA REPETIDAMENTE PARA COMBO MÁXIMO DE AURA)',
+                        fr: '(APPUYEZ EN CONTINU POUR UN COMBO D’AURA MAXIMAL)',
+                        ar: '(اضغط بشكل متكرر لتحقيق أقصى سلسلة ضربات)'
+                      })}
                     </span>
                   </button>
 
@@ -1139,33 +1311,39 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               </div>
 
               <h3 className="text-4xl md:text-6xl font-black font-anime text-white leading-tight">
-                ANIME TRAINING MODE COMPLETE!
+                {tr(currentLang, {
+                  en: 'ANIME TRAINING MODE COMPLETE!',
+                  es: '¡MODO ENTRENAMIENTO COMPLETADO!',
+                  fr: 'MODE ENTRAÎNEMENT TERMINÉ !',
+                  ar: 'اكتمل وضع التدريب القتالي!'
+                })}
               </h3>
 
               <p className="max-w-xl mx-auto text-gray-300 font-bold text-base">
-                {currentLang === 'ar' ? (
-                  <>تهانينا يا بطل! لقد أكملت 3 دقائق كاملة من التدريب المكثف وحققت أقصى هالة قتالية. تمت إضافة <strong className="text-[#00F0FF]">+75 AU</strong> تلقائياً إلى حملك التدريبي.</>
-                ) : (
-                  <>Congratulations warrior! You crushed a full 3-minute high-intensity combat session and unlocked peak aura. <strong className="text-[#00F0FF]">+75 AU</strong> has been added to your training load.</>
-                )}
+                {tr(currentLang, {
+                  en: 'Congratulations warrior! You crushed a full 3-minute high-intensity combat session and unlocked peak aura. +75 AU has been added to your training load.',
+                  es: '¡Felicidades guerrero! Superaste una sesión intensa de 3 minutos y desbloqueaste el aura máxima. Se añadieron +75 AU a tu carga.',
+                  fr: 'Félicitations guerrier ! Vous avez bouclé 3 minutes d’intensité maximale et libéré l’aura ultime. +75 AU ajoutés à votre charge.',
+                  ar: 'تهانينا يا بطل! لقد أكملت 3 دقائق كاملة من التدريب المكثف وحققت أقصى هالة قتالية. تمت إضافة +75 AU تلقائياً إلى حملك التدريبي.'
+                })}
               </p>
 
               {/* Stats Summary Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto py-4">
                 <div className="bg-[#181A28] p-4 rounded-2xl border border-gray-800">
-                  <span className="text-xs text-gray-400 font-bold block">{currentLang === 'ar' ? 'إجمالي الضربات' : 'Total Strikes'}</span>
+                  <span className="text-xs text-gray-400 font-bold block">{tr(currentLang, { en: 'Total Strikes', es: 'Golpes Totales', fr: 'Frappes Totales', ar: 'إجمالي الضربات' })}</span>
                   <span className="text-2xl font-black font-anime text-[#FF007A]">{comboHits} Hits</span>
                 </div>
                 <div className="bg-[#181A28] p-4 rounded-2xl border border-gray-800">
-                  <span className="text-xs text-gray-400 font-bold block">{currentLang === 'ar' ? 'مستوى الهالة' : 'Aura Power Level'}</span>
+                  <span className="text-xs text-gray-400 font-bold block">{tr(currentLang, { en: 'Aura Power Level', es: 'Nivel de Aura', fr: 'Puissance Aura', ar: 'مستوى الهالة' })}</span>
                   <span className="text-2xl font-black font-anime text-[#FFE600]">{powerLevel} LVL</span>
                 </div>
                 <div className="bg-[#181A28] p-4 rounded-2xl border border-gray-800">
-                  <span className="text-xs text-gray-400 font-bold block">{currentLang === 'ar' ? 'السعرات المحروقة' : 'Calories Burned'}</span>
+                  <span className="text-xs text-gray-400 font-bold block">{tr(currentLang, { en: 'Calories Burned', es: 'Calorías Quemadas', fr: 'Calories Brûlées', ar: 'السعرات المحروقة' })}</span>
                   <span className="text-2xl font-black font-anime text-[#00F0FF]">~48 kcal</span>
                 </div>
                 <div className="bg-[#181A28] p-4 rounded-2xl border border-gray-800">
-                  <span className="text-xs text-gray-400 font-bold block">{currentLang === 'ar' ? 'زيادة الحمل' : 'Load Increase'}</span>
+                  <span className="text-xs text-gray-400 font-bold block">{tr(currentLang, { en: 'Load Increase', es: 'Incremento Carga', fr: 'Gain de Charge', ar: 'زيادة الحمل' })}</span>
                   <span className="text-2xl font-black font-anime text-[#22C55E]">+75 AU</span>
                 </div>
               </div>
@@ -1175,13 +1353,13 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   onClick={startWorkout}
                   className="px-6 py-3 rounded-xl bg-[#00F0FF] text-black font-black font-anime text-sm shadow-[0_0_20px_#00F0FF] hover:scale-105 transition-all"
                 >
-                  🔄 {currentLang === 'ar' ? 'إعادة التدريب (TRAIN AGAIN)' : 'TRAIN AGAIN'}
+                  🔄 {tr(currentLang, { en: 'TRAIN AGAIN', es: 'ENTRENAR DE NUEVO', fr: 'RECOMMENCER', ar: 'إعادة التدريب (TRAIN AGAIN)' })}
                 </button>
                 <button
                   onClick={() => setIsCompleted(false)}
                   className="px-6 py-3 rounded-xl bg-[#181A28] border border-gray-700 text-white font-black font-anime text-sm hover:border-gray-500 transition-all"
                 >
-                  ✅ BACK TO BIOMETRIC DASHBOARD
+                  ✅ {tr(currentLang, { en: 'BACK TO BIOMETRIC DASHBOARD', es: 'VOLVER AL PANEL BIOMÉTRICO', fr: 'RETOUR AU TABLEAU BIOMÉTRIQUE', ar: 'العودة للوحة البيومترية' })}
                 </button>
               </div>
 
@@ -1196,7 +1374,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-800 pb-4">
             <h3 className="text-xl font-black font-anime text-[#00F0FF] flex items-center gap-2">
               <span>🎛️</span>
-              <span>{currentLang === 'ar' ? 'لوحة التحكم بالمؤشرات البيومترية // BIOMETRIC ENGINE CONTROLLER' : 'Biometric Engine Controller // METRICS DASHBOARD'}</span>
+              <span>{tr(currentLang, {
+                en: 'Biometric Engine Controller // METRICS DASHBOARD',
+                es: 'Controlador Biométrico // PANEL DE MÉTRICAS',
+                fr: 'Contrôleur Biométrique // TABLEAU DES MÉTRIQUES',
+                ar: 'لوحة التحكم بالمؤشرات البيومترية // BIOMETRIC ENGINE CONTROLLER'
+              })}</span>
             </h3>
             <span className="text-xs text-[#FFE600] font-mono font-bold bg-[#181A28] px-3 py-1.5 rounded-xl border border-[#FFE600]/30">
               ACWR Ratio: <strong className="text-white font-anime text-sm">{acwr.toFixed(2)}</strong>
@@ -1208,7 +1391,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             {/* Acute Load */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'الحمل التدريبي الحاد (Acute Load AU)' : 'Acute Training Load (AU)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Acute Training Load (AU)', es: 'Carga de Entrenamiento Aguda (AU)', fr: 'Charge d’Entraînement Aiguë (AU)', ar: 'الحمل التدريبي الحاد (Acute Load AU)' })}</span>
                 <span className="text-[#FF007A] font-anime text-sm font-black">{acuteLoad} AU</span>
               </div>
               <input 
@@ -1221,16 +1404,16 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 className="w-full accent-[#FF007A] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                <span>500 ({currentLang === 'ar' ? 'خفيف' : 'Light'})</span>
-                <span>1100 ({currentLang === 'ar' ? 'عادي' : 'Normal'})</span>
-                <span>2500 ({currentLang === 'ar' ? 'إجهاد' : 'High'})</span>
+                <span>500 ({tr(currentLang, { en: 'Light', es: 'Ligero', fr: 'Léger', ar: 'خفيف' })})</span>
+                <span>1100 ({tr(currentLang, { en: 'Normal', es: 'Normal', fr: 'Normal', ar: 'عادي' })})</span>
+                <span>2500 ({tr(currentLang, { en: 'High', es: 'Alto', fr: 'Élevé', ar: 'إجهاد' })})</span>
               </div>
             </div>
 
             {/* Chronic Load */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'الحمل التراكمي المزمن (Chronic Load AU)' : 'Chronic Training Load (AU)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Chronic Training Load (AU)', es: 'Carga Crónica Acumulada (AU)', fr: 'Charge Chronique Cumulée (AU)', ar: 'الحمل التراكمي المزمن (Chronic Load AU)' })}</span>
                 <span className="text-[#00F0FF] font-anime text-sm font-black">{chronicLoad} AU</span>
               </div>
               <input 
@@ -1244,7 +1427,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
                 <span>500 AU</span>
-                <span>950 AU ({currentLang === 'ar' ? 'معيار' : 'Baseline'})</span>
+                <span>950 AU ({tr(currentLang, { en: 'Baseline', es: 'Base', fr: 'Référence', ar: 'معيار' })})</span>
                 <span>2000 AU</span>
               </div>
             </div>
@@ -1264,8 +1447,8 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 className="w-full accent-[#00F0FF] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                <span>20 ms ({currentLang === 'ar' ? 'منخفض' : 'Low'})</span>
-                <span>65 ms ({currentLang === 'ar' ? 'جيد' : 'Good'})</span>
+                <span>20 ms ({tr(currentLang, { en: 'Low', es: 'Bajo', fr: 'Bas', ar: 'منخفض' })})</span>
+                <span>65 ms ({tr(currentLang, { en: 'Good', es: 'Bueno', fr: 'Bon', ar: 'جيد' })})</span>
                 <span>100 ms</span>
               </div>
             </div>
@@ -1287,7 +1470,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
                 <span>3h</span>
-                <span>7.5h ({currentLang === 'ar' ? 'موصى به' : 'Recommended'})</span>
+                <span>7.5h ({tr(currentLang, { en: 'Recommended', es: 'Recomendado', fr: 'Recommandé', ar: 'موصى به' })})</span>
                 <span>10h</span>
               </div>
             </div>
@@ -1295,7 +1478,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             {/* Deep Sleep % */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'نسبة النوم العميق (Deep Sleep %)' : 'Deep Sleep Ratio (%)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Deep Sleep Ratio (%)', es: 'Porcentaje de Sueño Profundo (%)', fr: 'Ratio de Sommeil Profond (%)', ar: 'نسبة النوم العميق (Deep Sleep %)' })}</span>
                 <span className="text-[#FFE600] font-anime text-sm font-black">{deepSleepPercent}%</span>
               </div>
               <input 
@@ -1307,8 +1490,8 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 className="w-full accent-[#FFE600] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                <span>5% ({currentLang === 'ar' ? 'منخفض' : 'Low'})</span>
-                <span>20% ({currentLang === 'ar' ? 'مثالي' : 'Optimal'})</span>
+                <span>5% ({tr(currentLang, { en: 'Low', es: 'Bajo', fr: 'Bas', ar: 'منخفض' })})</span>
+                <span>20% ({tr(currentLang, { en: 'Optimal', es: 'Óptimo', fr: 'Optimal', ar: 'مثالي' })})</span>
                 <span>35%</span>
               </div>
             </div>
@@ -1316,7 +1499,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             {/* Skin Temp */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'حرارة الجسم (Skin Temp °C)' : 'Skin Temperature (°C)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Skin Temperature (°C)', es: 'Temperatura Cutánea (°C)', fr: 'Température Cutanée (°C)', ar: 'حرارة الجسم (Skin Temp °C)' })}</span>
                 <span className="text-[#FF007A] font-anime text-sm font-black">{skinTemp.toFixed(1)}°C</span>
               </div>
               <input 
@@ -1329,8 +1512,8 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 className="w-full accent-[#FF007A] cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-bold mt-1">
-                <span>36.6°C ({currentLang === 'ar' ? 'طبيعي' : 'Normal'})</span>
-                <span>37.2°C ({currentLang === 'ar' ? 'إجهاد' : 'Elevated'})</span>
+                <span>36.6°C ({tr(currentLang, { en: 'Normal', es: 'Normal', fr: 'Normal', ar: 'طبيعي' })})</span>
+                <span>37.2°C ({tr(currentLang, { en: 'Elevated', es: 'Elevada', fr: 'Élevée', ar: 'إجهاد' })})</span>
                 <span>38.0°C</span>
               </div>
             </div>
@@ -1354,7 +1537,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             {/* Min Night SpO2 */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'أدنى أكسجين ليلي (Min SpO₂ Night)' : 'Min Nighttime SpO₂ (%)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Min Nighttime SpO₂ (%)', es: 'SpO₂ Nocturno Mínimo (%)', fr: 'SpO₂ Nocturne Min (%)', ar: 'أدنى أكسجين ليلي (Min SpO₂ Night)' })}</span>
                 <span className="text-[#FF007A] font-anime text-sm font-black">{minSpo2}%</span>
               </div>
               <input 
@@ -1370,7 +1553,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             {/* Max Speed & Distance */}
             <div className="bg-[#181A28] p-5 rounded-2xl border border-gray-800">
               <div className="flex justify-between items-center mb-2 text-xs font-bold">
-                <span className="text-gray-300">{currentLang === 'ar' ? 'أقصى سرعة وركض (Max Speed & Km)' : 'Max Speed & Sprint Pace (km/h)'}</span>
+                <span className="text-gray-300">{tr(currentLang, { en: 'Max Speed & Sprint Pace (km/h)', es: 'Velocidad Máxima y Sprint (km/h)', fr: 'Vitesse Max & Sprint (km/h)', ar: 'أقصى سرعة وركض (Max Speed & Km)' })}</span>
                 <span className="text-[#00F0FF] font-anime text-sm font-black">{maxSpeed} km/h</span>
               </div>
               <input 
@@ -1388,7 +1571,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
           {/* Injury History Toggles */}
           <div className="border-t border-gray-800 pt-6">
             <h4 className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider mb-3">
-              🏥 {currentLang === 'ar' ? 'سجل الإصابات السابقة (Previous Injury History)' : 'Previous Injury History Log'}
+              🏥 {tr(currentLang, { en: 'Previous Injury History Log', es: 'Historial de Lesiones Previas', fr: 'Historique des Blessures Antérieures', ar: 'سجل الإصابات السابقة (Previous Injury History)' })}
             </h4>
             <div className="flex flex-wrap gap-3">
               {(['knee', 'ankle', 'back', 'shoulder', 'hamstring'] as const).map((zone) => (
@@ -1401,7 +1584,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                       : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
                   }`}
                 >
-                  {previousInjuries[zone] ? (currentLang === 'ar' ? '⚠️ إصابة سابقاً:' : '⚠️ Prior Injury:') : (currentLang === 'ar' ? '✅ سليم:' : '✅ Clear:')} {zone.toUpperCase()}
+                  {previousInjuries[zone] ? tr(currentLang, { en: '⚠️ Prior Injury:', es: '⚠️ Lesión Previa:', fr: '⚠️ Blessure Passée :', ar: '⚠️ إصابة سابقاً:' }) : tr(currentLang, { en: '✅ Clear:', es: '✅ Sano:', fr: '✅ Sain :', ar: '✅ سليم:' })} {zone.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -1463,7 +1646,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 <div className="text-left">
                   <span className="text-[10px] font-black font-anime text-[#00F0FF] uppercase block">CAPTAIN AURA AI</span>
                   <span className="text-xs font-bold text-white block">
-                    {currentLang === 'ar' ? 'المدرب القتالي المباشر' : 'Live Combat Coach'}
+                    {tr(currentLang, { en: 'Live Combat Coach', es: 'Entrenador de Combate en Vivo', fr: 'Coach Combat en Direct', ar: 'المدرب القتالي المباشر' })}
                   </span>
                 </div>
               </div>
@@ -1481,7 +1664,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               >
                 <span className="text-4xl">{isListening ? '🔊' : '🎙️'}</span>
                 <span className="text-[10px] font-black font-anime mt-1 uppercase text-white">
-                  {isListening ? 'RECORDING' : 'TAP TO SPEAK'}
+                  {isListening ? tr(currentLang, { en: 'RECORDING', es: 'GRABANDO', fr: 'ENREGISTREMENT', ar: 'جاري التسجيل' }) : tr(currentLang, { en: 'TAP TO SPEAK', es: 'TOCA PARA HABLAR', fr: 'APPUYEZ', ar: 'اضغط للتحدث' })}
                 </span>
 
                 {/* Animated Pulsing Soundwave Rings */}
@@ -1519,31 +1702,31 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   <button
                     type="button"
-                    onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'أشعر بألم شديد في الركبة درجة 7' : 'Sharp knee pain level 7')}
+                    onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Sharp knee pain level 7', es: 'Dolor agudo de rodilla nivel 7', fr: 'Douleur aiguë genou niveau 7', ar: 'أشعر بألم شديد في الركبة درجة 7' }))}
                     className="px-2.5 py-1 rounded-lg bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-200 border border-gray-700 text-[10px] font-bold transition-all cursor-pointer"
                   >
-                    🦵 {currentLang === 'ar' ? 'ألم الركبة 7/10' : 'Knee Pain 7/10'}
+                    🦵 {tr(currentLang, { en: 'Knee Pain 7/10', es: 'Dolor Rodilla 7/10', fr: 'Douleur Genou 7/10', ar: 'ألم الركبة 7/10' })}
                   </button>
                   <button
                     type="button"
-                    onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'تصلب شديد في أسفل الظهر درجة 8' : 'Severe lower back stiffness level 8')}
+                    onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Severe lower back stiffness level 8', es: 'Rigidez severa lumbar nivel 8', fr: 'Raideur lombaire sévère niveau 8', ar: 'تصلب شديد في أسفل الظهر درجة 8' }))}
                     className="px-2.5 py-1 rounded-lg bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-200 border border-gray-700 text-[10px] font-bold transition-all cursor-pointer"
                   >
-                    🔙 {currentLang === 'ar' ? 'تصلب الظهر 8/10' : 'Back Pain 8/10'}
+                    🔙 {tr(currentLang, { en: 'Back Pain 8/10', es: 'Dolor Espalda 8/10', fr: 'Douleur Dos 8/10', ar: 'تصلب الظهر 8/10' })}
                   </button>
                   <button
                     type="button"
-                    onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'إجهاد وتعب شديد درجة 9' : 'Extreme exhaustion fatigue level 9')}
+                    onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Extreme exhaustion fatigue level 9', es: 'Fatiga extrema nivel 9', fr: 'Fatigue extrême niveau 9', ar: 'إجهاد وتعب شديد درجة 9' }))}
                     className="px-2.5 py-1 rounded-lg bg-[#181A28] hover:bg-[#FF007A]/30 text-gray-200 border border-gray-700 text-[10px] font-bold transition-all cursor-pointer"
                   >
-                    ⚡ {currentLang === 'ar' ? 'إجهاد حاد 9/10' : 'Fatigue 9/10'}
+                    ⚡ {tr(currentLang, { en: 'Fatigue 9/10', es: 'Fatiga 9/10', fr: 'Fatigue 9/10', ar: 'إجهاد حاد 9/10' })}
                   </button>
                   <button
                     type="button"
-                    onClick={() => processVoiceTranscript(currentLang === 'ar' ? 'ممتاز لا يوجد ألم درجة 0' : 'Feeling great zero pain level 0')}
+                    onClick={() => processVoiceTranscript(tr(currentLang, { en: 'Feeling great zero pain level 0', es: 'Me siento genial cero dolor nivel 0', fr: 'Forme optimale zéro douleur niveau 0', ar: 'ممتاز لا يوجد ألم درجة 0' }))}
                     className="px-2.5 py-1 rounded-lg bg-[#181A28] hover:bg-[#00F0FF]/30 text-gray-200 border border-gray-700 text-[10px] font-bold transition-all cursor-pointer"
                   >
-                    ✅ {currentLang === 'ar' ? 'لا يوجد ألم 0/10' : 'Zero Pain 0/10'}
+                    ✅ {tr(currentLang, { en: 'Zero Pain 0/10', es: 'Cero Dolor 0/10', fr: 'Zéro Douleur 0/10', ar: 'لا يوجد ألم 0/10' })}
                   </button>
                 </div>
               </div>
@@ -1561,7 +1744,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     {t('last_spoken_feedback')}
                   </span>
                   <p className="text-sm font-black text-[#FFE600] font-anime mt-0.5">
-                    {voiceTranscript ? `"${voiceTranscript}"` : (currentLang === 'ar' ? 'لم يتم استلام نص صوتي بعد...' : 'No spoken audio received yet...')}
+                    {voiceTranscript ? `"${voiceTranscript}"` : tr(currentLang, {
+                      en: 'No spoken audio received yet...',
+                      es: 'Aún no se recibió audio hablado...',
+                      fr: 'Aucun audio reçu pour le moment...',
+                      ar: 'لم يتم استلام نص صوتي بعد...'
+                    })}
                   </p>
                 </div>
               </div>
@@ -1612,7 +1800,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               {voiceLogs.length > 0 && (
                 <div className="pt-2">
                   <span className="text-[10px] font-anime font-black text-gray-400 block mb-1 uppercase">
-                    📜 {currentLang === 'ar' ? 'سجل المحادثات الصوتية السابقة:' : 'Voice Session Log:'}
+                    📜 {tr(currentLang, { en: 'Voice Session Log:', es: 'Registro de Sesiones de Voz:', fr: 'Journal des Sessions Vocales :', ar: 'سجل المحادثات الصوتية السابقة:' })}
                   </span>
                   <div className="space-y-1">
                     {voiceLogs.map((log, idx) => (
@@ -1666,7 +1854,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             </div>
 
             <div className="p-4 rounded-xl bg-[#181A28] border border-gray-800 text-xs font-bold text-[#FFE600] flex items-center justify-between">
-              <span>⏱️ {currentLang === 'ar' ? 'التنبؤ الزمني بوقوع الإصابة:' : 'Estimated Injury Risk Timeline:'}</span>
+              <span>⏱️ {tr(currentLang, { en: 'Estimated Injury Risk Timeline:', es: 'Línea de Tiempo Estimada de Riesgo:', fr: 'Estimation Délai de Risque :', ar: 'التنبؤ الزمني بوقوع الإصابة:' })}</span>
               <span className="font-anime text-sm text-white">{timelineMessage}</span>
             </div>
           </div>
@@ -1695,7 +1883,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             </div>
 
             <div className="mt-6 text-xs text-gray-400 font-bold flex items-center gap-2">
-              <span className="text-[#00F0FF]">AURA CHAMPION ENGINE</span> — {currentLang === 'ar' ? 'يتكيف تلقائياً مع خوارزميات الإصابات اليومية.' : 'Automatically adapts to daily injury predictive algorithms.'}
+              <span className="text-[#00F0FF]">AURA CHAMPION ENGINE</span> — {tr(currentLang, { en: 'Automatically adapts to daily injury predictive algorithms.', es: 'Se adapta automáticamente a los algoritmos diarios de prevención.', fr: 'S’adapte automatiquement aux algorithmes prédictifs quotidiens.', ar: 'يتكيف تلقائياً مع خوارزميات الإصابات اليومية.' })}
             </div>
           </div>
 
@@ -1712,12 +1900,15 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 <span>⏱️ COUNTDOWN TO RECOVERY & REST INTERVAL CALCULATOR</span>
               </div>
               <h3 className="text-2xl font-black font-anime text-white flex items-center gap-2">
-                <span>{currentLang === 'ar' ? 'عداد العد التنازلي للاستشفاء وحساب فترات الراحة المثلى' : 'Countdown to Recovery: Biometric Rest Interval Engine'}</span>
+                <span>{tr(currentLang, { en: 'Countdown to Recovery: Biometric Rest Interval Engine', es: 'Cuenta Regresiva de Recuperación: Motor de Descanso Biométrico', fr: 'Compte à Rebours Récupération : Moteur de Repos Biométrique', ar: 'عداد العد التنازلي للاستشفاء وحساب فترات الراحة المثلى' })}</span>
               </h3>
               <p className="text-xs text-gray-400 font-bold mt-1 max-w-2xl">
-                {currentLang === 'ar' 
-                  ? 'يقوم المحرك الحيوي بحساب فترة الراحة المثلى بين الجولات والتدريبات بناءً على شدة جلسة التمرين المسجلة، معدل الحمل الحاد والمزمن (ACWR)، وتوازن النبض لضمان الاستشفاء الأسرع ومنع التمزقات.'
-                  : 'Calculates optimal rest intervals and full recovery countdown based on your last recorded session intensity, ACWR ratio, and autonomic nervous system readiness.'}
+                {tr(currentLang, {
+                  en: 'Calculates optimal rest intervals and full recovery countdown based on your last recorded session intensity, ACWR ratio, and autonomic nervous system readiness.',
+                  es: 'Calcula intervalos óptimos de descanso según intensidad de sesión, ratio ACWR y preparación del sistema nervioso autónomo.',
+                  fr: 'Calcule les intervalles de repos optimaux selon l’intensité, le ratio ACWR et la préparation du système nerveux.',
+                  ar: 'يقوم المحرك الحيوي بحساب فترة الراحة المثلى بين الجولات والتدريبات بناءً على شدة جلسة التمرين المسجلة، معدل الحمل الحاد والمزمن (ACWR)، وتوازن النبض لضمان الاستشفاء الأسرع ومنع التمزقات.'
+                })}
               </p>
             </div>
 
@@ -1775,9 +1966,9 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
               {/* Completed Breaks Stat */}
               <div className="flex justify-between items-center w-full pt-2 text-xs font-bold text-gray-300">
-                <span>🏆 {currentLang === 'ar' ? 'استراحات مكتملة اليوم:' : 'Completed Breaks:'}</span>
+                <span>🏆 {tr(currentLang, { en: 'Completed Breaks:', es: 'Pausas Completadas:', fr: 'Pauses Complétées :', ar: 'استراحات مكتملة اليوم:' })}</span>
                 <span className="font-anime font-black text-[#FFE600] bg-[#181A28] px-2.5 py-1 rounded-lg border border-[#FFE600]/30">
-                  {completedBreaks} {currentLang === 'ar' ? 'استراحة' : 'Breaks'} (+{completedBreaks * 50} YARDX)
+                  {completedBreaks} {tr(currentLang, { en: 'Breaks', es: 'Pausas', fr: 'Pauses', ar: 'استراحة' })} (+{completedBreaks * 50} YARDX)
                 </span>
               </div>
 
@@ -1810,7 +2001,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider flex items-center gap-1.5">
                     <span>⚡</span>
-                    <span>{currentLang === 'ar' ? 'استراحة الحركة المقترحة القادمة:' : 'NEXT SUGGESTED MOVEMENT BREAK:'}</span>
+                    <span>{tr(currentLang, { en: 'NEXT SUGGESTED MOVEMENT BREAK:', es: 'PRÓXIMA PAUSA ACTIVA SUGERIDA:', fr: 'PROCHAINE PAUSE MOBILITÉ SUGGÉRÉE :', ar: 'استراحة الحركة المقترحة القادمة:' })}</span>
                   </span>
                   <span className="text-[10px] font-anime font-black text-[#00F0FF] bg-[#0A0B10] px-2.5 py-1 rounded-md border border-[#00F0FF]/20">
                     TARGET: {currentSuggestedBreak.zone.toUpperCase()}
@@ -1826,7 +2017,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                       {currentSuggestedBreak.title}
                     </h4>
                     <span className="text-xs font-anime font-black text-[#00F0FF] block mt-0.5">
-                      ⏱️ {currentLang === 'ar' ? 'المدة:' : 'Duration:'} {currentSuggestedBreak.duration}
+                      ⏱️ {tr(currentLang, { en: 'Duration:', es: 'Duración:', fr: 'Durée :', ar: 'المدة:' })} {currentSuggestedBreak.duration}
                     </span>
                   </div>
                 </div>
@@ -1836,7 +2027,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 </p>
 
                 <div className="text-[11px] text-[#22C55E] font-bold flex items-center gap-1.5">
-                  <span>🛡️ {currentLang === 'ar' ? 'الفائدة التراكمية:' : 'Biometric Benefit:'}</span>
+                  <span>🛡️ {tr(currentLang, { en: 'Biometric Benefit:', es: 'Beneficio Biométrico:', fr: 'Bénéfice Biométrique :', ar: 'الفائدة التراكمية:' })}</span>
                   <span>{currentSuggestedBreak.benefit}</span>
                 </div>
               </div>
@@ -1887,7 +2078,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     </span>
                     <div>
                       <span className="text-[10px] font-anime font-black text-[#00F0FF] block uppercase">
-                        {currentLang === 'ar' ? 'منطقة الاستهداف:' : 'TARGET ZONE:'} {currentSuggestedBreak.zone}
+                        {tr(currentLang, { en: 'TARGET ZONE:', es: 'ZONA OBJETIVO:', fr: 'ZONE CIBLE :', ar: 'منطقة الاستهداف:' })} {currentSuggestedBreak.zone}
                       </span>
                       <h4 className="text-lg font-black font-anime text-white">
                         {currentSuggestedBreak.title}
@@ -1897,7 +2088,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
                   <div className="bg-[#0A0B10] p-4 rounded-xl border border-gray-800">
                     <span className="text-xs font-anime font-black text-[#FFE600] block mb-1">
-                      📋 {currentLang === 'ar' ? 'طريقة التنفيذ:' : 'EXECUTION STEPS:'}
+                      📋 {tr(currentLang, { en: 'EXECUTION STEPS:', es: 'PASOS DE EJECUCIÓN:', fr: 'ÉTAPES D’EXÉCUTION :', ar: 'طريقة التنفيذ:' })}
                     </span>
                     <p className="text-xs text-gray-200 font-bold leading-relaxed">
                       {currentSuggestedBreak.instructions}
@@ -1905,7 +2096,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   </div>
 
                   <div className="flex justify-between items-center text-xs font-bold pt-1">
-                    <span className="text-gray-400">⏱️ {currentLang === 'ar' ? 'المدة المطلوبة:' : 'Target Time:'} <strong className="text-white font-anime">{currentSuggestedBreak.duration}</strong></span>
+                    <span className="text-gray-400">⏱️ {tr(currentLang, { en: 'Target Time:', es: 'Tiempo Objetivo:', fr: 'Temps Cible :', ar: 'المدة المطلوبة:' })} <strong className="text-white font-anime">{currentSuggestedBreak.duration}</strong></span>
                     <span className="text-[#22C55E]">✨ {currentSuggestedBreak.benefit}</span>
                   </div>
                 </div>
@@ -1933,7 +2124,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   onClick={() => setIsBreakModalOpen(false)}
                   className="py-4 px-6 rounded-2xl bg-[#181A28] text-gray-400 hover:text-white font-black font-anime text-xs border border-gray-800"
                 >
-                  {currentLang === 'ar' ? 'تأجيل الاستراحة' : 'Snooze Break'}
+                  {tr(currentLang, { en: 'Snooze Break', es: 'Posponer Pausa', fr: 'Reporter la Pause', ar: 'تأجيل الاستراحة' })}
                 </button>
               </div>
 
@@ -1949,7 +2140,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 {t('zone_title')} (MULTI-ZONE STRESS MATRIX)
               </h3>
               <p className="text-xs text-gray-400 font-bold mt-1">
-                {currentLang === 'ar' ? '👇 انقر على أي منطقة لعرض نصائح الاستشفاء الفورية والتمارين الموصى بها:' : '👇 Click on any body zone to reveal specific recovery tips & exercises:'}
+                {tr(currentLang, { en: '👇 Click on any body zone to reveal specific recovery tips & exercises:', es: '👇 Haz clic en cualquier zona para ver consejos y ejercicios de recuperación:', fr: '👇 Cliquez sur une zone corporelle pour afficher les exercices de récupération :', ar: '👇 انقر على أي منطقة لعرض نصائح الاستشفاء الفورية والتمارين الموصى بها:' })}
               </p>
             </div>
             <span className="text-xs font-anime font-black text-[#00F0FF] px-3 py-1 bg-[#181A28] border border-[#00F0FF]/30 rounded-full">
@@ -2104,128 +2295,143 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             const zoneDetails = {
               knee: {
                 icon: '🦵',
-                name: currentLang === 'ar' ? 'مفصل الركبة ووتر الصابونة' : 'Knee Joint & Patellar Tendon',
-                tips: currentLang === 'ar' 
-                  ? 'تدليك عضلات الفخذ الأمامية بالأسطوانة لمدة 3 دقائق. تطبيق الكمادات الباردة عند ارتياع الحرارة، والتركيز على تقوية عضلة VMO قبل التمارين القوية.'
-                  : 'Perform quadriceps foam rolling for 3 mins. Apply cold therapy if knee temperature is elevated. Focus on VMO activation before jumping or heavy squatting.',
+                name: tr(currentLang, { en: 'Knee Joint & Patellar Tendon', es: 'Articulación de Rodilla y Tendón Rotuliano', fr: 'Articulation du Genou & Tendon Rotulien', ar: 'مفصل الركبة ووتر الصابونة' }),
+                tips: tr(currentLang, {
+                  en: 'Perform quadriceps foam rolling for 3 mins. Apply cold therapy if knee temperature is elevated. Focus on VMO activation before jumping or heavy squatting.',
+                  es: 'Aplica rodillo de espuma en cuádriceps 3 min y terapia fría si sube la temperatura. Activa el VMO antes de saltar o hacer sentadillas.',
+                  fr: 'Massez le quadriceps au rouleau 3 min. Appliquez du froid si la température augmente et activez le VMO avant les sauts.',
+                  ar: 'تدليك عضلات الفخذ الأمامية بالأسطوانة لمدة 3 دقائق. تطبيق الكمادات الباردة عند ارتياع الحرارة، والتركيز على تقوية عضلة VMO قبل التمارين القوية.'
+                }),
                 exercises: [
                   {
-                    name: currentLang === 'ar' ? 'تمديد الركبة النهائي بالرباط المطاطي (TKE)' : 'VMO Terminal Knee Extensions (TKE)',
+                    name: tr(currentLang, { en: 'VMO Terminal Knee Extensions (TKE)', es: 'Extensiones Terminales de Rodilla (TKE)', fr: 'Extensions Terminales du Genou (TKE)', ar: 'تمديد الركبة النهائي بالرباط المطاطي (TKE)' }),
                     sets: '3 sets x 15 reps',
-                    desc: currentLang === 'ar' ? 'تركيز الانقباض على عضلة VMO عند الفرد الكامل للركبة مع رباط مقاومة.' : 'Focus on squeezing the VMO muscle at full lockout using a resistance band.'
+                    desc: tr(currentLang, { en: 'Focus on squeezing the VMO muscle at full lockout using a resistance band.', es: 'Contrae el músculo VMO al extender completamente con banda de resistencia.', fr: 'Contractez le VMO en extension complète avec bande élastique.', ar: 'تركيز الانقباض على عضلة VMO عند الفرد الكامل للركبة مع رباط مقاومة.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'نزول الساق المنفردة اللامركزي' : 'Eccentric Single-Leg Step Downs',
+                    name: tr(currentLang, { en: 'Eccentric Single-Leg Step Downs', es: 'Descensos Excéntricos a Una Pierna', fr: 'Descentes Excentriques Unipodales', ar: 'نزول الساق المنفردة اللامركزي' }),
                     sets: '3 sets x 10 reps',
-                    desc: currentLang === 'ar' ? 'نزول بطيء خلال 3-4 ثوانٍ لكل تكرار لتقوية وتر الركبة ضد التمزقات.' : 'Lower body over 3-4 seconds per rep to strengthen the patellar tendon eccentrically.'
+                    desc: tr(currentLang, { en: 'Lower body over 3-4 seconds per rep to strengthen the patellar tendon eccentrically.', es: 'Desciende en 3-4 s por repetición para fortalecer el tendón rotuliano.', fr: 'Descendez en 3-4 s par répétition pour renforcer le tendon rotulien.', ar: 'نزول بطيء خلال 3-4 ثوانٍ لكل تكرار لتقوية وتر الركبة ضد التمزقات.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'تدليك الفخذ الأمامي والشريط الحرقفي بالأسطوانة' : 'Quadriceps & IT Band Foam Rolling',
+                    name: tr(currentLang, { en: 'Quadriceps & IT Band Foam Rolling', es: 'Rodillo en Cuádriceps y Banda Iliotibial', fr: 'Rouleau Quadriceps & Bandelette IT', ar: 'تدليك الفخذ الأمامي والشريط الحرقفي بالأسطوانة' }),
                     sets: '3 mins per leg',
-                    desc: currentLang === 'ar' ? 'تدليك بطيء على العقد العضلية لتخفيف الضغط عن صابونة الركبة.' : 'Slow rolling over tight trigger points to release friction on the patella.'
+                    desc: tr(currentLang, { en: 'Slow rolling over tight trigger points to release friction on the patella.', es: 'Deslizamiento lento sobre puntos gatillo para aliviar fricción rotuliana.', fr: 'Passage lent sur les points de tension pour libérer la rotule.', ar: 'تدليك بطيء على العقد العضلية لتخفيف الضغط عن صابونة الركبة.' })
                   }
                 ],
-                gear: currentLang === 'ar' ? 'دعامة الركبة السيبرانية من أورا المزودة بدعامات جانبية ثلاثية' : 'Aura Cybernetic Knee Sleeve with Dual Lateral Stabilizers'
+                gear: tr(currentLang, { en: 'Aura Cybernetic Knee Sleeve with Dual Lateral Stabilizers', es: 'Rodillera Cibernética Aura con Estabilizadores Laterales', fr: 'Genouillère Cybernétique Aura à Stabilisateurs Latéraux', ar: 'دعامة الركبة السيبرانية من أورا المزودة بدعامات جانبية ثلاثية' })
               },
               ankle: {
                 icon: '🦶',
-                name: currentLang === 'ar' ? 'أربطة الكاحل ووتر الأكيلس' : 'Ankle Ligaments & Achilles Tendon',
-                tips: currentLang === 'ar'
-                  ? 'تمارين تحريك الكاحل برسم الحروف وركض الكاحل لتقوية وتر الأكيلس وحمايته من التمزقات أثناء التوقف المفاجئ والقفز.'
-                  : 'Perform ankle mobility alphabets and eccentric calf raises to protect the Achilles tendon from micro-tears under explosive deceleration.',
+                name: tr(currentLang, { en: 'Ankle Ligaments & Achilles Tendon', es: 'Ligamentos de Tobillo y Tendón de Aquiles', fr: 'Ligaments de Cheville & Tendon d’Achille', ar: 'أربطة الكاحل ووتر الأكيلس' }),
+                tips: tr(currentLang, {
+                  en: 'Perform ankle mobility alphabets and eccentric calf raises to protect the Achilles tendon from micro-tears under explosive deceleration.',
+                  es: 'Realiza alfabetos de movilidad y elevaciones excéntricas para proteger el tendón de Aquiles en desaceleraciones explosivas.',
+                  fr: 'Pratiquez l’alphabet articulaire et élévations excentriques pour protéger le tendon d’Achille lors des décélérations.',
+                  ar: 'تمارين تحريك الكاحل برسم الحروف وركض الكاحل لتقوية وتر الأكيلس وحمايته من التمزقات أثناء التوقف المفاجئ والقفز.'
+                }),
                 exercises: [
                   {
-                    name: currentLang === 'ar' ? 'إنزال الكعب اللامركزي على الدرجة' : 'Eccentric Heel Drops on Step',
+                    name: tr(currentLang, { en: 'Eccentric Heel Drops on Step', es: 'Descensos Excéntricos de Talón en Escalón', fr: 'Descentes Excentriques du Talon sur Marche', ar: 'إنزال الكعب اللامركزي على الدرجة' }),
                     sets: '3 sets x 12 reps',
-                    desc: currentLang === 'ar' ? 'نزول بطيء في 4 ثوانٍ أسفل مستوى الدرجة لإطالة ألياف وتر الأكيلس وتقويتها.' : 'Slow 4-second lower past step height to elongate and reinforce Achilles tendon fibers.'
+                    desc: tr(currentLang, { en: 'Slow 4-second lower past step height to elongate and reinforce Achilles tendon fibers.', es: 'Bajada lenta de 4 s bajo el escalón para reforzar fibras del tendón de Aquiles.', fr: 'Descente lente de 4 s sous la marche pour renforcer le tendon d’Achille.', ar: 'نزول بطيء في 4 ثوانٍ أسفل مستوى الدرجة لإطالة ألياف وتر الأكيلس وتقويتها.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'تمارين الكاحل للداخل والخارج بالرباط المطاطي' : 'Resistance Band Ankle Inversion/Eversion',
+                    name: tr(currentLang, { en: 'Resistance Band Ankle Inversion/Eversion', es: 'Inversión y Eversión de Tobillo con Banda', fr: 'Inversion/Éversion Cheville avec Élastique', ar: 'تمارين الكاحل للداخل والخارج بالرباط المطاطي' }),
                     sets: '3 sets x 15 reps',
-                    desc: currentLang === 'ar' ? 'تقوية العضلات المحيطة بالكاحل لمنع التواء المفصل أثناء القتال والركض.' : 'Strengthen peroneus and tibialis muscles to prevent lateral sprains.'
+                    desc: tr(currentLang, { en: 'Strengthen peroneus and tibialis muscles to prevent lateral sprains.', es: 'Fortalece peroneos y tibiales para prevenir esguinces laterales.', fr: 'Renforce les péroniers et tibiaux contre les entorses latérales.', ar: 'تقوية العضلات المحيطة بالكاحل لمنع التواء المفصل أثناء القتال والركض.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'دوائر تحريك الكاحل ورسم الحروف' : 'Ankle Mobility Circles & Alphabets',
+                    name: tr(currentLang, { en: 'Ankle Mobility Circles & Alphabets', es: 'Círculos de Movilidad y Alfabetos de Tobillo', fr: 'Cercles de Mobilité & Alphabet Cheville', ar: 'دوائر تحريك الكاحل ورسم الحروف' }),
                     sets: '2 mins per foot',
-                    desc: currentLang === 'ar' ? 'تحريك المفصل في كافة الاتجاهات لتنشيط السائل الزلالي داخل الكاحل.' : 'Full range of motion movements to restore synovial joint fluid.'
+                    desc: tr(currentLang, { en: 'Full range of motion movements to restore synovial joint fluid.', es: 'Rango completo de movimiento para restaurar el líquido sinovial.', fr: 'Amplitude complète pour restaurer le liquide synovial.', ar: 'تحريك المفصل في كافة الاتجاهات لتنشيط السائل الزلالي داخل الكاحل.' })
                   }
                 ],
-                gear: currentLang === 'ar' ? 'مشد الكاحل الضاغط من أورا مع أحزمة التثبيت الحركية' : 'Aura Ankle Compression Support Wrap with Kinetic Straps'
+                gear: tr(currentLang, { en: 'Aura Ankle Compression Support Wrap with Kinetic Straps', es: 'Tobillera de Compresión Aura con Correas Cinéticas', fr: 'Chevillère de Compression Aura à Sangles Cinétiques', ar: 'مشد الكاحل الضاغط من أورا مع أحزمة التثبيت الحركية' })
               },
               back: {
                 icon: '🔙',
-                name: currentLang === 'ar' ? 'الفقرات القطنية وعضلات الظهر السفلية' : 'Lumbar Spine & Erector Spinae',
-                tips: currentLang === 'ar'
-                  ? 'فك ضغط فقرات الظهر بالتعلق على العقلة وتمرين القطة والجمل. تجنب الرفعات الثقيلة عند ارتفاع نسبة الحمل التدريبي.'
-                  : 'Decompress spinal discs using bar hangs and Cat-Cow mobility flows. Avoid heavy axial loading or deadlifts when ACWR ratio is elevated.',
+                name: tr(currentLang, { en: 'Lumbar Spine & Erector Spinae', es: 'Columna Lumbar y Erector Espinal', fr: 'Colonne Lombaire & Érecteurs du Rachis', ar: 'الفقرات القطنية وعضلات الظهر السفلية' }),
+                tips: tr(currentLang, {
+                  en: 'Decompress spinal discs using bar hangs and Cat-Cow mobility flows. Avoid heavy axial loading or deadlifts when ACWR ratio is elevated.',
+                  es: 'Descomprime discos con suspensiones en barra y Gato-Vaca. Evita cargas axiales pesadas con ACWR elevado.',
+                  fr: 'Décompressez les disques via suspension et Chat-Vache. Évitez les charges axiales lourdes quand l’ACWR est élevé.',
+                  ar: 'فك ضغط فقرات الظهر بالتعلق على العقلة وتمرين القطة والجمل. تجنب الرفعات الثقيلة عند ارتفاع نسبة الحمل التدريبي.'
+                }),
                 exercises: [
                   {
-                    name: currentLang === 'ar' ? 'تمرين حشرة الميت لشد عضلات الجذع' : 'Deadbug Core Bracing Hold',
+                    name: tr(currentLang, { en: 'Deadbug Core Bracing Hold', es: 'Estabilización de Core Deadbug', fr: 'Gainage Deadbug Stabilisation', ar: 'تمرين حشرة الميت لشد عضلات الجذع' }),
                     sets: '3 sets x 45 secs',
-                    desc: currentLang === 'ar' ? 'الحفاظ على استقامة الظهر ملتصقاً بالأرض مع تمديد الأطراف لتثبيت الفقرات.' : 'Maintain flat spine against floor while extending opposing limbs to stabilize spine.'
+                    desc: tr(currentLang, { en: 'Maintain flat spine against floor while extending opposing limbs to stabilize spine.', es: 'Mantén la espalda plana al suelo extendiendo extremidades opuestas.', fr: 'Gardez le dos plaqué au sol en tendant les membres opposés.', ar: 'الحفاظ على استقامة الظهر ملتصقاً بالأرض مع تمديد الأطراف لتثبيت الفقرات.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'تمرين القطة والجمل لليونة العمود الفقري' : 'Cat-Cow Spinal Mobility Flow',
+                    name: tr(currentLang, { en: 'Cat-Cow Spinal Mobility Flow', es: 'Flujo de Movilidad Espinal Gato-Vaca', fr: 'Mobilisation Vertébrale Chat-Vache', ar: 'تمرين القطة والجمل لليونة العمود الفقري' }),
                     sets: '3 sets x 10 cycles',
-                    desc: currentLang === 'ar' ? 'تحريك مرن ومتحكم للفقرات لتخفيف الضغط عن أسفل الظهر.' : 'Gentle articulation of each spinal vertebra to relieve lumbar tension.'
+                    desc: tr(currentLang, { en: 'Gentle articulation of each spinal vertebra to relieve lumbar tension.', es: 'Articulación suave de cada vértebra para aliviar tensión lumbar.', fr: 'Articulation douce de chaque vertèbre pour soulager les lombaires.', ar: 'تحريك مرن ومتحكم للفقرات لتخفيف الضغط عن أسفل الظهر.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'التعلق الساكن على العقلة لفك ضغط الفقرات' : 'Passive Bar Spinal Decompression Hang',
+                    name: tr(currentLang, { en: 'Passive Bar Spinal Decompression Hang', es: 'Suspensión Pasiva en Barra para Descompresión', fr: 'Suspension Passive Décompression Vertébrale', ar: 'التعلق الساكن على العقلة لفك ضغط الفقرات' }),
                     sets: '3 sets x 30 secs',
-                    desc: currentLang === 'ar' ? 'استغلال الجاذبية لزيادة المسافة بين الفقرات وتخفيف الألم.' : 'Allow gravity to decompress intervertebral discs safely.'
+                    desc: tr(currentLang, { en: 'Allow gravity to decompress intervertebral discs safely.', es: 'Deja que la gravedad descomprima los discos intervertebrales.', fr: 'Laissez la gravité décompresser les disques en douceur.', ar: 'استغلال الجاذبية لزيادة المسافة بين الفقرات وتخفيف الألم.' })
                   }
                 ],
-                gear: currentLang === 'ar' ? 'حزام الظهر الأرغونومي الحراري من أورا لدعم العمود الفقري' : 'Aura Ergonomic Lumbar Belt & Thermal Posture Harness'
+                gear: tr(currentLang, { en: 'Aura Ergonomic Lumbar Belt & Thermal Posture Harness', es: 'Cinturón Lumbar Ergonómico Térmico Aura', fr: 'Ceinture Lombaire Ergonomique Thermique Aura', ar: 'حزام الظهر الأرغونومي الحراري من أورا لدعم العمود الفقري' })
               },
               shoulder: {
                 icon: '💪',
-                name: currentLang === 'ar' ? 'الكفة المدورة وعضلة الكتف الأمامية' : 'Rotator Cuff & Anterior Deltoid',
-                tips: currentLang === 'ar'
-                  ? 'تسخين الكفة المدورة بدوران الكابل الخارجي وانزلاق الكتف على الحائط قبل تمارين اللكم والضغط والرمي القوي.'
-                  : 'Warm up rotator cuff muscles with external rotations and scapular wall slides before heavy striking, throwing, or pressing sessions.',
+                name: tr(currentLang, { en: 'Rotator Cuff & Anterior Deltoid', es: 'Manguito Rotador y Deltoides Anterior', fr: 'Coiffe des Rotateurs & Deltoïde Antérieur', ar: 'الكفة المدورة وعضلة الكتف الأمامية' }),
+                tips: tr(currentLang, {
+                  en: 'Warm up rotator cuff muscles with external rotations and scapular wall slides before heavy striking, throwing, or pressing sessions.',
+                  es: 'Calienta el manguito rotador con rotaciones externas y deslizamientos escapulares antes de golpear o empujar.',
+                  fr: 'Échauffez la coiffe des rotateurs en rotation externe et glissades au mur avant frappe ou développé lourd.',
+                  ar: 'تسخين الكفة المدورة بدوران الكابل الخارجي وانزلاق الكتف على الحائط قبل تمارين اللكم والضغط والرمي القوي.'
+                }),
                 exercises: [
                   {
-                    name: currentLang === 'ar' ? 'الدوران الخارجي للكتف بالرباط المطاطي' : 'Banded External Rotations',
+                    name: tr(currentLang, { en: 'Banded External Rotations', es: 'Rotaciones Externas con Banda', fr: 'Rotations Externes avec Élastique', ar: 'الدوران الخارجي للكتف بالرباط المطاطي' }),
                     sets: '3 sets x 15 reps',
-                    desc: currentLang === 'ar' ? 'تثبيت الكوع بجانب الجسم مع تدوير الساعد للخارج لتقوية الكفة المدورة.' : 'Keep elbow glued to ribcage while rotating forearm outward.'
+                    desc: tr(currentLang, { en: 'Keep elbow glued to ribcage while rotating forearm outward.', es: 'Mantén el codo pegado al torso mientras rotas el antebrazo.', fr: 'Gardez le coude collé au buste en tournant l’avant-bras.', ar: 'تثبيت الكوع بجانب الجسم مع تدوير الساعد للخارج لتقوية الكفة المدورة.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'انزلاق لوحي الكتف على الحائط' : 'Scapular Wall Slides',
+                    name: tr(currentLang, { en: 'Scapular Wall Slides', es: 'Deslizamientos Escapulares en Pared', fr: 'Glissades Scapulaires au Mur', ar: 'انزلاق لوحي الكتف على الحائط' }),
                     sets: '3 sets x 12 reps',
-                    desc: currentLang === 'ar' ? 'الحفاظ على ملامسة الظهر واليدين للحائط لتنشيط عضلات الكتف الخلفية.' : 'Maintain full contact with wall to activate lower traps and serratus anterior.'
+                    desc: tr(currentLang, { en: 'Maintain full contact with wall to activate lower traps and serratus anterior.', es: 'Mantén contacto con la pared para activar trapecios inferiores y serrato.', fr: 'Gardez le contact avec le mur pour activer trapèzes et dentelé.', ar: 'الحفاظ على ملامسة الظهر واليدين للحائط لتنشيط عضلات الكتف الخلفية.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'إطالة الصدر على الباب وتدليك أعلى الظهر' : 'Pec Doorway Stretch & Thoracic Roll',
+                    name: tr(currentLang, { en: 'Pec Doorway Stretch & Thoracic Roll', es: 'Estiramiento Pectoral y Rodillo Torácico', fr: 'Étirement Pectoral & Rouleau Thoracique', ar: 'إطالة الصدر على الباب وتدليك أعلى الظهر' }),
                     sets: '3 mins total',
-                    desc: currentLang === 'ar' ? 'فتح عضلات الصدر وتعديل استقامة القفص الصدري لمنع انحشار عصب الكتف.' : 'Opens chest and restores thoracic extension to prevent shoulder impingement.'
+                    desc: tr(currentLang, { en: 'Opens chest and restores thoracic extension to prevent shoulder impingement.', es: 'Abre el pecho y previene el pinzamiento subacromial.', fr: 'Ouvre la poitrine et prévient le conflit d’épaule.', ar: 'فتح عضلات الصدر وتعديل استقامة القفص الصدري لمنع انحشار عصب الكتف.' })
                   }
                 ],
-                gear: currentLang === 'ar' ? 'مشد الكتف الحركي المطور لحماية الكفة المدورة من أورا' : 'Aura Kinetic Shoulder Stabilization Strap & Rotator Guard'
+                gear: tr(currentLang, { en: 'Aura Kinetic Shoulder Stabilization Strap & Rotator Guard', es: 'Estabilizador Cinético de Hombro Aura', fr: 'Orthèse Cinétique de Stabilisation d’Épaule Aura', ar: 'مشد الكتف الحركي المطور لحماية الكفة المدورة من أورا' })
               },
               hamstring: {
                 icon: '🏃',
-                name: currentLang === 'ar' ? 'عضلات الفخذ الخلفية (الهامسترنج)' : 'Biceps Femoris & Semitendinosus',
-                tips: currentLang === 'ar'
-                  ? 'إضافة تمارين نورديك هامتسرنج للقوة اللامركزية مع الإطالات المتحركة للوقاية من التمزق أثناء الانطلاق السريع أو الركل.'
-                  : 'Incorporate Nordic hamstring curls for eccentric strength and dynamic mobility stretches to prevent high-speed sprinting or kicking pulls.',
+                name: tr(currentLang, { en: 'Biceps Femoris & Semitendinosus', es: 'Bíceps Femoral y Semitendinoso', fr: 'Biceps Fémoral & Semi-tendineux', ar: 'عضلات الفخذ الخلفية (الهامسترنج)' }),
+                tips: tr(currentLang, {
+                  en: 'Incorporate Nordic hamstring curls for eccentric strength and dynamic mobility stretches to prevent high-speed sprinting or kicking pulls.',
+                  es: 'Incorpora curls nórdicos para fuerza excéntrica y movilidad dinámica para prevenir tirones en sprint.',
+                  fr: 'Intégrez les Nordic curls excentriques et étirements dynamiques pour prévenir les claquages au sprint.',
+                  ar: 'إضافة تمارين نورديك هامتسرنج للقوة اللامركزية مع الإطالات المتحركة للوقاية من التمزق أثناء الانطلاق السريع أو الركل.'
+                }),
                 exercises: [
                   {
-                    name: currentLang === 'ar' ? 'تمرين نورديك الفخذ الخلفي المساعد' : 'Assisted Nordic Hamstring Curls',
+                    name: tr(currentLang, { en: 'Assisted Nordic Hamstring Curls', es: 'Curl Nórdico Asistido de Isquios', fr: 'Nordic Hamstring Curls Assistés', ar: 'تمرين نورديك الفخذ الخلفي المساعد' }),
                     sets: '3 sets x 6 reps',
-                    desc: currentLang === 'ar' ? 'مقاومة السقوط للأمام لأطول فترة ممكنة لبناء قوة فرملة هائلة في الفخذ الخلفي.' : 'Resist forward fall as long as possible focusing on eccentric braking power.'
+                    desc: tr(currentLang, { en: 'Resist forward fall as long as possible focusing on eccentric braking power.', es: 'Resiste la caída frontal potenciando el frenado excéntrico.', fr: 'Résistez à la descente en freinage excentrique maximal.', ar: 'مقاومة السقوط للأمام لأطول فترة ممكنة لبناء قوة فرملة هائلة في الفخذ الخلفي.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'الرفعة الميتة الرومانية بساق واحدة' : 'Bodyweight Single-Leg RDL',
+                    name: tr(currentLang, { en: 'Bodyweight Single-Leg RDL', es: 'Peso Muerto Rumano a Una Pierna', fr: 'Soulevé de Terre Roumain Unipodal', ar: 'الرفعة الميتة الرومانية بساق واحدة' }),
                     sets: '3 sets x 10 reps',
-                    desc: currentLang === 'ar' ? 'الانحناء من الورك مع ظهر مستقيم لتقوية نقطة التقاء الفخذ الخلفي مع الأرداف.' : 'Hinge at hips with flat back to strengthen glute-hamstring tie-in.'
+                    desc: tr(currentLang, { en: 'Hinge at hips with flat back to strengthen glute-hamstring tie-in.', es: 'Bisagra de cadera con espalda recta para reforzar glúteo-isquio.', fr: 'Charnière de hanche dos plat pour renforcer fessier-ischio.', ar: 'الانحناء من الورك مع ظهر مستقيم لتقوية نقطة التقاء الفخذ الخلفي مع الأرداف.' })
                   },
                   {
-                    name: currentLang === 'ar' ? 'الإطالة العزل النشطة للفخذ الخلفي' : 'Active Isolated Hamstring Stretch',
+                    name: tr(currentLang, { en: 'Active Isolated Hamstring Stretch', es: 'Estiramiento Activo Aislado de Isquios', fr: 'Étirement Actif Isolé des Ischio-jambiers', ar: 'الإطالة العزل النشطة للفخذ الخلفي' }),
                     sets: '3 sets x 30 secs',
-                    desc: currentLang === 'ar' ? 'انقباض عضلات الفخذ الأمامية لإطالة العضلات الخلفية بمرونة وبدون إجهاد.' : 'Contract quads to actively stretch opposing hamstring muscle without strain.'
+                    desc: tr(currentLang, { en: 'Contract quads to actively stretch opposing hamstring muscle without strain.', es: 'Contrae cuádriceps para estirar isquios sin sobrecarga.', fr: 'Contractez le quadriceps pour étirer l’ischio sans contrainte.', ar: 'انقباض عضلات الفخذ الأمامية لإطالة العضلات الخلفية بمرونة وبدون إجهاد.' })
                   }
                 ],
-                gear: currentLang === 'ar' ? 'مشد الفخذ الضاغط الحراري للوقاية من التمزق العضلي' : 'Aura Thermal Compression Hamstring & Thigh Sleeve'
+                gear: tr(currentLang, { en: 'Aura Thermal Compression Hamstring & Thigh Sleeve', es: 'Muslera de Compresión Térmica Aura', fr: 'Manchon Cuisse de Compression Thermique Aura', ar: 'مشد الفخذ الضاغط الحراري للوقاية من التمزق العضلي' })
               }
             }[expandedZone];
 
@@ -2238,7 +2444,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     <span className="text-3xl p-2 bg-[#0A0B10] border border-[#00F0FF]/30 rounded-xl">{zoneDetails.icon}</span>
                     <div>
                       <span className="text-xs font-black font-anime text-[#00F0FF] block">
-                        {currentLang === 'ar' ? 'بروتوكول الاستشفاء المباشر للمنطقة' : 'SPECIFIC RECOVERY PROTOCOL'}
+                        {tr(currentLang, { en: 'SPECIFIC RECOVERY PROTOCOL', es: 'PROTOCOLO DE RECUPERACIÓN ESPECÍFICO', fr: 'PROTOCOLE DE RÉCUPÉRATION SPÉCIFIQUE', ar: 'بروتوكول الاستشفاء المباشر للمنطقة' })}
                       </span>
                       <h4 className="text-xl font-black font-anime text-white">
                         {zoneDetails.name}
@@ -2255,14 +2461,14 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                         border: `1px solid ${getZoneColor(currentZoneRisk)}` 
                       }}
                     >
-                      {currentLang === 'ar' ? 'نسبة الإجهاد:' : 'Zone Stress:'} {currentZoneRisk}%
+                      {tr(currentLang, { en: 'Zone Stress:', es: 'Estrés de Zona:', fr: 'Stress Zone :', ar: 'نسبة الإجهاد:' })} {currentZoneRisk}%
                     </span>
                     <button
                       type="button"
                       onClick={() => setExpandedZone(null)}
                       className="px-3 py-1 bg-[#0A0B10] hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-gray-700 hover:border-red-500 rounded-lg text-xs font-bold transition-all"
                     >
-                      ✕ {currentLang === 'ar' ? 'إغلاق' : 'Close'}
+                      ✕ {tr(currentLang, { en: 'Close', es: 'Cerrar', fr: 'Fermer', ar: 'إغلاق' })}
                     </button>
                   </div>
                 </div>
@@ -2271,7 +2477,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 <div className="bg-[#0A0B10] p-4 rounded-xl border border-[#00F0FF]/30">
                   <h5 className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider mb-2 flex items-center gap-2">
                     <span>⚡</span>
-                    <span>{currentLang === 'ar' ? 'توصيات أورا للتعافي السريع وتخفيف الحمل:' : 'AURA RECOVERY RECOMMENDATIONS:'}</span>
+                    <span>{tr(currentLang, { en: 'AURA RECOVERY RECOMMENDATIONS:', es: 'RECOMENDACIONES AURA DE RECUPERACIÓN:', fr: 'RECOMMANDATIONS RÉCUPÉRATION AURA :', ar: 'توصيات أورا للتعافي السريع وتخفيف الحمل:' })}</span>
                   </h5>
                   <p className="text-sm text-gray-200 font-bold leading-relaxed">
                     {zoneDetails.tips}
@@ -2281,7 +2487,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 {/* Target Exercises */}
                 <div>
                   <h5 className="text-xs font-black font-anime text-[#00F0FF] uppercase tracking-wider mb-3">
-                    🏋️ {currentLang === 'ar' ? 'التمارين العلاجية والوقائية الموصى بها:' : 'RECOMMENDED REHAB & STRENGTHENING EXERCISES:'}
+                    🏋️ {tr(currentLang, { en: 'RECOMMENDED REHAB & STRENGTHENING EXERCISES:', es: 'EJERCICIOS RECOMENDADOS DE REHABILITACIÓN:', fr: 'EXERCICES DE RÉÉDUCATION RECOMMANDÉS :', ar: 'التمارين العلاجية والوقائية الموصى بها:' })}
                   </h5>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {zoneDetails.exercises.map((ex, idx) => (
@@ -2303,7 +2509,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                 {/* Recommended Gear */}
                 <div className="pt-2 border-t border-gray-800 flex flex-wrap justify-between items-center gap-3 text-xs font-bold">
                   <div className="flex items-center gap-2 text-gray-300">
-                    <span className="text-[#FF007A]">🛡️ {currentLang === 'ar' ? 'العتاد الوقائي المقترح:' : 'Recommended Gear:'}</span>
+                    <span className="text-[#FF007A]">🛡️ {tr(currentLang, { en: 'Recommended Gear:', es: 'Equipo Recomendado:', fr: 'Équipement Recommandé :', ar: 'العتاد الوقائي المقترح:' })}</span>
                     <span className="text-white font-anime">{zoneDetails.gear}</span>
                   </div>
                   <span className="text-[#00F0FF] text-[11px] font-anime">
@@ -2328,7 +2534,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               </div>
               <div className="flex items-center gap-3">
                 <div className="bg-[#181A28] px-3 py-1.5 rounded-xl border border-gray-800 text-xs font-bold">
-                  <span className="text-gray-400">{currentLang === 'ar' ? 'نقاط الاستشفاء: ' : 'Recovery Score: '}</span>
+                  <span className="text-gray-400">{tr(currentLang, { en: 'Recovery Score: ', es: 'Recuperación: ', fr: 'Score Récup. : ', ar: 'نقاط الاستشفاء: ' })}</span>
                   <span className="text-[#00F0FF] font-anime">{muscleRecoveryScore}%</span>
                 </div>
               </div>
@@ -2347,8 +2553,8 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   <XAxis dataKey="day" stroke="#8E93B0" fontSize={12} tickLine={false} />
                   <YAxis stroke="#8E93B0" fontSize={12} tickLine={false} />
                   <Tooltip contentStyle={{ backgroundColor: '#181A28', borderColor: '#FFE600', borderRadius: '12px', color: '#FFF' }} />
-                  <Area type="monotone" dataKey="score" stroke="#FFE600" strokeWidth={3} fillOpacity={1} fill="url(#sleepGrad)" name={currentLang === 'ar' ? 'درجة جودة النوم' : 'Sleep Score'} />
-                  <Area type="monotone" dataKey="recovery" stroke="#00F0FF" strokeWidth={2} fillOpacity={0.3} fill="#00F0FF" name={currentLang === 'ar' ? 'نسبة التعافي العضلي %' : 'Muscle Recovery %'} />
+                  <Area type="monotone" dataKey="score" stroke="#FFE600" strokeWidth={3} fillOpacity={1} fill="url(#sleepGrad)" name={tr(currentLang, { en: 'Sleep Score', es: 'Puntuación Sueño', fr: 'Score Sommeil', ar: 'درجة جودة النوم' })} />
+                  <Area type="monotone" dataKey="recovery" stroke="#00F0FF" strokeWidth={2} fillOpacity={0.3} fill="#00F0FF" name={tr(currentLang, { en: 'Muscle Recovery %', es: 'Recuperación Muscular %', fr: 'Récupération Musculaire %', ar: 'نسبة التعافي العضلي %' })} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

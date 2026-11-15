@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   ExternalLink
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { handleImageError } from '../constants';
 
@@ -128,7 +128,7 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
                 {isOpen && (
                   <span className="inline-flex items-center gap-1 text-[10px] text-[#FFE600] font-bold font-anime">
                     <CheckCircle2 className="w-3 h-3" />
-                    <span className="hidden md:inline">{isAr ? 'مفتوح' : 'ACTIVE'}</span>
+                    <span className="hidden md:inline">{tr(currentLang, { en: 'ACTIVE', es: 'ACTIVO', fr: 'ACTIF', ar: 'مفتوح' })}</span>
                   </span>
                 )}
               </div>
@@ -159,13 +159,13 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
               {isOpen ? (
                 <>
                   <Minimize2 className="w-3.5 h-3.5 text-[#FFE600]" />
-                  <span className="hidden sm:inline">{isAr ? 'طي القسم' : 'COLLAPSE'}</span>
+                  <span className="hidden sm:inline">{tr(currentLang, { en: 'COLLAPSE', es: 'PLEGAR', fr: 'RÉDUIRE', ar: 'طي القسم' })}</span>
                   <ChevronUp className="w-3.5 h-3.5 text-gray-400" />
                 </>
               ) : (
                 <>
                   <Maximize2 className="w-3.5 h-3.5 text-black" />
-                  <span className="hidden sm:inline">{isAr ? 'عرض القسم' : 'EXPAND'}</span>
+                  <span className="hidden sm:inline">{tr(currentLang, { en: 'EXPAND', es: 'VER MÁS', fr: 'OUVRIR', ar: 'عرض القسم' })}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-black animate-bounce" />
                 </>
               )}
@@ -187,7 +187,7 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
                 className="px-5 py-1.5 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white font-black font-anime text-xs transition-all flex items-center gap-2 cursor-pointer"
               >
                 <ChevronUp className="w-3.5 h-3.5 text-[#FFE600]" />
-                <span>{isAr ? 'طي هذا القسم لأعلى' : 'COLLAPSE SECTION'}</span>
+                <span>{tr(currentLang, { en: 'COLLAPSE SECTION', es: 'PLEGAR SECCIÓN', fr: 'RÉDUIRE SECTION', ar: 'طي هذا القسم لأعلى' })}</span>
               </button>
             </div>
           </div>

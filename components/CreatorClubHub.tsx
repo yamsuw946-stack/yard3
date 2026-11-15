@@ -60,7 +60,7 @@ import {
   getConnectedSubscribers,
   toggleConnectSubscriber
 } from '../services/clubService';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { handleImageError } from '../constants';
 
@@ -110,7 +110,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
   const [newStoryIntensity, setNewStoryIntensity] = useState<ClubStory['intensity']>('HIGH');
   const [newStoryDuration, setNewStoryDuration] = useState<number>(30);
   const [newStoryCalories, setNewStoryCalories] = useState<number>(450);
-  const [newStoryMedia, setNewStoryMedia] = useState('/images/boxing_striker_kenji_1790712616545.jpg');
+  const [newStoryMedia, setNewStoryMedia] = useState('/images/ai_human_striker_male.jpg');
   
   // Device upload states (Mobile Camera or PC File)
   const [uploadedFileName, setUploadedFileName] = useState<string>('');
@@ -154,7 +154,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
       activeStoryViewer.id, 
       storyCommentInput.trim(), 
       club.ownerName || 'Athlete S-Rank',
-      club.ownerAvatar || '/images/boxing_striker_kenji_1790712616545.jpg'
+      club.ownerAvatar || '/images/ai_human_gulf_champion.jpg'
     );
     if (updated) {
       setActiveStoryViewer(updated);
@@ -290,11 +290,9 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
   const isLevel3OrAbove = userLevel >= 3;
 
   return (
-    <div className="min-h-screen bg-[#07080D] text-white py-12 px-4 md:px-8 relative overflow-hidden">
-      {/* Background Cyber Grid Accent */}
-      <div className="absolute inset-0 bg-cyber-grid opacity-15 pointer-events-none"></div>
+    <div className="min-h-screen bg-[#07080C] text-white py-12 px-4 md:px-8 relative overflow-hidden">
       <div 
-        className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[140px] opacity-20 pointer-events-none"
+        className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full blur-[140px] opacity-15 pointer-events-none"
         style={{ backgroundColor: club.accentColor }}
       ></div>
 
@@ -306,14 +304,14 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             {onBack && (
               <button 
                 onClick={onBack}
-                className="px-4 py-2 rounded-xl bg-[#121422] border border-gray-800 text-gray-300 hover:text-white hover:border-gray-600 transition-all text-xs font-bold font-anime cursor-pointer flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[#0C0E14] border border-white/[0.1] text-slate-300 hover:text-white hover:border-[#D4AF37]/50 transition-all text-xs font-semibold cursor-pointer flex items-center gap-2"
               >
                 ← {isEs ? 'VOLVER' : isFr ? 'RETOUR' : 'BACK'}
               </button>
             )}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#121424] border border-gray-800 text-xs font-black font-anime text-[#FFE600]">
-              <span className="w-2 h-2 rounded-full bg-[#E50914] animate-ping"></span>
-              <span>{isEs ? 'SISTEMA DE CLUBES YARD300' : isFr ? 'SYSTÈME DE CLUBS YARD300' : 'YARD300 CREATOR CLUBS'}</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#0C0E14] border border-white/[0.1] text-xs font-mono font-bold text-[#D4AF37]">
+              <span className="w-2 h-2 rounded-full bg-[#10B981]"></span>
+              <span>{isEs ? 'SISTEMA DE CLUBES YARD300' : isFr ? 'SYSTÈME DE CLUBS YARD300' : 'YARD 300 CREATOR CLUBS'}</span>
             </div>
           </div>
 
@@ -379,15 +377,21 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             </div>
 
             <h2 className="text-2xl sm:text-4xl font-black font-anime text-white leading-tight">
-              {isAr 
-                ? 'أنشئ ناديك الخاص واجمع قبيلتك الرياضية (BUILD YOUR TRIBE)' 
-                : 'Build Your Tribe & Lead Your Elite Athletic Squad'}
+              {tr(currentLang, {
+                en: 'Build Your Tribe & Lead Your Elite Athletic Squad',
+                es: 'Construye Tu Tribu y Lidera Tu Escuadrón Atlético Élite',
+                fr: 'Bâtissez Votre Tribu & Menez Votre Escouade Athlétique d’Élite',
+                ar: 'أنشئ ناديك الخاص واجمع قبيلتك الرياضية (BUILD YOUR TRIBE)'
+              })}
             </h2>
 
             <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-medium">
-              {isAr 
-                ? 'النخبة لا تتدرب بمفردها. مع اشتراك المستوى 3 (Titan Apex)، تفتح صلاحية امتلاك وإدارة ناديك الرياضي الخاص داخل YARD 300، تعيين اسم وشعار خاص، ونشر ستوريات تدريبك على مدار 24 ساعة لجذب ومتابعة نخبة الرياضيين.' 
-                : 'True champions forge unbreakable tribes. Unlock the ability to own and brand your athletic club, broadcast 24h stories, and command your squad alongside global warriors.'}
+              {tr(currentLang, {
+                en: 'True champions forge unbreakable tribes. With Tier 3 (Titan Apex), unlock the ability to own and brand your athletic club inside YARD 300, set your custom crest, and broadcast 24h stories.',
+                es: 'Los verdaderos campeones forjan tribus inquebrantables. Con el Nivel 3 (Titan Apex), desbloquea tu propio club en YARD 300, personaliza tu escudo y transmite historias 24h.',
+                fr: 'Les vrais champions forgent des tribus indestructibles. Avec le Niveau 3 (Titan Apex), possédez votre propre club YARD 300, créez votre blason et diffusez des stories 24h.',
+                ar: 'النخبة لا تتدرب بمفردها. مع اشتراك المستوى 3 (Titan Apex)، تفتح صلاحية امتلاك وإدارة ناديك الرياضي الخاص داخل YARD 300، تعيين اسم وشعار خاص، ونشر ستوريات تدريبك على مدار 24 ساعة لجذب ومتابعة نخبة الرياضيين.'
+              })}
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -397,12 +401,26 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 to-[#FFE600] text-black font-black font-anime text-sm shadow-[0_0_25px_rgba(16,185,129,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
                 >
                   <Crown className="w-4 h-4 text-black" />
-                  <span>{isAr ? 'ترقية وشراء رخصة النادي ($30 USD) ⚡' : 'Unlock Club License ($30 USD) ⚡'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'Unlock Club License ($30 USD) ⚡',
+                      es: 'Desbloquear Licencia de Club ($30 USD) ⚡',
+                      fr: 'Débloquer la Licence Club ($30 USD) ⚡',
+                      ar: 'ترقية وشراء رخصة النادي ($30 USD) ⚡'
+                    })}
+                  </span>
                 </button>
               ) : (
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-black font-anime text-xs border border-emerald-500/50">
                   <Crown className="w-4 h-4 text-emerald-400" />
-                  <span>{isAr ? 'رخصة النادي مفعلة ومملوكة لك بالكامل ✓' : 'Club License Active & Verified ✓'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'Club License Active & Verified ✓',
+                      es: 'Licencia de Club Activa y Verificada ✓',
+                      fr: 'Licence Club Active & Vérifiée ✓',
+                      ar: 'رخصة النادي مفعلة ومملوكة لك بالكامل ✓'
+                    })}
+                  </span>
                 </div>
               )}
 
@@ -411,7 +429,14 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   onClick={onNavigateToTiers}
                   className="px-5 py-3 rounded-2xl bg-[#141624] hover:bg-[#1A1C30] text-gray-300 hover:text-white font-black font-anime text-xs transition-all cursor-pointer"
                 >
-                  <span>{isAr ? 'استعراض مستويات الاشتراك' : 'View Subscriber Tiers'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'View Subscriber Tiers',
+                      es: 'Ver Niveles de Suscripción',
+                      fr: 'Voir les Niveaux d’Abonnement',
+                      ar: 'استعراض مستويات الاشتراك'
+                    })}
+                  </span>
                 </button>
               )}
             </div>

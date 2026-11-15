@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { handleImageError } from '../constants';
 import { JournalArticle } from '../types';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { OwnerConfigService } from '../services/ownerConfigService';
 
 interface JournalProps {
@@ -37,16 +37,27 @@ const Journal: React.FC<JournalProps> = ({ currentLang = 'en', onArticleClick })
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 pb-8">
           <div>
             <span className="block text-xs font-black uppercase tracking-[0.2em] text-[#FFE600] mb-3">
-              🔥 OFFICIAL YARD300 EDITORIAL // {isAr ? 'أسرار تدريب الساموراي وعقلية النخبة 2026' : 'WARRIOR JOURNAL & STRATEGY 2026'}
+              🔥 OFFICIAL YARD300 EDITORIAL // {tr(currentLang, {
+                en: 'WARRIOR JOURNAL & STRATEGY 2027',
+                es: 'DIARIO DEL GUERRERO Y ESTRATEGIA 2027',
+                fr: 'JOURNAL DU GUERRIER & STRATÉGIE 2027',
+                ar: 'أسرار تدريب الساموراي وعقلية النخبة 2027',
+              })}
             </span>
             <h2 className="text-4xl md:text-6xl font-black font-anime text-white">
-              {isAr ? 'مجلة ' : 'YARD300 '}<span className="text-[#E50914] neon-text-red">{isAr ? 'المحارب والأبطال' : 'WARRIOR JOURNAL'}</span>
+              {tr(currentLang, { en: 'YARD300 ', es: 'YARD300 ', fr: 'YARD300 ', ar: 'مجلة ' })}
+              <span className="text-[#E50914] neon-text-red">
+                {tr(currentLang, { en: 'WARRIOR JOURNAL', es: 'DIARIO GUERRERO', fr: 'JOURNAL GUERRIER', ar: 'المحارب والأبطال' })}
+              </span>
             </h2>
           </div>
           <p className="text-gray-300 font-bold text-sm max-w-md mt-4 md:mt-0">
-            {isAr 
-              ? 'مقالات حماسية واستراتيجيات تدريب رياضية قتالية متقدمة لتشغيل طاقة الهالة الشاملة وتجاوز الحدود البدنية.'
-              : 'High-octane editorials and advanced combat training strategies to ignite your inner warrior and surpass limits.'}
+            {tr(currentLang, {
+              en: 'High-octane editorials and advanced combat training strategies to ignite your inner warrior and surpass limits.',
+              es: 'Artículos de alto impacto y estrategias avanzadas de combate y resistencia para superar tus límites.',
+              fr: 'Éditoriaux haute intensité et stratégies de combat avancées pour éveiller votre potentiel athlétique.',
+              ar: 'مقالات حماسية واستراتيجيات تدريب رياضية قتالية متقدمة لتشغيل طاقة الهالة الشاملة وتجاوز الحدود البدنية.',
+            })}
           </p>
         </div>
 
@@ -79,7 +90,7 @@ const Journal: React.FC<JournalProps> = ({ currentLang = 'en', onArticleClick })
                 </p>
                 
                 <div className="mt-auto pt-4 flex items-center justify-between text-xs font-black font-anime text-[#FFE600] group-hover:text-white transition-colors">
-                  <span>{isAr ? 'اقرأ المقال الكامل' : 'READ FULL ARTICLE'}</span>
+                  <span>{tr(currentLang, { en: 'READ FULL ARTICLE', es: 'LEER ARTÍCULO COMPLETO', fr: 'LIRE L\'ARTICLE COMPLET', ar: 'اقرأ المقال الكامل' })}</span>
                   <span className="text-[#E50914]">{isAr ? '←' : '→'}</span>
                 </div>
               </div>

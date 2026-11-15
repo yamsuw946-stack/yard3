@@ -6,7 +6,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
 import { sendMessageToGemini } from '../services/geminiService';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { Bot, Sparkles, Send, X, Shield, Zap } from 'lucide-react';
 
@@ -18,6 +18,7 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
   const isEs = currentLang === 'es';
   const isFr = currentLang === 'fr';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -81,8 +82,8 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
     }
   };
 
-  const titleText = isAr ? 'كابتن أورا // AI Coach' : 'Captain Aura // AI Coach';
-  const subtitleText = isAr ? 'مدعوم بنموذج Google Gemini الذكي' : 'Powered by Google Gemini AI';
+  const titleText = t('Captain Aura // AI Coach', 'Captain Aura // Entrenador IA', 'Captain Aura // Coach IA', 'كابتن أورا // AI Coach');
+  const subtitleText = t('Powered by Google Gemini AI', 'Impulsado por Google Gemini AI', 'Propulsé par Google Gemini AI', 'مدعوم بنموذج Google Gemini الذكي');
   const thinkingText = isAr ? 'كابتن أورا يحلل بـ Gemini AI...' : isEs ? 'Captain Aura analizando...' : isFr ? 'Captain Aura analyse...' : 'Captain Aura analyzing with Gemini AI...';
   const placeholderText = isAr 
     ? 'اسأل كابتن أورا عن التمرين، التغذية، العتاد...' 
@@ -169,29 +170,29 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
             <button
               type="button"
               onClick={() => {
-                setInputValue(isAr ? 'ما هي أفضل خطة تغذية قتالية لبناء العضلات؟' : 'What is the best combat nutrition for muscle?');
+                setInputValue(t('What is the best combat nutrition for muscle?', '¿Cuál es la mejor nutrición de combate para músculo?', 'Quelle est la meilleure nutrition de combat pour le muscle ?', 'ما هي أفضل خطة تغذية قتالية لبناء العضلات؟'));
               }}
               className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 hover:text-emerald-300 transition-colors shrink-0"
             >
-              🥗 {isAr ? 'تغذية قتالية' : 'Nutrition'}
+              🥗 {t('Nutrition', 'Nutrición', 'Nutrition', 'تغذية قتالية')}
             </button>
             <button
               type="button"
               onClick={() => {
-                setInputValue(isAr ? 'كيف أزيد قوة لكمتي وسرعة رد الفعل؟' : 'How do I increase punch speed and reflexes?');
+                setInputValue(t('How do I increase punch speed and reflexes?', '¿Cómo aumento la velocidad de golpeo y reflejos?', 'Comment augmenter ma vitesse de frappe et mes réflexes ?', 'كيف أزيد قوة لكمتي وسرعة رد الفعل؟'));
               }}
               className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 hover:text-yellow-300 transition-colors shrink-0"
             >
-              🥊 {isAr ? 'قوة اللكمات' : 'Punch Speed'}
+              🥊 {t('Punch Speed', 'Velocidad', 'Frappe', 'قوة اللكمات')}
             </button>
             <button
               type="button"
               onClick={() => {
-                setInputValue(isAr ? 'ما هي مزايا خاتم وسوار YARD 300 البيومتري؟' : 'What are YARD 300 biometric tracker perks?');
+                setInputValue(t('What are YARD 300 biometric tracker perks?', '¿Cuáles son las ventajas del rastreador biométrico YARD 300?', 'Quels sont les atouts du capteur biométrique YARD 300 ?', 'ما هي مزايا خاتم وسوار YARD 300 البيومتري؟'));
               }}
               className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 hover:text-purple-300 transition-colors shrink-0"
             >
-              💍 {isAr ? 'عتاد YARD' : 'Gear Specs'}
+              💍 {t('Gear Specs', 'Equipo', 'Équipement', 'عتاد YARD')}
             </button>
           </div>
 
@@ -210,7 +211,7 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
                 onClick={handleSend}
                 disabled={!inputValue.trim() || isThinking}
                 className="bg-gradient-to-r from-emerald-400 to-[#FFE600] hover:brightness-110 text-black px-4 md:px-5 rounded-xl font-black font-anime text-xs transition-all disabled:opacity-40 shadow-[0_0_15px_rgba(16,185,129,0.4)] cursor-pointer flex items-center justify-center gap-1"
-                title={isAr ? 'إرسال' : 'Send'}
+                title={t('Send', 'Enviar', 'Envoyer', 'إرسال')}
               >
                 <Send className="w-4 h-4 text-black" />
               </button>
@@ -235,7 +236,7 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
               <X className="w-5 h-5" />
             </div>
             <span className="text-xs font-black font-anime text-white">
-              {isAr ? 'إغلاق' : 'CLOSE'}
+              {t('CLOSE', 'CERRAR', 'FERMER', 'إغلاق')}
             </span>
           </div>
         ) : (
@@ -251,14 +252,14 @@ const Assistant: React.FC<AssistantProps> = ({ currentLang = 'en' }) => {
             {/* Coach Label & Status */}
             <div className="flex flex-col text-left items-start">
               <span className="text-[11px] font-black font-anime text-white tracking-wider flex items-center gap-1 group-hover:text-emerald-300 transition-colors">
-                <span>{isAr ? 'الكوتش الذكي' : 'AI COACH'}</span>
+                <span>{t('AI COACH', 'ENTRENADOR IA', 'COACH IA', 'الكوتش الذكي')}</span>
                 <span className="text-[9px] px-1 py-0.2 rounded bg-[#FFE600] text-black font-black">
                   S-RANK
                 </span>
               </span>
               <span className="text-[9px] text-emerald-400 font-mono font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                {isAr ? 'مستشارك الرياضي' : 'Aura Coach Online'}
+                {t('Aura Coach Online', 'Entrenador en Línea', 'Coach en Ligne', 'مستشارك الرياضي')}
               </span>
             </div>
           </div>

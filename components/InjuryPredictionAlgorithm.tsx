@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
-import { 
-  ShieldAlert, 
-  Activity, 
-  Flame, 
-  HeartPulse, 
-  AlertTriangle, 
-  CheckCircle2, 
-  RefreshCw, 
-  TrendingUp, 
-  ShieldCheck, 
-  Zap,
-  RotateCcw
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  Tooltip as RechartsTooltip
+} from 'recharts';
+import {
+  ShieldAlert,
+  Activity,
+  CheckCircle2,
+  RotateCcw,
+  Moon,
+  Crosshair
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { InjuryRiskHistoryChart } from './InjuryRiskHistoryChart';
+import {
+  BiometricEngineService,
+  BiometricTelemetryState,
+  InjuryZoneKey,
+  evaluateInjuryRisk,
+  evaluateSleepArchitecture
+} from '../services/biometricEngine';
 
 interface InjuryPredictionAlgorithmProps {
   currentLang?: Language;
@@ -25,341 +35,486 @@ export const InjuryPredictionAlgorithm: React.FC<InjuryPredictionAlgorithmProps>
   currentLang = 'en',
   onClose
 }) => {
-  const isAr = currentLang === 'ar';
+  const t = (texts: { en: string; es: string; fr: string; ar: string }) => tr(currentLang, texts);
+  const [state, setState] = useState<BiometricTelemetryState>(() => BiometricEngineService.getState());
 
-  // Interactive Workload & Biometric Inputs
-  const [acuteLoadDays, setAcuteLoadDays] = useState<number>(1250); // Last 7 days training stress (AU)
-  const [chronicLoadDays, setChronicLoadDays] = useState<number>(1000); // Last 28 days baseline average (AU)
-  const [sessionRpe, setSessionRpe] = useState<number>(8); // Rate of Perceived Exertion (1 - 10)
-  const [hrvSuppressionPercent, setHrvSuppressionPercent] = useState<number>(12); // % drop from baseline HRV
-  const [previousInjuryZones, setPreviousInjuryZones] = useState<{
-    knee: boolean;
-    ankle: boolean;
-    hamstring: boolean;
-    shoulder: boolean;
-    lowerBack: boolean;
-  }>({
-    knee: false,
-    ankle: false,
-    hamstring: false,
-    shoulder: false,
-    lowerBack: false
-  });
+  useEffect(() => {
+    return BiometricEngineService.subscribe(setState);
+  }, []);
 
-  const toggleZone = (zone: keyof typeof previousInjuryZones) => {
+  const updateField = <K extends keyof BiometricTelemetryState>(key: K, value: BiometricTelemetryState[K]) => {
+    const next = BiometricEngineService.updateState({ [key]: value });
+    setState(next);
+  };
+
+  const toggleZone = (zone: InjuryZoneKey) => {
     soundFX.playButtonClick();
-    setPreviousInjuryZones(prev => ({ ...prev, [zone]: !prev[zone] }));
+    BiometricEngineService.updateState({
+      previousInjuryZones: {
+        ...state.previousInjuryZones,
+        [zone]: !state.previousInjuryZones[zone]
+      }
+    });
   };
 
-  // ACWR (Acute:Chronic Workload Ratio) Calculation
-  const acwr = Number((acuteLoadDays / Math.max(1, chronicLoadDays)).toFixed(2));
-
-  // Predictive Risk Engine
-  const calculateInjuryRisk = () => {
-    // Banister impulse-response model + Gabbett ACWR sweet spot
-    // Sweet spot: 0.8 - 1.3 -> Low risk (< 10%)
-    // Moderate risk: 1.31 - 1.49 -> (~20 - 30%)
-    // High danger spike: >= 1.5 -> (~50 - 80%)
-    // Under-training spike risk: < 0.75 -> (~25% when suddenly spiking)
-
-    let baseRiskPercent = 8;
-
-    if (acwr >= 0.85 && acwr <= 1.25) {
-      baseRiskPercent = 6;
-    } else if (acwr > 1.25 && acwr <= 1.45) {
-      baseRiskPercent = 22 + Math.round((acwr - 1.25) * 50);
-    } else if (acwr > 1.45) {
-      baseRiskPercent = 52 + Math.round(Math.min(40, (acwr - 1.45) * 75));
+  const applyScenario = (scenario: 'optimal' | 'spikeAlert' | 'rehab') => {
+    soundFX.playButtonClick();
+    if (scenario === 'optimal') {
+      BiometricEngineService.updateState({
+        acuteLoad7d: 1120,
+        chronicLoad28d: 1020,
+        trainingMonotony: 1.25,
+        sessionRpe: 7,
+        hrvSuppressionPercent: 5,
+        previousInjuryZones: { knee: false, ankle: false, hamstring: false, shoulder: false, lowerBack: false }
+      });
+    } else if (scenario === 'spikeAlert') {
+      BiometricEngineService.updateState({
+        acuteLoad7d: 1850,
+        chronicLoad28d: 1050,
+        trainingMonotony: 2.15,
+        sessionRpe: 9,
+        hrvSuppressionPercent: 24,
+        previousInjuryZones: { knee: false, ankle: false, hamstring: true, shoulder: false, lowerBack: false }
+      });
     } else {
-      // Under-prepared
-      baseRiskPercent = 18 + Math.round((0.85 - acwr) * 30);
+      BiometricEngineService.updateState({
+        acuteLoad7d: 780,
+        chronicLoad28d: 1050,
+        trainingMonotony: 1.15,
+        sessionRpe: 5,
+        hrvSuppressionPercent: 9,
+        previousInjuryZones: { knee: true, ankle: true, hamstring: false, shoulder: false, lowerBack: false }
+      });
     }
-
-    // Previous injury multiplier (+12% risk per unconditioned prior injury site)
-    const injuryCount = Object.values(previousInjuryZones).filter(Boolean).length;
-    const injuryPenalty = injuryCount * 11;
-
-    // HRV suppression penalty (Neuromuscular fatigue marker)
-    const hrvPenalty = hrvSuppressionPercent > 10 ? Math.round((hrvSuppressionPercent - 10) * 1.4) : 0;
-
-    // RPE fatigue multiplier
-    const rpePenalty = sessionRpe >= 8 ? (sessionRpe - 7) * 4 : 0;
-
-    let totalRisk = Math.min(96, Math.max(4, baseRiskPercent + injuryPenalty + hrvPenalty + rpePenalty));
-
-    let riskLevel: 'Low' | 'Moderate' | 'High' | 'Severe' = 'Low';
-    let riskColor = '#22C55E';
-
-    if (totalRisk < 18) {
-      riskLevel = 'Low';
-      riskColor = '#22C55E';
-    } else if (totalRisk < 40) {
-      riskLevel = 'Moderate';
-      riskColor = '#FFE600';
-    } else if (totalRisk < 65) {
-      riskLevel = 'High';
-      riskColor = '#FF007A';
-    } else {
-      riskLevel = 'Severe';
-      riskColor = '#E50914';
-    }
-
-    return {
-      acwr,
-      totalRisk,
-      riskLevel,
-      riskColor,
-      injuryCount,
-      recommendedAction: totalRisk >= 65
-        ? (isAr ? 'تخفيض الحمل التدريبي بنسبة 40% فوراً وجلسات تدليك وتمدد بالأجهزة' : 'Enforce immediate 40% deload, soft tissue mobility & cryo-recovery')
-        : totalRisk >= 40
-        ? (isAr ? 'تثبيت الحمل الحالي وتجنب محاولات تحطيم الأرقام القياسية اليوم' : 'Hold workload steady, focus on aerobic flush & avoid max 1RM testing')
-        : (isAr ? 'الجاهزية التامة للنزالات والتحميل الانفجاري الكامل 100%' : 'Clear for high-velocity combat drills & maximal explosive exertion')
-    };
   };
 
-  const risk = calculateInjuryRisk();
+  const risk = evaluateInjuryRisk(state);
+  const sleepEval = evaluateSleepArchitecture(state);
+
+  // Dynamic Biomechanical Vulnerability Radar Dataset across 6 vectors
+  const radarData = useMemo(() => {
+    const acwrFactor = Math.max(0, (risk.acwr - 1.0) * 45);
+    const monotonyFactor = Math.max(0, (state.trainingMonotony - 1.1) * 28);
+    const sleepPenalty = Math.max(0, 100 - sleepEval.overallScore) * 0.7;
+
+    return [
+      {
+        axis: t({ en: 'Hamstring', es: 'Isquios', fr: 'Ischios', ar: 'الأوتار' }),
+        strain: Math.min(98, Math.round(14 + acwrFactor * 0.9 + (state.previousInjuryZones.hamstring ? 42 : 0))),
+        baseline: 28
+      },
+      {
+        axis: t({ en: 'Knee ACL', es: 'Rodilla LCA', fr: 'Genou LCA', ar: 'الركبة' }),
+        strain: Math.min(98, Math.round(12 + acwrFactor * 0.8 + monotonyFactor * 0.5 + (state.previousInjuryZones.knee ? 40 : 0))),
+        baseline: 26
+      },
+      {
+        axis: t({ en: 'Achilles', es: 'Aquiles', fr: 'Achille', ar: 'الكاحل' }),
+        strain: Math.min(98, Math.round(10 + acwrFactor * 0.75 + (state.previousInjuryZones.ankle ? 38 : 0))),
+        baseline: 24
+      },
+      {
+        axis: t({ en: 'Lumbar', es: 'Lumbar', fr: 'Lombaire', ar: 'الظهر' }),
+        strain: Math.min(98, Math.round(11 + monotonyFactor * 0.7 + sleepPenalty * 0.35 + (state.previousInjuryZones.lowerBack ? 36 : 0))),
+        baseline: 25
+      },
+      {
+        axis: t({ en: 'Shoulder', es: 'Hombro', fr: 'Épaule', ar: 'الكتف' }),
+        strain: Math.min(98, Math.round(9 + state.sessionRpe * 2.4 + (state.previousInjuryZones.shoulder ? 34 : 0))),
+        baseline: 24
+      },
+      {
+        axis: t({ en: 'CNS / HRV', es: 'SNC / HRV', fr: 'SNC / HRV', ar: 'الجهاز العصبي' }),
+        strain: Math.min(98, Math.round(8 + state.hrvSuppressionPercent * 1.9 + sleepPenalty * 0.65)),
+        baseline: 30
+      }
+    ];
+  }, [risk.acwr, state, sleepEval.overallScore, currentLang]);
+
+  const radius = 56;
+  const circumference = 2 * Math.PI * radius;
+  const strokeOffset = circumference - (risk.totalRisk / 100) * circumference;
 
   return (
-    <div className="bg-[#0E101A] border-2 border-[#E50914]/50 rounded-3xl p-3 sm:p-6 md:p-10 shadow-[0_0_50px_rgba(229,9,20,0.25)] text-white font-sans max-w-5xl mx-auto space-y-10 w-full max-w-full overflow-hidden overflow-x-hidden">
-      
+    <div className="bg-[#07080D] border border-white/[0.09] rounded-2xl p-4 sm:p-6 md:p-9 shadow-2xl text-white font-sans max-w-6xl mx-auto space-y-8 w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-800 pb-6 mb-8">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E50914]/20 border border-[#E50914]/40 text-[#E50914] text-xs font-black font-anime uppercase tracking-wider">
-            <ShieldAlert className="w-3.5 h-3.5 text-[#E50914]" />
-            <span>{isAr ? 'خوارزمية التنبؤ بالإصابات وتوازن الحمل الحركي ACWR' : 'BIOMECHANICAL INJURY PREDICTION ALGORITHM'}</span>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-[11px] font-mono text-[#D4AF37] uppercase tracking-[0.18em]">
+            <ShieldAlert className="w-3.5 h-3.5 text-[#EF4444]" />
+            <span>
+              {t({
+                en: 'CLINICAL MULTI-FACTOR INJURY ENGINE',
+                es: 'MOTOR CLÍNICO MULTIFACTORIAL DE LESIONES',
+                fr: 'MOTEUR CLINIQUE MULTIFACTEUR DE BLESSURES',
+                ar: 'محرك التنبؤ الوقائي ACWR + FOSTER STRAIN'
+              })}
+            </span>
           </div>
-          <h2 className="text-2xl md:text-4xl font-black font-anime text-white">
-            {isAr ? 'نموذج التنبؤ بالحمل الحاد والمزمن للرياضيين' : 'Gabbett ACWR Acute:Chronic Workload Model'}
+          <h2 className="text-2xl md:text-4xl font-bold text-white tracking-tight">
+            {t({
+              en: 'Gabbett ACWR & Anatomical Strain Model',
+              es: 'Modelo Gabbett ACWR y Tensión Anatómica',
+              fr: 'Modèle Gabbett ACWR & Charge Anatomique',
+              ar: 'خوارزمية التنبؤ بالإصابات وتوزيع الإجهاد المفصلي'
+            })}
           </h2>
-          <p className="text-xs md:text-sm text-gray-300 font-bold max-w-2xl">
-            {isAr 
-              ? 'خوارزمية حسابية معتمدة عالمياً في أندية النخبة تتنبأ باحتمالية التمزقات العضلية وإصابات الأوتار قبل حدوثها بـ 7 أيام بناءً على الحمل الحركي والتعب العصبي.'
-              : 'Clinical predictive model tracking acute-to-chronic workload spikes, neuromuscular fatigue suppression, and anatomical vulnerability zones to avert soft-tissue tears.'}
+          <p className="text-xs md:text-sm text-slate-400 max-w-2xl leading-relaxed">
+            {t({
+              en: 'Precision sports-medicine model integrating Gabbett ACWR, Foster Strain, weighted joint hotspots, HRV suppression, and synced sleep debt.',
+              es: 'Modelo de medicina deportiva que integra Gabbett ACWR, tensión de Foster, zonas articulares, supresión de HRV y déficit de sueño sincronizado.',
+              fr: 'Modèle de médecine du sport intégrant ACWR Gabbett, tension Foster, zones articulaires, suppression HRV et dette de sommeil synchronisée.',
+              ar: 'نموذج سريري يربط نسبة الحمل الحاد والمزمن مع إجهاد Foster، ومصفوفة المفاصل التشريحية، ومعدل هبوط HRV وعجز النوم اللحظي.'
+            })}
           </p>
         </div>
 
-        {onClose && (
+        <div className="flex items-center gap-2.5 shrink-0">
           <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#181A28] border border-gray-700 text-gray-300 hover:text-white text-xs font-bold font-anime cursor-pointer transition-all shrink-0"
+            type="button"
+            onClick={() => applyScenario('optimal')}
+            className="px-3.5 py-2 rounded-lg bg-[#111521] hover:bg-[#171C2B] border border-white/[0.1] text-xs font-medium text-slate-200 flex items-center gap-1.5 cursor-pointer"
           >
-            {isAr ? 'إغلاق' : 'Close'}
+            <RotateCcw className="w-3.5 h-3.5 text-[#00F0FF]" />
+            <span>{t({ en: 'Reset', es: 'Reiniciar', fr: 'Réinitialiser', ar: 'إعادة ضبط' })}</span>
           </button>
-        )}
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg bg-white text-[#07080D] hover:bg-[#D4AF37] text-xs font-bold cursor-pointer transition-colors"
+            >
+              {t({ en: 'Close', es: 'Cerrar', fr: 'Fermer', ar: 'إغلاق' })}
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left: Input Controls */}
-        <div className="lg:col-span-7 space-y-6 bg-[#141624] p-6 rounded-2xl border border-gray-800">
-          <div className="flex items-center justify-between border-b border-gray-800 pb-3">
-            <span className="text-xs font-black font-anime text-gray-300 uppercase tracking-wider flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#00F0FF]" />
-              {isAr ? 'بيانات الجهد والضغط البدني:' : 'WORKLOAD & STRAIN METRICS:'}
+      {/* Scenario Switcher Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/[0.06]">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-400 me-1">
+            {t({ en: 'Simulate Scenarios:', es: 'Simular Escenarios:', fr: 'Simuler Scénarios :', ar: 'اختبار استجابة الخوارزمية:' })}
+          </span>
+          <button
+            type="button"
+            onClick={() => applyScenario('optimal')}
+            className="px-3 py-1.5 rounded-lg bg-[#10B981]/12 hover:bg-[#10B981]/22 border border-[#10B981]/35 text-[#10B981] text-xs font-semibold cursor-pointer"
+          >
+            {t({ en: 'Optimal (~1.10)', es: 'Óptimo (~1.10)', fr: 'Optimal (~1.10)', ar: 'النطاق المثالي (~1.10)' })}
+          </button>
+          <button
+            type="button"
+            onClick={() => applyScenario('spikeAlert')}
+            className="px-3 py-1.5 rounded-lg bg-rose-500/12 hover:bg-rose-500/22 border border-rose-500/35 text-rose-400 text-xs font-semibold cursor-pointer"
+          >
+            {t({ en: 'Overload Spike (>1.75)', es: 'Pico de Sobrecarga (>1.75)', fr: 'Pic de Surcharge (>1.75)', ar: 'طفرة خطرة (>1.75)' })}
+          </button>
+          <button
+            type="button"
+            onClick={() => applyScenario('rehab')}
+            className="px-3 py-1.5 rounded-lg bg-[#D4AF37]/12 hover:bg-[#D4AF37]/22 border border-[#D4AF37]/35 text-[#D4AF37] text-xs font-semibold cursor-pointer"
+          >
+            {t({ en: 'Rehab Return', es: 'Retorno de Rehab', fr: 'Retour Rééducation', ar: 'تأهيل المفاصل' })}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-4 text-xs font-mono tabular-nums text-slate-400">
+          <span>
+            {t({
+              en: `Confidence: ${risk.confidencePercent}%`,
+              es: `Confianza: ${risk.confidencePercent}%`,
+              fr: `Confiance : ${risk.confidencePercent}%`,
+              ar: `الدقة: ${risk.confidencePercent}%`
+            })}
+          </span>
+          <span>·</span>
+          <span className="text-[#00F0FF]">{risk.horizonDays}</span>
+        </div>
+      </div>
+
+      {/* Diagnostic Readout Row: Radial Risk Dial + 6-Axis Anatomical Strain Radar + Attribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left: Risk Radial Dial & ACWR Corridor (4 cols) */}
+        <div className="lg:col-span-4 bg-[#0B0E16] border border-white/[0.08] rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div className="flex flex-col items-center text-center pt-1">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-[0.16em] mb-3">
+              {t({ en: '7-DAY SOFT-TISSUE RISK', es: 'RIESGO TEJIDO BLANDO (7D)', fr: 'RISQUE TISSUS MOUS (7J)', ar: 'احتمالية الإصابة (7 أيام)' })}
             </span>
-            <button
-              onClick={() => {
-                soundFX.playButtonClick();
-                setAcuteLoadDays(1100);
-                setChronicLoadDays(1000);
-                setSessionRpe(7);
-                setHrvSuppressionPercent(6);
-                setPreviousInjuryZones({ knee: false, ankle: false, hamstring: false, shoulder: false, lowerBack: false });
-              }}
-              className="text-[11px] font-bold text-[#00F0FF] hover:underline cursor-pointer flex items-center gap-1"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>{isAr ? 'إعادة التعيين' : 'Reset Baseline'}</span>
-            </button>
+            <div className="relative w-36 h-36 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r={radius} fill="none" stroke="#171C2B" strokeWidth="10" />
+                <circle
+                  cx="70"
+                  cy="70"
+                  r={radius}
+                  fill="none"
+                  stroke={risk.riskColor}
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeOffset}
+                  className="transition-all duration-500"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center font-mono tabular-nums">
+                <span className="text-3xl font-extrabold" style={{ color: risk.riskColor }}>
+                  {risk.totalRisk}%
+                </span>
+                <span className="text-[10px] text-slate-400 uppercase">{risk.riskLevel}</span>
+              </div>
+            </div>
           </div>
 
-          {/* 1. Acute Load (7 Days) */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-xs font-bold">
-              <span className="text-gray-300">{isAr ? 'الحمل التدريبي الحاد (آخر 7 أيام):' : 'Acute Workload (Last 7 Days - Fatigue):'}</span>
-              <span className="text-sm font-black font-anime text-[#FF007A]">{acuteLoadDays} AU</span>
+          <div className="space-y-2 pt-3 border-t border-white/[0.07]">
+            <div className="flex justify-between items-center text-xs font-mono tabular-nums">
+              <span className="text-slate-400">ACWR Ratio</span>
+              <span className="text-base font-bold text-[#00F0FF]">{risk.acwr}</span>
             </div>
-            <input 
-              type="range" 
-              min={400} 
-              max={2500} 
-              step={25} 
-              value={acuteLoadDays} 
-              onChange={(e) => setAcuteLoadDays(parseInt(e.target.value))}
-              className="w-full accent-[#FF007A] cursor-pointer"
+            <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden flex">
+              <div className="h-full bg-blue-500 w-[30%]" />
+              <div className="h-full bg-emerald-500 w-[35%]" />
+              <div className="h-full bg-amber-500 w-[15%]" />
+              <div className="h-full bg-rose-600 w-[20%]" />
+            </div>
+            <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>&lt;0.8</span>
+              <span className="text-emerald-400">0.85–1.25</span>
+              <span className="text-rose-400">&gt;1.5</span>
+            </div>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#07080D] border border-white/[0.06] flex items-center justify-between text-xs">
+            <span className="text-slate-400 flex items-center gap-1.5">
+              <Moon className="w-3.5 h-3.5 text-[#00F0FF]" />
+              <span>{t({ en: 'Synced Sleep Index', es: 'Índice de Sueño Sincronizado', fr: 'Indice Sommeil Synchronisé', ar: 'مختبر النوم الحي' })}</span>
+            </span>
+            <span className="font-mono tabular-nums font-bold text-[#00F0FF]">
+              {sleepEval.overallScore}/100 · {state.totalSleepHours}h
+            </span>
+          </div>
+        </div>
+
+        {/* Center: Live Recharts 6-Axis Anatomical Vulnerability Radar (4 cols) */}
+        <div className="lg:col-span-4 bg-[#0B0E16] border border-white/[0.08] rounded-2xl p-5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <Crosshair className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>{t({ en: 'ANATOMICAL STRAIN RADAR', es: 'RADAR DE TENSIÓN ANATÓMICA', fr: 'RADAR DE CHARGE ANATOMIQUE', ar: 'خريطة الإجهاد التشريحي' })}</span>
+            </span>
+            <span className="text-[10px] font-mono text-slate-400">0–100%</span>
+          </div>
+
+          <div className="w-full h-56 min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="72%" data={radarData}>
+                <PolarGrid stroke="#1E293B" />
+                <PolarAngleAxis dataKey="axis" tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'monospace' }} />
+                <RechartsTooltip
+                  contentStyle={{
+                    backgroundColor: '#07090F',
+                    borderColor: 'rgba(255,255,255,0.12)',
+                    borderRadius: '10px',
+                    fontSize: '11px'
+                  }}
+                />
+                <Radar
+                  name={t({ en: 'Safe Baseline', es: 'Base Segura', fr: 'Référence Sûre', ar: 'الحد الآمن' })}
+                  dataKey="baseline"
+                  stroke="#10B981"
+                  fill="#10B981"
+                  fillOpacity={0.12}
+                  strokeWidth={1.5}
+                />
+                <Radar
+                  name={t({ en: 'Live Tissue Load', es: 'Carga Tisular en Vivo', fr: 'Charge Tissulaire Directe', ar: 'الحمل الفعلي' })}
+                  dataKey="strain"
+                  stroke="#EF4444"
+                  fill="#EF4444"
+                  fillOpacity={0.28}
+                  strokeWidth={2}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="flex items-center justify-center gap-5 text-[10px] font-mono text-slate-400 pt-2 border-t border-white/[0.06]">
+            <span className="text-rose-400">● {t({ en: 'Live Strain', es: 'Tensión Activa', fr: 'Charge Active', ar: 'الحمل الفعلي' })}</span>
+            <span className="text-[#10B981]">● {t({ en: 'Baseline', es: 'Base Segura', fr: 'Base Sûre', ar: 'الحد الآمن' })}</span>
+          </div>
+        </div>
+
+        {/* Right: Factor Attribution Breakdown & Medical Directive (4 cols) */}
+        <div className="lg:col-span-4 bg-[#0B0E16] border border-white/[0.08] rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div className="space-y-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-300 block">
+              {t({ en: 'RISK ATTRIBUTION WEIGHTS', es: 'PESOS DE ATRIBUCIÓN DE RIESGO', fr: 'PONDÉRATION DU RISQUE', ar: 'تفكيك أوزان الخطر (Attribution)' })}
+            </span>
+
+            {[
+              { label: t({ en: 'ACWR Load', es: 'Carga ACWR', fr: 'Charge ACWR', ar: 'حمل ACWR' }), val: risk.attribution.acwrLoad, color: '#FFFFFF' },
+              { label: t({ en: 'Foster Strain', es: 'Tensión Foster', fr: 'Charge Foster', ar: 'إجهاد Foster' }), val: risk.attribution.strainMonotony, color: '#D4AF37' },
+              { label: t({ en: 'Anatomical Zones', es: 'Zonas Anatómicas', fr: 'Zones Anatomiques', ar: 'المفاصل المصابة' }), val: risk.attribution.anatomicalZones, color: '#EF4444' },
+              { label: t({ en: 'Sleep & HRV', es: 'Sueño y HRV', fr: 'Sommeil & HRV', ar: 'النوم و HRV' }), val: risk.attribution.sleepAndAutonomic, color: '#00F0FF' }
+            ].map((item) => (
+              <div key={item.label} className="space-y-1">
+                <div className="flex justify-between text-xs font-mono tabular-nums">
+                  <span className="text-slate-400">{item.label}</span>
+                  <span className="font-bold" style={{ color: item.color }}>+{item.val}%</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-[#151A28] overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min(100, item.val * 2.2)}%`, backgroundColor: item.color }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#07080D] border border-white/[0.07] space-y-1.5">
+            <span className="text-[11px] font-bold text-[#00F0FF] flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>{t({ en: 'CLINICAL DIRECTIVE', es: 'DIRECTIVA CLÍNICA', fr: 'DIRECTIVE CLINIQUE', ar: 'التوجيه الطبي الوقائي' })}</span>
+            </span>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {t({
+                en: risk.recommendedActionEn,
+                es: risk.recommendedActionEs || risk.recommendedActionEn,
+                fr: risk.recommendedActionFr || risk.recommendedActionEn,
+                ar: risk.recommendedActionAr
+              })}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Workload Parameters & Anatomical Hotspots Grid */}
+      <div className="bg-[#0B0E16] border border-white/[0.08] rounded-2xl p-5 sm:p-6 space-y-5">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <Activity className="w-4 h-4 text-[#00F0FF]" />
+            <span>{t({ en: 'WORKLOAD & ANATOMICAL HOTSPOT CONTROLS', es: 'CONTROLES DE CARGA Y PUNTOS CRÍTICOS', fr: 'CONTRÔLES DE CHARGE & ZONES SENSIBLES', ar: 'ضوابط الحمل التدريبي ونقاط الضعف' })}</span>
+          </span>
+          <span className="text-xs font-mono tabular-nums text-[#D4AF37]">
+            Foster Strain: {risk.fosterStrain} AU ({risk.strainState})
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-medium">
+              <span className="text-slate-300">{t({ en: 'Acute Load (7d)', es: 'Carga Aguda (7d)', fr: 'Charge Aiguë (7j)', ar: 'الحمل الحاد (7 أيام)' })}</span>
+              <span className="font-mono tabular-nums text-rose-400 font-bold">{state.acuteLoad7d} AU</span>
+            </div>
+            <input
+              type="range"
+              min={400}
+              max={2500}
+              step={25}
+              value={state.acuteLoad7d}
+              onChange={(e) => updateField('acuteLoad7d', parseInt(e.target.value, 10))}
+              className="w-full accent-rose-500 cursor-pointer"
             />
           </div>
 
-          {/* 2. Chronic Load (28 Days) */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-xs font-bold">
-              <span className="text-gray-300">{isAr ? 'الحمل التدريبي المزمن (متوسط 28 يوماً):' : 'Chronic Workload (28-Day Baseline - Fitness):'}</span>
-              <span className="text-sm font-black font-anime text-[#00F0FF]">{chronicLoadDays} AU</span>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-medium">
+              <span className="text-slate-300">{t({ en: 'Chronic Load (28d)', es: 'Carga Crónica (28d)', fr: 'Charge Chronique (28j)', ar: 'الحمل المزمن (28 يوم)' })}</span>
+              <span className="font-mono tabular-nums text-[#00F0FF] font-bold">{state.chronicLoad28d} AU</span>
             </div>
-            <input 
-              type="range" 
-              min={400} 
-              max={2500} 
-              step={25} 
-              value={chronicLoadDays} 
-              onChange={(e) => setChronicLoadDays(parseInt(e.target.value))}
+            <input
+              type="range"
+              min={400}
+              max={2500}
+              step={25}
+              value={state.chronicLoad28d}
+              onChange={(e) => updateField('chronicLoad28d', parseInt(e.target.value, 10))}
               className="w-full accent-[#00F0FF] cursor-pointer"
             />
           </div>
 
-          {/* 3. Session RPE (Rate of Perceived Exertion) */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-xs font-bold">
-              <span className="text-gray-300">{isAr ? 'مقياس شدة الجهد الذهني والبدني RPE (1 - 10):' : 'Rate of Perceived Exertion (RPE 1-10):'}</span>
-              <span className="text-sm font-black font-anime text-[#FFE600]">{sessionRpe} / 10</span>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-medium">
+              <span className="text-slate-300">{t({ en: 'Foster Monotony', es: 'Monotonía Foster', fr: 'Monotonie Foster', ar: 'رتابة Foster' })}</span>
+              <span className="font-mono tabular-nums text-[#D4AF37] font-bold">{state.trainingMonotony.toFixed(2)}</span>
             </div>
-            <input 
-              type="range" 
-              min={1} 
-              max={10} 
-              step={1} 
-              value={sessionRpe} 
-              onChange={(e) => setSessionRpe(parseInt(e.target.value))}
-              className="w-full accent-[#FFE600] cursor-pointer"
+            <input
+              type="range"
+              min={1.0}
+              max={2.6}
+              step={0.05}
+              value={state.trainingMonotony}
+              onChange={(e) => updateField('trainingMonotony', parseFloat(e.target.value))}
+              className="w-full accent-[#D4AF37] cursor-pointer"
             />
           </div>
 
-          {/* 4. HRV Suppression */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center text-xs font-bold">
-              <span className="text-gray-300">{isAr ? 'مؤشر هبوط تقلب ضربات القلب HRV (الإجهاد العصبي):' : 'HRV Suppression % (Autonomic Strain):'}</span>
-              <span className="text-sm font-black font-anime text-purple-400">{hrvSuppressionPercent}%</span>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-medium">
+              <span className="text-slate-300">{t({ en: 'Session RPE', es: 'RPE de Sesión', fr: 'RPE de Séance', ar: 'شدة الجهد RPE' })}</span>
+              <span className="font-mono tabular-nums text-[#D4AF37] font-bold">{state.sessionRpe}/10</span>
             </div>
-            <input 
-              type="range" 
-              min={0} 
-              max={40} 
-              step={1} 
-              value={hrvSuppressionPercent} 
-              onChange={(e) => setHrvSuppressionPercent(parseInt(e.target.value))}
-              className="w-full accent-purple-400 cursor-pointer"
+            <input
+              type="range"
+              min={1}
+              max={10}
+              step={1}
+              value={state.sessionRpe}
+              onChange={(e) => updateField('sessionRpe', parseInt(e.target.value, 10))}
+              className="w-full accent-[#D4AF37] cursor-pointer"
             />
           </div>
 
-          {/* 5. Past Injury Hotspots */}
-          <div className="space-y-2 pt-2 border-t border-gray-800">
-            <label className="text-[11px] font-black text-gray-300 font-anime uppercase tracking-wider block">
-              {isAr ? 'مناطق الإصابات السابقة أو الإجهاد الموضعي الحاد:' : 'PRIOR INJURY SITES / ACTIVE VULNERABILITY ZONES:'}
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
-              {[
-                { key: 'knee' as const, labelEn: 'Knee (ACL/MCL)', labelAr: 'الركبة والأربطة' },
-                { key: 'ankle' as const, labelEn: 'Ankle / Achilles', labelAr: 'الكاحل ووتر أخيل' },
-                { key: 'hamstring' as const, labelEn: 'Hamstring', labelAr: 'العضلة الخلفية' },
-                { key: 'shoulder' as const, labelEn: 'Rotator Cuff', labelAr: 'مفصل الكتف' },
-                { key: 'lowerBack' as const, labelEn: 'Lumbar Spine', labelAr: 'أسفل الظهر' }
-              ].map(zone => (
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-xs font-medium">
+              <span className="text-slate-300">{t({ en: 'HRV Suppression', es: 'Supresión de HRV', fr: 'Suppression HRV', ar: 'هبوط HRV العصبي' })}</span>
+              <span className="font-mono tabular-nums text-[#00F0FF] font-bold">{state.hrvSuppressionPercent}%</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={40}
+              step={1}
+              value={state.hrvSuppressionPercent}
+              onChange={(e) => updateField('hrvSuppressionPercent', parseInt(e.target.value, 10))}
+              className="w-full accent-[#00F0FF] cursor-pointer"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 items-center content-start">
+            {[
+              { key: 'hamstring' as InjuryZoneKey, labelEn: 'Hamstring +13%', labelEs: 'Isquios +13%', labelFr: 'Ischios +13%', labelAr: 'أوتار +13%' },
+              { key: 'knee' as InjuryZoneKey, labelEn: 'Knee +12%', labelEs: 'Rodilla +12%', labelFr: 'Genou +12%', labelAr: 'ركبة +12%' },
+              { key: 'ankle' as InjuryZoneKey, labelEn: 'Ankle +10%', labelEs: 'Tobillo +10%', labelFr: 'Cheville +10%', labelAr: 'كاحل +10%' },
+              { key: 'lowerBack' as InjuryZoneKey, labelEn: 'Lumbar +10%', labelEs: 'Lumbar +10%', labelFr: 'Lombaire +10%', labelAr: 'ظهر +10%' },
+              { key: 'shoulder' as InjuryZoneKey, labelEn: 'Shoulder +8%', labelEs: 'Hombro +8%', labelFr: 'Épaule +8%', labelAr: 'كتف +8%' }
+            ].map((zone) => {
+              const active = state.previousInjuryZones[zone.key];
+              return (
                 <button
                   key={zone.key}
                   type="button"
                   onClick={() => toggleZone(zone.key)}
-                  className={`p-2.5 rounded-xl border text-xs font-bold font-anime text-left transition-all cursor-pointer flex items-center justify-between ${
-                    previousInjuryZones[zone.key]
-                      ? 'bg-[#E50914]/20 border-[#E50914] text-white shadow-[0_0_15px_rgba(229,9,20,0.4)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                  className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-medium cursor-pointer transition-colors ${
+                    active
+                      ? 'bg-rose-500/20 border-rose-500 text-white'
+                      : 'bg-[#07080D] border-white/[0.08] text-slate-400 hover:text-white'
                   }`}
                 >
-                  <span>{isAr ? zone.labelAr : zone.labelEn}</span>
-                  <span className={`w-2 h-2 rounded-full ${previousInjuryZones[zone.key] ? 'bg-[#E50914]' : 'bg-gray-700'}`} />
+                  {t({ en: zone.labelEn, es: zone.labelEs, fr: zone.labelFr, ar: zone.labelAr })}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
-
         </div>
-
-        {/* Right: Real-Time Risk Gauge & Prescriptions */}
-        <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
-          
-          {/* Main Risk Output Card */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#181A28] to-[#121422] border-2 border-[#E50914]/60 shadow-[0_0_30px_rgba(229,9,20,0.3)] text-center space-y-3 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#E50914]/15 blur-2xl rounded-full pointer-events-none" />
-
-            <span className="text-[11px] font-black font-anime text-gray-400 uppercase tracking-widest block">
-              {isAr ? 'مؤشر احتمالية الإصابة خلال 7 أيام' : '7-DAY PREDICTIVE INJURY RISK PROBABILITY'}
-            </span>
-
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-6xl md:text-7xl font-black font-anime" style={{ color: risk.riskColor }}>
-                {risk.totalRisk}%
-              </span>
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black font-anime uppercase tracking-wider bg-black/40 border border-gray-700">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: risk.riskColor }} />
-              <span className="text-white">
-                {isAr ? `مستوى الخطر: ${risk.riskLevel}` : `Risk Level: ${risk.riskLevel}`}
-              </span>
-            </div>
-
-            {/* ACWR Gauge indicator */}
-            <div className="pt-3 border-t border-gray-800 space-y-1">
-              <div className="flex justify-between items-center text-xs font-bold">
-                <span className="text-gray-300">{isAr ? 'نسبة الحمل ACWR الحالية:' : 'Current ACWR Value:'}</span>
-                <span className="text-base font-black font-mono text-[#00F0FF]">{risk.acwr}</span>
-              </div>
-              <div className="w-full h-2.5 bg-gray-800 rounded-full overflow-hidden flex">
-                <div className="h-full bg-blue-500 w-[30%]" title="Under-prepared (<0.8)" />
-                <div className="h-full bg-emerald-500 w-[35%]" title="Sweet Spot (0.8 - 1.3)" />
-                <div className="h-full bg-amber-500 w-[15%]" title="Elevated Risk (1.3 - 1.5)" />
-                <div className="h-full bg-red-600 w-[20%]" title="High Danger (>1.5)" />
-              </div>
-              <div className="flex justify-between text-[9px] text-gray-400 font-mono">
-                <span>0.5 (Under)</span>
-                <span className="text-emerald-400 font-bold">0.8 - 1.3 (Optimal)</span>
-                <span className="text-red-400 font-bold">&gt;1.5 (Danger)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Biomechanical Diagnostic Badges */}
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3.5 rounded-xl bg-[#141624] border border-gray-800 space-y-1">
-              <span className="text-gray-400 text-[10px] font-bold block">{isAr ? 'تصنيف المنطقة الحركية' : 'ACWR Zone Status'}</span>
-              <span className={`font-black font-anime text-sm ${
-                risk.acwr >= 0.8 && risk.acwr <= 1.3 ? 'text-emerald-400' : 'text-amber-400'
-              }`}>
-                {risk.acwr >= 0.8 && risk.acwr <= 1.3 ? 'Optimal Safe Zone' : risk.acwr > 1.3 ? 'Spike Danger' : 'Under-Conditioned'}
-              </span>
-              <span className="text-[10px] text-gray-400 block">{risk.acwr >= 0.8 && risk.acwr <= 1.3 ? 'Low Soft-Tissue Tear Risk' : 'High Tendon Vulnerability'}</span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-[#141624] border border-gray-800 space-y-1">
-              <span className="text-gray-400 text-[10px] font-bold block">{isAr ? 'معامل الإصابات السابقة' : 'Prior Injury Sites'}</span>
-              <span className="font-black text-[#FFE600] font-anime text-sm">{risk.injuryCount} {isAr ? 'مناطق مسجلة' : 'Zones Active'}</span>
-              <span className="text-[10px] text-gray-400 block">{risk.injuryCount > 0 ? '+11% Risk / Site' : 'Zero Previous Flags'}</span>
-            </div>
-          </div>
-
-          {/* Actionable Medical Prescription */}
-          <div className="p-4 rounded-xl bg-[#141624] border border-gray-800 space-y-2">
-            <span className="text-[11px] font-black text-gray-300 font-anime uppercase tracking-wider flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#00F0FF]" />
-              {isAr ? 'البروتوكول الوقائي المعتمد من الكادر الطبي:' : 'CLINICAL PREVENTATIVE PROTOCOL:'}
-            </span>
-            <p className="text-xs text-white font-bold leading-relaxed">
-              {risk.recommendedAction}
-            </p>
-          </div>
-
-        </div>
-
       </div>
 
-      {/* 30-Day Historical Recharts Visualization Module */}
-      <div className="pt-6 border-t border-gray-800">
-        <InjuryRiskHistoryChart currentLang={currentLang} />
-      </div>
-
+      {/* 30-Day Telemetry Chart */}
+      <InjuryRiskHistoryChart currentLang={currentLang} />
     </div>
   );
 };
+
 export default InjuryPredictionAlgorithm;

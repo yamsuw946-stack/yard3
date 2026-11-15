@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { Language } from '../i18n';
-import { getProducts } from '../constants';
+import { OwnerConfigService } from '../services/ownerConfigService';
 import ProductCard from './ProductCard';
 import { ShoppingBag, Sparkles, Filter, ShieldCheck, Flame } from 'lucide-react';
 
@@ -22,8 +22,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedGender, setSelectedGender] = useState<'all' | 'men' | 'women'>('all');
+  const [allProducts, setAllProducts] = useState<Product[]>(() => OwnerConfigService.getConfiguredProducts(currentLang));
 
-  const allProducts = getProducts(currentLang);
+  useEffect(() => {
+    setAllProducts(OwnerConfigService.getConfiguredProducts(currentLang));
+    return OwnerConfigService.subscribe(() => {
+      setAllProducts(OwnerConfigService.getConfiguredProducts(currentLang));
+    });
+  }, [currentLang]);
 
   const filteredProducts = allProducts.filter((product) => {
     const matchesCategory = selectedCategory === 'all' || product.category?.toLowerCase() === selectedCategory.toLowerCase();
@@ -69,8 +75,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
 
           <div className="flex items-center gap-3 shrink-0">
             <div className="px-4 py-3 rounded-2xl bg-[#141624] text-center font-mono">
-              <span className="block text-[10px] text-gray-400 uppercase">BATCH STATUS</span>
-              <span className="text-sm font-black font-anime text-[#10B981]">ACTIVE DROP ⚡</span>
+              <span className="block text-[10px] text-gray-400 uppercase">
+                {isEs ? 'ESTADO DEL LOTE' : isFr ? 'STATUT DU LOT' : isAr ? 'حالة الدفعة' : 'BATCH STATUS'}
+              </span>
+              <span className="text-sm font-black font-anime text-[#10B981]">
+                {isEs ? 'LANZAMIENTO ACTIVO ⚡' : isFr ? 'ÉDITION ACTIVE ⚡' : isAr ? 'متاح الآن ⚡' : 'ACTIVE DROP ⚡'}
+              </span>
             </div>
           </div>
         </div>
