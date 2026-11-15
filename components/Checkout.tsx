@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { 
   Wallet, 
   CheckCircle2, 
@@ -422,26 +422,34 @@ export const Checkout: React.FC<CheckoutProps> = ({
               </div>
 
               <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/60 text-emerald-400 font-mono text-xs font-bold">
-                STATUS: PAID ⚡
+                {tr(currentLang, { en: 'STATUS: PAID ⚡', es: 'ESTADO: PAGADO ⚡', fr: 'STATUT : PAYÉ ⚡', ar: 'الحالة: مدفوع ⚡' })}
               </span>
             </div>
 
             {/* Order Details Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
-                <span className="text-[10px] text-gray-400 block font-mono">ORDER ID</span>
+                <span className="text-[10px] text-gray-400 block font-mono">
+                  {tr(currentLang, { en: 'ORDER ID', es: 'ID PEDIDO', fr: 'N° COMMANDE', ar: 'رقم الطلب' })}
+                </span>
                 <span className="font-bold text-white font-mono">{completedOrder.id}</span>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
-                <span className="text-[10px] text-gray-400 block font-mono">DATE</span>
+                <span className="text-[10px] text-gray-400 block font-mono">
+                  {tr(currentLang, { en: 'DATE', es: 'FECHA', fr: 'DATE', ar: 'التاريخ' })}
+                </span>
                 <span className="font-bold text-white">{completedOrder.date}</span>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
-                <span className="text-[10px] text-gray-400 block font-mono">METHOD</span>
+                <span className="text-[10px] text-gray-400 block font-mono">
+                  {tr(currentLang, { en: 'METHOD', es: 'MÉTODO', fr: 'MOYEN', ar: 'الوسيلة' })}
+                </span>
                 <span className="font-bold text-emerald-400">{completedOrder.paymentMethod}</span>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
-                <span className="text-[10px] text-gray-400 block font-mono">TOTAL PAID</span>
+                <span className="text-[10px] text-gray-400 block font-mono">
+                  {tr(currentLang, { en: 'TOTAL PAID', es: 'TOTAL PAGADO', fr: 'TOTAL PAYÉ', ar: 'الإجمالي' })}
+                </span>
                 <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${completedOrder.total}</span>
               </div>
             </div>
@@ -449,7 +457,9 @@ export const Checkout: React.FC<CheckoutProps> = ({
             {/* Transaction Ref */}
             <div className="p-3 bg-black/60 rounded-xl border border-gray-800 flex items-center justify-between text-xs font-mono">
               <div className="space-y-0.5 overflow-hidden">
-                <span className="text-[10px] text-gray-400 block">TRANSACTION REFERENCE:</span>
+                <span className="text-[10px] text-gray-400 block">
+                  {tr(currentLang, { en: 'TRANSACTION REFERENCE:', es: 'REFERENCIA DE TRANSACCIÓN:', fr: 'RÉFÉRENCE DE TRANSACTION :', ar: 'مرجع العملية:' })}
+                </span>
                 <span className="text-cyan-300 font-bold truncate block">{completedOrder.transactionRef}</span>
               </div>
               <button
@@ -463,7 +473,11 @@ export const Checkout: React.FC<CheckoutProps> = ({
                 className="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer"
               >
                 {copiedTx ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedTx ? 'Copied' : 'Copy'}</span>
+                <span>
+                  {copiedTx
+                    ? tr(currentLang, { en: 'Copied', es: 'Copiado', fr: 'Copié', ar: 'تم النسخ' })
+                    : tr(currentLang, { en: 'Copy', es: 'Copiar', fr: 'Copier', ar: 'نسخ' })}
+                </span>
               </button>
             </div>
 
@@ -471,7 +485,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
             <div className="space-y-3">
               <h3 className="text-xs font-black font-anime text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Receipt className="w-4 h-4 text-emerald-400" />
-                <span>{isFr ? 'Articles Achetés' : isEs ? 'Artículos Comprados' : 'Purchased Gear'}</span>
+                <span>{tr(currentLang, { en: 'Purchased Gear', es: 'Artículos Comprados', fr: 'Articles Achetés', ar: 'المشتريات' })}</span>
               </h3>
               <div className="space-y-2">
                 {completedOrder.items.map((item, idx) => (
@@ -491,7 +505,9 @@ export const Checkout: React.FC<CheckoutProps> = ({
 
             {/* Shipping Info */}
             <div className="p-3.5 bg-black/40 rounded-xl border border-gray-800 text-xs space-y-1">
-              <span className="text-[10px] text-gray-400 uppercase font-mono block">DELIVERY ADDRESS & ATHLETE:</span>
+              <span className="text-[10px] text-gray-400 uppercase font-mono block">
+                {tr(currentLang, { en: 'DELIVERY ADDRESS & ATHLETE:', es: 'DIRECCIÓN Y ATLETA:', fr: 'ADRESSE DE LIVRAISON & ATHLÈTE :', ar: 'عنوان التوصيل والرياضي:' })}
+              </span>
               <p className="font-bold text-white">{completedOrder.athleteName} ({completedOrder.athleteEmail})</p>
               <p className="text-gray-300">{completedOrder.shippingAddress}</p>
             </div>
@@ -598,7 +614,9 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   }`}
                 >
                   <CreditCard className="w-5 h-5 text-emerald-400" />
-                  <span className="text-[11px] font-bold font-anime">Card</span>
+                  <span className="text-[11px] font-bold font-anime">
+                    {tr(currentLang, { en: 'Card', es: 'Tarjeta', fr: 'Carte', ar: 'بطاقة' })}
+                  </span>
                 </button>
 
                 {/* Apple Pay */}
@@ -855,24 +873,42 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   <div className="flex items-center gap-3">
                     <Coins className="w-8 h-8 text-amber-400" />
                     <div>
-                      <h3 className="font-anime font-black text-white text-base">MetaMask Web3 Gateway</h3>
+                      <h3 className="font-anime font-black text-white text-base">
+                        {tr(currentLang, {
+                          en: 'MetaMask Web3 Gateway',
+                          es: 'Pasarela Web3 MetaMask',
+                          fr: 'Passerelle Web3 MetaMask',
+                          ar: 'بوابة الدفع Web3 MetaMask'
+                        })}
+                      </h3>
                       <span className="text-[11px] text-gray-400 font-mono">{networkName}</span>
                     </div>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-mono font-bold">
-                    {hasMetaMask ? 'EXTENSION DETECTED' : 'EXTENSION NOT FOUND'}
+                    {hasMetaMask
+                      ? tr(currentLang, { en: 'EXTENSION DETECTED', es: 'EXTENSIÓN DETECTADA', fr: 'EXTENSION DÉTECTÉE', ar: 'الإضافة متصلة' })
+                      : tr(currentLang, { en: 'EXTENSION NOT FOUND', es: 'NO DETECTADA', fr: 'NON DÉTECTÉE', ar: 'الإضافة غير موجودة' })}
                   </span>
                 </div>
 
                 <div className="p-3 bg-black/60 rounded-xl border border-gray-800 text-xs space-y-1">
-                  <span className="text-[10px] text-gray-400 block font-mono">OFFICIAL RECEIVING TREASURY WALLET:</span>
+                  <span className="text-[10px] text-gray-400 block font-mono">
+                    {tr(currentLang, {
+                      en: 'OFFICIAL RECEIVING TREASURY WALLET:',
+                      es: 'CARTERA OFICIAL RECEPTORA:',
+                      fr: 'PORTEFEUILLE OFFICIEL DE RÉCEPTION :',
+                      ar: 'محفظة الاستلام الرسمية:'
+                    })}
+                  </span>
                   <p className="font-mono text-cyan-300 font-bold break-all text-[11px]">{TREASURY_WALLET_ADDRESS}</p>
                 </div>
 
                 {walletAddress ? (
                   <div className="p-3 bg-black/40 rounded-xl border border-emerald-500/40 flex justify-between items-center text-xs">
                     <div>
-                      <span className="text-[10px] text-emerald-400 block font-mono">CONNECTED WALLET:</span>
+                      <span className="text-[10px] text-emerald-400 block font-mono">
+                        {tr(currentLang, { en: 'CONNECTED WALLET:', es: 'CARTERA CONECTADA:', fr: 'PORTEFEUILLE CONNECTÉ :', ar: 'المحفظة المتصلة:' })}
+                      </span>
                       <span className="font-mono font-bold text-white">
                         {walletAddress.substring(0, 8)}...{walletAddress.substring(walletAddress.length - 6)}
                       </span>
@@ -889,7 +925,16 @@ export const Checkout: React.FC<CheckoutProps> = ({
                     className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black font-anime text-xs cursor-pointer transition-all flex items-center justify-center gap-2"
                   >
                     <Wallet className="w-4 h-4" />
-                    <span>{isConnecting ? 'Connecting...' : 'Connect MetaMask Wallet 🦊'}</span>
+                    <span>
+                      {isConnecting
+                        ? tr(currentLang, { en: 'Connecting...', es: 'Conectando...', fr: 'Connexion...', ar: 'جاري الاتصال...' })
+                        : tr(currentLang, {
+                            en: 'Connect MetaMask Wallet 🦊',
+                            es: 'Conectar Cartera MetaMask 🦊',
+                            fr: 'Connecter MetaMask 🦊',
+                            ar: 'ربط محفظة MetaMask 🦊'
+                          })}
+                    </span>
                   </button>
                 )}
 
@@ -901,9 +946,14 @@ export const Checkout: React.FC<CheckoutProps> = ({
                 >
                   <Coins className="w-4 h-4" />
                   <span>
-                    {isProcessing 
-                      ? 'Signing Web3 Transaction...' 
-                      : `Pay $${total} (${ethEquivalent} ETH) via MetaMask ⚡`}
+                    {isProcessing
+                      ? tr(currentLang, { en: 'Signing Web3 Transaction...', es: 'Firmando Transacción Web3...', fr: 'Signature Web3...', ar: 'جاري التوقيع...' })
+                      : tr(currentLang, {
+                          en: `Pay $${total} (${ethEquivalent} ETH) via MetaMask ⚡`,
+                          es: `Pagar $${total} (${ethEquivalent} ETH) vía MetaMask ⚡`,
+                          fr: `Payer $${total} (${ethEquivalent} ETH) via MetaMask ⚡`,
+                          ar: `دفع $${total} (${ethEquivalent} ETH) عبر MetaMask ⚡`
+                        })}
                   </span>
                 </button>
               </div>
@@ -914,7 +964,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
           {/* Right Summary Column */}
           <div className="lg:col-span-5 bg-[#121422] p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-6 h-fit">
             <h2 className="text-xl font-black font-anime text-white border-b border-gray-800 pb-3">
-              {isFr ? 'Récapitulatif de la Commande' : isEs ? 'Resumen del Pedido' : 'Order Summary'}
+              {tr(currentLang, { en: 'Order Summary', es: 'Resumen del Pedido', fr: 'Récapitulatif de la Commande', ar: 'ملخص الطلب' })}
             </h2>
 
             <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
@@ -932,15 +982,19 @@ export const Checkout: React.FC<CheckoutProps> = ({
 
             <div className="border-t border-gray-800 pt-4 space-y-2 text-xs">
               <div className="flex justify-between text-gray-400">
-                <span>{isFr ? 'Sous-total :' : isEs ? 'Subtotal:' : 'Subtotal:'}</span>
+                <span>{tr(currentLang, { en: 'Subtotal:', es: 'Subtotal:', fr: 'Sous-total :', ar: 'المجموع الفرعي:' })}</span>
                 <span className="text-white font-bold">${subtotal}</span>
               </div>
               <div className="flex justify-between text-emerald-400">
-                <span>{isFr ? 'Frais d’expédition :' : isEs ? 'Envío:' : 'Shipping:'}</span>
-                <span className="font-bold">FREE ⚡</span>
+                <span>{tr(currentLang, { en: 'Shipping:', es: 'Envío:', fr: 'Frais d’expédition :', ar: 'الشحن:' })}</span>
+                <span className="font-bold">
+                  {tr(currentLang, { en: 'FREE ⚡', es: 'GRATIS ⚡', fr: 'GRATUIT ⚡', ar: 'مجاني ⚡' })}
+                </span>
               </div>
               <div className="border-t border-gray-800/80 pt-2 flex justify-between items-center text-sm">
-                <span className="font-black font-anime text-white">{isFr ? 'TOTAL :' : isEs ? 'TOTAL:' : 'TOTAL:'}</span>
+                <span className="font-black font-anime text-white">
+                  {tr(currentLang, { en: 'TOTAL:', es: 'TOTAL:', fr: 'TOTAL :', ar: 'الإجمالي:' })}
+                </span>
                 <span className="text-2xl font-black font-mono text-[#FFE600]" dir="ltr">${total}</span>
               </div>
             </div>
@@ -948,24 +1002,29 @@ export const Checkout: React.FC<CheckoutProps> = ({
             {/* Athlete Bio-Metrics Clearance Badges */}
             <div className="pt-4 border-t border-gray-800 space-y-2">
               <span className="text-[10px] font-black text-gray-400 uppercase font-anime block">
-                🛡️ CERTIFIED ATHLETE PLATFORM CLEARANCE:
+                {tr(currentLang, {
+                  en: '🛡️ CERTIFIED ATHLETE PLATFORM CLEARANCE:',
+                  es: '🛡️ CERTIFICACIÓN OFICIAL DE ATLETA:',
+                  fr: '🛡️ CERTIFICATION OFFICIELLE ATHLÈTE :',
+                  ar: '🛡️ اعتماد الأمان والجاهزية الرياضية:'
+                })}
               </span>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
                   <HeartPulse className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Cardio Protected</span>
+                  <span>{tr(currentLang, { en: 'Cardio Protected', es: 'Cardio Protegido', fr: 'Cardio Protégé', ar: 'حماية قلبية' })}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
                   <Activity className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>ACWR Balanced</span>
+                  <span>{tr(currentLang, { en: 'ACWR Balanced', es: 'ACWR Equilibrado', fr: 'ACWR Équilibré', ar: 'توازن ACWR' })}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
                   <Moon className="w-4 h-4 text-purple-400 shrink-0" />
-                  <span>Sleep Verified</span>
+                  <span>{tr(currentLang, { en: 'Sleep Verified', es: 'Sueño Verificado', fr: 'Sommeil Vérifié', ar: 'تحليل النوم' })}</span>
                 </div>
                 <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
                   <ShieldCheck className="w-4 h-4 text-[#FFE600] shrink-0" />
-                  <span>Biometric Pass</span>
+                  <span>{tr(currentLang, { en: 'Biometric Pass', es: 'Pase Biométrico', fr: 'Pass Biométrique', ar: 'مرور بيومتري' })}</span>
                 </div>
               </div>
             </div>

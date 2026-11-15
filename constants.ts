@@ -6,55 +6,61 @@
 import React from 'react';
 import { Product, JournalArticle } from './types';
 
-export const HERO_IMAGE = '/images/anime_hero_demon_back_1788742125215.jpg';
+export const HERO_IMAGE = '/images/hero_banderas_muscular.jpg';
 export const SHAOLIN_MONASTERY_IMAGE = '/images/shaolin_mountain_monastery.jpg';
-export const REALISTIC_ANIME_STRIKER_IMAGE = '/images/realistic_anime_striker.jpg';
-export const REALISTIC_VALKYRIE_IMAGE = '/images/realistic_valkyrie_fighter.jpg';
-export const REALISTIC_MMA_BRAWLER_IMAGE = '/images/realistic_mma_brawler.jpg';
-export const REALISTIC_TACTICAL_SHINOBI_IMAGE = '/images/realistic_tactical_shinobi.jpg';
-export const REALISTIC_VALKYRIE_APEX_IMAGE = '/images/realistic_valkyrie_apex.jpg';
-export const REALISTIC_FLAME_STRIKER_IMAGE = '/images/realistic_flame_striker.jpg';
-export const ABOUT_SQUAD_IMAGE = '/images/aura_champions_squad.jpg';
-export const LIVE_ARENA_IMAGE = '/images/live_arena_fighters_2050_1788741135197.jpg';
-export const VALKYRIE_NEON_IMAGE = '/images/realistic_valkyrie_apex.jpg';
-export const TARIK_SAIYAN_IMAGE = '/images/realistic_mma_brawler.jpg';
-export const REN_FLAME_IMAGE = '/images/realistic_flame_striker.jpg';
-export const TITAN_BRAWLER_IMAGE = '/images/realistic_mma_brawler.jpg';
-export const CYBER_SHINOBI_IMAGE = '/images/realistic_tactical_shinobi.jpg';
-export const SAMURAI_RONIN_IMAGE = '/images/cyber_samurai_unique.jpg';
-export const CYBER_SAMURAI_UNIQUE_IMAGE = '/images/cyber_samurai_unique.jpg';
-export const CYBER_RONIN_BLADE_IMAGE = '/images/cyber_ronin_blade.jpg';
-export const NINJA_KUNOICHI_IMAGE = '/images/ninja_kunoichi_shadow_1790712603497.jpg';
-export const BOXING_STRIKER_IMAGE = '/images/boxing_striker_kenji_1790712616545.jpg';
-export const BOXING_VALKYRIE_IMAGE = '/images/boxing_valkyrie_punch_1790712629802.jpg';
-export const AI_COACH_IMAGE = '/images/anime_ai_coach_sensei_1788741808443.jpg';
-export const CHALLENGER_IMAGE = '/images/anime_challenger_rookie_1788741832986.jpg';
+export const REALISTIC_ANIME_STRIKER_IMAGE = '/images/ai_human_striker_male.jpg';
+export const REALISTIC_VALKYRIE_IMAGE = '/images/ai_human_valkyrie_female.jpg';
+export const REALISTIC_MMA_BRAWLER_IMAGE = '/images/ai_human_heavyweight_boxer.jpg';
+export const REALISTIC_TACTICAL_SHINOBI_IMAGE = '/images/ai_human_tactical_male.jpg';
+export const REALISTIC_VALKYRIE_APEX_IMAGE = '/images/ai_human_female_runner.jpg';
+export const REALISTIC_FLAME_STRIKER_IMAGE = '/images/ai_human_aerial_male.jpg';
+export const ABOUT_SQUAD_IMAGE = '/images/ai_human_arena_duo.jpg';
+export const LIVE_ARENA_IMAGE = '/images/athlete_brazilian_bjj.jpg';
+export const VALKYRIE_NEON_IMAGE = '/images/athlete_canadian_cyclist.jpg';
+export const TARIK_SAIYAN_IMAGE = '/images/ai_human_gulf_champion.jpg';
+export const REN_FLAME_IMAGE = '/images/athlete_nordic_runner.jpg';
+export const TITAN_BRAWLER_IMAGE = '/images/athlete_german_rower.jpg';
+export const CYBER_SHINOBI_IMAGE = '/images/athlete_moroccan_marathoner.jpg';
+export const SAMURAI_RONIN_IMAGE = '/images/athlete_australian_triathlete.jpg';
+export const CYBER_SAMURAI_UNIQUE_IMAGE = '/images/athlete_italian_muaythai.jpg';
+export const CYBER_RONIN_BLADE_IMAGE = '/images/athlete_korean_calisthenics.jpg';
+export const NINJA_KUNOICHI_IMAGE = '/images/athlete_japanese_judoka.jpg';
+export const BOXING_STRIKER_IMAGE = '/images/athlete_nigerian_sprinter.jpg';
+export const BOXING_VALKYRIE_IMAGE = '/images/athlete_french_fencer.jpg';
+export const AI_COACH_IMAGE = '/images/ai_human_performance_coach.jpg';
+export const CHALLENGER_IMAGE = '/images/athlete_mexican_boxer.jpg';
 export const JOURNAL_RECOVERY_IMAGE = '/images/recovery_journal_lab.jpg';
 export const JOURNAL_MINDSET_IMAGE = '/images/athlete_mindset_track.jpg';
 export const JOURNAL_GEAR_IMAGE = '/images/journal_gear_tech.jpg';
-export const YARD_BAZARUTO_RESORT_IMAGE = '/images/yard_bazaruto_resort.jpg';
+export const YARD_BAZARUTO_RESORT_IMAGE = '/images/yard_bazaruto_resort_v2.jpg';
 export const YARD_BAZARUTO_VILLA_IMAGE = '/images/yard_bazaruto_villa.jpg';
+export const YARD_BAZARUTO_VILLA_BEDROOM_IMAGE = '/images/yard_villa_bedroom.jpg';
+export const YARD_BAZARUTO_VILLA_LIVING_IMAGE = '/images/yard_villa_living.jpg';
+export const YARD_BAZARUTO_VILLA_BATHROOM_IMAGE = '/images/yard_villa_bathroom.jpg';
+export const YARD_BAZARUTO_VILLA_DINING_IMAGE = '/images/yard_villa_dining.jpg';
+export const YARD_BAZARUTO_ENTERTAINMENT_MALL_IMAGE = '/images/yard_hub_mall.jpg';
+export const YARD_ISLAND_AERIAL_NIGHT_IMAGE = '/images/bazaruto_aerial_night_v3.jpg';
 
 // Live Tournaments, Community Founders & Hero Showcase
 export const YARD300_BRAND_LOGO = '/images/yard_official_logo.jpg';
 export const YARD_SHARP_BW_SHIELD_LOGO = '/images/yard_official_logo.jpg';
 export const AURA_EMBLEM_LOGO = '/images/yard_official_logo.jpg';
-export const YARD_BRAND_HERO_BANNER = '/images/yard_brand_hero.jpg';
+export const YARD_BRAND_HERO_BANNER = '/images/ai_human_arena_duo.jpg';
 export const YARD_SHIRT_IMAGE = '/images/yard_tee_black_anime.jpg';
 export const YARD_SHORTS_IMAGE = '/images/yard_shorts_black_anime.jpg';
 export const YARD_WRAPS_IMAGE = '/images/yard_wraps_mockup.jpg';
-export const LIVE_ARENA_CHALLENGES_IMAGE = '/images/live_arena_challenges_1790809292780.jpg';
-export const ANIME_HERO_ROSTER_IMAGE = '/images/founders_trio_v3_1790810538938.jpg';
+export const LIVE_ARENA_CHALLENGES_IMAGE = '/images/athlete_british_pentathlete.jpg';
+export const ANIME_HERO_ROSTER_IMAGE = '/images/athlete_turkish_weightlifter.jpg';
 export const FOUNDER_YAM_SUW_IMAGE = '/images/yam_suw_athlete.jpg';
-export const FOUNDER_MTK_IMAGE = '/images/maram_kassab_athlete.jpg';
+export const FOUNDER_MTK_IMAGE = '/images/mtk_anime_pink_pilates.jpg';
 export const FOUNDER_ARB_IMAGE = '/images/arb_athlete.jpg';
 
-export const ANIME_FIGHTER_RYU_IMAGE = '/images/anime_fighter_ryu.jpg';
-export const ANIME_FIGHTER_REN_IMAGE = '/images/anime_fighter_ren.jpg';
-export const ANIME_FIGHTER_KIRA_IMAGE = '/images/anime_fighter_kira.jpg';
-export const ANIME_FIGHTER_RYU_IMPACT_IMAGE = '/images/anime_fighter_ryu_impact.jpg';
-export const ANIME_FIGHTER_REN_IMPACT_IMAGE = '/images/anime_fighter_ren_impact.jpg';
-export const ANIME_FIGHTER_KIRA_IMPACT_IMAGE = '/images/anime_fighter_kira_impact.jpg';
+export const ANIME_FIGHTER_RYU_IMAGE = '/images/ai_human_striker_male.jpg';
+export const ANIME_FIGHTER_REN_IMAGE = '/images/athlete_indian_wrestler.jpg';
+export const ANIME_FIGHTER_KIRA_IMAGE = '/images/ai_human_valkyrie_female.jpg';
+export const ANIME_FIGHTER_RYU_IMPACT_IMAGE = '/images/athlete_mexican_boxer.jpg';
+export const ANIME_FIGHTER_REN_IMPACT_IMAGE = '/images/athlete_italian_muaythai.jpg';
+export const ANIME_FIGHTER_KIRA_IMPACT_IMAGE = '/images/athlete_french_fencer.jpg';
 
 // 1-Second Cinematic Combat Videos for Ryu, Ren & Kira
 export const RYU_COMBAT_VIDEO = '/videos/ryu_combat_move.mp4';
@@ -71,38 +77,7 @@ export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event
     img.src = '/images/' + fileName;
   } else if (img.dataset.failCount === '1') {
     img.dataset.failCount = '2';
-    img.src = './images/' + fileName;
-  } else {
-    const fallbacks: Record<string, string> = {
-      'valkyrie_neon': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80',
-      'tarik_saiyan': 'https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?w=800&auto=format&fit=crop&q=80',
-      'ren_flame': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'realistic_mma': 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=800&auto=format&fit=crop&q=80',
-      'anime_ai_coach': 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80',
-      'anime_challenger': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80',
-      'anime_fast_recovery': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80',
-      'anime_journal_mindset': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80',
-      'anime_journal_gear': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80',
-      'anime_hero': 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80',
-      'aura_headphone': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
-      'aura_smartwatch': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
-      'aura_kinetic': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'aura_hydro': 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=80',
-      'aura_vr': 'https://images.unsplash.com/photo-1622979135225-d2ba269bc1bd?w=800&auto=format&fit=crop&q=80',
-      'aura_ignite': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'titan_brawler': 'https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?w=800&auto=format&fit=crop&q=80',
-      'cyber_shinobi': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&auto=format&fit=crop&q=80',
-      'live_arena': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80',
-      'anime_audio': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
-      'anime_watch': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
-      'anime_kinetic': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'anime_hydro': 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&auto=format&fit=crop&q=80',
-      'anime_vr': 'https://images.unsplash.com/photo-1622979135225-d2ba269bc1bd?w=800&auto=format&fit=crop&q=80',
-      'anime_preworkout': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80',
-      'anime_about': 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1200&auto=format&fit=crop&q=80'
-    };
-    const key = Object.keys(fallbacks).find(k => fileName.includes(k));
-    img.src = key ? fallbacks[key] : 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1200&auto=format&fit=crop&q=80';
+    img.src = HERO_IMAGE;
   }
 };
 
@@ -195,8 +170,32 @@ export const getProducts = (lang: string = 'en'): Product[] => {
         '/images/yard_smartband_white.jpg'
       ],
       colors: [
-        { id: 'black', nameEn: 'Obsidian Black (Screenless Woven Band)', nameAr: 'الأسود الليلي (سوار نسيجي بدون شاشة)', hex: '#0D0E12', textColor: '#FFFFFF', imageUrl: '/images/yard_smartband_black.jpg' },
-        { id: 'white', nameEn: 'Pearl White (Screenless Woven Band)', nameAr: 'الأبيض اللؤلؤي (سوار نسيجي بدون شاشة)', hex: '#F8F9FA', textColor: '#000000', imageUrl: '/images/yard_smartband_white.jpg' }
+        {
+          id: 'black',
+          nameEn: tr(
+            'Obsidian Black (Screenless Woven Band)',
+            'Negro Obsidiana (Banda Sin Pantalla)',
+            'Noir Obsidienne (Bracelet Sans Écran)',
+            'الأسود الليلي (سوار نسيجي بدون شاشة)'
+          ),
+          nameAr: 'الأسود الليلي (سوار نسيجي بدون شاشة)',
+          hex: '#0D0E12',
+          textColor: '#FFFFFF',
+          imageUrl: '/images/yard_smartband_black.jpg'
+        },
+        {
+          id: 'white',
+          nameEn: tr(
+            'Pearl White (Screenless Woven Band)',
+            'Blanco Perla (Banda Sin Pantalla)',
+            'Blanc Perle (Bracelet Sans Écran)',
+            'الأبيض اللؤلؤي (سوار نسيجي بدون شاشة)'
+          ),
+          nameAr: 'الأبيض اللؤلؤي (سوار نسيجي بدون شاشة)',
+          hex: '#F8F9FA',
+          textColor: '#000000',
+          imageUrl: '/images/yard_smartband_white.jpg'
+        }
       ],
       selectedColor: 'black',
       genders: ['men', 'women'],
@@ -210,7 +209,12 @@ export const getProducts = (lang: string = 'en'): Product[] => {
     },
     {
       id: 'p2',
-      name: 'YARD Biometric Smart Recovery Ring',
+      name: tr(
+        'YARD Biometric Smart Recovery Ring',
+        'Anillo Inteligente Biométrico YARD',
+        'Bague Connectée Biométrique YARD',
+        'خاتم YARD الذكي للاستشفاء والبيومتري'
+      ),
       tagline: tr(
         'Aerospace Titanium & Zirconia Ceramic Smart Ring — Sleep, Temp & HRV Staging (Black & White Edition)',
         'Anillo Inteligente de Titanio y Cerámica — Sueño, Temperatura y HRV (Negro y Blanco)',
@@ -239,8 +243,22 @@ export const getProducts = (lang: string = 'en'): Product[] => {
         '/images/yard_ring_white_solo.jpg'
       ],
       colors: [
-        { id: 'black', nameEn: 'Brushed Obsidian Black Titanium', nameAr: 'تيتانيوم أسود مطفي', hex: '#0D0E12', textColor: '#FFFFFF', imageUrl: '/images/yard_ring_black_solo.jpg' },
-        { id: 'white', nameEn: 'Pure Arctic White Zirconia Ceramic', nameAr: 'سيراميك أبيض ناصع', hex: '#F8F9FA', textColor: '#000000', imageUrl: '/images/yard_ring_white_solo.jpg' }
+        {
+          id: 'black',
+          nameEn: tr('Brushed Obsidian Black Titanium', 'Titanio Negro Obsidiana Cepillado', 'Titane Noir Obsidienne Brossé', 'تيتانيوم أسود مطفي'),
+          nameAr: 'تيتانيوم أسود مطفي',
+          hex: '#0D0E12',
+          textColor: '#FFFFFF',
+          imageUrl: '/images/yard_ring_black_solo.jpg'
+        },
+        {
+          id: 'white',
+          nameEn: tr('Pure Arctic White Zirconia Ceramic', 'Cerámica Circonio Blanco Ártico', 'Céramique Zircone Blanc Arctique', 'سيراميك أبيض ناصع'),
+          nameAr: 'سيراميك أبيض ناصع',
+          hex: '#F8F9FA',
+          textColor: '#000000',
+          imageUrl: '/images/yard_ring_white_solo.jpg'
+        }
       ],
       selectedColor: 'black',
       genders: ['men', 'women'],
@@ -254,7 +272,12 @@ export const getProducts = (lang: string = 'en'): Product[] => {
     },
     {
       id: 'p4',
-      name: 'YARD 300 Innovative Geometric Hydration Vessel',
+      name: tr(
+        'YARD 300 Innovative Geometric Hydration Vessel',
+        'Botella Geométrica Innovadora YARD 300',
+        'Gourde Géométrique Innovante YARD 300',
+        'وعاء YARD 300 الهندسي المبتكر للترطيب'
+      ),
       tagline: tr(
         'Next-Gen Geometric Hydration Vessel — Kinetic Temp LED Ring & Magnetic Spout (Stealth Black & Arctic White)',
         'Botella Geométrica Innovadora — Anillo LED Térmico y Tapa Magnética (Negro y Blanco)',
@@ -283,8 +306,22 @@ export const getProducts = (lang: string = 'en'): Product[] => {
         '/images/yard_vessel_innovative_white.jpg'
       ],
       colors: [
-        { id: 'black', nameEn: 'Stealth Obsidian Black', nameAr: 'الأسود المبتكر (Obsidian Black)', hex: '#0D0E12', textColor: '#FFFFFF', imageUrl: '/images/yard_vessel_innovative_black.jpg' },
-        { id: 'white', nameEn: 'Arctic Frost White', nameAr: 'الأبيض المبتكر (Arctic White)', hex: '#F8F9FA', textColor: '#000000', imageUrl: '/images/yard_vessel_innovative_white.jpg' }
+        {
+          id: 'black',
+          nameEn: tr('Stealth Obsidian Black', 'Negro Obsidiana Sigilo', 'Noir Obsidienne Furtif', 'الأسود المبتكر (Obsidian Black)'),
+          nameAr: 'الأسود المبتكر (Obsidian Black)',
+          hex: '#0D0E12',
+          textColor: '#FFFFFF',
+          imageUrl: '/images/yard_vessel_innovative_black.jpg'
+        },
+        {
+          id: 'white',
+          nameEn: tr('Arctic Frost White', 'Blanco Escarcha Ártico', 'Blanc Givre Arctique', 'الأبيض المبتكر (Arctic White)'),
+          nameAr: 'الأبيض المبتكر (Arctic White)',
+          hex: '#F8F9FA',
+          textColor: '#000000',
+          imageUrl: '/images/yard_vessel_innovative_white.jpg'
+        }
       ],
       selectedColor: 'black',
       genders: ['men', 'women'],
@@ -298,24 +335,29 @@ export const getProducts = (lang: string = 'en'): Product[] => {
     },
     {
       id: 'p7',
-      name: 'YARD 300 Cyber Anime Combat Pro T-Shirt',
+      name: tr(
+        'YARD 300 Apex Carbon Compression Tee',
+        'Camiseta de Compresión Carbono YARD 300',
+        'T-Shirt de Compression Carbone YARD 300',
+        'تي شيرت YARD 300 الكربوني الضاغط'
+      ),
       tagline: tr(
-        'Innovative Anime Cyber-Combat Compression Tee — Stylized "YARD 300" Mecha Lettering (Men\x27s Stealth Black & Women\x27s Pearl White)',
-        'Camiseta Innovadora Anime YARD 300 — Tipografía Mecha Estilizada (Negro para Hombres y Blanco para Mujeres)',
-        'T-Shirt Innovant Anime YARD 300 — Typographie Mecha Stylisée (Noir Homme & Blanc Femme)',
-        'تي شيرت أنمي قتالي مبتكر — كتابة YARD 300 بطريقة ميكا يابانية مستقبلية (الأسود للرجال والأبيض المنساب للنساء)'
+        'Precision Kinetic Compression Apparel — Geometric "YARD 300" Engineering (Men\x27s Obsidian Black & Women\x27s Pearl White)',
+        'Camiseta de Compresión Técnica YARD 300 — Corte Preciso (Negro para Hombres y Blanco para Mujeres)',
+        'T-Shirt de Compression Technique YARD 300 — Coupe Précise (Noir Homme & Blanc Femme)',
+        'تي شيرت ضاغط بتقنية الكربون المبتكرة — شعار YARD 300 الهندسي (الأسود للرجال والأبيض المنساب للنساء)'
       ),
       description: tr(
-        'Innovative anime-inspired athletic combat t-shirt engineered in Stealth Obsidian Black for men and Pure Arctic White with feminine tailored contours for women. Emblazoned with futuristic stylized "YARD 300" anime mecha calligraphy.',
-        'Camiseta de combate de última generación inspirada en el anime con tipografía YARD 300 mecha en Negro Sigilo para hombres y Blanco Ártico para mujeres.',
-        'T-shirt de combat haute performance inspiré de l\x27anime avec typographie YARD 300 futuriste en Noir Furtif homme et Blanc Arctique femme.',
-        'تي شيرت رياضي قتالي مبتكر مستوحى من عالم الأنمي: اللون الأسود الليلي للرجال بقصة رغلان ضاغطة، واللون الأبيض اللؤلؤي للنساء بقصة رياضية أنثوية انسيابية، مع طباعة كتابة YARD 300 بطريقة هندسية مبتكرة تشبه شعارات الأنمي وميكا الساموراي.'
+        'Precision kinetic compression t-shirt engineered in Obsidian Black for men and Pure Pearl White with sculpted contours for women.',
+        'Camiseta técnica de última generación en Negro Obsidiana para hombres y Blanco Perla para mujeres.',
+        'T-shirt de compression haute performance en Noir Obsidienne homme et Blanc Perle femme.',
+        'تي شيرت رياضي ضاغط عالي الأداء: اللون الأسود الليلي للرجال بقصة رغلان ضاغطة، واللون الأبيض اللؤلؤي للنساء بقصة انسيابية، مع شعار YARD 300 الهندسي.'
       ),
       longDescription: tr(
-        'Elevated into an authentic anime combat statement piece. Designed with bespoke cuts tailored for both genders: Men\x27s Stealth Obsidian Black featuring bonded compression contours, and Women\x27s Pure Arctic White featuring ergonomic feminine silhouette tailoring. Both editions showcase the innovative stylized "YARD 300" anime mecha typography boldly across the chest, fused with four-way stretch athletic fabric, lateral breathability panels, and frictionless flatlock seams.',
-        'Diseño exclusivo inspirado en el anime de combate. Corte anatómico de compresión para hombre en Negro y silueta femenina ergonómica para mujer en Blanco, ambos con tipografía mecha YARD 300.',
-        'Design exclusif inspiré des mangas de combat. Coupe athlétique homme en Noir et coupe féminine ajustée en Blanc, toutes deux arborant la typographie mecha YARD 300.',
-        'تصميم استثنائي يجمع بين الفخامة وعالم الأنمي القتالي: تم تخصيص نسختين متميزتين — نسخة الرجال باللون الأسود الليلي مع خطوط ضاغطة هندسية، ونسخة النساء باللون الأبيض اللؤلؤي بقصة رياضية أنثوية راقية تبرز الرشاقة، مع إبراز كتابة YARD 300 بطريقة مبتكرة بخط الأنمي الميكا المستقبلي.'
+        'Engineered for peak neuromuscular ventilation and zero-drag motion. Tailored separately for men in Obsidian Black and women in Pure Pearl White with breathable micro-mesh panels and laser-cut flatlock seams.',
+        'Diseñado para ventilación neuromuscular y movimiento sin fricción. Corte ergonómico masculino y femenino con costuras planas.',
+        'Conçu pour une ventilation optimale et une liberté de mouvement totale. Coupes dédiées homme et femme sans couture irritante.',
+        'مصمم هندسياً للتهوية القصوى والانسيابية أثناء الأداء البدني العالي: نسخة الرجال باللون الأسود الليلي، ونسخة النساء باللون الأبيض اللؤلؤي مع نسيج مسامي خفيف الوزن.'
       ),
       price: 115,
       originalPrice: 135,
@@ -328,17 +370,31 @@ export const getProducts = (lang: string = 'en'): Product[] => {
         '/images/yard_tee_women_anime.jpg'
       ],
       colors: [
-        { id: 'black', nameEn: 'Men\x27s Stealth Black (Anime YARD 300)', nameAr: 'الأسود الليلي للرجال (كتابة أنمي YARD 300)', hex: '#0D0E12', textColor: '#FFFFFF', imageUrl: '/images/yard_tee_men_anime.jpg' },
-        { id: 'white', nameEn: 'Women\x27s Pearl White (Feminine Anime YARD 300)', nameAr: 'الأبيض اللؤلؤي للنساء (تصميم أنثوي أنمي)', hex: '#F8F9FA', textColor: '#000000', imageUrl: '/images/yard_tee_women_anime.jpg' }
+        {
+          id: 'black',
+          nameEn: tr("Men's Obsidian Black (YARD 300)", 'Negro Obsidiana Hombre (YARD 300)', 'Noir Obsidienne Homme (YARD 300)', 'الأسود الليلي للرجال (YARD 300)'),
+          nameAr: 'الأسود الليلي للرجال (YARD 300)',
+          hex: '#0D0E12',
+          textColor: '#FFFFFF',
+          imageUrl: '/images/yard_tee_men_anime.jpg'
+        },
+        {
+          id: 'white',
+          nameEn: tr("Women's Pearl White (YARD 300)", 'Blanco Perla Mujer (YARD 300)', 'Blanc Perle Femme (YARD 300)', 'الأبيض اللؤلؤي للنساء (YARD 300)'),
+          nameAr: 'الأبيض اللؤلؤي للنساء (YARD 300)',
+          hex: '#F8F9FA',
+          textColor: '#000000',
+          imageUrl: '/images/yard_tee_women_anime.jpg'
+        }
       ],
       selectedColor: 'black',
       genders: ['men', 'women'],
       selectedGender: 'men',
       features: trList(
-        ['Innovative anime mecha "YARD 300" chest typography rendered in high-definition cyber styling', 'Men\x27s edition tailored in Stealth Obsidian Black with ergonomic muscle compression panels', 'Women\x27s edition tailored in Pure Pearl White with elegant feminine silhouette curves', 'Four-way stretch high-mobility micro-mesh cooling zones for zero friction', 'Special limited reduction: $20 OFF original retail price ($115 vs $135)'],
-        ['Tipografía anime mecha "YARD 300" en el pecho con diseño cibernético de alta definición', 'Edición para hombre en Negro Obsidiana con paneles de compresión muscular', 'Edición para mujer en Blanco Perla con silueta femenina anatómica', 'Zonas de ventilación de micro-malla elástica en 4 direcciones', 'Descuento especial: 20 $ de ahorro (115 $ vs 135 $)'],
-        ['Typographie anime mecha "YARD 300" haute définition sur la poitrine', 'Édition homme en Noir Obsidienne avec panneaux de compression ergonomiques', 'Édition femme en Blanc Perle avec silhouette féminine ajustée', 'Empiècements respirants en micro-mesh extensible 4 sens', 'Remise spéciale : 20 $ de réduction (115 $ vs 135 $)'],
-        ['كتابة مبتكرة لشعار "YARD 300" بأسلوب خطوط الأنمي والميكا المستقبلية عالية الدقة', 'إصدار رجالي باللون الأسود الليلي مع خطوط ضاغطة لتحديد العضلات وتعزيز الأداء', 'إصدار نسائي باللون الأبيض اللؤلؤي الناصع بقصة أنثوية رشيقة ومريحة جداً', 'ألياف تقنية مرنة في 4 اتجاهات مع شبك تهوية مسامي يمنع التعرق والاحتكاك', 'خصم حصري ومباشر بقيمة 20 دولار (115$ بدلاً من 135$)']
+        ['Architectural "YARD 300" precision typography across chest', 'Men\x27s edition tailored in Obsidian Black with supportive muscle compression zones', 'Women\x27s edition tailored in Pure Pearl White with ergonomic contoured seams', 'Four-way stretch micro-mesh cooling ventilation for zero friction', 'Direct release pricing: $115 (save $20 off $135 retail)'],
+        ['Tipografía arquitectónica YARD 300 en el pecho', 'Edición hombre en Negro Obsidiana con compresión muscular', 'Edición mujer en Blanco Perla con costuras ergonómicas', 'Malla elástica respirable en 4 direcciones', 'Precio directo de lanzamiento: 115 $ (ahorro de 20 $)'],
+        ['Typographie architecturale YARD 300 sur la poitrine', 'Édition homme en Noir Obsidienne à compression ciblée', 'Édition femme en Blanc Perle à coupe ergonomique', 'Tissu respirant extensible 4 sens sans frottement', 'Prix direct lancement : 115 $ (20 $ d\x27économie)'],
+        ['طباعة هندسية دقيقة لشعار "YARD 300" على الصدر', 'إصدار رجالي باللون الأسود الليلي مع دعم ضاغط للألياف العضلية', 'إصدار نسائي باللون الأبيض اللؤلؤي بقصة مريحة وانسيابية', 'ألياف تقنية مرنة في 4 اتجاهات مع شبك تهوية مسامي', 'سعر الإطلاق المباشر: 115$ (توفير 20$)']
       )
     }
   ];
@@ -348,82 +404,122 @@ export const PRODUCTS: Product[] = getProducts('en');
 
 export const getJournalArticles = (lang: string = 'en'): JournalArticle[] => {
   const isAr = lang === 'ar';
+  const isEs = lang === 'es';
+  const isFr = lang === 'fr';
+  const tr = (en: string, es: string, fr: string, ar: string) =>
+    isAr ? ar : isEs ? es : isFr ? fr : en;
+
   return [
     {
       id: 1,
-      title: isAr ? "عقلية محارب الساموراي: كسر الحدود 100% وتحطيم سقف الإجهاد العضلي" : "Samurai Warrior Mindset: Shattering Limits Past 100% & Conquering Muscle Fatigue",
-      date: isAr ? "28 سبتمبر 2026" : "September 28, 2026",
-      excerpt: isAr 
-        ? "الفرق بين الممارس العادي وبطل القتال الخارق ليس في الجينات، بل في التركيز الشرس والانضباط التكتيكي ومواصلة الضغط عند أعلى درجات الاحتراق."
-        : "The difference between an ordinary lifter and an elite combat champion isn't genetics — it's razor-sharp focus, tactical discipline, and pushing through deep burn.",
+      title: tr(
+        "Samurai Warrior Mindset: Shattering Limits Past 100% & Conquering Muscle Fatigue",
+        "Mentalidad de Guerrero Samurái: Superando el 100% y la Fatiga Muscular",
+        "Mentalité de Guerrier Samouraï : Dépasser les 100% et Vaincre la Fatigue",
+        "عقلية محارب الساموراي: كسر الحدود 100% وتحطيم سقف الإجهاد العضلي"
+      ),
+      date: tr("September 28, 2026", "28 de Septiembre, 2026", "28 Septembre 2026", "28 سبتمبر 2026"),
+      excerpt: tr(
+        "The difference between an ordinary lifter and an elite combat champion isn't genetics — it's razor-sharp focus, tactical discipline, and pushing through deep burn.",
+        "La diferencia entre un atleta común y un campeón de élite reside en el enfoque táctico y la disciplina bajo fatiga extrema.",
+        "La différence entre un athlète ordinaire et un champion réside dans la concentration tactique et la discipline sous fatigue.",
+        "الفرق بين الممارس العادي وبطل القتال الخارق ليس في الجينات، بل في التركيز الشرس والانضباط التكتيكي ومواصلة الضغط عند أعلى درجات الاحتراق."
+      ),
       image: JOURNAL_MINDSET_IMAGE,
-      content: isAr ? React.createElement(React.Fragment, null,
+      content: React.createElement(React.Fragment, null,
         React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "عندما تشعر باحتراق أليافك العضلية ويطالبك عقلك بالتوقف، يظهر محارب الساموراي الكامن بداخلك. في منهجية YARD300، لا نؤمن بالحدود الثابتة؛ فالإرهاق مجرد إشارة عصبية عابرة تعلن بدء التدريب الحقيقي."
+          tr(
+            "When muscles burn and your mind screams to drop the barbell, the inner samurai awakens. In the YARD300 combat philosophy, fixed ceilings do not exist; fatigue is merely the neurological bell signaling that real growth has begun.",
+            "Cuando los músculos arden, despierta el guerrero interior. En la filosofía YARD300 no existen techos fijos; la fatiga es la señal neurológica de adaptación real.",
+            "Lorsque les muscles brûlent, le guerrier intérieur s’éveille. Dans l’approche YARD300, il n’y a pas de plafond fixe ; la fatigue annonce le progrès réel.",
+            "عندما تشعر باحتراق أليافك العضلية ويطالبك عقلك بالتوقف، يظهر محارب الساموراي الكامن بداخلك. في منهجية YARD300، لا نؤمن بالحدود الثابتة؛ فالإرهاق مجرد إشارة عصبية عابرة تعلن بدء التدريب الحقيقي."
+          )
         ),
         React.createElement("p", { className: "mb-8 text-lg leading-relaxed text-[#D0D8ED]" },
-          "دمج التوافق العصبي العضلي، ومراقبة هرمونات التحمل، والتنفس القتالي العميق يتيح لك تحقيق كومبو لا نهائي وكسر حاجز الـ 100% دون التعرض للإصابات المفاجئة."
+          tr(
+            "Synthesizing neuromuscular coordination, endurance hormone monitoring, and tactical deep combat respiration allows you to shatter the 100% threshold safely.",
+            "Combinar coordinación neuromuscular, monitoreo de resistencia y respiración táctica te permite superar el umbral del 100% con seguridad.",
+            "Allier coordination neuromusculaire, suivi de l’endurance et respiration tactique permet de dépasser vos limites en toute sécurité.",
+            "دمج التوافق العصبي العضلي، ومراقبة هرمونات التحمل، والتنفس القتالي العميق يتيح لك تحقيق كومبو لا نهائي وكسر حاجز الـ 100% دون التعرض للإصابات المفاجئة."
+          )
         ),
-        React.createElement("blockquote", { className: "border-r-4 border-[#E50914] pr-6 italic text-2xl text-[#FFE600] my-10 font-anime" },
-          "\"النصل لا يُصقل إلا باللهب العالي، وعضلات البطل لا تُبنى إلا بكسر حاجز الخوف!\""
-        )
-      ) : React.createElement(React.Fragment, null,
-        React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "When muscles burn and your mind screams to drop the barbell, the inner samurai awakens. In the YARD300 combat philosophy, fixed ceilings do not exist; fatigue is merely the neurological bell signaling that real growth has begun."
-        ),
-        React.createElement("p", { className: "mb-8 text-lg leading-relaxed text-[#D0D8ED]" },
-          "Synthesizing neuromuscular coordination, endurance hormone monitoring, and tactical deep combat respiration allows you to shatter the 100% threshold safely."
-        ),
-        React.createElement("blockquote", { className: "border-l-4 border-[#E50914] pl-6 italic text-2xl text-[#FFE600] my-10 font-anime" },
-          "\"The katana is forged only in fierce flame, and champion muscle is sculpted only by annihilating self-doubt!\""
+        React.createElement("blockquote", { className: `${isAr ? 'border-r-4 pr-6' : 'border-l-4 pl-6'} border-[#E50914] italic text-2xl text-[#FFE600] my-10 font-anime` },
+          tr(
+            "\"The katana is forged only in fierce flame, and champion muscle is sculpted only by annihilating self-doubt!\"",
+            "\"¡La katana se forja solo en fuego intenso, y el físico de campeón se esculpe superando toda duda!\"",
+            "\"Le katana ne se forge que dans la flamme vive, et le physique d’un champion se sculpte sans le moindre doute !\"",
+            "\"النصل لا يُصقل إلا باللهب العالي، وعضلات البطل لا تُبنى إلا بكسر حاجز الخوف!\""
+          )
         )
       )
     },
     {
       id: 2,
-      title: isAr ? "ثورة عتاد براند YARD300 القتالي: دمج ألياف الكربون مع مستشعرات الأنمي 2050" : "YARD300 Combat Gear Revolution: Carbon Armor & 2050 Biometric Precision",
-      date: isAr ? "25 سبتمبر 2026" : "September 25, 2026",
-      excerpt: isAr
-        ? "استكشف كيف ابتكر مهندسو YARD300 دروعاً رياضية وأحزمة مقاومة وسماعات هجينة تتفاعل مع ضربات القلب ونبضات الهالة الحركية."
-        : "Discover how YARD300 engineered titanium wearables, kinetic harnesses, and hybrid audio that sync directly with heart-rate spikes.",
+      title: tr(
+        "YARD300 Combat Gear Revolution: Carbon Armor & 2050 Biometric Precision",
+        "Revolución de Equipamiento YARD300: Armadura de Carbono y Precisión Biométrica",
+        "Révolution Équipement YARD300 : Armure Carbone & Précision Biométrique",
+        "ثورة عتاد براند YARD300 القتالي: دمج ألياف الكربون مع مستشعرات الأداء 2050"
+      ),
+      date: tr("September 25, 2026", "25 de Septiembre, 2026", "25 Septembre 2026", "25 سبتمبر 2026"),
+      excerpt: tr(
+        "Discover how YARD300 engineered titanium wearables, kinetic harnesses, and hybrid audio that sync directly with heart-rate spikes.",
+        "Descubre cómo YARD300 diseñó sensores de titanio y arneses cinéticos sincronizados con el ritmo cardíaco.",
+        "Découvrez comment YARD300 a conçu des capteurs en titane et des tenues cinétiques synchronisées au rythme cardiaque.",
+        "استكشف كيف ابتكر مهندسو YARD300 دروعاً رياضية وأحزمة مقاومة وسماعات هجينة تتفاعل مع ضربات القلب ونبضات الهالة الحركية."
+      ),
       image: JOURNAL_GEAR_IMAGE,
-      content: isAr ? React.createElement(React.Fragment, null,
+      content: React.createElement(React.Fragment, null,
         React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "لم يعد عتاد التمرين مجرد أقمشة تمتص العرق. في عصر براند YARD300، تحول كل منتج إلى قطعة درع سيبرانية تحسب الإجهاد الحركي وتدعم المفاصل الحساسة لتوفير طاقة انفجارية فورية."
+          tr(
+            "Athletic gear is no longer passive fabric. Under brand YARD300, every piece is cyber-armor calculating kinetic strain and stabilizing joints for instantaneous explosive force.",
+            "El equipamiento deportivo ya no es tela pasiva. Cada pieza de YARD300 estabiliza articulaciones y maximiza la fuerza explosiva.",
+            "L’équipement sportif n’est plus un simple textile. Chaque pièce YARD300 stabilise les articulations et libère une puissance explosive.",
+            "لم يعد عتاد التمرين مجرد أقمشة تمتص العرق. في عصر براند YARD300، تحول كل منتج إلى قطعة درع سيبرانية تحسب الإجهاد الحركي وتدعم المفاصل الحساسة لتوفير طاقة انفجارية فورية."
+          )
         ),
         React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "من سماعات إلغاء الضوضاء التيتانية إلى أحزمة المقاومة البوليمرية، صنعت كل قطعة لتصمد أمام أشرس جلسات الملاكمة وتمارين الـ CrossFit القاسية."
-        )
-      ) : React.createElement(React.Fragment, null,
-        React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "Athletic gear is no longer passive fabric. Under brand YARD300, every piece is cyber-armor calculating kinetic strain and stabilizing joints for instantaneous explosive force."
-        ),
-        React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "From titanium noise-cancelling headphones to high-load kinetic harnesses, every item is built to outlast the most punishing boxing rounds."
+          tr(
+            "From titanium noise-cancelling headphones to high-load kinetic harnesses, every item is built to outlast the most punishing boxing rounds.",
+            "Desde wearables de titanio hasta prendas cinéticas, cada artículo está fabricado para resistir los asaltos más duros.",
+            "Des capteurs en titane aux textiles de compression cinétique, chaque pièce résiste aux entraînements les plus exigeants.",
+            "من سماعات إلغاء الضوضاء التيتانية إلى أحزمة المقاومة البوليمرية، صنعت كل قطعة لتصمد أمام أشرس جلسات الملاكمة وتمارين الـ CrossFit القاسية."
+          )
         )
       )
     },
     {
       id: 3,
-      title: isAr ? "بروتوكول الاستشفاء النينجا: استعادة معدل HRV والشفاء العضلي العميق في 4 ساعات" : "Ninja Recovery Protocol: HRV Restoration & Deep Tissue Healing in 4 Hours",
-      date: isAr ? "20 سبتمبر 2026" : "September 20, 2026",
-      excerpt: isAr
-        ? "خوارزميات الذكاء الاصطناعي تكشف أسرار كبسولات الضوء الأحمر والكمادات الثلجية لاستعادة الجاهزية القتالية التامة بدون إهدار أيام راحة سلبية."
-        : "AI algorithms reveal the secrets of photobiomodulation and cold exposure to restore full combat readiness without passive downtime.",
+      title: tr(
+        "Ninja Recovery Protocol: HRV Restoration & Deep Tissue Healing in 4 Hours",
+        "Protocolo de Recuperación Ninja: Restauración de HRV en 4 Horas",
+        "Protocole de Récupération Ninja : Restauration VRC en 4 Heures",
+        "بروتوكول الاستشفاء النينجا: استعادة معدل HRV والشفاء العضلي العميق في 4 ساعات"
+      ),
+      date: tr("September 20, 2026", "20 de Septiembre, 2026", "20 Septembre 2026", "20 سبتمبر 2026"),
+      excerpt: tr(
+        "AI algorithms reveal the secrets of photobiomodulation and cold exposure to restore full combat readiness without passive downtime.",
+        "Los algoritmos de IA revelan protocolos térmicos y de fotobiomodulación para recuperar la preparación total sin pausa pasiva.",
+        "Les algorithmes d’IA révèlent les secrets de récupération active et de restauration VRC sans temps mort.",
+        "خوارزميات الذكاء الاصطناعي تكشف أسرار كبسولات الضوء الأحمر والكمادات الثلجية لاستعادة الجاهزية القتالية التامة بدون إهدار أيام راحة سلبية."
+      ),
       image: JOURNAL_RECOVERY_IMAGE,
-      content: isAr ? React.createElement(React.Fragment, null,
+      content: React.createElement(React.Fragment, null,
         React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "المحارب الذكي لا ينتظر أن يشفى جسده بالمصادفة. الاستشفاء النشط يُدار بنفس الدقة والصرامة التي تُدار بها جولات الملاكمة."
+          tr(
+            "A modern warrior never leaves recovery to luck. Active healing is tracked with the exact rigor applied to heavy boxing rounds.",
+            "Un guerrero moderno nunca deja la recuperación al azar; el descanso activo se mide con el mismo rigor que cada asalto.",
+            "Un athlète moderne ne laisse jamais sa récupération au hasard ; la régénération est mesurée avec rigueur.",
+            "المحارب الذكي لا ينتظر أن يشفى جسده بالمصادفة. الاستشفاء النشط يُدار بنفس الدقة والصرامة التي تُدار بها جولات الملاكمة."
+          )
         ),
         React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "باستخدام قراءات SpO2، وموجات الضوء الأحمر 850nm، وتتبع مراحل النوم العميق بمحرك YARD300، يعود المحارب إلى كامل طاقته في صباح اليوم التالي."
-        )
-      ) : React.createElement(React.Fragment, null,
-        React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "A modern warrior never leaves recovery to luck. Active healing is tracked with the exact rigor applied to heavy boxing rounds."
-        ),
-        React.createElement("p", { className: "mb-6 text-lg leading-relaxed text-[#D0D8ED]" },
-          "Utilizing SpO2 metrics, 850nm red light wavelengths, and YARD300 deep sleep staging, athletes reboot to peak 9999 AU capacity overnight."
+          tr(
+            "Utilizing SpO2 metrics, 850nm red light wavelengths, and YARD300 deep sleep staging, athletes reboot to peak 9999 AU capacity overnight.",
+            "Utilizando métricas SpO2 y análisis de sueño profundo de YARD300, los atletas restauran su capacidad máxima durante la noche.",
+            "Grâce aux mesures SpO2 et à l’analyse du sommeil profond YARD300, les athlètes retrouvent leur plein potentiel chaque matin.",
+            "باستخدام قراءات SpO2، وموجات الضوء الأحمر 850nm، وتتبع مراحل النوم العميق بمحرك YARD300، يعود المحارب إلى كامل طاقته في صباح اليوم التالي."
+          )
         )
       )
     }
@@ -433,6 +529,6 @@ export const getJournalArticles = (lang: string = 'en'): JournalArticle[] => {
 export const JOURNAL_ARTICLES: JournalArticle[] = getJournalArticles('en');
 
 export const BRAND_NAME = 'YARD300';
-export const BRAND_TAGLINE = 'AURA CHAMPION // 限界突破 2026';
-export const PRIMARY_COLOR = '#FF007A'; 
-export const ACCENT_COLOR = '#00F0FF';
+export const BRAND_TAGLINE = 'YARD 300 GLOBAL PERFORMANCE LAB';
+export const PRIMARY_COLOR = '#D4AF37'; 
+export const ACCENT_COLOR = '#10B981';

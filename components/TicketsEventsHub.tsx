@@ -1,38 +1,17 @@
-/**
- * TicketsEventsHub.tsx
- * YARD 300 Official Championships, Tournaments & Live Events Ticketing Portal
- * 
- * Strict User-Specified Color Palette:
- * - Pure Black (#000000 / #0A0B10)
- * - Pure White (#FFFFFF)
- * - Cyber Emerald Green (#10B981)
- * - Electric Yellow (#FFE600)
- * - Royal Cyber Purple (#A855F7)
- */
-
 import React, { useState } from 'react';
-import { 
-  Ticket, 
-  Calendar, 
-  MapPin, 
-  Sparkles, 
-  ShieldCheck, 
-  Trophy, 
-  Flame, 
-  Check, 
-  Clock, 
-  Users, 
-  ExternalLink, 
-  ChevronRight, 
-  Zap, 
-  ArrowRight,
+import {
+  Ticket,
+  Calendar,
+  MapPin,
+  ShieldCheck,
+  Check,
   Tv,
   MonitorPlay,
   Radio,
   Bell,
-  Crown
+  QrCode
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { handleImageError } from '../constants';
 
@@ -44,135 +23,303 @@ interface TicketsEventsHubProps {
 
 interface TournamentEvent {
   id: string;
-  titleEn: string;
-  titleAr: string;
-  taglineEn: string;
-  taglineAr: string;
-  dateEn: string;
-  dateAr: string;
+  code: string;
+  title: { en: string; es: string; fr: string; ar: string };
+  tagline: { en: string; es: string; fr: string; ar: string };
+  date: { en: string; es: string; fr: string; ar: string };
   time: string;
-  locationEn: string;
-  locationAr: string;
+  location: { en: string; es: string; fr: string; ar: string };
   price: number;
   originalPrice?: number;
-  badgeEn: string;
-  badgeAr: string;
-  badgeColor: string;
-  badgeTextColor: string;
-  tier: 'VIP RINGSIDE' | 'CHAMPION PASS' | 'ATHLETE ENTRY' | 'GENERAL SPECTATOR';
-  status: 'opens_nov_15' | 'not_open_2027';
-  statusNoticeEn: string;
-  statusNoticeAr: string;
-  perksEn: string[];
-  perksAr: string[];
+  tier: 'ATHLETE ENTRY' | 'CHAMPION PASS' | 'VIP RINGSIDE';
+  status: 'opens_jan_5' | 'not_open_2027';
+  statusNotice: { en: string; es: string; fr: string; ar: string };
+  perks: { en: string[]; es: string[]; fr: string[]; ar: string[] };
   image: string;
 }
 
 const TOURNAMENT_EVENTS: TournamentEvent[] = [
   {
-    id: 'shaolin-december-trials',
-    titleEn: 'Shaolin Iron Trials & Functional Open (December 2026)',
-    titleAr: 'بطولة شاولين وتحديات اللياقة الوظيفية (ديسمبر 2026)',
-    taglineEn: 'High-intensity obstacle gauntlet, 100-strike punch speed trials, and heavy kettlebell drags.',
-    taglineAr: 'نزال القوة البدنية وسباق العقبات الزمني، تحدي الـ 100 لكمة، واختبارات التحمل الصارمة.',
-    dateEn: 'December 20, 2026',
-    dateAr: '20 ديسمبر 2026',
-    time: '09:00 - 17:00 ICT',
-    locationEn: 'Held in Phnom Penh (Cambodia)',
-    locationAr: 'تقام في مدينة بنوم بنه (كمبوديا)',
+    id: 'wilderness-10-trials-2027',
+    code: 'Y300-NAT-10',
+    title: {
+      en: 'Wilderness 10-Challenge Endurance Open',
+      es: 'Abierto de Resistencia: 10 Desafíos en la Naturaleza',
+      fr: 'Open d’Endurance : 10 Défis en Pleine Nature',
+      ar: 'بطولة التحديات العشرة للقدرة واللياقة في الطبيعة'
+    },
+    tagline: {
+      en: 'A 10-challenge natural-terrain endurance championship testing raw stamina, agility, and power outdoors.',
+      es: 'Campeonato de 10 desafíos en entorno natural para probar fuerza, resistencia y capacidad atlética real.',
+      fr: 'Championnat en 10 épreuves en pleine nature testant l’endurance, la puissance et la résilience mentale.',
+      ar: 'بطولة كبرى تضم 10 تحديات ميدانية متكاملة لاختبار القدرة واللياقة البدنية والتحمل الشاق في أحضان الطبيعة.'
+    },
+    date: {
+      en: 'January 5, 2027',
+      es: '5 de enero de 2027',
+      fr: '5 janvier 2027',
+      ar: '5 يناير 2027'
+    },
+    time: '07:00 – 17:00 ICT',
+    location: {
+      en: 'Wilderness Circuit · Cambodia',
+      es: 'Circuito Natural · Camboya',
+      fr: 'Circuit Nature · Cambodge',
+      ar: 'مسار الطبيعة المفتوح · كمبوديا'
+    },
     price: 80,
     originalPrice: 110,
-    badgeEn: 'DECEMBER // OPENS NOV 15',
-    badgeAr: 'ديسمبر // تفتح 15 نوفمبر',
-    badgeColor: '#10B981', // Green
-    badgeTextColor: '#000000',
     tier: 'ATHLETE ENTRY',
-    status: 'opens_nov_15',
-    statusNoticeEn: 'December Tournament: Ticket booking has not opened yet. Tickets will officially open on November 15, 2026.',
-    statusNoticeAr: 'المسابقة المقامة في ديسمبر: لم يتم فتح الحجز بعد، سيتم فتح التذاكر في 15 نوفمبر.',
-    perksEn: [
-      'Official Competitor Bib & Timing Chip',
-      'Live Biometric ACWR Heart Monitoring Display',
-      'Official YARD 300 Finisher Medal & Certificate',
-      'Hydration & Protein Recovery Pack'
-    ],
-    perksAr: [
-      'رقم المتسابق الرسمي وشريحة التوقيت الإلكتروني',
-      'شاشة عرض مباشرة للنبض والضغط العضلي ACWR',
-      'ميدالية إنهاء السباق وشهادة معتمدة من YARD',
-      'حقيبة ترطيب وبروتين مخصصة للاستشفاء الفوري'
-    ],
+    status: 'opens_jan_5',
+    statusNotice: {
+      en: 'Ticket sales officially open January 5, 2027 — 10-Challenge Nature Endurance Championship.',
+      es: 'Venta de entradas abre oficialmente el 5 de enero de 2027 — Campeonato de 10 Desafíos en Naturaleza.',
+      fr: 'Ouverture officielle des billets le 5 janvier 2027 — Championnat des 10 Défis Nature.',
+      ar: 'تُفتح التذاكر رسمياً في 5 يناير 2027 — بطولة الـ 10 تحديات في الطبيعة.'
+    },
+    perks: {
+      en: [
+        'Official 10-Challenge Nature Bib & RFID Timing Chip',
+        'Live ACWR Heart & Terrain Telemetry Display',
+        'Serialized YARD 300 10-Trial Finisher Medal',
+        'Field Electrolyte & Recovery Nutrition Pack'
+      ],
+      es: [
+        'Dorsal oficial de 10 desafíos y chip de cronometraje RFID',
+        'Lectura en vivo de carga ACWR y frecuencia cardíaca',
+        'Medalla numerada YARD 300 de los 10 Desafíos',
+        'Kit de hidratación y recuperación en circuito'
+      ],
+      fr: [
+        'Dossard officiel 10 épreuves et puce chrono RFID',
+        'Télémétrie ACWR et suivi cardiaque en direct',
+        'Médaille Finisher numérotée YARD 300',
+        'Pack électrolytes et récupération sur le terrain'
+      ],
+      ar: [
+        'رقم المتسابق للـ 10 تحديات وشريحة التوقيت الذكية',
+        'شاشة قياس مباشرة للنبض والحمل العضلي ACWR',
+        'ميدالية إنهاء التحديات العشرة المرقمة من YARD',
+        'حقيبة ترطيب وتغذية للاستشفاء الميداني الفوري'
+      ]
+    },
     image: '/images/ticket_shaolin_trials.jpg'
   },
   {
     id: 'cyber-grand-prix-2027',
-    titleEn: 'YARD 300 Cyber Grand Prix 2027',
-    titleAr: 'بطولة YARD 300 الكبرى للسايبر والملاكمة 2027',
-    taglineEn: 'The supreme international arena battle where 300 elite Hyrox & Shaolin athletes collide.',
-    taglineAr: 'نزال الحلبة الدولي الأضخم بمشاركة 300 بطل من نخبة الهايروكس والشاولين والملاكمة العالمية.',
-    dateEn: 'January 30, 2027',
-    dateAr: '30 يناير 2027',
-    time: '18:00 - 23:00 ICT',
-    locationEn: 'Held in Bangkok (Thailand)',
-    locationAr: 'تقام في مدينة بانكوك (تايلاند)',
+    code: 'Y300-BKK-2027',
+    title: {
+      en: 'YARD 300 Grand Prix 2027',
+      es: 'Gran Premio YARD 300 · 2027',
+      fr: 'Grand Prix YARD 300 · 2027',
+      ar: 'بطولة YARD 300 الكبرى 2027'
+    },
+    tagline: {
+      en: 'Flagship international arena showdown uniting 300 Hyrox and martial athletics specialists.',
+      es: 'Gran espectáculo internacional de arena que reúne a 300 atletas de Hyrox y combate.',
+      fr: 'Rendez-vous international d’élite réunissant 300 spécialistes Hyrox et arts martiaux.',
+      ar: 'النزال الدولي الأضخم بمشاركة 300 بطل من نخبة الهايروكس والفنون القتالية العالمية.'
+    },
+    date: {
+      en: 'January 30, 2027',
+      es: '30 de enero de 2027',
+      fr: '30 janvier 2027',
+      ar: '30 يناير 2027'
+    },
+    time: '18:00 – 23:00 ICT',
+    location: {
+      en: 'Bangkok · Thailand',
+      es: 'Bangkok · Tailandia',
+      fr: 'Bangkok · Thaïlande',
+      ar: 'بانكوك · تايلاند'
+    },
     price: 100,
     originalPrice: 150,
-    badgeEn: '2027 // NOT OPEN FOR SALE YET',
-    badgeAr: 'بطولات 2027 // لم يُفتح البيع بعد',
-    badgeColor: '#A855F7', // Purple
-    badgeTextColor: '#FFFFFF',
     tier: 'CHAMPION PASS',
     status: 'not_open_2027',
-    statusNoticeEn: '2027 Championship: Tickets have not opened for sale yet.',
-    statusNoticeAr: 'المسابقة المقامة في 2027: لم يتم فتح التذاكر للبيع بعد.',
-    perksEn: [
-      'Full Tournament Arena Admission & Seating',
-      'Exclusive Official YARD 300 Championship Jersey',
-      'Access to Fighter Warm-up Chambers & Recovery Pods',
-      'Live Biometric Telemetry App Sync'
-    ],
-    perksAr: [
-      'دخول كامل لجميع نزالات البطولة ومقاعد الحلبة',
-      'قميص البطولة الرسمي الحصري YARD 300 Apex',
-      'دخول مناطق إحماء المقاتلين وغرف الاستشفاء',
-      'مزامنة فورية للإحصائيات الحيوية عبر التطبيق'
-    ],
+    statusNotice: {
+      en: '2027 Championship — Tickets have not opened for sale yet.',
+      es: 'Campeonato 2027 — Las entradas aún no están a la venta.',
+      fr: 'Championnat 2027 — Billetterie pas encore ouverte.',
+      ar: 'بطولة 2027 — لم يتم فتح التذاكر للبيع بعد.'
+    },
+    perks: {
+      en: [
+        'Full Tournament Arena Seating Access',
+        'Official YARD 300 Championship Jersey',
+        'Fighter Warm-Up Paddock & Recovery Lounge',
+        'Live Biometric Telemetry App Sync'
+      ],
+      es: [
+        'Acceso completo a gradas principales del torneo',
+        'Camiseta oficial del Campeonato YARD 300',
+        'Acceso a zona de calentamiento y recuperación',
+        'Sincronización biométrica en directo en la app'
+      ],
+      fr: [
+        'Accès complet aux places de l’arène officielle',
+        'Maillot officiel du Championnat YARD 300',
+        'Salon récupération et paddock d’échauffement',
+        'Synchronisation télémétrique en direct sur l’app'
+      ],
+      ar: [
+        'دخول كامل لجميع نزالات البطولة والمقاعد الرئيسية',
+        'قميص البطولة الرسمي الحصري YARD 300',
+        'دخول مناطق الإحماء وصالات الاستشفاء',
+        'مزامنة فورية للإحصائيات الحيوية عبر التطبيق'
+      ]
+    },
     image: '/images/ticket_tokyo_cyber.jpg'
   },
   {
     id: 'vip-masters-showdown-2027',
-    titleEn: 'YARD VIP Ringside & Founders Gala 2027',
-    titleAr: 'تذكرة المنصة الملكية VIP ولقاء المؤسسين 2027',
-    taglineEn: 'Front-row ringside combat access, masterclass access, and custom serialized gear.',
-    taglineAr: 'مقاعد الصف الأول في حلبة النزال، حضور ماستركلاس خاص مع الكادر التدريبي وتذكار مرقم.',
-    dateEn: 'March 15, 2027',
-    dateAr: '15 مارس 2027',
-    time: '17:00 - 00:00 ICT',
-    locationEn: 'Held in Siem Reap (Cambodia)',
-    locationAr: 'تقام في مدينة سيم ريب (كمبوديا)',
+    code: 'Y300-REP-2027',
+    title: {
+      en: 'YARD VIP Ringside & Founders Gala',
+      es: 'Pase VIP Ringside y Gala de Fundadores',
+      fr: 'VIP Ringside & Gala des Fondateurs',
+      ar: 'تذكرة المنصة الملكية VIP ولقاء المؤسسين'
+    },
+    tagline: {
+      en: 'Front-row ringside combat vantage, private founders clinic, and serialized titanium keepsake.',
+      es: 'Primera fila frente al ring, clínica privada con fundadores y placa de titanio numerada.',
+      fr: 'Premier rang au bord du ring, masterclass privée des fondateurs et trophée en titane.',
+      ar: 'مقاعد الصف الأول المباشر مع جلسة ماستركلاس مع المؤسسين ودرع تيتانيوم مرقم.'
+    },
+    date: {
+      en: 'March 15, 2027',
+      es: '15 de marzo de 2027',
+      fr: '15 mars 2027',
+      ar: '15 مارس 2027'
+    },
+    time: '17:00 – 00:00 ICT',
+    location: {
+      en: 'Siem Reap · Cambodia',
+      es: 'Siem Reap · Camboya',
+      fr: 'Siem Reap · Cambodge',
+      ar: 'سيم ريب · كمبوديا'
+    },
     price: 180,
     originalPrice: 250,
-    badgeEn: '2027 // NOT OPEN FOR SALE YET',
-    badgeAr: 'بطولات 2027 // لم يُفتح البيع بعد',
-    badgeColor: '#FFE600', // Yellow
-    badgeTextColor: '#000000',
     tier: 'VIP RINGSIDE',
     status: 'not_open_2027',
-    statusNoticeEn: '2027 Championship: Tickets have not opened for sale yet.',
-    statusNoticeAr: 'المسابقة المقامة في 2027: لم يتم فتح التذاكر للبيع بعد.',
-    perksEn: [
-      'Front-Row Ringside Seating with Holographic Audio',
-      'Private Masterclass Session with Founding Coaches',
-      'Personalized Titanium YARD 300 Serialized Plaque',
-      'Gourmet High-Protein Nutrition & Refreshments'
-    ],
-    perksAr: [
-      'مقاعد الصف الأول المباشر أمام الحلبة مع صوت مجسم',
-      'جلسة ماستركلاس خاصة مع المدربين المؤسسين',
-      'درع تذكاري محفور ومرقم من التيتانيوم',
-      'بوفيه تغذية قتالية متكامل ومشروبات طاقة طبيعية'
-    ],
+    statusNotice: {
+      en: '2027 Championship — Tickets have not opened for sale yet.',
+      es: 'Campeonato 2027 — Las entradas aún no están a la venta.',
+      fr: 'Championnat 2027 — Billetterie pas encore ouverte.',
+      ar: 'بطولة 2027 — لم يتم فتح التذاكر للبيع بعد.'
+    },
+    perks: {
+      en: [
+        'Front-Row Ringside Hospitality Seating',
+        'Private Masterclass with Founding Coaches',
+        'Engraved Titanium YARD 300 Plaque',
+        'Gourmet Athletic Nutrition & Lounge'
+      ],
+      es: [
+        'Asientos VIP en primera fila con hospitalidad',
+        'Masterclass privada con los entrenadores fundadores',
+        'Placa de titanio YARD 300 grabada y numerada',
+        'Lounge VIP con nutrición atlética gourmet'
+      ],
+      fr: [
+        'Places d’honneur premier rang avec hospitalité',
+        'Masterclass privée avec les coachs fondateurs',
+        'Plaque commémorative en titane gravée YARD 300',
+        'Lounge gastronomique de nutrition sportive'
+      ],
+      ar: [
+        'مقاعد الصف الأول المباشر مع ضيافة المنصة',
+        'ماستركلاس خاص مع المدربين المؤسسين',
+        'درع تذكاري محفور ومرقم من التيتانيوم',
+        'بوفيه تغذية رياضية متكامل وصالة VIP'
+      ]
+    },
     image: '/images/ticket_vip_showdown.jpg'
+  }
+];
+
+interface ArenaZone {
+  id: 'ringside' | 'lower' | 'paddock' | 'broadcast';
+  label: { en: string; es: string; fr: string; ar: string };
+  distance: string;
+  capacity: string;
+  telemetry: { en: string; es: string; fr: string; ar: string };
+  desc: { en: string; es: string; fr: string; ar: string };
+}
+
+const ARENA_ZONES: ArenaZone[] = [
+  {
+    id: 'ringside',
+    label: { en: 'Ringside VIP', es: 'Ringside VIP', fr: 'Ringside VIP', ar: 'الصف الأول VIP' },
+    distance: '2.5 m',
+    capacity: '40 Seats',
+    telemetry: {
+      en: 'HUD Wristband + Acoustic Feed',
+      es: 'Pulsera HUD + Audio Táctico',
+      fr: 'Bracelet HUD + Flux Acoustique',
+      ar: 'سوار HUD + بث صوتي محيطي'
+    },
+    desc: {
+      en: 'Unobstructed mat-level view directly alongside corner coaches and medical ring staff.',
+      es: 'Visión directa a ras de tatami junto a entrenadores y equipo médico del combate.',
+      fr: 'Vue directe au niveau du ring aux côtés des coachs et de l’équipe médicale.',
+      ar: 'رؤية مباشرة على مستوى الحلبة بجانب زوايا المدربين والكادر الطبي.'
+    }
+  },
+  {
+    id: 'lower',
+    label: { en: 'Champion Bowl', es: 'Grada Dorada', fr: 'Tribune Or', ar: 'المدرج الذهبي' },
+    distance: '9 m',
+    capacity: '180 Seats',
+    telemetry: {
+      en: 'Live Jumbotron ACWR Matrix',
+      es: 'Matriz ACWR en Pantalla Gigante',
+      fr: 'Matrice ACWR Écran Géant',
+      ar: 'شاشات عملاقة لمؤشرات ACWR'
+    },
+    desc: {
+      en: 'Elevated panoramic bowl angled at 24° for crystal oversight across all functional obstacle lanes.',
+      es: 'Grada panorámica a 24° con visión total de todos los carriles de obstáculos y desafíos.',
+      fr: 'Tribune panoramique inclinée à 24° couvrant l’ensemble des couloirs d’épreuves.',
+      ar: 'مدرج بانورامي مرتفع بزاوية 24° يكشف كامل مسارات الحلبة والعقبات.'
+    }
+  },
+  {
+    id: 'paddock',
+    label: { en: 'Athlete Floor', es: 'Pista Atletas', fr: 'Piste Athlètes', ar: 'أرضية المتنافسين' },
+    distance: '0 m',
+    capacity: '300 Slots',
+    telemetry: {
+      en: 'Live Chest/Ring Biometrics',
+      es: 'Biometría en Vivo Pecho/Anillo',
+      fr: 'Biométrie Direct Bague/Bande',
+      ar: 'نقل حي لنبض الصدر والخاتم'
+    },
+    desc: {
+      en: 'Direct competition lane access with heated calibration zones and post-heat contrast recovery.',
+      es: 'Acceso directo a carriles de competición con zonas de activación y recuperación térmica.',
+      fr: 'Accès direct aux couloirs avec zones de calibration et récupération contrastée.',
+      ar: 'وصول مباشر إلى مسار المنافسة مع مناطق الإحماء وحمامات الاستشفاء بعد الجولات.'
+    }
+  },
+  {
+    id: 'broadcast',
+    label: { en: 'Global 4K Stream', es: 'Streaming 4K', fr: 'Stream 4K Mondial', ar: 'البث العالمي 4K' },
+    distance: 'Remote',
+    capacity: 'Unlimited',
+    telemetry: {
+      en: 'Multi-Cam 60FPS + Telemetry HUD',
+      es: 'Multi-Cámara 60FPS + HUD en Vivo',
+      fr: 'Multi-Cam 60FPS + HUD Télémétrie',
+      ar: 'كاميرات متعددة 60FPS + بيانات حية'
+    },
+    desc: {
+      en: 'Switch dynamically between mat cams, coach corner audio, and real-time heart-rate overlays.',
+      es: 'Alterna entre cámaras de tatami, audio de esquina y pulso cardíaco en tiempo real.',
+      fr: 'Basculez entre caméras au sol, audio des coins et superposition cardiaque en direct.',
+      ar: 'التبديل المباشر بين الكاميرات وصوت المدربين مع قراءات نبض القلب على الشاشة.'
+    }
   }
 ];
 
@@ -182,194 +329,228 @@ export const TicketsEventsHub: React.FC<TicketsEventsHubProps> = ({
   onProceedToCheckout
 }) => {
   const isAr = currentLang === 'ar';
-  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
-  const [ticketQuantity, setTicketQuantity] = useState<number>(1);
-  const [purchaseSuccess, setPurchaseSuccess] = useState<string | null>(null);
+  const [selectedZoneId, setSelectedZoneId] = useState<ArenaZone['id']>('ringside');
+  const [remindedIds, setRemindedIds] = useState<Record<string, boolean>>({});
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  const handleSelectTicket = (event: TournamentEvent) => {
-    soundFX.playButtonClick();
-    setSelectedTicketId(event.id);
+  const activeZone = ARENA_ZONES.find((z) => z.id === selectedZoneId) || ARENA_ZONES[0];
+
+  const getLangKey = (): 'en' | 'es' | 'fr' | 'ar' => {
+    if (currentLang === 'ar' || currentLang === 'es' || currentLang === 'fr') return currentLang;
+    return 'en';
+  };
+  const lKey = getLangKey();
+
+  const handleToggleAlert = (event: TournamentEvent) => {
+    soundFX.playSuccess();
+    setRemindedIds((prev) => ({ ...prev, [event.id]: true }));
+    if (event.status === 'opens_jan_5') {
+      setStatusMessage(
+        tr(currentLang, {
+          en: 'Alert confirmed for the 10-Challenge Nature Championship — Ticket sales open January 5, 2027.',
+          es: 'Alerta confirmada para el Campeonato de 10 Desafíos en Naturaleza — Venta abre el 5 de enero de 2027.',
+          fr: 'Alerte activée pour les 10 Défis Nature — Ouverture des billets le 5 janvier 2027.',
+          ar: 'تم ضبط التذكير بنجاح لبطولة التحديات العشرة في الطبيعة — بيع التذاكر في 5 يناير 2027.'
+        })
+      );
+    } else {
+      setStatusMessage(
+        tr(currentLang, {
+          en: `Early-release alert active for ${event.title.en} (Season 2027).`,
+          es: `Alerta anticipada activa para ${event.title.es} (Temporada 2027).`,
+          fr: `Alerte prioritaire active pour ${event.title.fr} (Saison 2027).`,
+          ar: `تم تسجيلك في قائمة التنبيه المبكر لبطولة ${event.title.ar} (موسم 2027).`
+        })
+      );
+    }
+    setTimeout(() => setStatusMessage(null), 4000);
   };
 
   return (
-    <div className={`min-h-screen pt-28 pb-24 bg-black text-white relative w-full max-w-full overflow-hidden ${isAr ? 'text-right' : 'text-left'}`}>
-      
-      {/* Background Gradients: Strict White, Black, Green, Yellow, Purple */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#A855F7]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[#10B981]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#FFE600]/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 sm:px-6 md:px-8 relative z-10 space-y-12">
-        
-        {/* Navigation Back & Portal Badge */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className={`min-h-screen pt-24 pb-16 bg-[#07080D] text-white relative w-full max-w-full overflow-hidden ${isAr ? 'text-right' : 'text-left'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 space-y-8">
+        {/* Top Row */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
           {onBackToHome && (
             <button
+              type="button"
               onClick={onBackToHome}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#12131C] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
+              className="px-4 py-2 rounded-lg bg-[#0B0E16] hover:bg-white text-white hover:text-[#07080D] border border-white/[0.1] text-xs font-semibold cursor-pointer transition-colors"
             >
-              <span>{isAr ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+              {tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}
             </button>
           )}
-
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#12131C] text-[#FFE600] text-xs font-black font-anime shadow-md">
-            <Ticket className="w-4 h-4 text-[#FFE600]" />
-            <span>{isAr ? 'بوابة تذاكر البطولات والأحداث الرسمية' : 'OFFICIAL CHAMPIONSHIPS & EVENTS TICKETING'}</span>
-          </div>
-        </div>
-
-        {/* Hero Section */}
-        <div className="text-center max-w-4xl mx-auto space-y-4">
-          <span className="px-4 py-1 rounded-full bg-[#12131C] text-[#10B981] text-xs font-black font-anime uppercase tracking-wider inline-block">
-            OFFICIAL CHAMPIONSHIPS & EVENTS SCHEDULE
+          <span className="text-xs font-mono text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
+            <Ticket className="w-3.5 h-3.5" />
+            <span>
+              {tr(currentLang, {
+                en: 'OFFICIAL CHAMPIONSHIPS · TICKETING DESK',
+                es: 'CAMPEONATOS OFICIALES · TAQUILLA',
+                fr: 'CHAMPIONNATS OFFICIELS · BILLETTERIE',
+                ar: 'بوابة التذاكر والبطولات الرسمية'
+              })}
+            </span>
           </span>
-          <h1 className="text-4xl md:text-6xl font-black font-anime text-white">
-            {isAr ? 'جدول بطولات وحجز تذاكر ' : 'CHAMPIONSHIP SCHEDULE & TICKETS '}
-            <span className="text-[#FFE600]">YARD 300</span>
-          </h1>
-          <p className="text-sm md:text-base text-gray-300 font-bold max-w-2xl mx-auto leading-relaxed">
-            {isAr 
-              ? 'تنويه رسمي: لم يتم فتح بيع التذاكر حالياً. سيتم فتح حجز التذاكر للمسابقة المقامة في ديسمبر رسمياً في 15 نوفمبر. أما بالنسبة للبطولات المقامة في عام 2027، فلم يتم فتح التذاكر للبيع بعد. تقام البطولات في مدن كمبوديا وتايلاند.' 
-              : 'Official Notice: Ticket booking is currently closed. For the tournament held in December, ticket booking will open on November 15, 2026. For 2027 championships, tickets have not opened for sale yet. Tournaments will be held in Cambodia and Thailand.'}
-          </p>
         </div>
 
-        {/* Official Ticket Schedule Notice Banner (Green & Purple & Yellow) */}
-        <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#0E101C] via-[#10141C] to-[#0E101C] shadow-[0_0_40px_rgba(168,85,247,0.2)] relative overflow-hidden">
-          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        {/* Hero Schedule Summary */}
+        <div className="rounded-2xl bg-[#0B0E16] border border-white/[0.08] p-5 sm:p-7 space-y-5">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
             <div className="space-y-2 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/20 text-[#FFE600] text-xs font-black font-anime uppercase tracking-wider">
-                <Bell className="w-3.5 h-3.5 text-[#FFE600]" />
-                <span>{isAr ? 'تنبيه رسمي بشأن مواعيد حجز التذاكر' : 'OFFICIAL TICKET RELEASE SCHEDULE'}</span>
-              </div>
-              <h2 className="text-xl md:text-2xl font-black font-anime text-white">
-                {isAr ? 'حالة حجز التذاكر للبطولات القادمة' : 'Championship Ticket Booking Status'}
-              </h2>
-              <p className="text-xs md:text-sm text-gray-200 font-bold leading-relaxed">
-                {isAr 
-                  ? 'لم يتم فتح الحجز للتذاكر حالياً. بالنسبة للمسابقة المقامة في ديسمبر، سيتم فتح التذاكر في 15 نوفمبر. أما بالنسبة للبطولات المقامة في عام 2027، فلم يتم فتح التذاكر للبيع بعد. تقام البطولات في كمبوديا وتايلاند.'
-                  : 'Ticket booking is currently not open. For the tournament held in December, tickets will officially open on November 15. As for the championships held in 2027, tickets have not opened for sale yet. Tournaments will take place in Cambodia and Thailand.'}
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+                {tr(currentLang, {
+                  en: 'Championship Schedule & Passes: ',
+                  es: 'Calendario y Pases de Campeonato: ',
+                  fr: 'Calendrier & Pass Championnat : ',
+                  ar: 'جدول بطولات وحلبات '
+                })}
+                <span className="text-[#D4AF37]">YARD 300</span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                {tr(currentLang, {
+                  en: 'Official Release Schedule: Ticket sales for the 10-Challenge Nature Endurance & Fitness Championship open January 5, 2027. Championships in Bangkok & Siem Reap (2027) have not opened for sale yet.',
+                  es: 'Calendario oficial: la venta de entradas para el Campeonato de 10 Desafíos de Resistencia en la Naturaleza abre el 5 de enero de 2027. Bangkok y Siem Reap (2027) aún no abren venta.',
+                  fr: 'Calendrier officiel : ouverture de la billetterie pour le Championnat des 10 Défis Nature le 5 janvier 2027. Bangkok et Siem Reap (2027) ouvriront ultérieurement.',
+                  ar: 'تنويه رسمي: موعد فتح بيع تذاكر بطولة التحديات العشرة في الطبيعة (التي تضم 10 تحديات لاختبار القدرة واللياقة في الطبيعة) هو 5 يناير 2027. أما بطولات بانكوك وسيم ريب لعام 2027 فلم تُفتح للبيع بعد.'
+                })}
               </p>
             </div>
 
-            <div className="shrink-0 flex items-center gap-2">
-              <span className="px-4 py-2 rounded-xl bg-[#10B981]/20 text-[#10B981] text-xs font-black font-anime">
-                {isAr ? 'ديسمبر: تفتح 15 نوفمبر' : 'DEC: OPENS NOV 15'}
+            <div className="grid grid-cols-2 gap-3 shrink-0 font-mono text-xs">
+              <div className="p-3 rounded-xl bg-[#07080D] border border-[#10B981]/35">
+                <span className="text-[10px] text-slate-400 block">
+                  {tr(currentLang, { en: '10 NATURE TRIALS', es: '10 DESAFÍOS NATURA', fr: '10 DÉFIS NATURE', ar: '10 تحديات بالطبيعة' })}
+                </span>
+                <span className="text-sm font-bold text-[#10B981]">
+                  {tr(currentLang, { en: 'Opens Jan 5, 2027', es: 'Abre 5 Ene 2027', fr: 'Ouvre 5 Jan 2027', ar: 'يفتح 5 يناير 2027' })}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-[#07080D] border border-white/[0.1]">
+                <span className="text-[10px] text-slate-400 block">2027 CIRCUIT</span>
+                <span className="text-sm font-bold text-[#D4AF37]">
+                  {tr(currentLang, { en: 'Pre-Release', es: 'Prelanzamiento', fr: 'Pré-Sortie', ar: 'قيد الطرح' })}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Arena Vantage Blueprint Bar */}
+          <div className="pt-4 border-t border-white/[0.07] space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-slate-400">
+                {tr(currentLang, {
+                  en: 'ARENA VANTAGE & TELEMETRY ZONES',
+                  es: 'ZONAS DE VISIÓN Y TELEMETRÍA',
+                  fr: 'ZONES DE VISION & TÉLÉMÉTRIE',
+                  ar: 'استعراض مناطق الحلبة والرؤية'
+                })}
               </span>
-              <span className="px-4 py-2 rounded-xl bg-[#A855F7]/20 text-[#A855F7] text-xs font-black font-anime">
-                {isAr ? '2027: لم تفتح بعد' : '2027: NOT OPEN YET'}
-              </span>
+              <div className="flex flex-wrap gap-1.5 bg-[#07080D] p-1 rounded-xl border border-white/[0.08]">
+                {ARENA_ZONES.map((z) => (
+                  <button
+                    key={z.id}
+                    type="button"
+                    onClick={() => {
+                      soundFX.playButtonClick();
+                      setSelectedZoneId(z.id);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                      selectedZoneId === z.id
+                        ? 'bg-[#D4AF37] text-[#07080D]'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {z.label[lKey]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 rounded-xl bg-[#07080D] border border-white/[0.06] text-xs">
+              <div className="md:col-span-2">
+                <span className="font-bold text-white block mb-1">{activeZone.label[lKey]}</span>
+                <p className="text-slate-400 leading-relaxed">{activeZone.desc[lKey]}</p>
+              </div>
+              <div className="font-mono tabular-nums">
+                <span className="text-[10px] text-slate-500 block">
+                  {tr(currentLang, { en: 'PROXIMITY / CAP', es: 'DISTANCIA / AFORO', fr: 'DISTANCE / CAP.', ar: 'القرب / السعة' })}
+                </span>
+                <span className="text-[#D4AF37] font-bold">{activeZone.distance} · {activeZone.capacity}</span>
+              </div>
+              <div className="font-mono">
+                <span className="text-[10px] text-slate-500 block">
+                  {tr(currentLang, { en: 'TELEMETRY FEED', es: 'FLUJO BIOMÉTRICO', fr: 'FLUX TÉLÉMÉTRIQUE', ar: 'التغطية الحيوية' })}
+                </span>
+                <span className="text-[#10B981] font-semibold">{activeZone.telemetry[lKey]}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Success notification banner */}
-        {purchaseSuccess && (
-          <div className="p-4 rounded-2xl bg-[#10B981]/20 text-[#10B981] font-black font-anime text-center shadow-lg">
-            ✓ {purchaseSuccess}
+        {/* Confirmation Banner */}
+        {statusMessage && (
+          <div className="p-4 rounded-xl bg-[#10B981]/15 border border-[#10B981]/40 text-[#10B981] font-semibold text-xs text-center">
+            ✓ {statusMessage}
           </div>
         )}
 
-        {/* Tournament Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* 3 Boarding-Pass Style Championship Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {TOURNAMENT_EVENTS.map((event) => {
-            const isSelected = selectedTicketId === event.id;
+            const isReminded = Boolean(remindedIds[event.id]);
+            const isJan5 = event.status === 'opens_jan_5';
 
             return (
-              <div 
+              <div
                 key={event.id}
-                onClick={() => handleSelectTicket(event)}
-                className={`rounded-3xl p-6 md:p-8 bg-[#0D0E17] transition-all duration-300 relative flex flex-col justify-between cursor-pointer ${
-                  isSelected 
-                    ? 'shadow-[0_0_35px_rgba(255,230,0,0.35)] scale-[1.02] bg-[#121320]' 
-                    : 'hover:bg-[#121320]'
-                }`}
+                className="rounded-2xl bg-[#0B0E16] border border-white/[0.08] hover:border-[#D4AF37]/45 transition-colors overflow-hidden flex flex-col justify-between"
               >
                 <div>
-                  
-                  {/* Event Thumbnail & Status Badge */}
-                  <div className="relative w-full h-56 rounded-2xl overflow-hidden mb-6 bg-black group">
-                    <img loading="lazy" decoding="async" 
-                      src={event.image} 
-                      alt={event.titleEn}
+                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-black">
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      src={event.image}
+                      alt={event.title[lKey]}
                       onError={handleImageError}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                    
-                    <div className="absolute top-3 left-3 right-3 flex justify-between items-center">
-                      <span 
-                        className="px-3 py-1 rounded-xl text-[10px] font-black font-anime shadow-lg"
-                        style={{ backgroundColor: event.badgeColor, color: event.badgeTextColor }}
-                      >
-                        {isAr ? event.badgeAr : event.badgeEn}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E16] via-[#0B0E16]/30 to-transparent" />
+
+                    <div className="absolute top-3 inset-x-3 flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-[#D4AF37] font-bold bg-[#07080D]/85 px-2.5 py-1 rounded-md border border-white/10">
+                        {event.code}
                       </span>
-                      <span className="text-[10px] font-black font-anime text-[#FFE600] bg-black/90 px-2.5 py-1 rounded-lg">
+                      <span className="text-white bg-[#07080D]/85 px-2.5 py-1 rounded-md border border-white/10">
                         {event.tier}
                       </span>
                     </div>
 
-                    {/* Under the photo: Clear Booking Status Notice */}
-                    {event.status === 'opens_nov_15' ? (
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold bg-black/95 px-3 py-2 rounded-xl backdrop-blur-md shadow-lg">
-                        <div className="flex items-center gap-2 text-[#10B981]">
-                          <Calendar className="w-4 h-4 text-[#10B981] animate-pulse shrink-0" />
-                          <span className="font-anime font-bold text-[11px] sm:text-xs">
-                            {isAr ? 'لم يفتح الحجز بعد — يفتح 15 نوفمبر' : 'Booking Not Open Yet — Opens Nov 15'}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-anime font-black text-[#FFE600] bg-[#141624] px-2 py-0.5 rounded">
-                          {isAr ? 'ديسمبر 2026' : 'DEC 2026'}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-bold bg-black/95 px-3 py-2 rounded-xl backdrop-blur-md shadow-lg">
-                        <div className="flex items-center gap-2 text-[#A855F7]">
-                          <Clock className="w-4 h-4 text-[#A855F7] shrink-0" />
-                          <span className="font-anime font-bold text-[11px] sm:text-xs text-gray-200">
-                            {isAr ? 'لم يتم فتح التذاكر للبيع بعد' : 'Tickets Not Open For Sale Yet'}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-anime font-black text-white bg-[#A855F7]/30 px-2 py-0.5 rounded">
-                          {isAr ? 'موسم 2027' : 'SEASON 2027'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Date & Location Capsule */}
-                  <div className="flex flex-wrap gap-2 text-[11px] font-bold text-gray-400 mb-3">
-                    <div className="flex items-center gap-1 bg-black px-2.5 py-1 rounded-lg text-[#10B981]">
-                      <Calendar className="w-3 h-3" />
-                      <span>{isAr ? event.dateAr : event.dateEn}</span>
-                    </div>
-                    <div className="flex items-center gap-1 bg-black px-2.5 py-1 rounded-lg text-gray-300">
-                      <Clock className="w-3 h-3 text-[#FFE600]" />
-                      <span>{event.time}</span>
+                    <div className="absolute bottom-3 inset-x-4 flex items-center justify-between text-xs font-mono">
+                      <span className={isJan5 ? 'text-[#10B981] font-semibold' : 'text-[#D4AF37] font-semibold'}>
+                        {isJan5
+                          ? tr(currentLang, { en: 'Opens Jan 5, 2027', es: 'Abre 5 Ene 2027', fr: 'Ouvre 5 Jan 2027', ar: 'تفتح 5 يناير 2027' })
+                          : tr(currentLang, { en: '2027 · Not Open Yet', es: '2027 · Aún Cerrado', fr: '2027 · Pas Encore Ouvert', ar: 'موسم 2027 · مغلق حالياً' })}
+                      </span>
+                      <span className="text-slate-300 tabular-nums">{event.date[lKey]}</span>
                     </div>
                   </div>
 
-                  {/* Title & Tagline */}
-                  <h3 className="text-xl font-black font-anime text-white mb-2 leading-tight">
-                    {isAr ? event.titleAr : event.titleEn}
-                  </h3>
-                  <p className="text-xs text-gray-400 font-bold leading-relaxed mb-4">
-                    {isAr ? event.taglineAr : event.taglineEn}
-                  </p>
+                  <div className="p-5 space-y-3">
+                    <div>
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 mb-1">
+                        <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+                        <span>{event.location[lKey]}</span>
+                        <span>·</span>
+                        <span>{event.time}</span>
+                      </div>
+                      <h3 className="text-lg font-bold text-white leading-snug">{event.title[lKey]}</h3>
+                      <p className="text-xs text-slate-400 leading-relaxed mt-1">{event.tagline[lKey]}</p>
+                    </div>
 
-                  {/* City and Country only */}
-                  <div className="flex items-center gap-2 text-xs font-bold text-gray-200 mb-6 bg-black p-3 rounded-xl">
-                    <MapPin className="w-4 h-4 text-[#A855F7] shrink-0" />
-                    <span>{isAr ? event.locationAr : event.locationEn}</span>
-                  </div>
-
-                  {/* Perks List */}
-                  <div className="space-y-2 mb-6">
-                    <span className="text-[11px] font-black text-[#FFE600] uppercase font-anime">
-                      {isAr ? 'مميزات وحزمة التذكرة عند فتح البيع:' : 'TICKET PRIVILEGES (UPON RELEASE):'}
-                    </span>
-                    <ul className="space-y-1.5 text-xs font-bold text-gray-300">
-                      {(isAr ? event.perksAr : event.perksEn).map((perk, idx) => (
+                    <ul className="space-y-1.5 text-xs text-slate-300 pt-2 border-t border-white/[0.06]">
+                      {event.perks[lKey].map((perk, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <Check className="w-3.5 h-3.5 text-[#10B981] shrink-0 mt-0.5" />
                           <span>{perk}</span>
@@ -377,267 +558,206 @@ export const TicketsEventsHub: React.FC<TicketsEventsHubProps> = ({
                       ))}
                     </ul>
                   </div>
-
                 </div>
 
-                {/* Status Notice Banner */}
-                <div className="mb-4">
-                  {event.status === 'not_open_2027' ? (
-                    <div className="p-3 rounded-xl bg-[#A855F7]/10 flex items-center gap-2 text-xs font-bold text-white">
-                      <Clock className="w-4 h-4 text-[#A855F7] shrink-0" />
-                      <span>{isAr ? event.statusNoticeAr : event.statusNoticeEn}</span>
-                    </div>
-                  ) : event.status === 'opens_nov_15' ? (
-                    <div className="p-3 rounded-xl bg-[#10B981]/10 flex items-center gap-2 text-xs font-bold text-white">
-                      <Calendar className="w-4 h-4 text-[#10B981] shrink-0" />
-                      <span>{isAr ? event.statusNoticeAr : event.statusNoticeEn}</span>
-                    </div>
-                  ) : null}
-                </div>
+                <div className="relative border-t border-dashed border-white/[0.16] bg-[#07080D]/80 p-5 space-y-3">
+                  <span className="absolute -top-2.5 -left-2.5 w-5 h-5 rounded-full bg-[#07080D] border border-white/[0.08]" />
+                  <span className="absolute -top-2.5 -right-2.5 w-5 h-5 rounded-full bg-[#07080D] border border-white/[0.08]" />
 
-                {/* Price and Action Button */}
-                <div className="pt-4">
-                  <div className="flex items-baseline justify-between mb-4">
+                  <div className="flex items-center justify-between gap-3">
                     <div>
-                      <span className="text-2xl sm:text-3xl font-black text-[#FFE600] font-mono tracking-tight" dir="ltr">${event.price}</span>
-                      {event.originalPrice && (
-                        <span className="text-sm line-through text-gray-500 ml-2">${event.originalPrice}</span>
-                      )}
-                      <span className="text-[10px] text-gray-400 block font-bold mt-0.5">
-                        {isAr ? 'السعر التقديري عند فتح البيع' : 'ESTIMATED PRICE AT LAUNCH'}
+                      <span className="text-[10px] font-mono text-slate-400 block uppercase">
+                        {tr(currentLang, { en: 'ESTIMATED PASS RATE', es: 'TARIFA ESTIMADA', fr: 'TARIF ESTIMÉ', ar: 'السعر المقدر عند الطرح' })}
                       </span>
+                      <div className="flex items-baseline gap-2 font-mono tabular-nums">
+                        <span className="text-2xl font-bold text-[#D4AF37]" dir="ltr">${event.price}</span>
+                        {event.originalPrice && (
+                          <span className="text-xs line-through text-slate-500" dir="ltr">${event.originalPrice}</span>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-[10px] font-black text-[#10B981] bg-black px-2.5 py-1 rounded-lg">
-                      {event.status === 'opens_nov_15' 
-                        ? (isAr ? 'يفتح في 15 نوفمبر' : 'OPENS NOV 15')
-                        : (isAr ? 'لم يفتح البيع بعد' : 'NOT OPEN YET')}
-                    </span>
+
+                    <QrCode className="w-7 h-7 text-slate-400" />
                   </div>
 
-                  {event.status === 'opens_nov_15' ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        soundFX.playSuccess();
-                        setPurchaseSuccess(isAr 
-                          ? `تم ضبط التذكير بنجاح! لم يتم فتح الحجز بعد، وسيتم فتح التذاكر لمسابقة ديسمبر في 15 نوفمبر 2026.`
-                          : `Reminder registered! Tickets are not open yet — December tournament booking opens November 15, 2026.`);
-                        setTimeout(() => setPurchaseSuccess(null), 4000);
-                      }}
-                      className="w-full py-3.5 rounded-xl bg-[#10B981] hover:bg-white text-black font-black font-anime text-xs shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      <Calendar className="w-4 h-4 text-black" />
-                      <span>{isAr ? 'تفتح التذاكر في 15 نوفمبر — ضبط تذكير' : 'OPENS NOVEMBER 15 — REMIND ME'}</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        soundFX.playSuccess();
-                        setPurchaseSuccess(isAr 
-                          ? `تم تسجيلك في قائمة التنبيهات! بطولات 2027 لم يتم فتح التذاكر للبيع بعد وسنبلغك فور إطلاقها.`
-                          : `Alert registered! Tickets for 2027 championships have not opened for sale yet. You will be notified the instant they launch.`);
-                        setTimeout(() => setPurchaseSuccess(null), 4000);
-                      }}
-                      className="w-full py-3.5 rounded-xl bg-[#3b0764] hover:bg-[#581c87] border border-[#7e22ce] text-white font-black font-anime text-xs shadow-[0_0_20px_rgba(88,28,135,0.6)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      <Bell className="w-4 h-4 text-white" />
-                      <span>{isAr ? 'لم يتم فتح التذاكر للبيع بعد — أبلغني' : 'TICKETS NOT OPEN FOR SALE YET — NOTIFY ME'}</span>
-                    </button>
-                  )}
-                </div>
+                  <p className="text-[11px] text-slate-400 leading-snug">{event.statusNotice[lKey]}</p>
 
+                  <button
+                    type="button"
+                    onClick={() => handleToggleAlert(event)}
+                    className={`w-full py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer ${
+                      isReminded
+                        ? 'bg-[#10B981] text-[#07080D]'
+                        : isJan5
+                        ? 'bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080D]'
+                        : 'bg-[#141824] hover:bg-[#1E2436] text-white border border-white/[0.12]'
+                    }`}
+                  >
+                    {isReminded ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>{tr(currentLang, { en: 'Alert Active', es: 'Alerta Activa', fr: 'Alerte Active', ar: 'تم تفعيل التنبيه بنجاح' })}</span>
+                      </>
+                    ) : isJan5 ? (
+                      <>
+                        <Calendar className="w-4 h-4" />
+                        <span>
+                          {tr(currentLang, {
+                            en: 'Opens Jan 5, 2027 — Remind Me',
+                            es: 'Abre 5 Ene 2027 — Recordarme',
+                            fr: 'Ouvre 5 Jan 2027 — M’alerter',
+                            ar: 'يفتح 5 يناير 2027 — ذكّرني'
+                          })}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Bell className="w-4 h-4" />
+                        <span>
+                          {tr(currentLang, {
+                            en: 'Notify Me at Launch',
+                            es: 'Notificarme en Apertura',
+                            fr: 'M’alerter au Lancement',
+                            ar: '2027 لم يُفتح بعد — أبلغني'
+                          })}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* Global Online Livestream Section: White, Black, Purple & Yellow */}
-        <div className="rounded-3xl p-8 md:p-12 bg-gradient-to-br from-[#0F0D1A] via-[#0A0B10] to-[#120F20] shadow-[0_0_40px_rgba(168,85,247,0.25)] relative overflow-hidden">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 mb-8 pb-8">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#A855F7]/20 text-[#A855F7] text-xs font-black font-anime uppercase tracking-wider">
-                <Radio className="w-3.5 h-3.5 text-[#A855F7] animate-pulse" />
-                <span>{isAr ? 'بث مباشر عالمي 4K // للجمهور عبر الإنترنت' : 'GLOBAL 4K ULTRA HD LIVESTREAM'}</span>
+        {/* Global 4K Livestream Passes */}
+        <div className="rounded-2xl bg-[#0B0E16] border border-white/[0.08] p-5 md:p-7 space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/[0.07] pb-5">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2 text-xs font-mono text-[#00F0FF] uppercase tracking-wider">
+                <Radio className="w-3.5 h-3.5" />
+                <span>{tr(currentLang, { en: 'GLOBAL 4K 60FPS BROADCAST', es: 'TRANSMISIÓN MUNDIAL 4K 60FPS', fr: 'DIFFUSION MONDIALE 4K 60FPS', ar: 'البث المباشر 4K Ultra HD' })}</span>
               </div>
-              <h2 className="text-2xl md:text-4xl font-black font-anime text-white leading-tight">
-                {isAr ? (
-                  <>
-                    غير قادر على الحضور في الحلبة؟ <br />
-                    <span className="text-[#A855F7]">تابع البث المباشر بدقة فائقة من أي مكان</span>
-                  </>
-                ) : (
-                  <>
-                    CANNOT ATTEND IN PERSON? <br />
-                    <span className="text-[#A855F7]">STREAM THE ACTION LIVE FROM ANYWHERE</span>
-                  </>
-                )}
+              <h2 className="text-xl md:text-2xl font-bold text-white">
+                {tr(currentLang, {
+                  en: 'Stream Every Championship Bout Live in 4K',
+                  es: 'Sigue Cada Combate y Desafío en Vivo en 4K',
+                  fr: 'Suivez Chaque Épreuve et Combat en Direct 4K',
+                  ar: 'تابع نزالات الحلبة مباشرة من أي مكان'
+                })}
               </h2>
-              <p className="text-xs md:text-sm text-gray-300 font-medium leading-relaxed">
-                {isAr 
-                  ? 'بث مباشر بزوايا كاميرا تفاعلية متعددة، تعليق رياضي احترافي، وإحصائيات النبض الحية لمقاتلي الحلبة لحظة بلحظة.' 
-                  : 'Live multi-angle camera coverage, professional sports commentary, and real-time biometric athlete telemetry directly on your screen.'}
+              <p className="text-xs text-slate-400 leading-relaxed">
+                {tr(currentLang, {
+                  en: 'Multi-angle mat cameras with corner coach feeds and real-time biometric overlays.',
+                  es: 'Cámaras multiángulo con audio de entrenadores y telemetría cardíaca en pantalla.',
+                  fr: 'Caméras multi-angles, flux audio des coachs et biométrie en temps réel.',
+                  ar: 'تغطية تفاعلية متعددة الزوايا مع قراءات نبض القلب وأوزان اللكمات مباشرة على الشاشة.'
+                })}
               </p>
             </div>
 
-            <div className="flex items-center gap-3 bg-black px-4 py-3 rounded-2xl shrink-0">
-              <Tv className="w-6 h-6 text-[#A855F7]" />
-              <div className="text-xs">
-                <span className="block font-black text-white font-anime">1080p / 4K 60FPS</span>
-                <span className="text-gray-400 font-bold">{isAr ? 'متاح على الهاتف والكمبيوتر والشاشات الذكية' : 'Mobile, Desktop & Smart TVs'}</span>
+            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#07080D] border border-white/[0.08] text-xs font-mono shrink-0">
+              <Tv className="w-5 h-5 text-[#D4AF37]" />
+              <div>
+                <span className="block font-bold text-white">4K 60FPS HDR</span>
+                <span className="text-slate-400">Web · iOS · Smart TV</span>
               </div>
             </div>
           </div>
 
-          {/* Two Online Stream Options: $10 Per Match vs $120 Full Season Pass */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Option 1: Single Match Pass ($10) */}
-            <div className="rounded-2xl p-6 bg-black flex flex-col justify-between space-y-4 shadow-lg">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-black font-anime bg-gray-800 text-gray-200">
-                    SINGLE MATCH PPV
-                  </span>
-                  <span className="text-xs font-bold text-gray-400">
-                    {isAr ? 'تذكرة نزال واحد' : 'Per Match Access'}
-                  </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Single Match PPV ($10) */}
+            <div className="p-5 rounded-xl bg-[#07080D] border border-white/[0.08] flex flex-col justify-between space-y-4">
+              <div className="space-y-2.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-slate-300 font-bold">SINGLE MATCH PPV</span>
+                  <span className="text-slate-500">48h Replay</span>
                 </div>
-
-                <h3 className="text-xl font-black font-anime text-white mb-2">
-                  {isAr ? 'تذكرة البث لمباراة واحدة' : 'Single Match Stream Pass'}
+                <h3 className="text-lg font-bold text-white">
+                  {tr(currentLang, { en: 'Single Match Stream Pass', es: 'Pase de Transmisión Individual', fr: 'Pass Diffusion Match Unique', ar: 'تذكرة البث لمباراة واحدة' })}
                 </h3>
-                <p className="text-xs text-gray-400 font-medium mb-4 leading-relaxed">
-                  {isAr 
-                    ? 'اختر النزال الذي ترغب بمشاهدته على الهواء مباشرة مع إعادة كاملة متاحة لمدة 48 ساعة.' 
-                    : 'Stream any individual match of your choice with 48-hour on-demand replay access.'}
-                </p>
-
-                <ul className="space-y-1.5 text-xs text-gray-300 font-medium mb-4">
+                <ul className="space-y-1.5 text-xs text-slate-300">
                   <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                    <span>{isAr ? 'بث مباشر بدقة Full HD للنزال المختار' : 'Full HD 60fps livestream of chosen match'}</span>
+                    <Check className="w-3.5 h-3.5 text-[#10B981]" />
+                    <span>{tr(currentLang, { en: 'Full HD 60fps livestream access', es: 'Acceso Full HD 60fps en vivo', fr: 'Accès direct Full HD 60fps', ar: 'بث Full HD مباشر للنزال المختار' })}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                    <span>{isAr ? 'إعادة مشاهدة غير محدودة لمدة 48 ساعة' : '48-hour unlimited replay access'}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                    <span>{isAr ? 'عرض إحصائيات اللكمات والنبض المباشرة' : 'Live punch counters & telemetry'}</span>
+                    <Check className="w-3.5 h-3.5 text-[#10B981]" />
+                    <span>{tr(currentLang, { en: '48-hour on-demand replay', es: 'Repetición bajo demanda 48h', fr: 'Replay à la demande 48h', ar: 'إعادة مشاهدة لمدة 48 ساعة' })}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 flex items-center justify-between gap-4">
-                <div>
-                  <span className="text-3xl font-black text-white font-mono tracking-tight" dir="ltr">$10</span>
-                  <span className="text-xs text-gray-400 block font-bold">{isAr ? 'للمباراة الواحدة' : 'per single match'}</span>
-                </div>
+              <div className="pt-3 border-t border-white/[0.07] flex items-center justify-between">
+                <span className="text-2xl font-bold font-mono tabular-nums text-white" dir="ltr">$10</span>
                 <button
+                  type="button"
                   onClick={() => {
                     soundFX.playSuccess();
-                    setPurchaseSuccess(isAr ? 'تم الاشتراك في تذكرة البث المباشر للمباراة ($10)!' : 'Single Match Live Stream Pass Purchased ($10)!');
-                    setTimeout(() => {
-                      setPurchaseSuccess(null);
-                      if (onProceedToCheckout) {
-                        onProceedToCheckout('Single Match Stream Pass', 10);
-                      }
-                    }, 1200);
+                    if (onProceedToCheckout) onProceedToCheckout('Single Match Stream Pass', 10);
                   }}
-                  className="px-5 py-3 rounded-xl bg-white hover:bg-[#FFE600] text-black font-black font-anime text-xs transition-all flex items-center gap-2 cursor-pointer shadow-md"
+                  className="px-4 py-2 rounded-lg bg-white hover:bg-[#D4AF37] text-[#07080D] font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
-                  <MonitorPlay className="w-4 h-4 text-black" />
-                  <span>{isAr ? 'حجز بث المباراة ($10)' : 'GET MATCH PASS ($10)'}</span>
+                  <MonitorPlay className="w-4 h-4" />
+                  <span>{tr(currentLang, { en: 'Get Match Pass ($10)', es: 'Obtener Pase ($10)', fr: 'Pass Match ($10)', ar: 'حجز البث ($10)' })}</span>
                 </button>
               </div>
             </div>
 
-            {/* Option 2: Full Championship Season Pass ($120) */}
-            <div className="rounded-2xl p-6 bg-black shadow-[0_0_35px_rgba(255,230,0,0.2)] flex flex-col justify-between space-y-4 relative">
-              <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#FFE600] text-black text-[9px] font-black font-anime tracking-wider">
-                {isAr ? 'القيمة الأفضل // كامل البطولة' : 'BEST VALUE // ALL-ACCESS'}
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-black font-anime bg-[#FFE600]/20 text-[#FFE600]">
-                    FULL TOURNAMENT PASS
-                  </span>
+            {/* Full Championship Pass ($120) */}
+            <div className="p-5 rounded-xl bg-[#07080D] border border-[#D4AF37]/45 flex flex-col justify-between space-y-4">
+              <div className="space-y-2.5">
+                <div className="flex justify-between items-center text-xs font-mono">
+                  <span className="text-[#D4AF37] font-bold">FULL TOURNAMENT PASS</span>
+                  <span className="text-[#10B981]">{tr(currentLang, { en: 'Save 57%', es: 'Ahorra 57%', fr: '-57%', ar: 'وفر 57%' })}</span>
                 </div>
-
-                <h3 className="text-xl font-black font-anime text-white mb-2">
-                  {isAr ? 'تذكرة البث لجميع نزالات البطولة كاملة' : 'Full Championship All-Access Pass'}
+                <h3 className="text-lg font-bold text-white">
+                  {tr(currentLang, { en: 'All-Access Championship Pass', es: 'Pase Completo de Campeonato 4K', fr: 'Pass Championnat Accès Total', ar: 'تذكرة البطولة الكاملة 4K' })}
                 </h3>
-                <p className="text-xs text-gray-400 font-medium mb-4 leading-relaxed">
-                  {isAr 
-                    ? 'اشتراك شامل لكافة مباريات وجولات البطولة من الافتتاح وحتى النزال النهائي مع أرشيف كامل وتصوير الكواليس.' 
-                    : 'Unlimited access to every single match from preliminaries to the Grand Final, plus full tournament replay archive.'}
-                </p>
-
-                <ul className="space-y-1.5 text-xs text-gray-300 font-medium mb-4">
+                <ul className="space-y-1.5 text-xs text-slate-300">
                   <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#FFE600] shrink-0" />
-                    <span>{isAr ? 'بث 4K فائق الوضوح لكافة نزالات وأيام البطولة' : '4K Ultra HD for all tournament matches'}</span>
+                    <Check className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>{tr(currentLang, { en: '4K Ultra HD for every tournament bout', es: '4K Ultra HD en todos los combates', fr: '4K Ultra HD sur tout le tournoi', ar: 'بث 4K لكافة النزالات والتصفيات' })}</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#FFE600] shrink-0" />
-                    <span>{isAr ? 'أرشيف دائم وتنزيل النزالات بدون انقطاع' : 'Lifetime replay archive & match downloads'}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#FFE600] shrink-0" />
-                    <span>{isAr ? 'مشاهدة كواليس التدريب واللقاءات الحصرية' : 'Exclusive backstage warmup & coach cams'}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
-                    <span>{isAr ? 'توفير أكثر من 60% مقارنة بشراء كل مباراة منفردة' : 'Save over 60% vs single match tickets'}</span>
+                    <Check className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <span>{tr(currentLang, { en: 'Lifetime archive + backstage warmup feeds', es: 'Archivo permanente + backstage en vivo', fr: 'Archive à vie + coulisses d’échauffement', ar: 'أرشيف دائم وكواليس غرف الإحماء' })}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4 flex items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">$120</span>
-                    <span className="text-xs line-through text-gray-500 font-bold">$280</span>
-                  </div>
-                  <span className="text-xs text-[#10B981] block font-bold">{isAr ? 'للبطولة كاملة بجميع مبارياتها' : 'all matches included'}</span>
+              <div className="pt-3 border-t border-white/[0.07] flex items-center justify-between">
+                <div className="flex items-baseline gap-2 font-mono tabular-nums" dir="ltr">
+                  <span className="text-2xl font-bold text-[#D4AF37]">$120</span>
+                  <span className="text-xs line-through text-slate-500">$280</span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     soundFX.playSuccess();
-                    setPurchaseSuccess(isAr ? 'تم الاشتراك في تذكرة البطولة كاملة ($120)!' : 'Full Championship Pass Purchased ($120)!');
-                    setTimeout(() => {
-                      setPurchaseSuccess(null);
-                      if (onProceedToCheckout) {
-                        onProceedToCheckout('Full Tournament Stream Pass', 120);
-                      }
-                    }, 1200);
+                    if (onProceedToCheckout) onProceedToCheckout('Full Tournament Stream Pass', 120);
                   }}
-                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#FFE600] to-[#FFD700] hover:from-white hover:to-white text-black font-black font-anime text-xs transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(255,230,0,0.4)] hover:scale-105"
+                  className="px-4 py-2 rounded-lg bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080D] font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
-                  <Tv className="w-4 h-4 text-black" />
-                  <span>{isAr ? 'حجز البطولة كاملة ($120)' : 'GET FULL PASS ($120)'}</span>
+                  <Tv className="w-4 h-4" />
+                  <span>{tr(currentLang, { en: 'Get Full Pass ($120)', es: 'Pase Completo ($120)', fr: 'Pass Intégral ($120)', ar: 'حجز البطولة ($120)' })}</span>
                 </button>
               </div>
             </div>
+          </div>
 
+          <div className="pt-3 border-t border-white/[0.06] flex items-center gap-2.5 text-xs text-slate-400">
+            <ShieldCheck className="w-4 h-4 text-[#10B981] shrink-0" />
+            <span>
+              {tr(currentLang, {
+                en: 'Every badge uses dynamic serialized anti-scalp QR encryption validated directly at arena entry gates.',
+                es: 'Cada pase usa cifrado QR dinámico anti-reventa validado directamente en puertas del recinto.',
+                fr: 'Chaque billet utilise un QR crypté anti-fraude validé directement aux portes de l’arène.',
+                ar: 'جميع التذاكر مشفرة برمز QR متجدد يمنع التزوير وإعادة البيع غير المصرح به عند البوابات.'
+              })}
+            </span>
           </div>
         </div>
-
-        {/* Security Guarantee Box */}
-        <div className="p-8 rounded-3xl bg-[#0D0E17] text-center max-w-3xl mx-auto space-y-3 shadow-lg">
-          <div className="flex items-center justify-center gap-2 text-white font-black font-anime text-sm">
-            <ShieldCheck className="w-5 h-5 text-[#10B981]" />
-            <span>{isAr ? 'ضمان التذاكر وحقوق حضور البطولات' : 'OFFICIAL YARD 300 TICKET GUARANTEE'}</span>
-          </div>
-          <p className="text-xs text-gray-400 font-bold leading-relaxed">
-            {isAr 
-              ? 'كافة التذاكر مرقمة إلكترونياً ومشفرة بتقنية الـ QR الذكية لمنع التزوير وإعادة البيع غير المصرح به. يمكنك إبراز التذكرة عبر هاتفك المحمول عند بوابات الدخول للصالة الرسمية.' 
-              : 'All tournament badges are serialized and encrypted with smart anti-scalp dynamic QR codes. Show your digital badge directly on your mobile device at the official championship arena gates.'}
-          </p>
-        </div>
-
       </div>
     </div>
   );

@@ -35,7 +35,11 @@ import {
   Sliders,
   ToggleLeft,
   ToggleRight,
-  Crown
+  Crown,
+  Type,
+  Tag,
+  Palmtree,
+  Users
 } from 'lucide-react';
 import { 
   OwnerConfigService, 
@@ -43,17 +47,29 @@ import {
   SiteSectionConfig, 
   PaymentGatewayConfig, 
   SiteVideoItem, 
-  CustomArticleData 
+  CustomArticleData,
+  DEFAULT_RESORT_CONFIG,
+  DEFAULT_BRAND_SITE_SETTINGS
 } from '../services/ownerConfigService';
-import { PRODUCTS, handleImageError } from '../constants';
-import { Language } from '../i18n';
+import { PRODUCTS, YARD_BAZARUTO_RESORT_IMAGE, YARD_ISLAND_AERIAL_NIGHT_IMAGE, handleImageError } from '../constants';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
+
+export type OwnerDashboardTab =
+  | 'photos'
+  | 'siteCopy'
+  | 'catalogPricing'
+  | 'resortBrand'
+  | 'sections'
+  | 'payments'
+  | 'videos'
+  | 'articles';
 
 interface OwnerDashboardProps {
   currentLang: Language;
   onBackToStore: () => void;
   onNavigateToView?: (viewId: string) => void;
-  initialTab?: 'photos' | 'sections' | 'payments' | 'videos' | 'articles';
+  initialTab?: OwnerDashboardTab;
 }
 
 export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
@@ -83,7 +99,8 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
   const [authSuccessMsg, setAuthSuccessMsg] = useState<string | null>(null);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'photos' | 'sections' | 'payments' | 'videos' | 'articles'>(initialTab);
+  const [activeTab, setActiveTab] = useState<OwnerDashboardTab>(initialTab);
+  const [catalogLangEdit, setCatalogLangEdit] = useState<string>(currentLang);
 
   // Status notifications
   const [saveToast, setSaveToast] = useState<string | null>(null);
@@ -113,7 +130,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
     titleEn: '',
     titleAr: '',
     url: '',
-    posterUrl: '/images/anime_fighter_ryu_impact.jpg',
+    posterUrl: '/images/ai_human_striker_male.jpg',
     type: 'mp4',
     tag: 'COMBAT',
     featuredIn: 'arena'
@@ -154,32 +171,39 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       setIsAuthenticated(true);
       setOwnerInfo(OwnerConfigService.getOwnerInfo());
       setAuthError(null);
-      triggerToast(isAr ? `أهلاً بك يا ${OwnerConfigService.getOwnerInfo().name}! تم الدخول بنجاح.` : `Welcome ${OwnerConfigService.getOwnerInfo().name}!`);
+      triggerToast(tr(currentLang, {
+        en: `Welcome ${OwnerConfigService.getOwnerInfo().name}!`,
+        es: `¡Bienvenido ${OwnerConfigService.getOwnerInfo().name}!`,
+        fr: `Bienvenue ${OwnerConfigService.getOwnerInfo().name} !`,
+        ar: `أهلاً بك يا ${OwnerConfigService.getOwnerInfo().name}! تم الدخول بنجاح.`
+      }));
     } else {
       soundFX.playLaser();
-      setAuthError(isAr 
-        ? 'بيانات الدخول غير مطابقة. تأكد من إيميل المالك وكلمة السر.'
-        : 'Invalid credentials. Access is restricted strictly to the verified store owner.'
-      );
+      setAuthError(tr(currentLang, {
+        en: 'Invalid credentials. Access is restricted strictly to the verified store owner.',
+        es: 'Credenciales inválidas. Acceso restringido al propietario verificado.',
+        fr: 'Identifiants invalides. Accès strictement réservé au propriétaire vérifié.',
+        ar: 'بيانات الدخول غير مطابقة. تأكد من إيميل المالك وكلمة السر.'
+      }));
     }
   };
 
   const handleOwnerRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (!ownerEmail.trim()) {
-      setAuthError(isAr ? 'يرجى إدخال البريد الإلكتروني' : 'Please enter an email');
+      setAuthError(tr(currentLang, { en: 'Please enter an email', es: 'Ingresa un correo electrónico', fr: 'Veuillez saisir un e-mail', ar: 'يرجى إدخال البريد الإلكتروني' }));
       return;
     }
     if (!ownerPassword.trim()) {
-      setAuthError(isAr ? 'يرجى كتابة رقم سري خاص' : 'Please enter a secret password');
+      setAuthError(tr(currentLang, { en: 'Please enter a secret password', es: 'Ingresa una contraseña secreta', fr: 'Veuillez saisir un mot de passe secret', ar: 'يرجى كتابة رقم سري خاص' }));
       return;
     }
     if (ownerPassword.length < 4) {
-      setAuthError(isAr ? 'يجب أن لا يقل الرقم السري عن 4 خانات' : 'Password must be at least 4 characters');
+      setAuthError(tr(currentLang, { en: 'Password must be at least 4 characters', es: 'La contraseña debe tener al menos 4 caracteres', fr: 'Le mot de passe doit comporter au moins 4 caractères', ar: 'يجب أن لا يقل الرقم السري عن 4 خانات' }));
       return;
     }
     if (ownerPassword !== confirmPassword) {
-      setAuthError(isAr ? 'الرقم السري وتأكيد الرقم السري غير متطابقين' : 'Passwords do not match');
+      setAuthError(tr(currentLang, { en: 'Passwords do not match', es: 'Las contraseñas no coinciden', fr: 'Les mots de passe ne correspondent pas', ar: 'الرقم السري وتأكيد الرقم السري غير متطابقين' }));
       return;
     }
 
@@ -190,8 +214,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       setIsAuthenticated(true);
       setOwnerInfo({ name: regName, email: ownerEmail.trim().toLowerCase() });
       setAuthError(null);
-      setAuthSuccessMsg(isAr ? `تم تسجيل وتفعيل حسابك كمالك رسمي (${regName}) بنجاح!` : `Owner account registered for ${regName}!`);
-      triggerToast(isAr ? `تم تسجيل وتفعيل حسابك كمالك رسمي (${regName})` : `Owner account created for ${regName}`);
+      const createdMsg = tr(currentLang, {
+        en: `Owner account registered for ${regName}!`,
+        es: `¡Cuenta de propietario registrada para ${regName}!`,
+        fr: `Compte propriétaire enregistré pour ${regName} !`,
+        ar: `تم تسجيل وتفعيل حسابك كمالك رسمي (${regName}) بنجاح!`
+      });
+      setAuthSuccessMsg(createdMsg);
+      triggerToast(createdMsg);
     }
   };
 
@@ -205,7 +235,12 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
   const persistConfig = (updated: OwnerSiteConfig, toastMsg?: string) => {
     setConfig(updated);
     OwnerConfigService.saveConfig(updated);
-    triggerToast(toastMsg || (isAr ? 'تم حفظ وتطبيق التعديلات بنجاح!' : 'Changes saved & applied live!'));
+    triggerToast(toastMsg || tr(currentLang, {
+      en: 'Changes saved & applied live!',
+      es: '¡Cambios guardados y aplicados en vivo!',
+      fr: 'Modifications enregistrées et appliquées en direct !',
+      ar: 'تم حفظ وتطبيق التعديلات بنجاح!'
+    }));
   };
 
   // Section Toggles
@@ -214,7 +249,12 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
     const updatedSections = config.sections.map(s => 
       s.id === sectionId ? { ...s, enabled: !s.enabled } : s
     );
-    persistConfig({ ...config, sections: updatedSections }, isAr ? 'تم تحديث حالة القسم مباشرة' : 'Section status updated live');
+    persistConfig({ ...config, sections: updatedSections }, tr(currentLang, {
+      en: 'Section status updated live',
+      es: 'Estado de sección actualizado en vivo',
+      fr: 'Statut de la section mis à jour en direct',
+      ar: 'تم تحديث حالة القسم مباشرة'
+    }));
   };
 
   // Payment Gateway Toggles
@@ -224,7 +264,12 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       g.id === gatewayId ? { ...g, enabled: !g.enabled } : g
     );
     const updatedPayments = { ...config.payments, gateways: updatedGateways };
-    persistConfig({ ...config, payments: updatedPayments }, isAr ? 'تم تحديث بوابات الدفع في المتجر' : 'Payment gateways updated live');
+    persistConfig({ ...config, payments: updatedPayments }, tr(currentLang, {
+      en: 'Payment gateways updated live',
+      es: 'Pasarelas de pago actualizadas en vivo',
+      fr: 'Passerelles de paiement mises à jour en direct',
+      ar: 'تم تحديث بوابات الدفع في المتجر'
+    }));
   };
 
   // Update Treasury Addresses
@@ -237,7 +282,12 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       treasurySolanaAddress: sol,
       cryptoDiscountPercent: discount
     };
-    persistConfig({ ...config, payments: updatedPayments }, isAr ? 'تم حفظ عناوين الخزينة والخصومات' : 'Treasury addresses & discount saved');
+    persistConfig({ ...config, payments: updatedPayments }, tr(currentLang, {
+      en: 'Treasury addresses & discount saved',
+      es: 'Direcciones de tesorería y descuento guardados',
+      fr: 'Adresses de trésorerie et remise enregistrées',
+      ar: 'تم حفظ عناوين الخزينة والخصومات'
+    }));
   };
 
   // Media Saves
@@ -299,7 +349,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       titleEn: '',
       titleAr: '',
       url: '',
-      posterUrl: '/images/anime_fighter_ryu_impact.jpg',
+      posterUrl: '/images/ai_human_striker_male.jpg',
       type: 'mp4',
       tag: 'COMBAT',
       featuredIn: 'arena'
@@ -433,13 +483,10 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
   // If not authenticated, show Owner Authentication Lock Screen
   if (!isAuthenticated) {
     return (
-      <div className={`min-h-screen bg-[#040508] text-white pt-28 pb-16 px-4 md:px-8 flex flex-col items-center justify-center relative ${isAr ? 'text-right' : 'text-left'}`}>
-        <div className="absolute inset-0 bg-cyber-grid opacity-15 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#E50914]/10 via-transparent to-[#040508] pointer-events-none" />
-
-        <div className="w-full max-w-lg bg-[#0C0E16] border border-gray-800 rounded-3xl p-6 md:p-8 shadow-[0_0_50px_rgba(229,9,20,0.25)] relative z-10 backdrop-blur-xl">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#E50914] via-[#7000FF] to-[#00F0FF] flex items-center justify-center mx-auto mb-5 shadow-[0_0_25px_rgba(229,9,20,0.5)]">
-            <ShieldCheck className="w-8 h-8 text-white" />
+      <div className={`min-h-screen bg-[#07080C] text-white pt-28 pb-16 px-4 md:px-8 flex flex-col items-center justify-center relative ${isAr ? 'text-right' : 'text-left'}`}>
+        <div className="w-full max-w-lg bg-[#0C0E14] border border-white/[0.1] rounded-3xl p-6 md:p-8 shadow-2xl relative z-10 backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/40 flex items-center justify-center mx-auto mb-5">
+            <ShieldCheck className="w-8 h-8 text-[#D4AF37]" />
           </div>
 
           <div className="text-center mb-6">
@@ -448,13 +495,16 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             </span>
             <h1 className="text-2xl md:text-3xl font-black font-anime text-white">
               {authMode === 'login' 
-                ? (isAr ? 'تسجيل دخول المالك' : 'Owner Secure Sign-In') 
-                : (isAr ? 'تسجيل / ضبط حساب المالك' : 'Register Owner Account')}
+                ? tr(currentLang, { en: 'Owner Secure Sign-In', es: 'Acceso Seguro del Propietario', fr: 'Connexion Sécurisée Propriétaire', ar: 'تسجيل دخول المالك' })
+                : tr(currentLang, { en: 'Register Owner Account', es: 'Registrar Cuenta de Propietario', fr: 'Créer un Compte Propriétaire', ar: 'تسجيل / ضبط حساب المالك' })}
             </h1>
             <p className="text-xs text-gray-400 mt-2 font-medium">
-              {isAr 
-                ? 'هذه البوابة مشفرة ومخصصة لك حصراً لتفتح باسمك وبرقمك السري الخاص، ولا تظهر إطلاقاً للجمهور أو زوار المتجر.'
-                : 'Restricted strictly to the verified store owner. Opens under your personal name & secret password, completely hidden from public visitors.'}
+              {tr(currentLang, {
+                en: 'Restricted strictly to the verified store owner. Opens under your personal name & secret password, completely hidden from public visitors.',
+                es: 'Acceso exclusivo para el propietario verificado. Se abre con tu nombre y contraseña secreta, oculto al público.',
+                fr: 'Strictement réservé au propriétaire vérifié. Accessible uniquement avec votre nom et mot de passe secret, caché au public.',
+                ar: 'هذه البوابة مشفرة ومخصصة لك حصراً لتفتح باسمك وبرقمك السري الخاص، ولا تظهر إطلاقاً للجمهور أو زوار المتجر.'
+              })}
             </p>
           </div>
 
@@ -474,7 +524,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              <span>{isAr ? 'تسجيل الدخول' : 'Sign In'}</span>
+              <span>{tr(currentLang, { en: 'Sign In', es: 'Iniciar Sesión', fr: 'Connexion', ar: 'تسجيل الدخول' })}</span>
             </button>
             <button
               type="button"
@@ -490,7 +540,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              <span>{isAr ? 'تسجيل / ضبط الحساب باسمك' : 'Register / Custom Name'}</span>
+              <span>{tr(currentLang, { en: 'Register / Custom Name', es: 'Registrar / Nombre', fr: 'Créer / Nom Perso', ar: 'تسجيل / ضبط الحساب باسمك' })}</span>
             </button>
           </div>
 
@@ -512,7 +562,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
             <form onSubmit={handleOwnerLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                  {isAr ? 'البريد الإلكتروني المسجل:' : 'Registered Owner Email:'}
+                  {tr(currentLang, { en: 'Registered Owner Email:', es: 'Correo del Propietario:', fr: 'E-mail du Propriétaire :', ar: 'البريد الإلكتروني المسجل:' })}
                 </label>
                 <input
                   type="email"
@@ -529,7 +579,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                  {isAr ? 'الرقم السري الخاص بك:' : 'Secret Owner Password:'}
+                  {tr(currentLang, { en: 'Secret Owner Password:', es: 'Contraseña Secreta:', fr: 'Mot de Passe Secret :', ar: 'الرقم السري الخاص بك:' })}
                 </label>
                 <div className="relative">
                   <input
@@ -547,7 +597,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                   <Key className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
                 <div className="flex items-center justify-between mt-1.5 text-[10px] text-gray-400">
-                  <span>{isAr ? 'الرقم الافتراضي للمالك: 300 أو yard300' : 'Default Owner PIN: 300 or yard300'}</span>
+                  <span>{tr(currentLang, { en: 'Default Owner PIN: 300 or yard300', es: 'PIN por defecto: 300 o yard300', fr: 'PIN par défaut : 300 ou yard300', ar: 'الرقم الافتراضي للمالك: 300 أو yard300' })}</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -557,7 +607,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                     }}
                     className="text-[#FFE600] hover:underline cursor-pointer font-bold"
                   >
-                    {isAr ? 'تعبئة تلقائية (Yam Suw)' : 'Auto-fill (Yam Suw)'}
+                    {tr(currentLang, { en: 'Auto-fill (Yam Suw)', es: 'Autocompletar (Yam Suw)', fr: 'Auto-remplir (Yam Suw)', ar: 'تعبئة تلقائية (Yam Suw)' })}
                   </button>
                 </div>
               </div>
@@ -567,14 +617,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                 className="w-full py-3.5 bg-gradient-to-r from-[#E50914] to-[#B91C1C] hover:from-[#B91C1C] hover:to-[#E50914] text-white font-black font-anime text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(229,9,20,0.4)] cursor-pointer flex items-center justify-center gap-2 mt-2"
               >
                 <Unlock className="w-4 h-4" />
-                <span>{isAr ? 'دخول لوحة تحكم وتعديل المالك' : 'Sign In as Verified Owner'}</span>
+                <span>{tr(currentLang, { en: 'Sign In as Verified Owner', es: 'Acceder como Propietario', fr: 'Connexion Propriétaire Vérifié', ar: 'دخول لوحة تحكم وتعديل المالك' })}</span>
               </button>
             </form>
           ) : (
             <form onSubmit={handleOwnerRegister} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                  {isAr ? 'اسم المالك (يظهر في أعلى اللوحة):' : 'Owner Display Name:'}
+                  {tr(currentLang, { en: 'Owner Display Name:', es: 'Nombre del Propietario:', fr: 'Nom d’Affichage Propriétaire :', ar: 'اسم المالك (يظهر في أعلى اللوحة):' })}
                 </label>
                 <input
                   type="text"
@@ -584,14 +634,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                     setOwnerName(e.target.value);
                     setAuthError(null);
                   }}
-                  placeholder="Yam Suw (أو اسمك المفضل)"
+                  placeholder="Yam Suw"
                   className="w-full bg-[#141624] border border-gray-700 rounded-xl px-4 py-2.5 text-white font-sans text-xs outline-none focus:border-[#FFE600] focus:ring-1 focus:ring-[#FFE600] transition-all font-bold"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                  {isAr ? 'البريد الإلكتروني الخاص بك:' : 'Personal Owner Email:'}
+                  {tr(currentLang, { en: 'Personal Owner Email:', es: 'Correo Personal:', fr: 'E-mail Personnel :', ar: 'البريد الإلكتروني الخاص بك:' })}
                 </label>
                 <input
                   type="email"
@@ -609,7 +659,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                    {isAr ? 'الرقم السري الجديد:' : 'Secret Password:'}
+                    {tr(currentLang, { en: 'Secret Password:', es: 'Contraseña:', fr: 'Mot de passe :', ar: 'الرقم السري الجديد:' })}
                   </label>
                   <input
                     type="password"
@@ -625,7 +675,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider font-anime">
-                    {isAr ? 'تأكيد الرقم السري:' : 'Confirm Password:'}
+                    {tr(currentLang, { en: 'Confirm Password:', es: 'Confirmar Contraseña:', fr: 'Confirmer :', ar: 'تأكيد الرقم السري:' })}
                   </label>
                   <input
                     type="password"
@@ -646,7 +696,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                 className="w-full py-3.5 bg-gradient-to-r from-[#FFE600] to-[#FFB700] hover:from-[#FFB700] hover:to-[#FFE600] text-black font-black font-anime text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(255,230,0,0.4)] cursor-pointer flex items-center justify-center gap-2 mt-2"
               >
                 <Check className="w-4 h-4 text-black" />
-                <span>{isAr ? 'تسجيل وحفظ حساب المالك وتفعيل اللوحة فوراً' : 'Register & Launch Owner Dashboard'}</span>
+                <span>{tr(currentLang, { en: 'Register & Launch Owner Dashboard', es: 'Registrar y Abrir Panel', fr: 'Enregistrer et Ouvrir le Tableau', ar: 'تسجيل وحفظ حساب المالك وتفعيل اللوحة فوراً' })}</span>
               </button>
             </form>
           )}
@@ -657,7 +707,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               onClick={onBackToStore}
               className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 font-anime"
             >
-              <span>{isAr ? '← العودة إلى المتجر العام' : '← Return to Public Store'}</span>
+              <span>{tr(currentLang, { en: '← Return to Public Store', es: '← Volver a la Tienda', fr: '← Retour à la Boutique', ar: '← العودة إلى المتجر العام' })}</span>
             </button>
           </div>
         </div>
@@ -667,16 +717,11 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
 
   // Live Authenticated Dashboard
   return (
-    <div className={`min-h-screen bg-[#040508] text-white pt-24 pb-20 px-4 md:px-8 relative ${isAr ? 'text-right' : 'text-left'}`}>
-      
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-[#E50914]/15 via-transparent to-transparent pointer-events-none" />
-
-      {/* Floating Save Toast */}
+    <div className={`min-h-screen bg-[#07080C] text-white pt-24 pb-20 px-4 md:px-8 relative ${isAr ? 'text-right' : 'text-left'}`}>
+      {/* Floating Save Confirmation Toast */}
       {saveToast && (
-        <div className="fixed top-24 right-6 z-50 bg-[#10B981] text-black font-black font-anime px-4 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.8)] flex items-center gap-2 text-sm animate-bounce">
-          <CheckCircle2 className="w-5 h-5 text-black" />
+        <div className={`fixed top-20 ${isAr ? 'left-6' : 'right-6'} z-50 px-5 py-3 rounded-2xl bg-emerald-500 text-black font-black text-xs shadow-[0_0_25px_rgba(16,185,129,0.5)] flex items-center gap-2`}>
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>{saveToast}</span>
         </div>
       )}
@@ -684,29 +729,38 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
       <div className="max-w-[1700px] mx-auto relative z-10 space-y-8">
         
         {/* Top Command Bar */}
-        <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+        <div className="bg-[#0C0E14] border border-white/[0.08] rounded-3xl p-6 md:p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 shadow-xl backdrop-blur-xl">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-              <span className="text-[11px] font-black font-anime text-[#FFE600] tracking-widest uppercase">
-                {isAr ? 'مركز قيادة المالك المعتمد // جلسة خاصة ومحمية' : 'OWNER COMMAND CENTER // VERIFIED EXCLUSIVE'}
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <span className="text-[11px] font-mono font-bold text-[#D4AF37] tracking-widest uppercase">
+                {tr(currentLang, {
+                  en: 'FULL-SITE CONTROL STUDIO // VERIFIED EXCLUSIVE',
+                  es: 'ESTUDIO DE CONTROL TOTAL // EXCLUSIVO VERIFICADO',
+                  fr: 'STUDIO DE CONTRÔLE COMPLET // EXCLUSIF VÉRIFIÉ',
+                  ar: 'لوحة التحكم والتعديل الشامل للموقع // جلسة خاصة ومحمية'
+                })}
               </span>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
-                <Crown className="w-3 h-3 text-[#FFE600]" />
+              <span className="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/35 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <Crown className="w-3 h-3 text-[#D4AF37]" />
                 <span>{ownerInfo.name}</span>
                 <span className="opacity-75">({ownerInfo.email})</span>
               </span>
-              <span className="text-[10px] bg-red-950/40 text-red-300 border border-red-800/40 px-2 py-0.5 rounded-full font-bold">
-                {isAr ? 'مخفية عن الجمهور' : 'Hidden from Public'}
+              <span className="text-[10px] bg-white/[0.05] text-slate-300 border border-white/[0.1] px-2.5 py-0.5 rounded-full font-mono">
+                Ctrl+Shift+Y · #admin
               </span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-black font-anime text-white">
-              {isAr ? 'لوحة تحكم ' : 'YARD 300 '}<span className="text-[#E50914] neon-text-red">{isAr ? `المالك: ${ownerInfo.name}` : `OWNER: ${ownerInfo.name}`}</span>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white">
+              {tr(currentLang, { en: 'YARD 300 ', es: 'YARD 300 ', fr: 'YARD 300 ', ar: 'لوحة التحكم الشاملة · ' })}
+              <span className="text-[#D4AF37]">{isAr ? ownerInfo.name : `CONTROL: ${ownerInfo.name}`}</span>
             </h1>
             <p className="text-gray-400 text-xs md:text-sm max-w-2xl font-medium">
-              {isAr 
-                ? 'تحكم كامل وشامل في صور الموقع والمنتجات، تفعيل وتعطيل الأقسام، إدارة بوابات الدفع والخزينة، رفع وتحديث الفيديوهات، وكتابة ونشر المقالات في المجلة الرياضية.'
-                : 'Complete control over site photos & product media, toggling sections, configuring payment gateways & crypto treasury, managing promotional videos, and publishing articles to the Warrior Journal.'}
+              {tr(currentLang, {
+                en: 'Live full-site editor: customize Hero texts & KPIs, products & pricing, Bazaruto Resort & Founders, photos, sections, payments, videos, and editorial articles.',
+                es: 'Editor integral en vivo: personaliza textos Hero y KPIs, productos y precios, Bazaruto Resort y Fundadores, fotos, secciones, pagos, videos y artículos.',
+                fr: 'Éditeur complet en direct : personnalisez textes Hero et KPIs, produits et prix, Bazaruto Resort et Fondateurs, photos, sections, paiements, vidéos et articles.',
+                ar: 'تحكم وتعديل مباشر وفوري على كل شيء في الموقع: النصوص والعناوين، المنتجات والأسعار، المنتجع والمؤسسون، الصور، الأقسام، الدفع، الفيديوهات، والمقالات.'
+              })}
             </p>
           </div>
 
@@ -717,19 +771,19 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               className="px-4 py-2.5 bg-[#141624] hover:bg-[#1E2238] border border-gray-700 hover:border-gray-500 text-white rounded-xl text-xs font-black font-anime transition-all flex items-center gap-2 cursor-pointer"
             >
               <Eye className="w-4 h-4 text-[#00F0FF]" />
-              <span>{isAr ? 'معاينة المتجر المباشر' : 'View Live Store'}</span>
+              <span>{tr(currentLang, { en: 'View Live Store', es: 'Ver Tienda en Vivo', fr: 'Voir la Boutique', ar: 'معاينة المتجر المباشر' })}</span>
             </button>
 
             <button
               onClick={handleExportJSON}
-              title={isAr ? 'تصدير نسخة احتياطية' : 'Export Backup JSON'}
+              title={tr(currentLang, { en: 'Export Backup JSON', es: 'Exportar Respaldo JSON', fr: 'Exporter Sauvegarde JSON', ar: 'تصدير نسخة احتياطية' })}
               className="p-2.5 bg-[#141624] hover:bg-[#1E2238] border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white rounded-xl text-xs transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />
             </button>
 
             <label
-              title={isAr ? 'استيراد نسخة احتياطية' : 'Import Backup JSON'}
+              title={tr(currentLang, { en: 'Import Backup JSON', es: 'Importar Respaldo JSON', fr: 'Importer Sauvegarde JSON', ar: 'استيراد نسخة احتياطية' })}
               className="p-2.5 bg-[#141624] hover:bg-[#1E2238] border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white rounded-xl text-xs transition-all cursor-pointer"
             >
               <Upload className="w-4 h-4" />
@@ -738,7 +792,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
 
             <button
               onClick={handleResetFactory}
-              title={isAr ? 'استعادة ضبط المصنع' : 'Reset to Default'}
+              title={tr(currentLang, { en: 'Reset to Default', es: 'Restablecer Fábrica', fr: 'Réinitialiser', ar: 'استعادة ضبط المصنع' })}
               className="p-2.5 bg-[#1A1215] hover:bg-[#2B151B] border border-red-900/60 text-red-400 hover:text-red-300 rounded-xl text-xs transition-all cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
@@ -749,7 +803,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               className="px-3 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-400 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
               <Lock className="w-3.5 h-3.5 inline mr-1" />
-              <span>{isAr ? 'قفل' : 'Lock'}</span>
+              <span>{tr(currentLang, { en: 'Lock', es: 'Bloquear', fr: 'Verrouiller', ar: 'قفل' })}</span>
             </button>
           </div>
         </div>
@@ -764,7 +818,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <span className="block text-xl font-black font-anime text-white">
                 {Object.keys(config.media.productImageOverrides).length + 2}
               </span>
-              <span className="text-[10px] text-gray-400 uppercase font-anime">{isAr ? 'الصور المخصصة' : 'Custom Media'}</span>
+              <span className="text-[10px] text-gray-400 uppercase font-anime">{tr(currentLang, { en: 'Custom Media', es: 'Medios Propios', fr: 'Médias Perso', ar: 'الصور المخصصة' })}</span>
             </div>
           </div>
 
@@ -776,7 +830,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <span className="block text-xl font-black font-anime text-white">
                 {config.sections.filter(s => s.enabled).length} / {config.sections.length}
               </span>
-              <span className="text-[10px] text-gray-400 uppercase font-anime">{isAr ? 'الأقسام النشطة' : 'Active Sections'}</span>
+              <span className="text-[10px] text-gray-400 uppercase font-anime">{tr(currentLang, { en: 'Active Sections', es: 'Secciones Activas', fr: 'Sections Actives', ar: 'الأقسام النشطة' })}</span>
             </div>
           </div>
 
@@ -788,7 +842,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <span className="block text-xl font-black font-anime text-white">
                 {config.payments.gateways.filter(g => g.enabled).length} / {config.payments.gateways.length}
               </span>
-              <span className="text-[10px] text-gray-400 uppercase font-anime">{isAr ? 'بوابات الدفع' : 'Payment Methods'}</span>
+              <span className="text-[10px] text-gray-400 uppercase font-anime">{tr(currentLang, { en: 'Payment Methods', es: 'Métodos de Pago', fr: 'Paiements', ar: 'بوابات الدفع' })}</span>
             </div>
           </div>
 
@@ -800,7 +854,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <span className="block text-xl font-black font-anime text-white">
                 {config.videos.length}
               </span>
-              <span className="text-[10px] text-gray-400 uppercase font-anime">{isAr ? 'الفيديوهات الحية' : 'Live Videos'}</span>
+              <span className="text-[10px] text-gray-400 uppercase font-anime">{tr(currentLang, { en: 'Live Videos', es: 'Videos en Vivo', fr: 'Vidéos en Direct', ar: 'الفيديوهات الحية' })}</span>
             </div>
           </div>
 
@@ -812,26 +866,71 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               <span className="block text-xl font-black font-anime text-white">
                 {config.articles.length}
               </span>
-              <span className="text-[10px] text-gray-400 uppercase font-anime">{isAr ? 'مقالات المجلة' : 'Journal Articles'}</span>
+              <span className="text-[10px] text-gray-400 uppercase font-anime">{tr(currentLang, { en: 'Journal Articles', es: 'Artículos', fr: 'Articles Journal', ar: 'مقالات المجلة' })}</span>
             </div>
           </div>
         </div>
 
         {/* Tab Selector Navigation */}
-        <div className="flex border-b border-gray-800 overflow-x-auto gap-2 pb-2">
+        <div className="flex border-b border-gray-800 overflow-x-auto gap-2 pb-3">
+          <button
+            onClick={() => {
+              soundFX.playButtonClick();
+              setActiveTab('siteCopy');
+            }}
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'siteCopy'
+                ? 'bg-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)]'
+                : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
+            }`}
+          >
+            <Type className="w-4 h-4" />
+            <span>{tr(currentLang, { en: 'Hero & Copy', es: 'Hero y Textos', fr: 'Hero & Textes', ar: 'النصوص والعناوين' })}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundFX.playButtonClick();
+              setActiveTab('catalogPricing');
+            }}
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'catalogPricing'
+                ? 'bg-gradient-to-r from-[#E50914] to-[#B91C1C] text-white shadow-[0_0_20px_rgba(229,9,20,0.45)]'
+                : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
+            }`}
+          >
+            <Tag className="w-4 h-4" />
+            <span>{tr(currentLang, { en: 'Products & Pricing', es: 'Productos y Precios', fr: 'Produits & Prix', ar: 'المنتجات والأسعار' })}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundFX.playButtonClick();
+              setActiveTab('resortBrand');
+            }}
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'resortBrand'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-black shadow-[0_0_20px_rgba(16,185,129,0.45)]'
+                : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
+            }`}
+          >
+            <Palmtree className="w-4 h-4" />
+            <span>{tr(currentLang, { en: 'Resort, Founders & Footer', es: 'Resort, Fundadores y Pie', fr: 'Resort, Fondateurs & Pied', ar: 'المنتجع، المؤسسون والفوتر' })}</span>
+          </button>
+
           <button
             onClick={() => {
               soundFX.playButtonClick();
               setActiveTab('photos');
             }}
-            className={`px-5 py-3 rounded-2xl font-black font-anime text-xs md:text-sm flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'photos'
-                ? 'bg-gradient-to-r from-[#E50914] to-[#B91C1C] text-white shadow-[0_0_20px_rgba(229,9,20,0.5)]'
+                ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.35)]'
                 : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
-            <span>{isAr ? 'القسم 1: الصور والوسائط' : '1. Photos & Media'}</span>
+            <span>{tr(currentLang, { en: 'Photos & Logo', es: 'Fotos y Logo', fr: 'Photos & Logo', ar: 'الصور والشعار' })}</span>
           </button>
 
           <button
@@ -839,14 +938,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               soundFX.playButtonClick();
               setActiveTab('sections');
             }}
-            className={`px-5 py-3 rounded-2xl font-black font-anime text-xs md:text-sm flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'sections'
-                ? 'bg-gradient-to-r from-[#7000FF] to-[#4F46E5] text-white shadow-[0_0_20px_rgba(112,0,255,0.5)]'
+                ? 'bg-gradient-to-r from-[#7000FF] to-[#4F46E5] text-white shadow-[0_0_20px_rgba(112,0,255,0.45)]'
                 : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
             }`}
           >
             <Layers className="w-4 h-4" />
-            <span>{isAr ? 'القسم 2: أقسام الموقع' : '2. Site Sections'}</span>
+            <span>{tr(currentLang, { en: 'Sections & Banner', es: 'Secciones y Banner', fr: 'Sections & Bannière', ar: 'الأقسام والإعلانات' })}</span>
           </button>
 
           <button
@@ -854,14 +953,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               soundFX.playButtonClick();
               setActiveTab('payments');
             }}
-            className={`px-5 py-3 rounded-2xl font-black font-anime text-xs md:text-sm flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'payments'
-                ? 'bg-gradient-to-r from-[#10B981] to-[#059669] text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] font-black'
+                ? 'bg-gradient-to-r from-[#10B981] to-[#059669] text-black shadow-[0_0_20px_rgba(16,185,129,0.45)]'
                 : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span>{isAr ? 'القسم 3: طرق وبوابات الدفع' : '3. Payment Gateways'}</span>
+            <span>{tr(currentLang, { en: 'Payments', es: 'Pagos', fr: 'Paiements', ar: 'بوابات الدفع' })}</span>
           </button>
 
           <button
@@ -869,14 +968,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               soundFX.playButtonClick();
               setActiveTab('videos');
             }}
-            className={`px-5 py-3 rounded-2xl font-black font-anime text-xs md:text-sm flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'videos'
-                ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-black shadow-[0_0_20px_rgba(245,158,11,0.5)] font-black'
+                ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-black shadow-[0_0_20px_rgba(245,158,11,0.45)]'
                 : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
             }`}
           >
             <Video className="w-4 h-4" />
-            <span>{isAr ? 'القسم 4: الفيديوهات والعروض' : '4. Videos & Demos'}</span>
+            <span>{tr(currentLang, { en: 'Videos', es: 'Videos', fr: 'Vidéos', ar: 'الفيديوهات' })}</span>
           </button>
 
           <button
@@ -884,14 +983,14 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
               soundFX.playButtonClick();
               setActiveTab('articles');
             }}
-            className={`px-5 py-3 rounded-2xl font-black font-anime text-xs md:text-sm flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+            className={`px-4 py-2.5 rounded-2xl font-black font-anime text-xs flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'articles'
-                ? 'bg-gradient-to-r from-[#00F0FF] to-[#0284C7] text-black shadow-[0_0_20px_rgba(0,240,255,0.5)] font-black'
+                ? 'bg-gradient-to-r from-[#00F0FF] to-[#0284C7] text-black shadow-[0_0_20px_rgba(0,240,255,0.45)]'
                 : 'bg-[#0E1018] text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700'
             }`}
           >
             <BookOpen className="w-4 h-4" />
-            <span>{isAr ? 'القسم 5: كتابة وإدارة المقالات' : '5. Warrior Journal CMS'}</span>
+            <span>{isAr ? 'المجلة والمقالات' : 'Journal CMS'}</span>
           </button>
         </div>
 
@@ -944,8 +1043,8 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                       const updated = { ...config.media, heroImage: e.target.value };
                       setConfig({ ...config, media: updated });
                     }}
-                    placeholder="/images/anime_hero_demon_back_1788742125215.jpg"
-                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#E50914] font-mono"
+                    placeholder="/images/hero_banderas_muscular.jpg"
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37] font-mono"
                   />
 
                   {/* Preset Quick Buttons */}
@@ -954,32 +1053,32 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        const updated = { ...config.media, heroImage: '/images/anime_hero_demon_back_1788742125215.jpg' };
+                        const updated = { ...config.media, heroImage: '/images/hero_banderas_muscular.jpg' };
                         persistConfig({ ...config, media: updated });
                       }}
-                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-anime"
+                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-mono"
                     >
-                      Demon Back
+                      Hero Muscular
                     </button>
                     <button
                       type="button"
                       onClick={() => {
-                        const updated = { ...config.media, heroImage: '/images/cyber_ronin_blade.jpg' };
+                        const updated = { ...config.media, heroImage: '/images/ai_human_tactical_male.jpg' };
                         persistConfig({ ...config, media: updated });
                       }}
-                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-anime"
+                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-mono"
                     >
-                      Samurai Ronin
+                      Tactical Athlete
                     </button>
                     <button
                       type="button"
                       onClick={() => {
-                        const updated = { ...config.media, heroImage: '/images/live_arena_fighters_2050_1788741135197.jpg' };
+                        const updated = { ...config.media, heroImage: '/images/ai_human_arena_duo.jpg' };
                         persistConfig({ ...config, media: updated });
                       }}
-                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-anime"
+                      className="px-2 py-0.5 rounded bg-[#1D2032] hover:bg-gray-700 text-[10px] text-gray-300 font-mono"
                     >
-                      Live Arena
+                      Performance Arena
                     </button>
                   </div>
                 </div>
@@ -1622,7 +1721,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                         type="text"
                         value={videoForm.posterUrl || ''}
                         onChange={(e) => setVideoForm({ ...videoForm, posterUrl: e.target.value })}
-                        placeholder="/images/anime_fighter_ryu_impact.jpg"
+                        placeholder="/images/ai_human_striker_male.jpg"
                         className="w-full bg-[#1A1D2E] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-400 font-mono"
                       />
                     </div>
@@ -1962,6 +2061,874 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
 
             </div>
 
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: HERO COPY & KPI NUMBERS (نصوص الواجهة والأرقام الرئيسية)
+        ========================================================================= */}
+        {activeTab === 'siteCopy' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Type className="w-5 h-5 text-[#D4AF37]" />
+                    <span>{isAr ? 'تعديل نصوص الواجهة الرئيسية والأرقام' : 'Hero Banner Texts & Live KPI Metrics'}</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {isAr
+                      ? 'أي تعديل هنا ينعكس فوراً في الواجهة الرئيسية للموقع (اتركه فارغاً لاستخدام النص الافتراضي).'
+                      : 'Edit hero headline segments, eyebrow badge, subtitle, and telemetry numbers. Leave blank to keep defaults.'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      persistConfig(
+                        { ...config, heroText: { kpi1Value: '+9,999', kpi2Value: '100%', kpi3Value: 'S-RANK' } },
+                        isAr ? 'تمت استعادة نصوص الهيرو الافتراضية' : 'Hero texts reset to defaults'
+                      );
+                    }}
+                    className="px-3 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-xs text-gray-300 font-bold cursor-pointer"
+                  >
+                    {isAr ? 'استعادة الافتراضي' : 'Reset Defaults'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => persistConfig({ ...config, heroText: config.heroText }, isAr ? 'تم حفظ نصوص الهيرو بنجاح!' : 'Hero copy saved live!')}
+                    className="px-5 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#e5c14a] text-black font-black font-anime text-xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isAr ? 'حفظ النصوص الآن' : 'Save Hero Copy'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* KPI Numbers Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-2xl bg-[#10121C] border border-gray-800">
+                <div>
+                  <label className="text-[11px] font-bold text-[#D4AF37] block mb-1">KPI 1 (e.g. +9,999)</label>
+                  <input
+                    type="text"
+                    value={config.heroText?.kpi1Value || ''}
+                    onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, kpi1Value: e.target.value } })}
+                    placeholder="+9,999"
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-sm text-white font-mono outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#D4AF37] block mb-1">KPI 2 (e.g. 100%)</label>
+                  <input
+                    type="text"
+                    value={config.heroText?.kpi2Value || ''}
+                    onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, kpi2Value: e.target.value } })}
+                    placeholder="100%"
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-sm text-white font-mono outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-[#D4AF37] block mb-1">KPI 3 (e.g. S-RANK)</label>
+                  <input
+                    type="text"
+                    value={config.heroText?.kpi3Value || ''}
+                    onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, kpi3Value: e.target.value } })}
+                    placeholder="S-RANK"
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-sm text-white font-mono outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+              </div>
+
+              {/* Bilingual Copy Inputs */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Copy */}
+                <div className="p-5 rounded-2xl bg-[#10121C] border border-gray-800 space-y-3" dir="ltr">
+                  <span className="text-xs font-black text-[#D4AF37] uppercase tracking-wider block">English Hero Copy</span>
+                  <div>
+                    <label className="text-[11px] text-gray-400 block mb-1">Eyebrow Badge (EN)</label>
+                    <input
+                      type="text"
+                      value={config.heroText?.badgeEn || ''}
+                      onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, badgeEn: e.target.value } })}
+                      placeholder="ATHLETIC PERFORMANCE & RECOVERY"
+                      className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">Line 1 Part A (White)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title1En || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title1En: e.target.value } })}
+                        placeholder="FORGE YOUR "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-[#D4AF37] block mb-1">Line 1 Part B (Gold)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title2En || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title2En: e.target.value } })}
+                        placeholder="LIMITLESS "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">Line 2 Part A (White)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title3En || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title3En: e.target.value } })}
+                        placeholder="ATHLETIC "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-gray-300 block mb-1">Line 2 Part B (Light)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title4En || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title4En: e.target.value } })}
+                        placeholder="LEGACY"
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-gray-400 block mb-1">Hero Subtitle (EN)</label>
+                    <textarea
+                      rows={3}
+                      value={config.heroText?.subtitleEn || ''}
+                      onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, subtitleEn: e.target.value } })}
+                      placeholder="Custom athletic gear, AI performance analytics, and private bio-recovery sanctuary..."
+                      className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+
+                {/* Arabic Copy */}
+                <div className="p-5 rounded-2xl bg-[#10121C] border border-gray-800 space-y-3" dir="rtl">
+                  <span className="text-xs font-black text-[#D4AF37] uppercase tracking-wider block">النصوص العربية للواجهة</span>
+                  <div>
+                    <label className="text-[11px] text-gray-400 block mb-1">الشارة العلوية (عربي)</label>
+                    <input
+                      type="text"
+                      value={config.heroText?.badgeAr || ''}
+                      onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, badgeAr: e.target.value } })}
+                      placeholder="الأداء الرياضي الفائق والاستشفاء الحيوي"
+                      className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">السطر 1 (أبيض)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title1Ar || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title1Ar: e.target.value } })}
+                        placeholder="اصنع "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-[#D4AF37] block mb-1">السطر 1 (ذهبي)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title2Ar || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title2Ar: e.target.value } })}
+                        placeholder="إرثك القتالي "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">السطر 2 (أبيض)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title3Ar || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title3Ar: e.target.value } })}
+                        placeholder="بلا "
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-gray-300 block mb-1">السطر 2 (تكميلي)</label>
+                      <input
+                        type="text"
+                        value={config.heroText?.title4Ar || ''}
+                        onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, title4Ar: e.target.value } })}
+                        placeholder="حدود"
+                        className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-gray-400 block mb-1">النص الفرعي تحت العنوان (عربي)</label>
+                    <textarea
+                      rows={3}
+                      value={config.heroText?.subtitleAr || ''}
+                      onChange={(e) => setConfig({ ...config, heroText: { ...config.heroText, subtitleAr: e.target.value } })}
+                      placeholder="عتاد رياضي فاخر، تحليلات ذكاء اصطناعي للأداء، ومنتجع استشفاء متكامل..."
+                      className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: PRODUCTS, PRICING & CLUB/CAMP LIMITS (المنتجات والأسعار والاشتراكات)
+        ========================================================================= */}
+        {activeTab === 'catalogPricing' && (
+          <div className="space-y-8 animate-fadeIn">
+            {/* Club & Camp Global Numbers */}
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-[#D4AF37]" />
+                    <span>{isAr ? 'أسعار النادي الخاص وسعة الكامب الدولي' : 'Club Membership Price & Global Camp Capacity'}</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {isAr ? 'تعديل سعر اشتراك النادي الرياضي وسعة كل معسكر عالمي فوراً.' : 'Configure Club ownership license pricing and global camp athlete limit.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => persistConfig({ ...config }, isAr ? 'تم حفظ إعدادات النادي والكامب!' : 'Club & Camp settings saved!')}
+                  className="px-5 py-2.5 rounded-xl bg-[#D4AF37] text-black font-black text-xs flex items-center gap-2 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isAr ? 'حفظ الإعدادات' : 'Save Limits'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-[#10121C] border border-gray-800">
+                  <label className="text-xs font-bold text-gray-300 block mb-1.5">
+                    {isAr ? 'سعر اشتراك النادي الرياضي الخاص ($ USD):' : 'Private Athletic Club Fee ($ USD):'}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={config.siteSettings?.clubMembershipPrice ?? 30}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        siteSettings: { ...config.siteSettings, clubMembershipPrice: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-4 py-2.5 text-sm font-mono text-[#D4AF37] outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+                <div className="p-4 rounded-2xl bg-[#10121C] border border-gray-800">
+                  <label className="text-xs font-bold text-gray-300 block mb-1.5">
+                    {isAr ? 'السعة القصوى لكل معسكر دولي (رياضي):' : 'Global Camp Capacity Limit (Athletes):'}
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={config.siteSettings?.campCapacity ?? 300}
+                    onChange={(e) =>
+                      setConfig({
+                        ...config,
+                        siteSettings: { ...config.siteSettings, campCapacity: Number(e.target.value) }
+                      })
+                    }
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-4 py-2.5 text-sm font-mono text-[#10B981] outline-none focus:border-[#10B981]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Full Store Catalog Editor */}
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-[#E50914]" />
+                    <span>{isAr ? 'تحرير جميع منتجات المتجر والأسعار والإخفاء' : 'Full Product Catalog: Names, Prices, Copy & Visibility'}</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {isAr
+                      ? 'عدّل اسم أو سعر أو وصف أو صورة أي منتج أو قم بإخفائه من المتجر بضغطة واحدة.'
+                      : 'Edit any item name, live price, compare-at price, tagline, description, image URL, or toggle visibility.'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    value={catalogLangEdit}
+                    onChange={(e) => setCatalogLangEdit(e.target.value)}
+                    className="bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  >
+                    <option value="en">Base Catalog: English</option>
+                    <option value="ar">الكتالوج الأساسي: العربية</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => persistConfig({ ...config }, isAr ? 'تم حفظ جميع تعديلات المنتجات والأسعار!' : 'All product catalog edits saved live!')}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E50914] to-[#B91C1C] text-white font-black text-xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isAr ? 'حفظ كل المنتجات' : 'Save All Products'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {OwnerConfigService.getConfiguredProducts(catalogLangEdit, true).map((prod) => {
+                  const ov = config.productOverrides?.[prod.id] || {};
+                  const isDisabled = Boolean(ov.disabled);
+
+                  const updateProdField = (patch: Record<string, unknown>) => {
+                    setConfig({
+                      ...config,
+                      productOverrides: {
+                        ...config.productOverrides,
+                        [prod.id]: { ...ov, ...patch }
+                      }
+                    });
+                  };
+
+                  return (
+                    <div
+                      key={prod.id}
+                      className={`p-5 rounded-2xl border space-y-4 transition-all ${
+                        isDisabled
+                          ? 'bg-[#08090F] border-gray-900 opacity-65'
+                          : 'bg-[#10121C] border-gray-800 hover:border-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <img
+                            src={prod.imageUrl}
+                            alt={prod.name}
+                            referrerPolicy="no-referrer"
+                            onError={handleImageError}
+                            className="w-14 h-14 rounded-xl object-cover bg-black border border-gray-800 shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <span className="text-[10px] font-mono text-gray-500 block">
+                              {prod.id} · {prod.category}
+                            </span>
+                            <h4 className="font-bold text-sm text-white truncate">{prod.name}</h4>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const nextOv = {
+                                ...config.productOverrides,
+                                [prod.id]: { ...ov, disabled: !isDisabled }
+                              };
+                              persistConfig(
+                                { ...config, productOverrides: nextOv },
+                                !isDisabled ? (isAr ? 'تم إخفاء المنتج' : 'Product hidden') : (isAr ? 'تم إظهار المنتج' : 'Product visible')
+                              );
+                            }}
+                            className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 cursor-pointer ${
+                              isDisabled
+                                ? 'bg-gray-800 text-gray-400 border border-gray-700'
+                                : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            }`}
+                          >
+                            {isDisabled ? <ToggleLeft className="w-4 h-4" /> : <ToggleRight className="w-4 h-4" />}
+                            <span>{isDisabled ? (isAr ? 'مخفي' : 'Hidden') : (isAr ? 'ظاهر' : 'Visible')}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="sm:col-span-3">
+                          <label className="text-[10px] text-gray-400 block mb-1">{isAr ? 'اسم المنتج:' : 'Product Name:'}</label>
+                          <input
+                            type="text"
+                            value={ov.name !== undefined ? ov.name : prod.name}
+                            onChange={(e) => updateProdField({ name: e.target.value })}
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-emerald-400 block mb-1">{isAr ? 'السعر ($):' : 'Price ($):'}</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={ov.price !== undefined ? ov.price : prod.price}
+                            onChange={(e) => updateProdField({ price: Number(e.target.value) })}
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none focus:border-emerald-400"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-gray-400 block mb-1">{isAr ? 'السعر قبل الخصم ($):' : 'Original Price ($):'}</label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={ov.originalPrice !== undefined ? ov.originalPrice : (prod.originalPrice || '')}
+                            onChange={(e) => updateProdField({ originalPrice: e.target.value ? Number(e.target.value) : undefined })}
+                            placeholder="Optional"
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-gray-400 block mb-1">{isAr ? 'رابط الصورة:' : 'Image URL:'}</label>
+                          <input
+                            type="text"
+                            value={config.media.productImageOverrides?.[prod.id] ?? prod.imageUrl}
+                            onChange={(e) =>
+                              setConfig({
+                                ...config,
+                                media: {
+                                  ...config.media,
+                                  productImageOverrides: {
+                                    ...config.media.productImageOverrides,
+                                    [prod.id]: e.target.value
+                                  }
+                                }
+                              })
+                            }
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className="text-[10px] text-gray-400 block mb-1">{isAr ? 'السطر التسويقي (Tagline):' : 'Tagline:'}</label>
+                          <input
+                            type="text"
+                            value={ov.tagline !== undefined ? ov.tagline : prod.tagline}
+                            onChange={(e) => updateProdField({ tagline: e.target.value })}
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className="text-[10px] text-gray-400 block mb-1">{isAr ? 'الوصف:' : 'Description:'}</label>
+                          <textarea
+                            rows={2}
+                            value={ov.description !== undefined ? ov.description : prod.description}
+                            onChange={(e) => updateProdField({ description: e.target.value })}
+                            className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-800/80">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const nextOverrides = { ...config.productOverrides };
+                            delete nextOverrides[prod.id];
+                            const nextImgs = { ...config.media.productImageOverrides };
+                            delete nextImgs[prod.id];
+                            persistConfig(
+                              {
+                                ...config,
+                                productOverrides: nextOverrides,
+                                media: { ...config.media, productImageOverrides: nextImgs }
+                              },
+                              isAr ? 'تمت استعادة المنتج الافتراضي' : 'Restored product defaults'
+                            );
+                          }}
+                          className="text-[11px] text-gray-400 hover:text-red-400 cursor-pointer font-semibold"
+                        >
+                          {isAr ? 'استعادة الافتراضي' : 'Reset Item'}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => persistConfig({ ...config }, isAr ? `تم حفظ: ${prod.name}` : `Saved: ${prod.name}`)}
+                          className="px-4 py-1.5 rounded-xl bg-white hover:bg-gray-200 text-black text-xs font-black flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>{isAr ? 'تطبيق التعديل' : 'Apply Changes'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: RESORT, FOUNDERS & FOOTER (منتجع بازاروتو، المؤسسون، ومعلومات التواصل)
+        ========================================================================= */}
+        {activeTab === 'resortBrand' && (
+          <div className="space-y-8 animate-fadeIn">
+            {/* Bazaruto Resort Sanctuary Controls */}
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Palmtree className="w-5 h-5 text-emerald-400" />
+                    <span>{isAr ? 'إعدادات منتجع يارد بازاروتو (النصوص، التوقيع والصور)' : 'YARD Bazaruto Sanctuary — Copy, Signature & Visuals'}</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {isAr
+                      ? 'تحكم في تاريخ الافتتاح، النبذة المكتوبة، اسم المصمم المعماري، وصور المنتجع والجزيرة الليلية.'
+                      : 'Edit opening date badge, overview text, architectural signature credit, panorama and night aerial island photos.'}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      persistConfig(
+                        { ...config, resort: { ...DEFAULT_RESORT_CONFIG } },
+                        isAr ? 'تمت استعادة إعدادات المنتجع الافتراضية' : 'Resort settings reset to defaults'
+                      )
+                    }
+                    className="px-3 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700 text-xs text-gray-300 font-bold cursor-pointer"
+                  >
+                    {isAr ? 'افتراضي' : 'Reset'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => persistConfig({ ...config }, isAr ? 'تم حفظ تعديلات المنتجع بنجاح!' : 'Bazaruto Resort settings saved live!')}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isAr ? 'حفظ المنتجع' : 'Save Resort'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Opening Date Badge (EN)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.openingDateEn || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, openingDateEn: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">شارة الافتتاح (عربي)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.openingDateAr || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, openingDateAr: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-400"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Title (EN)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.titleEn || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, titleEn: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">العنوان (عربي)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.titleAr || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, titleAr: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Gold Subtitle Highlight (EN)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.subtitleHighlightEn || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, subtitleHighlightEn: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">العنوان الفرعي المميز (عربي)</label>
+                  <input
+                    type="text"
+                    value={config.resort?.subtitleHighlightAr || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, subtitleHighlightAr: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="text-xs font-bold text-[#D4AF37] block mb-1">
+                    {isAr ? 'التوقيع المعماري أسفل النبذة:' : 'Architectural Signature Name:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={config.resort?.architectName || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, architectName: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Overview Paragraph (EN)</label>
+                  <textarea
+                    rows={3}
+                    value={config.resort?.overviewEn || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, overviewEn: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">النبذة التعريفية (عربي)</label>
+                  <textarea
+                    rows={3}
+                    value={config.resort?.overviewAr || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, overviewAr: e.target.value } })}
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+
+                {/* Resort Imagery */}
+                <div className="p-4 rounded-2xl bg-[#10121C] border border-gray-800 space-y-2">
+                  <label className="text-xs font-bold text-gray-300 block">
+                    {isAr ? 'صورة المنتجع الأولى (Panorama):' : 'Resort Primary Panorama URL:'}
+                  </label>
+                  <img
+                    src={config.resort?.heroPanoramaImage || YARD_BAZARUTO_RESORT_IMAGE}
+                    alt="Resort Panorama"
+                    referrerPolicy="no-referrer"
+                    onError={handleImageError}
+                    className="w-full h-36 object-cover rounded-xl bg-black border border-gray-800"
+                  />
+                  <input
+                    type="text"
+                    value={config.resort?.heroPanoramaImage || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, heroPanoramaImage: e.target.value } })}
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#10121C] border border-gray-800 space-y-2">
+                  <label className="text-xs font-bold text-gray-300 block">
+                    {isAr ? 'صورة الجزيرة الليلية من الأعلى:' : 'Island Aerial Night View URL:'}
+                  </label>
+                  <img
+                    src={config.resort?.aerialNightImage || YARD_ISLAND_AERIAL_NIGHT_IMAGE}
+                    alt="Aerial Night"
+                    referrerPolicy="no-referrer"
+                    onError={handleImageError}
+                    className="w-full h-36 object-cover rounded-xl bg-black border border-gray-800"
+                  />
+                  <input
+                    type="text"
+                    value={config.resort?.aerialNightImage || ''}
+                    onChange={(e) => setConfig({ ...config, resort: { ...config.resort, aerialNightImage: e.target.value } })}
+                    className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Founders Profile Editor */}
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Users className="w-5 h-5 text-[#D4AF37]" />
+                    <span>{isAr ? 'تعديل بيانات وصور المؤسسين' : 'Founders Leadership Profiles'}</span>
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {isAr ? 'تعديل أسماء، أدوار، وصور المؤسسين الثلاثة في الواجهة.' : 'Customize founder display names, roles, and portraits across the site.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => persistConfig({ ...config }, isAr ? 'تم حفظ بيانات المؤسسين!' : 'Founder profiles saved live!')}
+                  className="px-5 py-2.5 rounded-xl bg-[#D4AF37] text-black font-black text-xs flex items-center gap-2 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isAr ? 'حفظ المؤسسين' : 'Save Founders'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {['yam-suw', 'mtk', 'arb'].map((fid) => {
+                  const fData = config.siteSettings?.founderOverrides?.[fid] || DEFAULT_BRAND_SITE_SETTINGS.founderOverrides[fid] || {};
+                  const updateFounder = (patch: Record<string, string>) => {
+                    setConfig({
+                      ...config,
+                      siteSettings: {
+                        ...config.siteSettings,
+                        founderOverrides: {
+                          ...config.siteSettings.founderOverrides,
+                          [fid]: { ...fData, ...patch }
+                        }
+                      }
+                    });
+                  };
+
+                  return (
+                    <div key={fid} className="p-4 rounded-2xl bg-[#10121C] border border-gray-800 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={fData.image || '/images/founder_yam_suw_suit.jpg'}
+                          alt={fData.name || fid}
+                          referrerPolicy="no-referrer"
+                          onError={handleImageError}
+                          className="w-12 h-12 rounded-xl object-cover object-top bg-black border border-gray-700"
+                        />
+                        <span className="text-xs font-mono text-[#D4AF37] font-bold uppercase">{fid}</span>
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 block mb-1">Display Name (EN)</label>
+                        <input
+                          type="text"
+                          value={fData.name || ''}
+                          onChange={(e) => updateFounder({ name: e.target.value })}
+                          className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 block mb-1">الاسم (عربي)</label>
+                        <input
+                          type="text"
+                          value={fData.nameAr || ''}
+                          onChange={(e) => updateFounder({ nameAr: e.target.value })}
+                          className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 block mb-1">Role / Title (EN)</label>
+                        <input
+                          type="text"
+                          value={fData.role || ''}
+                          onChange={(e) => updateFounder({ role: e.target.value })}
+                          className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 block mb-1">الدور القيادي (عربي)</label>
+                        <input
+                          type="text"
+                          value={fData.roleAr || ''}
+                          onChange={(e) => updateFounder({ roleAr: e.target.value })}
+                          className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-gray-400 block mb-1">Portrait URL</label>
+                        <input
+                          type="text"
+                          value={fData.image || ''}
+                          onChange={(e) => updateFounder({ image: e.target.value })}
+                          className="w-full bg-[#181B28] border border-gray-700 rounded-xl px-3 py-1.5 text-xs font-mono text-white outline-none"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer, Contact & Social Settings */}
+            <div className="bg-[#0A0C14] border border-gray-800 rounded-3xl p-6 md:p-8 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black font-anime text-white flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-[#00F0FF]" />
+                    <span>{isAr ? 'معلومات الفوتر والتواصل والحسابات الرسمية' : 'Footer Copy, Contact Email & Official Social Links'}</span>
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => persistConfig({ ...config }, isAr ? 'تم حفظ إعدادات الفوتر والتواصل!' : 'Footer & contact settings saved!')}
+                  className="px-5 py-2.5 rounded-xl bg-[#00F0FF] text-black font-black text-xs flex items-center gap-2 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isAr ? 'حفظ بيانات التواصل' : 'Save Footer & Social'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Footer Brand Tagline (EN)</label>
+                  <input
+                    type="text"
+                    value={config.siteSettings?.footerTaglineEn || ''}
+                    onChange={(e) =>
+                      setConfig({ ...config, siteSettings: { ...config.siteSettings, footerTaglineEn: e.target.value } })
+                    }
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">نبذة الفوتر أسفل الموقع (عربي)</label>
+                  <input
+                    type="text"
+                    value={config.siteSettings?.footerTaglineAr || ''}
+                    onChange={(e) =>
+                      setConfig({ ...config, siteSettings: { ...config.siteSettings, footerTaglineAr: e.target.value } })
+                    }
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">Official Contact Email</label>
+                  <input
+                    type="email"
+                    value={config.siteSettings?.contactEmail || ''}
+                    onChange={(e) =>
+                      setConfig({ ...config, siteSettings: { ...config.siteSettings, contactEmail: e.target.value } })
+                    }
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-xs font-bold text-gray-300 block mb-1">Instagram Handle</label>
+                    <input
+                      type="text"
+                      value={config.siteSettings?.instagramHandle || ''}
+                      onChange={(e) =>
+                        setConfig({ ...config, siteSettings: { ...config.siteSettings, instagramHandle: e.target.value } })
+                      }
+                      className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-300 block mb-1">Instagram URL</label>
+                    <input
+                      type="text"
+                      value={config.siteSettings?.instagramUrl || ''}
+                      onChange={(e) =>
+                        setConfig({ ...config, siteSettings: { ...config.siteSettings, instagramUrl: e.target.value } })
+                      }
+                      className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">X / Twitter Handle</label>
+                  <input
+                    type="text"
+                    value={config.siteSettings?.xHandle || ''}
+                    onChange={(e) =>
+                      setConfig({ ...config, siteSettings: { ...config.siteSettings, xHandle: e.target.value } })
+                    }
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-300 block mb-1">X / Twitter URL</label>
+                  <input
+                    type="text"
+                    value={config.siteSettings?.xUrl || ''}
+                    onChange={(e) =>
+                      setConfig({ ...config, siteSettings: { ...config.siteSettings, xUrl: e.target.value } })
+                    }
+                    className="w-full bg-[#141624] border border-gray-700 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

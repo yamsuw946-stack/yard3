@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { HERO_IMAGE, CHALLENGER_IMAGE, handleImageError } from '../constants';
 import { FitnessDataPoint, AttributeData } from '../types';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { authService, AuthUser } from '../services/authService';
 import { HydrationTracker } from './HydrationTracker';
 import { HeartRateLoadChart } from './HeartRateLoadChart';
@@ -36,30 +36,30 @@ import {
   ClubStory 
 } from '../services/clubService';
 
-const getWeeklyData = (isAr: boolean): FitnessDataPoint[] => [
-  { day: isAr ? 'الأحد' : 'Sun', powerLevel: 7200, calories: 650, workoutMinutes: 60, auraScore: 82 },
-  { day: isAr ? 'الإثنين' : 'Mon', powerLevel: 8100, calories: 820, workoutMinutes: 75, auraScore: 88 },
-  { day: isAr ? 'الثلاثاء' : 'Tue', powerLevel: 7800, calories: 710, workoutMinutes: 65, auraScore: 85 },
-  { day: isAr ? 'الأربعاء' : 'Wed', powerLevel: 8900, calories: 950, workoutMinutes: 90, auraScore: 92 },
-  { day: isAr ? 'الخميس' : 'Thu', powerLevel: 9400, calories: 1100, workoutMinutes: 105, auraScore: 96 },
-  { day: isAr ? 'الجمعة' : 'Fri', powerLevel: 8500, calories: 800, workoutMinutes: 70, auraScore: 90 },
-  { day: isAr ? 'السبت' : 'Sat', powerLevel: 9850, calories: 1250, workoutMinutes: 120, auraScore: 99 },
+const getWeeklyData = (lang: Language): FitnessDataPoint[] => [
+  { day: tr(lang, { en: 'Sun', es: 'Dom', fr: 'Dim', ar: 'الأحد' }), powerLevel: 7200, calories: 650, workoutMinutes: 60, auraScore: 82 },
+  { day: tr(lang, { en: 'Mon', es: 'Lun', fr: 'Lun', ar: 'الإثنين' }), powerLevel: 8100, calories: 820, workoutMinutes: 75, auraScore: 88 },
+  { day: tr(lang, { en: 'Tue', es: 'Mar', fr: 'Mar', ar: 'الثلاثاء' }), powerLevel: 7800, calories: 710, workoutMinutes: 65, auraScore: 85 },
+  { day: tr(lang, { en: 'Wed', es: 'Mié', fr: 'Mer', ar: 'الأربعاء' }), powerLevel: 8900, calories: 950, workoutMinutes: 90, auraScore: 92 },
+  { day: tr(lang, { en: 'Thu', es: 'Jue', fr: 'Jeu', ar: 'الخميس' }), powerLevel: 9400, calories: 1100, workoutMinutes: 105, auraScore: 96 },
+  { day: tr(lang, { en: 'Fri', es: 'Vie', fr: 'Ven', ar: 'الجمعة' }), powerLevel: 8500, calories: 800, workoutMinutes: 70, auraScore: 90 },
+  { day: tr(lang, { en: 'Sat', es: 'Sáb', fr: 'Sam', ar: 'السبت' }), powerLevel: 9850, calories: 1250, workoutMinutes: 120, auraScore: 99 },
 ];
 
-const getMonthlyData = (isAr: boolean): FitnessDataPoint[] => [
-  { day: isAr ? 'الأسبوع 1' : 'Week 1', powerLevel: 28000, calories: 4200, workoutMinutes: 380, auraScore: 84 },
-  { day: isAr ? 'الأسبوع 2' : 'Week 2', powerLevel: 32000, calories: 4800, workoutMinutes: 420, auraScore: 89 },
-  { day: isAr ? 'الأسبوع 3' : 'Week 3', powerLevel: 36500, calories: 5300, workoutMinutes: 470, auraScore: 94 },
-  { day: isAr ? 'الأسبوع 4' : 'Week 4', powerLevel: 41200, calories: 6100, workoutMinutes: 530, auraScore: 98 },
+const getMonthlyData = (lang: Language): FitnessDataPoint[] => [
+  { day: tr(lang, { en: 'Week 1', es: 'Semana 1', fr: 'Semaine 1', ar: 'الأسبوع 1' }), powerLevel: 28000, calories: 4200, workoutMinutes: 380, auraScore: 84 },
+  { day: tr(lang, { en: 'Week 2', es: 'Semana 2', fr: 'Semaine 2', ar: 'الأسبوع 2' }), powerLevel: 32000, calories: 4800, workoutMinutes: 420, auraScore: 89 },
+  { day: tr(lang, { en: 'Week 3', es: 'Semana 3', fr: 'Semaine 3', ar: 'الأسبوع 3' }), powerLevel: 36500, calories: 5300, workoutMinutes: 470, auraScore: 94 },
+  { day: tr(lang, { en: 'Week 4', es: 'Semana 4', fr: 'Semaine 4', ar: 'الأسبوع 4' }), powerLevel: 41200, calories: 6100, workoutMinutes: 530, auraScore: 98 },
 ];
 
-const getAttributeData = (isAr: boolean): AttributeData[] => [
-  { attribute: isAr ? 'القوة الانفجارية' : 'Power', score: 96, fullMark: 100 },
-  { attribute: isAr ? 'السرعة والبديهة' : 'Agility', score: 92, fullMark: 100 },
-  { attribute: isAr ? 'التحمل العضلي' : 'Stamina', score: 98, fullMark: 100 },
-  { attribute: isAr ? 'التركيز والصلابة' : 'Focus', score: 95, fullMark: 100 },
-  { attribute: isAr ? 'سرعة الاستشفاء' : 'Recovery', score: 88, fullMark: 100 },
-  { attribute: isAr ? 'طاقة الهالة S-Rank' : 'Aura Rank', score: 99, fullMark: 100 },
+const getAttributeData = (lang: Language): AttributeData[] => [
+  { attribute: tr(lang, { en: 'Power', es: 'Potencia', fr: 'Puissance', ar: 'القوة الانفجارية' }), score: 96, fullMark: 100 },
+  { attribute: tr(lang, { en: 'Agility', es: 'Agilidad', fr: 'Agilité', ar: 'السرعة والبديهة' }), score: 92, fullMark: 100 },
+  { attribute: tr(lang, { en: 'Stamina', es: 'Resistencia', fr: 'Endurance', ar: 'التحمل العضلي' }), score: 98, fullMark: 100 },
+  { attribute: tr(lang, { en: 'Focus', es: 'Enfoque', fr: 'Concentration', ar: 'التركيز والصلابة' }), score: 95, fullMark: 100 },
+  { attribute: tr(lang, { en: 'Recovery', es: 'Recuperación', fr: 'Récupération', ar: 'سرعة الاستشفاء' }), score: 88, fullMark: 100 },
+  { attribute: tr(lang, { en: 'Aura Rank', es: 'Rango Aura', fr: 'Rang Aura', ar: 'طاقة الهالة S-Rank' }), score: 99, fullMark: 100 },
 ];
 
 interface ProfileProps {
@@ -73,12 +73,13 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ 
   onBack, 
-  currentLang = 'en', 
+  currentLang: propLang = 'en', 
   onOpenAuraVisualizer, 
   onNavigateToEngine,
   onNavigateToClub,
   onOpenAuth
 }) => {
+  const currentLang = propLang as Language;
   const isEs = currentLang === 'es';
   const isFr = currentLang === 'fr';
   const isAr = currentLang === 'ar';
@@ -249,22 +250,22 @@ const Profile: React.FC<ProfileProps> = ({
     window.addEventListener('aura_avatar_updated', handleAvatarUpdate);
     return () => window.removeEventListener('aura_avatar_updated', handleAvatarUpdate);
   }, []);
-  const [fitnessData, setFitnessData] = useState<FitnessDataPoint[]>(() => getWeeklyData(isAr));
+  const [fitnessData, setFitnessData] = useState<FitnessDataPoint[]>(() => getWeeklyData(currentLang));
   const [showLogModal, setShowLogModal] = useState(false);
   
   // Update data when language toggles
   useEffect(() => {
-    setFitnessData(getWeeklyData(isAr));
-  }, [isAr]);
+    setFitnessData(getWeeklyData(currentLang));
+  }, [currentLang]);
 
   // New session state
-  const [newDay, setNewDay] = useState(isAr ? 'الجولة القادمة' : 'Next Session');
+  const [newDay, setNewDay] = useState(tr(currentLang, { en: 'Next Session', es: 'Próxima Sesión', fr: 'Prochaine Session', ar: 'الجولة القادمة' }));
   const [newCalories, setNewCalories] = useState<number>(850);
   const [newMinutes, setNewMinutes] = useState<number>(80);
   const [newPower, setNewPower] = useState<number>(9500);
 
-  const activeData = timeframe === 'week' ? fitnessData : getMonthlyData(isAr);
-  const attributeData = getAttributeData(isAr);
+  const activeData = timeframe === 'week' ? fitnessData : getMonthlyData(currentLang);
+  const attributeData = getAttributeData(currentLang);
 
   const handleAddWorkout = (e: React.FormEvent) => {
     e.preventDefault();
@@ -305,12 +306,17 @@ const Profile: React.FC<ProfileProps> = ({
     return () => window.removeEventListener('yard300_streak_updated', handleStreakUpdate);
   }, []);
 
-  const athleteName = currentUser?.name || (isAr ? 'رياضي YARD 300' : 'YARD 300 ATHLETE');
-  const athleteRank = currentUser?.rankTitle || (isAr ? 'المستوى الأول (ضيف)' : 'A-RANK WARRIOR');
+  const athleteName = currentUser?.name || tr(currentLang, { en: 'YARD 300 ATHLETE', es: 'ATLETA YARD 300', fr: 'ATHLÈTE YARD 300', ar: 'رياضي YARD 300' });
+  const athleteRank = currentUser?.rankTitle || tr(currentLang, { en: 'A-RANK WARRIOR', es: 'GUERRERO RANGO A', fr: 'GUERRIER RANG A', ar: 'المستوى الأول (ضيف)' });
   const athleteLevel = currentUser?.level || 45;
-  const athleteSpec = isAr 
-    ? (currentUser?.specializationAr || currentUser?.specialization || 'الملاكمة الحركية والتحمل العضلي 🥊') 
-    : (currentUser?.specialization || 'Kinetic Striking & Endurance 🥊');
+  const athleteSpec = isAr
+    ? (currentUser?.specializationAr || currentUser?.specialization || 'الملاكمة الحركية والتحمل العضلي 🥊')
+    : (currentUser?.specialization || tr(currentLang, {
+        en: 'Kinetic Striking & Endurance 🥊',
+        es: 'Golpeo Cinético y Resistencia 🥊',
+        fr: 'Frappe Cinétique & Endurance 🥊',
+        ar: 'الملاكمة الحركية والتحمل العضلي 🥊'
+      }));
   const athleteRole = currentUser?.role || 'athlete';
 
   const currentAuraData: SharedAuraData = {
@@ -368,7 +374,7 @@ const Profile: React.FC<ProfileProps> = ({
             className="group flex items-center gap-2 text-xs md:text-sm font-black font-anime text-[#00F0FF] hover:text-white transition-colors hover-cyber-glitch cursor-pointer"
           >
             <span className="text-xl">{isAr ? '→' : '←'}</span>
-            <span>{isAr ? 'العودة للرئيسية // COCKPIT EXIT' : 'RETURN TO BASE // COCKPIT EXIT'}</span>
+            <span>{tr(currentLang, { en: 'RETURN TO BASE // COCKPIT EXIT', es: 'VOLVER A LA BASE // SALIR', fr: 'RETOUR À LA BASE // QUITTER', ar: 'العودة للرئيسية // COCKPIT EXIT' })}</span>
           </button>
 
           <div className="flex flex-wrap items-center gap-2.5">
@@ -380,7 +386,7 @@ const Profile: React.FC<ProfileProps> = ({
 
             <div className="px-3.5 py-1.5 rounded-full bg-[#141622] border border-[#FFE600] text-xs font-black text-[#FFE600] font-anime neon-border-yellow flex items-center gap-1.5">
               <span>⚡</span>
-              <span>{currentUser ? `${athleteName} // ${athleteRank}` : (isAr ? 'وضع الضيف // GUEST' : 'GUEST // RECRUIT')}</span>
+              <span>{currentUser ? `${athleteName} // ${athleteRank}` : tr(currentLang, { en: 'GUEST // RECRUIT', es: 'INVITADO // RECLUTA', fr: 'INVITÉ // RECRUE', ar: 'وضع الضيف // GUEST' })}</span>
             </div>
 
             {/* Profile Action Buttons: Edit Profile, Sign In / Sign Out */}
@@ -397,10 +403,10 @@ const Profile: React.FC<ProfileProps> = ({
                     setIsEditingProfile(true);
                   }}
                   className="px-3 py-1.5 rounded-xl bg-[#00F0FF]/15 hover:bg-[#00F0FF]/25 border border-[#00F0FF]/60 hover:border-[#00F0FF] text-[#00F0FF] hover:text-white text-xs font-anime font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.2)]"
-                  title={isAr ? 'تعديل الملف الرياضي' : 'Edit Profile'}
+                  title={tr(currentLang, { en: 'Edit Profile', es: 'Editar Perfil', fr: 'Modifier le Profil', ar: 'تعديل الملف الرياضي' })}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>{isAr ? 'تعديل' : 'Edit'}</span>
+                  <span>{tr(currentLang, { en: 'Edit', es: 'Editar', fr: 'Modifier', ar: 'تعديل' })}</span>
                 </button>
 
                 <button
@@ -410,10 +416,10 @@ const Profile: React.FC<ProfileProps> = ({
                     authService.logout();
                   }}
                   className="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 hover:border-red-500 text-red-300 hover:text-white text-xs font-anime font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_10px_rgba(239,68,68,0.2)]"
-                  title={isAr ? 'تسجيل الخروج' : 'Sign Out'}
+                  title={tr(currentLang, { en: 'Sign Out', es: 'Cerrar Sesión', fr: 'Déconnexion', ar: 'تسجيل الخروج' })}
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>{isAr ? 'خروج' : 'Sign Out'}</span>
+                  <span>{tr(currentLang, { en: 'Sign Out', es: 'Salir', fr: 'Déconnexion', ar: 'خروج' })}</span>
                 </button>
               </div>
             ) : (
@@ -427,7 +433,7 @@ const Profile: React.FC<ProfileProps> = ({
                 className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-[#00F0FF] hover:from-emerald-400 hover:to-[#00F0FF] text-black text-xs font-anime font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.4)]"
               >
                 <LogIn className="w-3.5 h-3.5" />
-                <span>{isAr ? 'تسجيل الدخول / إنشاء حساب' : 'Sign In / Register'}</span>
+                <span>{tr(currentLang, { en: 'Sign In / Register', es: 'Iniciar Sesión / Registro', fr: 'Connexion / Inscription', ar: 'تسجيل الدخول / إنشاء حساب' })}</span>
               </button>
             )}
           </div>
@@ -436,19 +442,22 @@ const Profile: React.FC<ProfileProps> = ({
         {/* Guest Mode Alert Banner */}
         {!currentUser && (
           <div className="mb-8 p-4 md:p-5 rounded-2xl bg-gradient-to-r from-[#00F0FF]/15 via-emerald-500/10 to-[#A855F7]/15 border-2 border-[#00F0FF]/50 shadow-[0_0_25px_rgba(0,240,255,0.2)] flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-md">
-            <div className="flex items-center gap-3.5 text-center sm:text-right">
+            <div className="flex items-center gap-3.5 text-center sm:text-start">
               <div className="w-12 h-12 rounded-2xl bg-black/60 border-2 border-[#00F0FF] flex items-center justify-center shrink-0 text-2xl shadow-[0_0_15px_rgba(0,240,255,0.3)]">
                 🥋
               </div>
               <div>
                 <h4 className="text-sm md:text-base font-black font-anime text-white flex items-center gap-2 justify-center sm:justify-start">
-                  <span>{isAr ? 'أنت تتصفح حالياً كضيف (Guest Mode)' : 'Browsing in Athlete Guest Mode'}</span>
+                  <span>{tr(currentLang, { en: 'Browsing in Athlete Guest Mode', es: 'Navegando en Modo Invitado', fr: 'Navigation en Mode Invité Athlète', ar: 'أنت تتصفح حالياً كضيف (Guest Mode)' })}</span>
                   <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-ping" />
                 </h4>
                 <p className="text-xs text-gray-300 font-bold mt-0.5">
-                  {isAr 
-                    ? 'سجل دخولك أو أنشئ ملفك الرياضي الخاص لتخصيص اسمك، حفظ سلاسل التدريب القتالية، وربط نقاط الهالة!' 
-                    : 'Sign in or create your personal athlete profile to customize your name, save combat streaks, and claim rank XP!'}
+                  {tr(currentLang, {
+                    en: 'Sign in or create your personal athlete profile to customize your name, save combat streaks, and claim rank XP!',
+                    es: 'Inicia sesión o crea tu perfil de atleta para personalizar tu nombre, guardar rachas y reclamar XP de rango.',
+                    fr: 'Connectez-vous ou créez votre profil d’athlète pour personnaliser votre nom, sauvegarder vos séries et gagner de l’XP.',
+                    ar: 'سجل دخولك أو أنشئ ملفك الرياضي الخاص لتخصيص اسمك، حفظ سلاسل التدريب القتالية، وربط نقاط الهالة!'
+                  })}
                 </p>
               </div>
             </div>
@@ -461,7 +470,7 @@ const Profile: React.FC<ProfileProps> = ({
               }}
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-[#00F0FF] hover:from-emerald-400 hover:to-[#00F0FF] text-black font-black font-anime text-xs shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
             >
-              {isAr ? 'تسجيل الدخول / إنشاء حساب ←' : 'Sign In / Register Profile →'}
+              {tr(currentLang, { en: 'Sign In / Register Profile →', es: 'Iniciar Sesión / Crear Perfil →', fr: 'Connexion / Créer Profil →', ar: 'تسجيل الدخول / إنشاء حساب ←' })}
             </button>
           </div>
         )}
@@ -533,12 +542,15 @@ const Profile: React.FC<ProfileProps> = ({
               </div>
               <p className="text-base font-bold text-[#00F0FF] flex items-center justify-center md:justify-start gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#00F0FF] animate-ping" />
-                <span>{isAr ? `تخصص: ${athleteSpec}` : `Spec: ${athleteSpec}`}</span>
+                <span>{tr(currentLang, { en: `Spec: ${athleteSpec}`, es: `Esp.: ${athleteSpec}`, fr: `Spéc. : ${athleteSpec}`, ar: `تخصص: ${athleteSpec}` })}</span>
               </p>
               <p className="text-xs text-gray-400 font-bold font-mono">
-                {isAr 
-                  ? `عضوية أبطال أورا المعتمدة // تاريخ التسجيل: ${currentUser?.memberSince || '2026'}` 
-                  : `Aura Champion Pass Certified // Member Since: ${currentUser?.memberSince || '2026'} // EVA-CORE ACTIVE`}
+                {tr(currentLang, {
+                  en: `Aura Champion Pass Certified // Member Since: ${currentUser?.memberSince || '2026'} // EVA-CORE ACTIVE`,
+                  es: `Pase Campeón Aura Certificado // Miembro desde: ${currentUser?.memberSince || '2026'} // EVA-CORE ACTIVO`,
+                  fr: `Pass Champion Aura Certifié // Membre depuis : ${currentUser?.memberSince || '2026'} // EVA-CORE ACTIF`,
+                  ar: `عضوية أبطال أورا المعتمدة // تاريخ التسجيل: ${currentUser?.memberSince || '2026'}`
+                })}
               </p>
 
               {/* Creator Club Ownership Badge & Owner Command Center (Visible only when appropriate) */}
@@ -565,7 +577,7 @@ const Profile: React.FC<ProfileProps> = ({
                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#E50914]/20 border border-[#E50914]/60 text-white hover:border-[#E50914] text-xs font-black font-anime shadow-[0_0_15px_rgba(229,9,20,0.3)] hover:scale-105 transition-all cursor-pointer"
                   >
                     <span>👑</span>
-                    <span>{isAr ? 'لوحة تحكم المالك' : 'OWNER DASHBOARD'}</span>
+                    <span>{tr(currentLang, { en: 'OWNER DASHBOARD', es: 'PANEL DEL PROPIETARIO', fr: 'TABLEAU PROPRIÉTAIRE', ar: 'لوحة تحكم المالك' })}</span>
                     <span className="text-[10px] bg-[#E50914] text-white px-1.5 py-0.2 rounded font-mono">PORTAL</span>
                   </a>
                 )}
@@ -576,7 +588,7 @@ const Profile: React.FC<ProfileProps> = ({
                 <div className="flex justify-between text-xs font-bold mb-1 font-mono">
                   <span className="text-[#FFE600] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 bg-[#FFE600] rounded-full animate-hud-blink" />
-                    {isAr ? 'مستوى شحن الهالة الحيوية // REACTOR CHARGE' : 'AURA REACTOR KINETIC CHARGE'}
+                    {tr(currentLang, { en: 'AURA REACTOR KINETIC CHARGE', es: 'CARGA CINÉTICA DEL REACTOR AURA', fr: 'CHARGE CINÉTIQUE RÉACTEUR AURA', ar: 'مستوى شحن الهالة الحيوية // REACTOR CHARGE' })}
                   </span>
                   <span className="text-[#00F0FF] font-anime">{avgAura}% / 100% [MAX]</span>
                 </div>
@@ -607,7 +619,7 @@ const Profile: React.FC<ProfileProps> = ({
                 className="flex-1 md:flex-none px-6 py-3.5 bg-[#141622] hover:bg-[#1E1735] border-2 border-[#00F0FF] neon-border-cyan text-[#00F0FF] hover:text-white font-black text-sm font-anime rounded-xl shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center gap-2 hover-cyber-glitch cursor-pointer active:scale-95"
               >
                 <Sparkles className="w-4 h-4 text-[#FFE600] animate-spin" style={{ animationDuration: '4s' }} />
-                <span>{isAr ? 'تخصيص الهالة والأفتار' : 'Customize Aura & Avatar'}</span>
+                <span>{tr(currentLang, { en: 'Customize Aura & Avatar', es: 'Personalizar Aura y Avatar', fr: 'Personnaliser Aura & Avatar', ar: 'تخصيص الهالة والأفتار' })}</span>
               </button>
             )}
 
@@ -617,10 +629,10 @@ const Profile: React.FC<ProfileProps> = ({
                 type="button"
                 onClick={() => setShowShareModal(true)}
                 className="py-3 px-3 bg-[#181A2A] hover:bg-[#22253B] border border-[#A855F7] neon-border-purple text-[#A855F7] hover:text-white font-black text-xs font-anime rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer hover-cyber-glitch active:scale-95"
-                title={isAr ? 'مشاركة بطاقة الهالة الرقمية' : 'Share My Aura Passport'}
+                title={tr(currentLang, { en: 'Share My Aura Passport', es: 'Compartir Mi Pasaporte Aura', fr: 'Partager Mon Passeport Aura', ar: 'مشاركة بطاقة الهالة الرقمية' })}
               >
                 <Share2 className="w-3.5 h-3.5 shrink-0" />
-                <span>{isAr ? 'مشاركة الهالة' : 'Share My Aura'}</span>
+                <span>{tr(currentLang, { en: 'Share My Aura', es: 'Compartir Aura', fr: 'Partager Aura', ar: 'مشاركة الهالة' })}</span>
               </button>
 
               <button
@@ -631,10 +643,10 @@ const Profile: React.FC<ProfileProps> = ({
                     ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_20px_#10B981]'
                     : 'bg-[#181A2A] hover:bg-[#22253B] border-[#00F0FF] neon-border-cyan text-[#00F0FF] hover:text-white'
                 }`}
-                title={isAr ? 'نسخ رابط الهالة الفريد' : 'Copy Shareable Link'}
+                title={tr(currentLang, { en: 'Copy Shareable Link', es: 'Copiar Enlace Compartible', fr: 'Copier le Lien', ar: 'نسخ رابط الهالة الفريد' })}
               >
                 {directCopied ? <Check className="w-3.5 h-3.5 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0" />}
-                <span>{directCopied ? (isAr ? 'تم النسخ ✓' : 'Copied ✓') : (isAr ? 'نسخ الرابط' : 'Copy Link')}</span>
+                <span>{directCopied ? tr(currentLang, { en: 'Copied ✓', es: 'Copiado ✓', fr: 'Copié ✓', ar: 'تم النسخ ✓' }) : tr(currentLang, { en: 'Copy Link', es: 'Copiar Enlace', fr: 'Copier Lien', ar: 'نسخ الرابط' })}</span>
               </button>
             </div>
 
@@ -642,7 +654,7 @@ const Profile: React.FC<ProfileProps> = ({
               onClick={() => setShowLogModal(true)}
               className="flex-1 md:flex-none px-6 py-4 bg-[#10B981] hover:bg-[#059669] text-black font-black text-sm font-anime rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
-              <span>{isAr ? 'تسجيل جولة تدريبية جديدة' : 'Log New Combat Session'}</span>
+              <span>{tr(currentLang, { en: 'Log New Combat Session', es: 'Registrar Sesión de Combate', fr: 'Enregistrer une Session', ar: 'تسجيل جولة تدريبية جديدة' })}</span>
               <span className="text-lg">⚡</span>
             </button>
             <div className="flex gap-2">
@@ -654,7 +666,7 @@ const Profile: React.FC<ProfileProps> = ({
                     : 'bg-[#181A28] text-gray-400 border border-gray-700 hover:text-white'
                 }`}
               >
-                {isAr ? 'عرض أسبوعي' : 'Weekly'}
+                {tr(currentLang, { en: 'Weekly', es: 'Semanal', fr: 'Hebdomadaire', ar: 'عرض أسبوعي' })}
               </button>
               <button 
                 onClick={() => setTimeframe('month')}
@@ -664,7 +676,7 @@ const Profile: React.FC<ProfileProps> = ({
                     : 'bg-[#181A28] text-gray-400 border border-gray-700 hover:text-white'
                 }`}
               >
-                {isAr ? 'عرض شهري' : 'Monthly'}
+                {tr(currentLang, { en: 'Monthly', es: 'Mensual', fr: 'Mensuel', ar: 'عرض شهري' })}
               </button>
             </div>
           </div>
@@ -683,14 +695,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex justify-between items-center mb-3">
               <span className="text-[10px] font-mono font-bold text-gray-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#A855F7] animate-hud-blink" />
-                {isAr ? '🔥 السعرات المحروقة [POD-01]' : '🔥 BURN SENSOR [POD-01]'}
+                {tr(currentLang, { en: '🔥 BURN SENSOR [POD-01]', es: '🔥 SENSOR QUEMA [POD-01]', fr: '🔥 CAPTEUR CALORIES [POD-01]', ar: '🔥 السعرات المحروقة [POD-01]' })}
               </span>
               <span className="text-2xl group-hover:scale-125 transition-transform">⚡</span>
             </div>
             <span className="text-3xl font-black font-anime text-[#A855F7] neon-text-purple block mb-1">
               {totalCalories.toLocaleString('en-US')} <span className="text-xs text-gray-300 font-mono">kcal</span>
             </span>
-            <span className="text-[11px] font-bold text-[#00F0FF] font-mono">{isAr ? '+18% مقارنة بالأسبوع الماضي' : '+18% vs Last Week // OVERLOAD'}</span>
+            <span className="text-[11px] font-bold text-[#00F0FF] font-mono">{tr(currentLang, { en: '+18% vs Last Week // OVERLOAD', es: '+18% vs Semana Pasada', fr: '+18% vs Semaine Dernière', ar: '+18% مقارنة بالأسبوع الماضي' })}</span>
           </div>
 
           {/* Pod 2: Intensive Training */}
@@ -702,14 +714,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex justify-between items-center mb-3">
               <span className="text-[10px] font-mono font-bold text-gray-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-hud-blink" />
-                {isAr ? '⏱️ ساعات التدريب [POD-02]' : '⏱️ CHRONO LOAD [POD-02]'}
+                {tr(currentLang, { en: '⏱️ CHRONO LOAD [POD-02]', es: '⏱️ CARGA CRONO [POD-02]', fr: '⏱️ CHARGE CHRONO [POD-02]', ar: '⏱️ ساعات التدريب [POD-02]' })}
               </span>
               <span className="text-2xl group-hover:scale-125 transition-transform">🥊</span>
             </div>
             <span className="text-3xl font-black font-anime text-[#00F0FF] neon-text-cyan block mb-1">
-              {(totalMinutes / 60).toFixed(1)} <span className="text-xs text-gray-300 font-mono">{isAr ? 'ساعة' : 'hrs'}</span>
+              {(totalMinutes / 60).toFixed(1)} <span className="text-xs text-gray-300 font-mono">{tr(currentLang, { en: 'hrs', es: 'hrs', fr: 'h', ar: 'ساعة' })}</span>
             </span>
-            <span className="text-[11px] font-bold text-[#FFE600] font-mono">{totalMinutes} {isAr ? 'دقيقة تركيز شديد' : 'mins extreme combat focus'}</span>
+            <span className="text-[11px] font-bold text-[#FFE600] font-mono">{totalMinutes} {tr(currentLang, { en: 'mins extreme combat focus', es: 'min de enfoque de combate extremo', fr: 'min de concentration extrême', ar: 'دقيقة تركيز شديد' })}</span>
           </div>
 
           {/* Pod 3: YARDX Tokens */}
@@ -721,14 +733,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex justify-between items-center mb-3">
               <span className="text-[10px] font-mono font-bold text-gray-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FFE600] animate-hud-blink" />
-                {isAr ? '🪙 مكافآت عملة YARDX [POD-03]' : '🪙 YARDX PROTOCOL [POD-03]'}
+                {tr(currentLang, { en: '🪙 YARDX PROTOCOL [POD-03]', es: '🪙 PROTOCOLO YARDX [POD-03]', fr: '🪙 PROTOCOLE YARDX [POD-03]', ar: '🪙 مكافآت عملة YARDX [POD-03]' })}
               </span>
               <span className="text-2xl group-hover:scale-125 transition-transform">🏆</span>
             </div>
             <span className="text-3xl font-black font-anime text-[#FFE600] neon-text-yellow block mb-1">
               1,250 <span className="text-xs text-gray-300 font-mono">YARDX</span>
             </span>
-            <span className="text-[11px] font-bold text-[#A855F7] font-mono">{isAr ? 'قابل للاستبدال بمنتجات العتاد!' : 'Redeemable for Combat Gear!'}</span>
+            <span className="text-[11px] font-bold text-[#A855F7] font-mono">{tr(currentLang, { en: 'Redeemable for Combat Gear!', es: '¡Canjeable por Equipo de Combate!', fr: 'Échangeable contre Équipement !', ar: 'قابل للاستبدال بمنتجات العتاد!' })}</span>
           </div>
 
           {/* Pod 4: Aura Score */}
@@ -740,14 +752,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex justify-between items-center mb-3">
               <span className="text-[10px] font-mono font-bold text-gray-400 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#A855F7] animate-hud-blink" />
-                {isAr ? '🔮 مؤشر الهالة العام [POD-04]' : '🔮 AURA TELEMETRY [POD-04]'}
+                {tr(currentLang, { en: '🔮 AURA TELEMETRY [POD-04]', es: '🔮 TELEMETRÍA AURA [POD-04]', fr: '🔮 TÉLÉMÉTRIE AURA [POD-04]', ar: '🔮 مؤشر الهالة العام [POD-04]' })}
               </span>
               <span className="text-2xl group-hover:scale-125 transition-transform">✨</span>
             </div>
             <span className="text-3xl font-black font-anime text-white block mb-1">
               {avgAura} / 100
             </span>
-            <span className="text-[11px] font-bold text-[#00F0FF] font-mono">{isAr ? 'جاهزية كاملة للنزول للحلبة' : 'Combat Ready // S-RANK ONLINE'}</span>
+            <span className="text-[11px] font-bold text-[#00F0FF] font-mono">{tr(currentLang, { en: 'Combat Ready // S-RANK ONLINE', es: 'Listo para Combate // RANGO S', fr: 'Prêt au Combat // RANG S', ar: 'جاهزية كاملة للنزول للحلبة' })}</span>
           </div>
 
         </div>
@@ -766,15 +778,18 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="space-y-2 text-center lg:text-left rtl:lg:text-right flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#161828] border border-[#FFE600] text-[#FFE600] text-xs font-black font-anime shadow-[0_0_15px_rgba(255,230,0,0.3)]">
                 <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '3s' }} />
-                <span>{isAr ? 'جواز سفر الهالة الرقمي المعتمد // SHARE MY AURA HUD' : 'VERIFIED DIGITAL AURA PASSPORT // SHARE MY AURA HUD'}</span>
+                <span>{tr(currentLang, { en: 'VERIFIED DIGITAL AURA PASSPORT // SHARE MY AURA HUD', es: 'PASAPORTE DIGITAL AURA VERIFICADO // COMPARTIR', fr: 'PASSEPORT AURA NUMÉRIQUE VÉRIFIÉ // PARTAGER', ar: 'جواز سفر الهالة الرقمي المعتمد // SHARE MY AURA HUD' })}</span>
               </div>
               <h3 className="text-xl md:text-2xl font-black font-anime text-white hover-cyber-glitch inline-block cursor-default">
-                {isAr ? 'شارك هالتك وإحصائياتك الرياضية مع أصدقائك ومنافسيك' : 'Broadcast Your Live Aura & Athletic Statistics'}
+                {tr(currentLang, { en: 'Broadcast Your Live Aura & Athletic Statistics', es: 'Comparte Tu Aura en Vivo y Estadísticas Atléticas', fr: 'Diffusez Votre Aura en Direct & Statistiques', ar: 'شارك هالتك وإحصائياتك الرياضية مع أصدقائك ومنافسيك' })}
               </h3>
               <p className="text-xs text-gray-300 font-bold max-w-2xl font-mono">
-                {isAr
-                  ? `قم بإنشاء رابط فريد مشفر يحتوي على رتبتك (${currentAuraData.tier})، أقصى قوة (${peakPower.toLocaleString('en-US')} AU)، ستريك القتال (${streakData.currentStreak || 14} يوم)، ومستوى شحن هالتك (${avgAura}%).`
-                  : `Generate a unique encrypted passport link embedding your live S-Rank tier (${currentAuraData.tier}), peak power (${peakPower.toLocaleString('en-US')} AU), streak (${streakData.currentStreak || 14}D), and aura charge (${avgAura}%).`}
+                {tr(currentLang, {
+                  en: `Generate a unique encrypted passport link embedding your live S-Rank tier (${currentAuraData.tier}), peak power (${peakPower.toLocaleString('en-US')} AU), streak (${streakData.currentStreak || 14}D), and aura charge (${avgAura}%).`,
+                  es: `Genera un enlace cifrado único con tu rango (${currentAuraData.tier}), potencia máxima (${peakPower.toLocaleString('en-US')} AU), racha (${streakData.currentStreak || 14}D) y carga aura (${avgAura}%).`,
+                  fr: `Générez un lien passeport chiffré incluant votre rang (${currentAuraData.tier}), puissance max (${peakPower.toLocaleString('en-US')} AU), série (${streakData.currentStreak || 14}J) et charge (${avgAura}%).`,
+                  ar: `قم بإنشاء رابط فريد مشفر يحتوي على رتبتك (${currentAuraData.tier})، أقصى قوة (${peakPower.toLocaleString('en-US')} AU)، ستريك القتال (${streakData.currentStreak || 14} يوم)، ومستوى شحن هالتك (${avgAura}%).`
+                })}
               </p>
             </div>
 
@@ -790,7 +805,11 @@ const Profile: React.FC<ProfileProps> = ({
                 }`}
               >
                 {directCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                <span>{directCopied ? (isAr ? 'تم نسخ الرابط الفريد بنجاح ✓' : 'Link Copied to Clipboard ✓') : (isAr ? 'نسخ الرابط // Copy Link' : 'Copy Link')}</span>
+                <span>
+                  {directCopied
+                    ? tr(currentLang, { en: 'Link Copied to Clipboard ✓', es: 'Enlace Copiado ✓', fr: 'Lien Copié ✓', ar: 'تم نسخ الرابط الفريد بنجاح ✓' })
+                    : tr(currentLang, { en: 'Copy Link', es: 'Copiar Enlace', fr: 'Copier le Lien', ar: 'نسخ الرابط // Copy Link' })}
+                </span>
               </button>
 
               {/* Share My Aura Modal Trigger */}
@@ -800,7 +819,7 @@ const Profile: React.FC<ProfileProps> = ({
                 className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#2c084f] via-[#480d7a] to-[#10B981] hover:opacity-90 text-white font-anime font-black text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_20px_rgba(76,29,149,0.7)] hover-cyber-glitch active:scale-95 border border-[#6b21a8]"
               >
                 <Share2 className="w-4 h-4" />
-                <span>{isAr ? 'عرض بطاقة المشاركة ⚡' : 'Share My Aura ⚡'}</span>
+                <span>{tr(currentLang, { en: 'Share My Aura ⚡', es: 'Compartir Mi Aura ⚡', fr: 'Partager Mon Aura ⚡', ar: 'عرض بطاقة المشاركة ⚡' })}</span>
               </button>
             </div>
           </div>
@@ -1035,18 +1054,18 @@ const Profile: React.FC<ProfileProps> = ({
                   <span className="text-[10px] font-mono font-bold text-[#00F0FF] tracking-widest">[ OSCILLOSCOPE CH-A // 433.92 MHz ]</span>
                 </div>
                 <h3 className="text-xl md:text-2xl font-black font-anime text-white flex items-center gap-2 hover-cyber-glitch inline-block cursor-default">
-                  <span>⚡ {isAr ? 'مسار الطاقة وحماس البطل' : 'Power & Combat Intensity'}</span>
+                  <span>⚡ {tr(currentLang, { en: 'Power & Combat Intensity', es: 'Potencia e Intensidad de Combate', fr: 'Puissance & Intensité de Combat', ar: 'مسار الطاقة وحماس البطل' })}</span>
                 </h3>
-                <p className="text-xs text-gray-400 font-bold font-mono">{isAr ? 'تتبع تصاعد الطاقة الحركية ومؤشر الهالة خلال الجولات' : 'Kinetic power surges & aura score telemetry across combat sessions'}</p>
+                <p className="text-xs text-gray-400 font-bold font-mono">{tr(currentLang, { en: 'Kinetic power surges & aura score telemetry across combat sessions', es: 'Picos de potencia cinética y telemetría aura por sesión', fr: 'Pics de puissance cinétique et télémétrie aura par session', ar: 'تتبع تصاعد الطاقة الحركية ومؤشر الهالة خلال الجولات' })}</p>
               </div>
               <div className="flex items-center gap-4 text-xs font-bold font-mono">
                 <span className="flex items-center gap-1.5 text-[#A855F7]">
                   <span className="w-3 h-3 rounded-full bg-[#A855F7] shadow-[0_0_10px_#A855F7]"></span>
-                  {isAr ? 'مستوى القوة' : 'Power Level'}
+                  {tr(currentLang, { en: 'Power Level', es: 'Nivel de Potencia', fr: 'Niveau de Puissance', ar: 'مستوى القوة' })}
                 </span>
                 <span className="flex items-center gap-1.5 text-[#00F0FF]">
                   <span className="w-3 h-3 rounded-full bg-[#00F0FF] shadow-[0_0_10px_#00F0FF]"></span>
-                  {isAr ? 'مؤشر الهالة' : 'Aura Score'}
+                  {tr(currentLang, { en: 'Aura Score', es: 'Puntuación Aura', fr: 'Score Aura', ar: 'مؤشر الهالة' })}
                 </span>
               </div>
             </div>
@@ -1085,7 +1104,7 @@ const Profile: React.FC<ProfileProps> = ({
                     strokeWidth={3}
                     fillOpacity={1} 
                     fill="url(#powerGradient)" 
-                    name={isAr ? "مستوى القوة" : "Power Level"}
+                    name={tr(currentLang, { en: 'Power Level', es: 'Nivel de Potencia', fr: 'Niveau de Puissance', ar: 'مستوى القوة' })}
                   />
                   <Area 
                     type="monotone" 
@@ -1094,7 +1113,7 @@ const Profile: React.FC<ProfileProps> = ({
                     strokeWidth={2}
                     fillOpacity={1} 
                     fill="url(#auraGradient)" 
-                    name={isAr ? "مؤشر الهالة" : "Aura Score"}
+                    name={tr(currentLang, { en: 'Aura Score', es: 'Puntuación Aura', fr: 'Score Aura', ar: 'مؤشر الهالة' })}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -1114,9 +1133,9 @@ const Profile: React.FC<ProfileProps> = ({
                 <span className="text-[10px] font-mono font-bold text-[#A855F7] tracking-widest">[ HEX-RADAR MATRIX ]</span>
               </div>
               <h3 className="text-xl font-black font-anime text-white mb-1 flex items-center gap-2 hover-cyber-glitch inline-block cursor-default">
-                <span>🎯 {isAr ? 'شجرة خصائص البطل' : 'Champion Attribute Tree'}</span>
+                <span>🎯 {tr(currentLang, { en: 'Champion Attribute Tree', es: 'Árbol de Atributos', fr: 'Arbre d’Attributs', ar: 'شجرة خصائص البطل' })}</span>
               </h3>
-              <p className="text-xs text-[#FFE600] font-bold mb-4 font-mono">{isAr ? 'توزع الخصائص البدنية والقتالية' : 'Pilot combat & physical attribute polygon'}</p>
+              <p className="text-xs text-[#FFE600] font-bold mb-4 font-mono">{tr(currentLang, { en: 'Pilot combat & physical attribute polygon', es: 'Polígono de atributos físicos y de combate', fr: 'Polygone des attributs physiques et de combat', ar: 'توزع الخصائص البدنية والقتالية' })}</p>
             </div>
 
             <div className="h-[280px] w-full relative">
@@ -1130,7 +1149,7 @@ const Profile: React.FC<ProfileProps> = ({
                   <PolarAngleAxis dataKey="attribute" stroke="#D0D8ED" fontSize={10} tick={{ fill: '#00F0FF', fontWeight: 'bold' }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#2A2D45" />
                   <Radar 
-                    name={isAr ? "الخصائص البدنية" : "Attributes"} 
+                    name={tr(currentLang, { en: 'Attributes', es: 'Atributos', fr: 'Attributs', ar: 'الخصائص البدنية' })}
                     dataKey="score" 
                     stroke="#FFE600" 
                     fill="#A855F7" 
@@ -1141,7 +1160,7 @@ const Profile: React.FC<ProfileProps> = ({
             </div>
 
             <div className="p-3 rounded-xl bg-[#151726] border border-[#FFE600]/40 text-center text-xs font-bold text-[#FFE600] font-mono shadow-[0_0_15px_rgba(255,230,0,0.2)]">
-              🔥 {isAr ? 'أعلى ميزة: طاقة الهالة S-Rank (99/100)' : 'TOP TRAIT: S-RANK AURA POWER (99/100) // PEAK'}
+              🔥 {tr(currentLang, { en: 'TOP TRAIT: S-RANK AURA POWER (99/100) // PEAK', es: 'RASGO TOP: PODER AURA RANGO S (99/100)', fr: 'ATOUT TOP : PUISSANCE AURA RANG S (99/100)', ar: 'أعلى ميزة: طاقة الهالة S-Rank (99/100)' })}
             </div>
           </div>
 
@@ -1161,9 +1180,9 @@ const Profile: React.FC<ProfileProps> = ({
                 <span className="text-[10px] font-mono font-bold text-[#FFE600] tracking-widest">[ THERMAL DISPERSION & WORKLOAD TELEMETRY ]</span>
               </div>
               <h3 className="text-xl md:text-2xl font-black font-anime text-white flex items-center gap-2 hover-cyber-glitch inline-block cursor-default">
-                <span>🔥 {isAr ? 'حرق السعرات ودقائق التمرين المكثف' : 'Calorie Burn & Workout Minutes'}</span>
+                <span>🔥 {tr(currentLang, { en: 'Calorie Burn & Workout Minutes', es: 'Quema de Calorías y Minutos', fr: 'Calories Brûlées & Minutes', ar: 'حرق السعرات ودقائق التمرين المكثف' })}</span>
               </h3>
-              <p className="text-xs text-gray-400 font-bold font-mono">{isAr ? 'مقارنة بين الجهد العضلي واستهلاك السعرات الحرارية' : 'Muscle output compared to caloric expenditure per session'}</p>
+              <p className="text-xs text-gray-400 font-bold font-mono">{tr(currentLang, { en: 'Muscle output compared to caloric expenditure per session', es: 'Esfuerzo muscular vs gasto calórico por sesión', fr: 'Effort musculaire vs dépense calorique par séance', ar: 'مقارنة بين الجهد العضلي واستهلاك السعرات الحرارية' })}</p>
             </div>
           </div>
 
@@ -1185,8 +1204,8 @@ const Profile: React.FC<ProfileProps> = ({
                   }} 
                 />
                 <Legend wrapperStyle={{ paddingTop: '10px', fontSize: '12px', fontWeight: 'bold' }} />
-                <Bar dataKey="calories" name={isAr ? "السعرات المحروقة (kcal)" : "Calories Burned (kcal)"} fill="#FFE600" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="workoutMinutes" name={isAr ? "دقائق التمرين (دقيقة)" : "Workout Minutes (min)"} fill="#A855F7" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="calories" name={tr(currentLang, { en: 'Calories Burned (kcal)', es: 'Calorías Quemadas (kcal)', fr: 'Calories Brûlées (kcal)', ar: 'السعرات المحروقة (kcal)' })} fill="#FFE600" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="workoutMinutes" name={tr(currentLang, { en: 'Workout Minutes (min)', es: 'Minutos de Entreno (min)', fr: 'Minutes d’Entraînement (min)', ar: 'دقائق التمرين (دقيقة)' })} fill="#A855F7" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -1195,7 +1214,7 @@ const Profile: React.FC<ProfileProps> = ({
         {/* Champion Badges & Achievements with Mecha Pilot Feats */}
         <div>
           <h3 className={`text-2xl font-black font-anime text-white mb-6 ${isAr ? 'border-r-4 pr-4' : 'border-l-4 pl-4'} border-[#00F0FF] flex items-center gap-2`}>
-            <span>{isAr ? 'وسامات وألقاب البطل المُنجزة 🏆' : 'Champion Badges & Feats 🏆'}</span>
+            <span>{tr(currentLang, { en: 'Champion Badges & Feats 🏆', es: 'Insignias y Hazañas 🏆', fr: 'Badges & Exploits 🏆', ar: 'وسامات وألقاب البطل المُنجزة 🏆' })}</span>
             <span className="text-xs font-mono text-[#00F0FF]">[PILOT_ACCREDITATION]</span>
           </h3>
 
@@ -1208,8 +1227,8 @@ const Profile: React.FC<ProfileProps> = ({
                 ⚡
               </div>
               <div>
-                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{isAr ? 'تجاوز 100%' : 'Beyond 100%'}</h4>
-                <p className="text-xs text-[#00F0FF] font-bold font-mono">{isAr ? 'إتمام 10 جولات قاسية متتالية' : 'Completed 10 brutal rounds'}</p>
+                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{tr(currentLang, { en: 'Beyond 100%', es: 'Más Allá del 100%', fr: 'Au-delà de 100%', ar: 'تجاوز 100%' })}</h4>
+                <p className="text-xs text-[#00F0FF] font-bold font-mono">{tr(currentLang, { en: 'Completed 10 brutal rounds', es: 'Completó 10 asaltos brutales', fr: '10 rounds brutaux terminés', ar: 'إتمام 10 جولات قاسية متتالية' })}</p>
               </div>
             </div>
 
@@ -1220,8 +1239,8 @@ const Profile: React.FC<ProfileProps> = ({
                 🔥
               </div>
               <div>
-                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{isAr ? 'حارق السعرات الخارق' : 'Calorie Inferno'}</h4>
-                <p className="text-xs text-[#FFE600] font-bold font-mono">{isAr ? 'حرق أكثر من 1,000 kcal في يوم' : 'Burned 1,000+ kcal in 1 day'}</p>
+                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{tr(currentLang, { en: 'Calorie Inferno', es: 'Infierno Calórico', fr: 'Brasier Calorique', ar: 'حارق السعرات الخارق' })}</h4>
+                <p className="text-xs text-[#FFE600] font-bold font-mono">{tr(currentLang, { en: 'Burned 1,000+ kcal in 1 day', es: '1,000+ kcal quemadas en 1 día', fr: '1 000+ kcal brûlées en 1 jour', ar: 'حرق أكثر من 1,000 kcal في يوم' })}</p>
               </div>
             </div>
 
@@ -1232,8 +1251,8 @@ const Profile: React.FC<ProfileProps> = ({
                 🥋
               </div>
               <div>
-                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{isAr ? 'سيد الملاكمة والبديهة' : 'Reflex Master'}</h4>
-                <p className="text-xs text-[#A855F7] font-bold font-mono">{isAr ? 'استخدام نظارة VR 50 مرة' : '50 VR Combat Sessions'}</p>
+                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{tr(currentLang, { en: 'Reflex Master', es: 'Maestro de Reflejos', fr: 'Maître des Réflexes', ar: 'سيد الملاكمة والبديهة' })}</h4>
+                <p className="text-xs text-[#A855F7] font-bold font-mono">{tr(currentLang, { en: '50 VR Combat Sessions', es: '50 Sesiones de Combate VR', fr: '50 Sessions de Combat VR', ar: 'استخدام نظارة VR 50 مرة' })}</p>
               </div>
             </div>
 
@@ -1244,8 +1263,8 @@ const Profile: React.FC<ProfileProps> = ({
                 👑
               </div>
               <div>
-                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{isAr ? 'أسطورة أورا S-Rank' : 'S-Rank Aura Legend'}</h4>
-                <p className="text-xs text-white font-bold font-mono">{isAr ? 'الصدارة على مستوى المنطقة' : 'Rank #1 Regional Leader'}</p>
+                <h4 className="font-black text-white font-anime text-sm hover-cyber-glitch">{tr(currentLang, { en: 'S-Rank Aura Legend', es: 'Leyenda Aura Rango S', fr: 'Légende Aura Rang S', ar: 'أسطورة أورا S-Rank' })}</h4>
+                <p className="text-xs text-white font-bold font-mono">{tr(currentLang, { en: 'Rank #1 Regional Leader', es: 'Líder Regional #1', fr: 'Leader Régional #1', ar: 'الصدارة على مستوى المنطقة' })}</p>
               </div>
             </div>
 
@@ -1266,14 +1285,14 @@ const Profile: React.FC<ProfileProps> = ({
             <div className="flex justify-between items-center mb-6 border-b border-[#A855F7]/40 pb-4">
               <div>
                 <span className="text-[10px] font-mono text-[#00F0FF] block">[ PILOT LOG ENTRY CONSOLE ]</span>
-                <h3 className="text-2xl font-black font-anime text-white">{isAr ? 'تسجيل جولة تدريبية جديدة ⚡' : 'Log New Workout Session ⚡'}</h3>
+                <h3 className="text-2xl font-black font-anime text-white">{tr(currentLang, { en: 'Log New Workout Session ⚡', es: 'Registrar Nueva Sesión ⚡', fr: 'Enregistrer Nouvelle Séance ⚡', ar: 'تسجيل جولة تدريبية جديدة ⚡' })}</h3>
               </div>
               <button onClick={() => setShowLogModal(false)} className="text-[#A855F7] text-xl font-bold hover-cyber-glitch p-1 cursor-pointer">✖</button>
             </div>
 
             <form onSubmit={handleAddWorkout} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{isAr ? 'اسم الجولة / اليوم:' : 'Session / Day Name:'}</label>
+                <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{tr(currentLang, { en: 'Session / Day Name:', es: 'Nombre de Sesión / Día:', fr: 'Nom de Séance / Jour :', ar: 'اسم الجولة / اليوم:' })}</label>
                 <input 
                   type="text" 
                   value={newDay} 
@@ -1285,7 +1304,7 @@ const Profile: React.FC<ProfileProps> = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{isAr ? 'السعرات المحروقة (kcal):' : 'Calories Burned (kcal):'}</label>
+                  <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{tr(currentLang, { en: 'Calories Burned (kcal):', es: 'Calorías Quemadas (kcal):', fr: 'Calories Brûlées (kcal) :', ar: 'السعرات المحروقة (kcal):' })}</label>
                   <input 
                     type="number" 
                     value={newCalories} 
@@ -1296,7 +1315,7 @@ const Profile: React.FC<ProfileProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{isAr ? 'دقائق التمرين (min):' : 'Workout Minutes (min):'}</label>
+                  <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{tr(currentLang, { en: 'Workout Minutes (min):', es: 'Minutos de Entreno (min):', fr: 'Minutes d’Entraînement (min) :', ar: 'دقائق التمرين (min):' })}</label>
                   <input 
                     type="number" 
                     value={newMinutes} 
@@ -1308,7 +1327,7 @@ const Profile: React.FC<ProfileProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{isAr ? 'طاقة الهالة الناتجة (Power Level):' : 'Aura Power Level Output:'}</label>
+                <label className="block text-xs font-bold font-mono text-gray-300 mb-1">{tr(currentLang, { en: 'Aura Power Level Output:', es: 'Potencia Aura Generada:', fr: 'Puissance Aura Générée :', ar: 'طاقة الهالة الناتجة (Power Level):' })}</label>
                 <input 
                   type="number" 
                   value={newPower} 
@@ -1322,7 +1341,7 @@ const Profile: React.FC<ProfileProps> = ({
                 type="submit"
                 className="w-full py-4 mt-6 bg-gradient-to-r from-[#2c084f] via-[#480d7a] to-[#10B981] text-white font-black text-base font-anime rounded-xl shadow-[0_0_25px_rgba(76,29,149,0.7)] hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] transition-all hover-cyber-glitch cursor-pointer active:scale-95 border border-[#6b21a8]"
               >
-                {isAr ? 'تأكيد وإضافة للرسم البياني ⚡' : 'Confirm & Add to Telemetry ⚡'}
+                {tr(currentLang, { en: 'Confirm & Add to Telemetry ⚡', es: 'Confirmar y Añadir a Telemetría ⚡', fr: 'Confirmer & Ajouter à la Télémétrie ⚡', ar: 'تأكيد وإضافة للرسم البياني ⚡' })}
               </button>
             </form>
 
@@ -1749,7 +1768,7 @@ const Profile: React.FC<ProfileProps> = ({
               <div className="flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-[#00F0FF]" />
                 <h3 className="font-anime font-black text-xl text-white">
-                  {isFr ? 'Modifier le Profil Athlète' : isEs ? 'Editar Perfil de Atleta' : 'Edit Athlete Profile'}
+                  {tr(currentLang, { en: 'Edit Athlete Profile', es: 'Editar Perfil de Atleta', fr: 'Modifier le Profil Athlète', ar: 'تعديل الملف الرياضي' })}
                 </h3>
               </div>
               <button
@@ -1765,7 +1784,7 @@ const Profile: React.FC<ProfileProps> = ({
               <div className="py-8 text-center space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                 <p className="text-white font-anime font-black text-lg">
-                  {isFr ? 'Profil mis à jour avec succès ! ⚡' : isEs ? '¡Perfil actualizado con éxito! ⚡' : 'Profile Updated Successfully! ⚡'}
+                  {tr(currentLang, { en: 'Profile Updated Successfully! ⚡', es: '¡Perfil actualizado con éxito! ⚡', fr: 'Profil mis à jour avec succès ! ⚡', ar: 'تم تحديث الملف الرياضي بنجاح! ⚡' })}
                 </p>
               </div>
             ) : (
@@ -1788,7 +1807,7 @@ const Profile: React.FC<ProfileProps> = ({
               >
                 <div>
                   <label className="block text-xs font-mono font-bold text-gray-300 uppercase mb-1">
-                    {isFr ? 'Nom de l’Athlète / Indicatif' : isEs ? 'Nombre del Atleta / Indicativo' : 'Athlete Name / Call-Sign'}
+                    {tr(currentLang, { en: 'Athlete Name / Call-Sign', es: 'Nombre del Atleta / Indicativo', fr: 'Nom de l’Athlète / Indicatif', ar: 'اسم الرياضي / اللقب' })}
                   </label>
                   <input
                     type="text"
@@ -1802,7 +1821,7 @@ const Profile: React.FC<ProfileProps> = ({
 
                 <div>
                   <label className="block text-xs font-mono font-bold text-gray-300 uppercase mb-1">
-                    {isFr ? 'Discipline & Spécialisation' : isEs ? 'Disciplina y Especialización' : 'Discipline & Combat Specialization'}
+                    {tr(currentLang, { en: 'Discipline & Combat Specialization', es: 'Disciplina y Especialización', fr: 'Discipline & Spécialisation', ar: 'التخصص الرياضي والقتالي' })}
                   </label>
                   <input
                     type="text"
@@ -1819,13 +1838,13 @@ const Profile: React.FC<ProfileProps> = ({
                     onClick={() => setIsEditingProfile(false)}
                     className="px-4 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-300 font-anime font-black text-xs cursor-pointer transition-all"
                   >
-                    {isFr ? 'Annuler' : isEs ? 'Cancelar' : 'Cancel'}
+                    {tr(currentLang, { en: 'Cancel', es: 'Cancelar', fr: 'Annuler', ar: 'إلغاء' })}
                   </button>
                   <button
                     type="submit"
                     className="px-5 py-2 rounded-xl bg-[#00F0FF] hover:bg-[#00D0DF] text-black font-anime font-black text-xs cursor-pointer transition-all shadow-[0_0_15px_rgba(0,240,255,0.4)]"
                   >
-                    {isFr ? 'Enregistrer' : isEs ? 'Guardar Cambios' : 'Save Changes'}
+                    {tr(currentLang, { en: 'Save Changes', es: 'Guardar Cambios', fr: 'Enregistrer', ar: 'حفظ التغييرات' })}
                   </button>
                 </div>
               </form>

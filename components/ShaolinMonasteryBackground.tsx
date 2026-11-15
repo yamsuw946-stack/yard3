@@ -200,27 +200,24 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
           ref={canvasRef} 
           className="absolute inset-0 w-full h-full mix-blend-screen opacity-75"
         />
-
-        {/* Layer 4: Authentic 35mm Motion Picture Subtle Film Grain */}
-        <div className="absolute inset-0 bg-speedlines mix-blend-overlay opacity-10 pointer-events-none" />
       </div>
 
       {/* Floating Cinemagraph Control Pill in Bottom-Right Corner */}
-      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center gap-1.5 p-1 rounded-2xl bg-[#0C0E18]/90 border border-emerald-500/40 backdrop-blur-xl shadow-[0_0_25px_rgba(16,185,129,0.25)] text-xs">
+      <div className="fixed bottom-4 right-4 z-40 hidden sm:flex items-center gap-1.5 p-1 rounded-xl bg-[#0C0E14]/90 border border-white/[0.1] backdrop-blur-xl shadow-lg text-xs">
         <button
           type="button"
           onClick={() => setIsEnabled(!isEnabled)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-anime font-black text-[11px] transition-all cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold text-[11px] transition-all cursor-pointer ${
             isEnabled 
-              ? 'bg-emerald-500 text-black shadow-md' 
-              : 'bg-black/60 text-gray-400 hover:text-white'
+              ? 'bg-[#D4AF37] text-[#07080C]' 
+              : 'bg-black/60 text-slate-400 hover:text-white'
           }`}
-          title="Toggle Cinemagraph Shaolin Background"
+          title="Toggle Living Sanctuary Background"
         >
           <Film className="w-3.5 h-3.5" />
           <span>
             {isEnabled 
-              ? (isFr ? 'Cinemagraph Shaolin' : isEs ? 'Cinemagraph Shaolin' : 'Shaolin Cinemagraph') 
+              ? (isFr ? 'Atmosphère Active' : isEs ? 'Atmósfera Activa' : 'Sanctuary Ambience') 
               : (isFr ? 'Noir Pur' : isEs ? 'Negro Puro' : 'Pure Obsidian')}
           </span>
         </button>
@@ -229,10 +226,10 @@ export const ShaolinMonasteryBackground: React.FC<ShaolinMonasteryBackgroundProp
           <button
             type="button"
             onClick={() => setCinemagraphMode(prev => prev === 'cinemagraph' ? 'calm' : 'cinemagraph')}
-            className="p-1.5 rounded-xl bg-black/60 hover:bg-black text-[#FFE600] transition-colors cursor-pointer"
-            title={cinemagraphMode === 'cinemagraph' ? 'Living Cinemagraph (Active)' : 'Calm Mist Mode'}
+            className="p-1.5 rounded-lg bg-black/60 hover:bg-black text-[#D4AF37] transition-colors cursor-pointer"
+            title={cinemagraphMode === 'cinemagraph' ? 'Living Ambience (Active)' : 'Calm Mist Mode'}
           >
-            {cinemagraphMode === 'cinemagraph' ? <Wind className="w-3.5 h-3.5 animate-pulse text-[#FFE600]" /> : <Sparkles className="w-3.5 h-3.5 text-gray-400" />}
+            {cinemagraphMode === 'cinemagraph' ? <Wind className="w-3.5 h-3.5 text-[#D4AF37]" /> : <Sparkles className="w-3.5 h-3.5 text-slate-400" />}
           </button>
         )}
       </div>

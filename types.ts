@@ -89,7 +89,7 @@ export type ViewState =
   | { type: 'customClub' }
   | { type: 'yardCamp' }
   | { type: 'bazaruto' }
-  | { type: 'ownerDashboard'; initialTab?: 'photos' | 'sections' | 'payments' | 'videos' | 'articles' };
+  | { type: 'ownerDashboard'; initialTab?: 'photos' | 'sections' | 'payments' | 'videos' | 'articles' | 'siteCopy' | 'catalogPricing' | 'resortBrand' };
 
 export interface FitnessDataPoint {
   day: string;

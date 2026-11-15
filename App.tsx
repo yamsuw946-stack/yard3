@@ -15,7 +15,7 @@ import ProductDetail from './components/ProductDetail';
 import JournalDetail from './components/JournalDetail';
 import CartDrawer from './components/CartDrawer';
 import { MobileAppNotice } from './components/MobileAppNotice';
-import { Leaderboard } from './components/Leaderboard';
+import { Leaderboard, WEEKLY_CHAMPIONS, MONTHLY_CHAMPIONS } from './components/Leaderboard';
 import { AIAnimeCoach } from './components/AIAnimeCoach';
 import { CombatArena } from './components/CombatArena';
 import { SectionHubNav, SectionHubId } from './components/SectionHubNav';
@@ -28,6 +28,7 @@ import AppDownloadModal from './components/AppDownloadModal';
 import { SharedAuraModal } from './components/SharedAuraModal';
 import { FoundersAndCommunity } from './components/FoundersAndCommunity';
 import { AuthModal } from './components/AuthModal';
+import { authService } from './services/authService';
 import { GlobalSponsorsShowcase } from './components/GlobalSponsorsShowcase';
 import { BazarutoResortSanctuary } from './components/BazarutoResortSanctuary';
 
@@ -60,16 +61,22 @@ import {
   JOURNAL_GEAR_IMAGE 
 } from './constants';
 import { Product, JournalArticle, ViewState } from './types';
-import { Language, LANGUAGES } from './i18n';
+import { Language, LANGUAGES, tr } from './i18n';
 import { soundFX } from './services/soundFX';
+import {
+  BiometricEngineService,
+  evaluateSleepArchitecture,
+  evaluateInjuryRisk,
+  BiometricTelemetryState
+} from './services/biometricEngine';
 
-// Sleek Cyber Chamber Loading Fallback
+// Executive Chamber Loading Fallback
 const CyberLoadingFallback: React.FC = () => (
   <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 space-y-4">
-    <div className="w-12 h-12 rounded-2xl bg-black/80 border-2 border-emerald-500/60 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] animate-pulse">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+    <div className="w-12 h-12 rounded-2xl bg-[#0C0E14] border border-[#D4AF37]/40 flex items-center justify-center shadow-lg">
+      <div className="w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
     </div>
-    <span className="text-xs font-mono font-black text-emerald-400 tracking-widest uppercase">
+    <span className="text-xs font-mono font-bold text-[#D4AF37] tracking-widest uppercase">
       LOADING YARD 300 CHAMBER...
     </span>
   </div>
@@ -79,13 +86,23 @@ function App() {
   const [view, setView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.toLowerCase();
-      const search = window.location.search.toLowerCase();
-      if (hash.includes('club') || search.includes('club')) {
-        return { type: 'customClub' };
-      }
-      if (hash === '#owner' || hash === '#admin') {
-        return { type: 'ownerDashboard' };
-      }
+      const params = new URLSearchParams(window.location.search);
+      const section = (params.get('section') || '').toLowerCase();
+      const target = section || hash.replace('#', '');
+      if (target.includes('club')) return { type: 'customClub' };
+      if (target === 'owner' || target === 'admin' || target === 'dashboard') return { type: 'ownerDashboard' };
+      if (target === 'yardengine' || target === 'engine') return { type: 'yardEngine' };
+      if (target === 'sleepstudies' || target === 'sleep') return { type: 'sleepStudies' };
+      if (target === 'injuryprediction' || target === 'injury') return { type: 'injuryPrediction' };
+      if (target === 'leaderboard') return { type: 'leaderboard' };
+      if (target === 'ticketsevents' || target === 'tickets') return { type: 'ticketsEvents' };
+      if (target === 'bazarutoresort' || target === 'resort') return { type: 'bazarutoResort' };
+      if (target === 'options') return { type: 'options' };
+      if (target === 'camp') return { type: 'camp' };
+      if (target === 'founders') return { type: 'founders' };
+      if (target === 'tiers' || target === 'subscribertier' || target === 'subscribertiers') return { type: 'subscriberTiers' };
+      if (target === 'arena') return { type: 'arena' };
+      if (target === 'aicoach') return { type: 'aiCoach' };
     }
     return { type: 'home' };
   });
@@ -93,9 +110,18 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAppDownloadOpen, setIsAppDownloadOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+  const [verificationToast, setVerificationToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [currentLang, setCurrentLang] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const urlLang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase();
+      if (urlLang === 'en' || urlLang === 'es' || urlLang === 'fr' || urlLang === 'ar') {
+        localStorage.setItem('yard300_lang', urlLang);
+        return urlLang as Language;
+      }
+    }
     const saved = localStorage.getItem('yard300_lang');
-    if (saved === 'en' || saved === 'es' || saved === 'fr') {
+    if (saved === 'en' || saved === 'es' || saved === 'fr' || saved === 'ar') {
       return saved as Language;
     }
     // Official language is English by default (English, Español, Français)
@@ -117,25 +143,57 @@ function App() {
   });
   const [isOwner, setIsOwner] = useState<boolean>(() => OwnerConfigService.isOwnerLoggedIn());
   const [ownerInfo, setOwnerInfo] = useState(() => OwnerConfigService.getOwnerInfo());
+  const [leaderboardTab, setLeaderboardTab] = useState<'weekly' | 'monthly' | 'allTime'>('weekly');
+  const [liveTelemetry, setLiveTelemetry] = useState<BiometricTelemetryState>(() =>
+    BiometricEngineService.getState()
+  );
 
-  // Listen for url changes that may contain shared aura tokens or owner auth changes
   useEffect(() => {
+    return BiometricEngineService.subscribe((next) => setLiveTelemetry(next));
+  }, []);
+
+  // Process 1-click email verification links on load & hash/url changes + listen for auth events
+  useEffect(() => {
+    const runUrlVerification = () => {
+      const verifyResult = authService.checkAndProcessUrlVerification();
+      if (verifyResult.success && verifyResult.user) {
+        soundFX.playSuccess();
+        soundFX.playPowerUp();
+        setVerificationToast({
+          type: 'success',
+          text: tr(currentLang, {
+            en: `Email confirmed! Welcome, ${verifyResult.user.name}.`,
+            es: `¡Correo confirmado! Bienvenido, ${verifyResult.user.name}.`,
+            fr: `E-mail confirmé ! Bienvenue, ${verifyResult.user.name}.`,
+            ar: `تم تأكيد البريد وتفعيل الحساب! أهلاً بك يا ${verifyResult.user.name}.`
+          })
+        });
+      } else if (verifyResult.error) {
+        setVerificationToast({ type: 'error', text: verifyResult.error });
+      }
+    };
+
     const checkAuraInUrl = () => {
       const data = getSharedAuraFromUrl();
       if (data) {
         setSharedAuraGuestData(data);
       }
+      runUrlVerification();
     };
     const handleAuthChange = () => {
       setIsOwner(OwnerConfigService.isOwnerLoggedIn());
       setOwnerInfo(OwnerConfigService.getOwnerInfo());
     };
-    const handleOpenAuth = () => {
+    const handleOpenAuth = (e: Event) => {
+      const detail = (e as CustomEvent<{ mode?: 'login' | 'register' }>).detail;
+      setAuthModalMode(detail?.mode === 'register' ? 'register' : 'login');
       setIsAuthModalOpen(true);
     };
     const handleCartClear = () => {
       setCartItems([]);
     };
+
+    runUrlVerification();
     window.addEventListener('hashchange', checkAuraInUrl);
     window.addEventListener('popstate', checkAuraInUrl);
     window.addEventListener('yard300_owner_auth_changed', handleAuthChange);
@@ -148,7 +206,7 @@ function App() {
       window.removeEventListener('yard300_open_auth', handleOpenAuth);
       window.removeEventListener('yard300_cart_clear', handleCartClear);
     };
-  }, []);
+  }, [currentLang]);
 
   // Collapsible state for each individual section: default open active section (yardEngine), others neat & collapsed to eliminate clutter
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -188,10 +246,34 @@ function App() {
   useEffect(() => {
     localStorage.setItem('yard300_lang', currentLang);
     const langInfo = LANGUAGES.find(l => l.code === currentLang);
-    const dir = langInfo?.dir || 'ltr';
+    const dir = langInfo?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr');
     document.documentElement.dir = dir;
     document.documentElement.lang = currentLang;
-  }, [currentLang]);
+
+    const seoTitle = tr(currentLang, {
+      en: 'YARD 300 – Combat Health, Bio-Performance & Ayman Alsuwaidi',
+      es: 'YARD 300 – Salud de Combate, Biometría y Ayman Alsuwaidi',
+      fr: 'YARD 300 – Santé de Combat, Biométrie & Ayman Alsuwaidi',
+      ar: 'YARD 300 – الأداء الرياضي والصحة القتالية — أيمن السويدي'
+    });
+    const seoDesc = tr(currentLang, {
+      en: 'YARD 300 by Ayman Alsuwaidi (Yam Suw): AI biometric injury prediction, sleep lab, athletic performance gear & Jan 5, 2027 10-challenge nature championship.',
+      es: 'YARD 300 por Ayman Alsuwaidi (Yam Suw): predicción biométrica de lesiones, laboratorio del sueño, equipamiento élite y campeonato del 5 de enero de 2027.',
+      fr: 'YARD 300 par Ayman Alsuwaidi (Yam Suw) : prédiction biométrique des blessures, laboratoire du sommeil, équipement élite et championnat du 5 janvier 2027.',
+      ar: 'منصة YARD 300 بقيادة أيمن السويدي (Yam Suw): التنبؤ بالإصابات بالذكاء الاصطناعي، مختبر النوم، عتاد الأبطال وبطولة التحديات الـ 10 في 5 يناير 2027.'
+    });
+
+    document.title = seoTitle;
+    const updateMeta = (selector: string, val: string) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute('content', val);
+    };
+    updateMeta('meta[name="description"]', seoDesc);
+    updateMeta('meta[property="og:title"]', seoTitle);
+    updateMeta('meta[property="og:description"]', seoDesc);
+    updateMeta('meta[name="twitter:title"]', seoTitle);
+    updateMeta('meta[name="twitter:description"]', seoDesc);
+  }, [currentLang, view]);
 
   // Enforce pure obsidian cyber night mode permanently
   useEffect(() => {
@@ -217,6 +299,11 @@ function App() {
         }
         if (rawHash === 'options') {
           setView({ type: 'options' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        if (rawHash === 'owner' || rawHash === 'admin' || rawHash === 'dashboard') {
+          setView({ type: 'ownerDashboard' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
@@ -252,13 +339,24 @@ function App() {
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
 
-  // Mobile App Download Modal Event Listener
+  // Mobile App Download Modal Event Listener + Ctrl/Cmd+Shift+Y Owner Control Shortcut
   useEffect(() => {
     const handleOpenAppDownload = () => {
       setIsAppDownloadOpen(true);
     };
+    const handleControlShortcut = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setView({ type: 'ownerDashboard' });
+      }
+    };
     window.addEventListener('open-app-download', handleOpenAppDownload);
-    return () => window.removeEventListener('open-app-download', handleOpenAppDownload);
+    window.addEventListener('keydown', handleControlShortcut);
+    return () => {
+      window.removeEventListener('open-app-download', handleOpenAppDownload);
+      window.removeEventListener('keydown', handleControlShortcut);
+    };
   }, []);
 
   // Handle navigation (clicks on Navbar or Footer links)
@@ -451,6 +549,27 @@ function App() {
       {/* 20-Day Official Launch Announcement Google-Style Dismissible Popup Ad */}
       <LaunchAnnouncementModal currentLang={currentLang} />
 
+      {verificationToast && (
+        <div
+          role="status"
+          className={`fixed top-16 left-1/2 -translate-x-1/2 z-[130] px-4 py-2.5 rounded-xl border shadow-xl flex items-center gap-3 text-xs font-semibold backdrop-blur-md ${
+            verificationToast.type === 'success'
+              ? 'bg-emerald-950/90 border-emerald-400/60 text-emerald-200'
+              : 'bg-red-950/90 border-red-400/60 text-red-200'
+          }`}
+        >
+          <span>{verificationToast.text}</span>
+          <button
+            type="button"
+            onClick={() => setVerificationToast(null)}
+            className="text-white/70 hover:text-white font-bold cursor-pointer"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {view.type !== 'checkout' && (
         <Navbar 
             onNavClick={handleNavClick} 
@@ -465,7 +584,10 @@ function App() {
             onLanguageChange={setCurrentLang}
             onOpenMetaMask={() => setIsMetaMaskOpen(true)}
             walletAddress={walletAddress}
-            onOpenAuth={() => setIsAuthModalOpen(true)}
+            onOpenAuth={(mode = 'login') => {
+              setAuthModalMode(mode);
+              setIsAuthModalOpen(true);
+            }}
         />
       )}
       
@@ -482,7 +604,10 @@ function App() {
                 else if (target === 'sleepStudies') setView({ type: 'sleepStudies' });
                 else if (target === 'injuryPrediction') setView({ type: 'injuryPrediction' });
                 else if (target === 'arena') setView({ type: 'arena' });
-                else if (target === 'subscriberTiers') {
+                else if (target === 'leaderboard') {
+                  setLeaderboardTab('weekly');
+                  setView({ type: 'leaderboard' });
+                } else if (target === 'subscriberTiers') {
                   const el = document.getElementById('subscriber-tiers');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }
@@ -490,84 +615,379 @@ function App() {
             />
             
             {/* Visual Anchor & Interactive Experience Container */}
-            <div className="max-w-[1800px] w-full max-w-full overflow-x-hidden mx-auto px-4 md:px-8 space-y-16">
+            <div className="max-w-[1680px] w-full max-w-full overflow-x-hidden mx-auto px-3 sm:px-5 md:px-8 space-y-6 md:space-y-8">
               
               {/* 1. Subscriber Tiers & Earned Credentials Showcase (4 Levels) */}
-              <SubscriberTiersShowcase currentLang={currentLang} />
+              <SubscriberTiersShowcase
+                currentLang={currentLang}
+                onNavigateToClub={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setView({ type: 'customClub' });
+                }}
+              />
 
-              {/* Official Global Sponsors & Sports Performance Partners (Adidas, Red Bull, WHOOP, MMA Federation, Tiger Muay Thai) */}
+              {/* Official Global Sponsors & Sports Performance Partners */}
               <GlobalSponsorsShowcase currentLang={currentLang} />
 
               {/* 2. Interactive Clinical Algorithms Launcher (Sleep Studies & ACWR Injury Prediction) */}
-              <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-[#121422] via-[#0E101A] to-[#161826] shadow-[0_0_40px_rgba(0,240,255,0.2)]">
-                <div className="max-w-3xl mb-8 space-y-2">
-                  <span className="px-3 py-1 rounded-full bg-[#00F0FF]/20 text-[#00F0FF] text-xs font-black font-anime uppercase tracking-wider">
-                    ⚡ {currentLang === 'ar' ? 'الخوارزميات السريرية والبيومترية' : 'CLINICAL ALGORITHMIC LABS'}
-                  </span>
-                  <h3 className="text-2xl md:text-4xl font-black font-anime text-white">
-                    {currentLang === 'ar' ? 'خوارزمية دراسات النوم ونموذج التنبؤ بالإصابات' : 'Sleep Studies & Biomechanical Injury Prediction'}
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-300 font-bold leading-relaxed">
-                    {currentLang === 'ar' 
-                      ? 'أدوات حسابية تفاعلية تحلل دورات النوم العميق واستشفاء هرمون النمو، وتتنبأ بمخاطر التمزقات العضلية وفق معيار الحمل الحاد والمزمن (ACWR).'
-                      : 'Interactive precision algorithms calculating Stage-3 deep sleep GH synthesis, sleep debt, and 7-day predictive soft-tissue strain risk.'}
-                  </p>
-                </div>
+              {(() => {
+                const sleepEval = evaluateSleepArchitecture(liveTelemetry);
+                const injuryEval = evaluateInjuryRisk(liveTelemetry);
+                return (
+                  <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-[#0C0E14] border border-white/[0.08] shadow-xl">
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
+                      <div className="max-w-3xl space-y-1.5">
+                        <span className="text-[10px] font-mono font-bold text-[#D4AF37] uppercase tracking-[0.18em] block">
+                          {tr(currentLang, {
+                            en: 'LIVE CLINICAL ALGORITHMIC LABS',
+                            es: 'LABORATORIOS CLÍNICOS ALGORÍTMICOS EN VIVO',
+                            fr: 'LABORATOIRES CLINIQUES ALGORITHMIQUES EN DIRECT',
+                            ar: 'الخوارزميات السريرية والبيومترية الحية'
+                          })}
+                        </span>
+                        <h3 className="text-xl md:text-2xl font-extrabold text-white">
+                          {tr(currentLang, {
+                            en: 'Sleep Studies & Biomechanical Injury Prediction',
+                            es: 'Estudios del Sueño y Predicción Biomecánica de Lesiones',
+                            fr: 'Études du Sommeil et Prédiction Biomécanique des Blessures',
+                            ar: 'خوارزمية دراسات النوم ونموذج التنبؤ بالإصابات'
+                          })}
+                        </h3>
+                        <p className="text-xs text-slate-300 leading-relaxed">
+                          {tr(currentLang, {
+                            en: 'Interactive precision algorithms calculating Stage-3 deep sleep GH synthesis, sleep debt, and 7-day predictive soft-tissue strain risk.',
+                            es: 'Algoritmos de precisión que calculan la síntesis de GH en sueño profundo NREM3, deuda de sueño y riesgo de sobrecarga a 7 días.',
+                            fr: 'Algorithmes de précision calculant la synthèse GH en sommeil profond NREM3, la dette de sommeil et le risque musculaire sur 7 jours.',
+                            ar: 'أدوات حسابية تفاعلية تحلل دورات النوم العميق واستشفاء هرمون النمو، وتتنبأ بمخاطر التمزقات العضلية وفق معيار الحمل الحاد والمزمن (ACWR).'
+                          })}
+                        </p>
+                      </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Sleep Studies Launcher Card */}
-                  <div className="p-6 rounded-2xl bg-[#141624] transition-all flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-black font-anime text-[#00F0FF] uppercase tracking-wider block">
-                        CLINICAL SLEEP LAB
-                      </span>
-                      <h4 className="text-xl font-black font-anime text-white">
-                        {currentLang === 'ar' ? 'خوارزمية دراسات النوم وهندسة التعافي' : 'Sleep Architecture & Recovery Lab'}
-                      </h4>
-                      <p className="text-xs text-gray-300 font-bold">
-                        {currentLang === 'ar' ? 'تحليل أطوار النوم العميق NREM3 و REM والدين التراكمي وجاهزية الجهاز العصبي.' : 'Evaluate deep sleep stages, REM reflex consolidation, and athletic sleep debt.'}
-                      </p>
+                      <div className="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#121622] border border-white/[0.08] font-mono text-[11px] tabular-nums shrink-0" dir="ltr">
+                        <span className="text-slate-400">
+                          {tr(currentLang, { en: 'READINESS', es: 'LISTO', fr: 'PRÉPA', ar: 'READINESS' })}
+                        </span>
+                        <span className="text-[#D4AF37] font-bold">{sleepEval.overallScore}%</span>
+                        <span className="text-slate-600">|</span>
+                        <span className="text-slate-400">ACWR</span>
+                        <span className="text-[#10B981] font-bold">{injuryEval.acwr.toFixed(2)}</span>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setView({ type: 'sleepStudies' });
-                      }}
-                      className="w-full py-3 rounded-xl bg-[#7000FF] hover:bg-[#8519ff] text-white font-black font-anime text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(112,0,255,0.4)]"
-                    >
-                      <span>{currentLang === 'ar' ? 'تشغيل خوارزمية النوم' : 'Launch Sleep Algorithm'}</span>
-                      <span>→</span>
-                    </button>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Sleep Studies Live Card */}
+                      <div className="p-4 sm:p-5 rounded-xl bg-[#121622] border border-white/[0.07] hover:border-[#D4AF37]/45 transition-all flex flex-col justify-between space-y-3.5">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] font-mono font-bold text-[#D4AF37] uppercase tracking-wider">
+                              {tr(currentLang, {
+                                en: 'CLINICAL SLEEP LAB',
+                                es: 'LAB DE SUEÑO',
+                                fr: 'LABO SOMMEIL',
+                                ar: 'مختبر النوم'
+                              })} · {sleepEval.recoveryState.includes('Optimal')
+                                ? tr(currentLang, { en: 'OPTIMAL ANABOLIC', es: 'ANABÓLICO ÓPTIMO', fr: 'ANABOLIQUE OPTIMAL', ar: 'ذروة التعافي البنائي' })
+                                : sleepEval.recoveryState.includes('Balanced')
+                                ? tr(currentLang, { en: 'BALANCED RECOVERY', es: 'RECUPERACIÓN EQUILIBRADA', fr: 'RÉCUPÉRATION ÉQUILIBRÉE', ar: 'تعافٍ متوازن' })
+                                : tr(currentLang, { en: 'SUPPRESSED / DEBT', es: 'DÉFICIT DE SUEÑO', fr: 'DETTE DE SOMMEIL', ar: 'نقص وتعافٍ منخفض' })}
+                            </span>
+                            <span className="text-[11px] font-mono font-bold text-white tabular-nums" dir="ltr">
+                              {liveTelemetry.totalSleepHours.toFixed(1)}h · NREM3 {liveTelemetry.deepSleepPercent}%
+                            </span>
+                          </div>
+
+                          <div>
+                            <h4 className="text-base md:text-lg font-bold text-white">
+                              {tr(currentLang, {
+                                en: 'Sleep Architecture & Recovery Lab',
+                                es: 'Arquitectura del Sueño y Recuperación',
+                                fr: 'Architecture du Sommeil et Récupération',
+                                ar: 'خوارزمية دراسات النوم وهندسة التعافي'
+                              })}
+                            </h4>
+                            <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                              {tr(currentLang, {
+                                en: 'Evaluate deep sleep stages, REM reflex consolidation, and athletic sleep debt.',
+                                es: 'Evalúa las fases de sueño profundo, consolidación REM y deuda de sueño atlética.',
+                                fr: 'Évaluez les phases NREM3, la consolidation REM et la dette de sommeil athlétique.',
+                                ar: 'تحليل أطوار النوم العميق NREM3 و REM والدين التراكمي وجاهزية الجهاز العصبي.'
+                              })}
+                            </p>
+                          </div>
+
+                          {/* Live Hypnogram Micro-Preview */}
+                          <div className="p-2.5 rounded-xl bg-[#07080C] border border-white/[0.06] flex items-center justify-between gap-3">
+                            <svg viewBox="0 0 180 38" className="w-32 sm:w-36 h-9 shrink-0" aria-hidden="true">
+                              <polyline
+                                fill="none"
+                                stroke="#D4AF37"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                points="2,8 22,8 26,31 52,31 58,18 76,18 82,10 100,10 106,30 132,30 138,14 162,14 176,8"
+                              />
+                            </svg>
+                            <div className="grid grid-cols-2 gap-3 text-[11px] font-mono tabular-nums" dir="ltr">
+                              <div>
+                                <span className="text-slate-500 block text-[9px]">
+                                  {tr(currentLang, { en: 'GH SYNTH', es: 'SÍNTESIS GH', fr: 'SYNTHÈSE GH', ar: 'GH SYNTH' })}
+                                </span>
+                                <span className="text-[#D4AF37] font-bold">
+                                  {sleepEval.growthHormoneEst.includes('Peak')
+                                    ? tr(currentLang, { en: 'Peak Release', es: 'Pico Máximo', fr: 'Pic Maximal', ar: 'إفراز ذروي' })
+                                    : sleepEval.growthHormoneEst.includes('Moderate')
+                                    ? tr(currentLang, { en: 'Moderate', es: 'Moderado', fr: 'Modéré', ar: 'متوسط' })
+                                    : tr(currentLang, { en: 'Blunted', es: 'Reducido', fr: 'Réduit', ar: 'منخفض' })}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500 block text-[9px]">SPO2</span>
+                                <span className="text-[#10B981] font-bold">{liveTelemetry.baselineSpo2}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            setView({ type: 'sleepStudies' });
+                          }}
+                          className="w-full py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <span>
+                            {tr(currentLang, {
+                              en: 'Open Sleep Lab Telemetry',
+                              es: 'Abrir Telemetría del Sueño',
+                              fr: 'Ouvrir le Labo Sommeil',
+                              ar: 'تشغيل مختبر النوم الحي'
+                            })}
+                          </span>
+                          <span>→</span>
+                        </button>
+                      </div>
+
+                      {/* Injury Prediction Live Card */}
+                      <div className="p-4 sm:p-5 rounded-xl bg-[#121622] border border-white/[0.07] hover:border-[#10B981]/45 transition-all flex flex-col justify-between space-y-3.5">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] font-mono font-bold text-[#10B981] uppercase tracking-wider">
+                              {tr(currentLang, {
+                                en: 'GABBETT ACWR ENGINE',
+                                es: 'MOTOR GABBETT ACWR',
+                                fr: 'MOTEUR GABBETT ACWR',
+                                ar: 'محرك ACWR الوقائي'
+                              })} · {injuryEval.horizonDays.includes('Optimal')
+                                ? tr(currentLang, { en: '7D+ OPTIMAL', es: '7D+ ÓPTIMO', fr: '7J+ OPTIMAL', ar: 'آمن +7 أيام' })
+                                : injuryEval.horizonDays.includes('4–7')
+                                ? tr(currentLang, { en: '4-7D HORIZON', es: '4-7 DÍAS', fr: '4-7 JOURS', ar: 'أفق 4-7 أيام' })
+                                : injuryEval.horizonDays.includes('48–72')
+                                ? tr(currentLang, { en: '48-72H WATCH', es: '48-72 HORAS', fr: '48-72 HEURES', ar: 'مراقبة 72 ساعة' })
+                                : tr(currentLang, { en: '24H ALERT', es: 'ALERTA 24H', fr: 'ALERTE 24H', ar: 'تنبيه 24 ساعة' })}
+                            </span>
+                            <span className="text-[11px] font-mono font-bold tabular-nums" style={{ color: injuryEval.riskColor }} dir="ltr">
+                              {tr(currentLang, { en: 'RISK', es: 'RIESGO', fr: 'RISQUE', ar: 'RISK' })} {injuryEval.totalRisk}% · ACWR {injuryEval.acwr.toFixed(2)}
+                            </span>
+                          </div>
+
+                          <div>
+                            <h4 className="text-base md:text-lg font-bold text-white">
+                              {tr(currentLang, {
+                                en: 'Biomechanical Injury Prediction',
+                                es: 'Predicción Biomecánica de Lesiones',
+                                fr: 'Prédiction Biomécanique des Blessures',
+                                ar: 'خوارزمية التنبؤ بالإصابات وتوازن الحمل'
+                              })}
+                            </h4>
+                            <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                              {tr(currentLang, {
+                                en: 'Acute:chronic workload ratio analysis, tendon strain alerts, and preventative conditioning.',
+                                es: 'Análisis de carga aguda/crónica, alertas de tensión tendinosa y acondicionamiento preventivo.',
+                                fr: 'Analyse du ratio charge aiguë/chronique, alertes tendineuses et préparation préventive.',
+                                ar: 'تتبع الحمل الحاد والمزمن، إجهاد الأوتار، ومعامل الإصابات السابقة لحماية مفاصل الأبطال.'
+                              })}
+                            </p>
+                          </div>
+
+                          {/* Live 7-Day Strain Risk Sparkline */}
+                          <div className="p-2.5 rounded-xl bg-[#07080C] border border-white/[0.06] flex items-center justify-between gap-3">
+                            <svg viewBox="0 0 180 38" className="w-32 sm:w-36 h-9 shrink-0" aria-hidden="true">
+                              <rect x="0" y="12" width="180" height="14" fill="#10B981" fillOpacity="0.1" rx="2" />
+                              <polyline
+                                fill="none"
+                                stroke="#10B981"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                points="2,28 30,24 58,26 86,19 114,22 144,16 176,14"
+                              />
+                            </svg>
+                            <div className="grid grid-cols-2 gap-3 text-[11px] font-mono tabular-nums" dir="ltr">
+                              <div>
+                                <span className="text-slate-500 block text-[9px]">
+                                  {tr(currentLang, { en: 'STRAIN', es: 'CARGA', fr: 'CHARGE', ar: 'STRAIN' })}
+                                </span>
+                                <span className="text-white font-bold">{injuryEval.fosterStrain}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-500 block text-[9px]">
+                                  {tr(currentLang, { en: 'CONFIDENCE', es: 'CONFIANZA', fr: 'FIABILITÉ', ar: 'CONFIDENCE' })}
+                                </span>
+                                <span className="text-[#10B981] font-bold">{injuryEval.confidencePercent}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            setView({ type: 'injuryPrediction' });
+                          }}
+                          className="w-full py-2.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-[#07080C] font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                          <span>
+                            {tr(currentLang, {
+                              en: 'Open Injury Radar Engine',
+                              es: 'Abrir Radar de Lesiones',
+                              fr: 'Ouvrir le Radar Blessures',
+                              ar: 'تشغيل محرك التنبؤ بالإصابات'
+                            })}
+                          </span>
+                          <span>→</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 2B. Weekly (Top 10) & Monthly (Top 50) Champions + Training Telemetry Readings Preview */}
+              <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-[#0C0E14] border border-emerald-500/25 shadow-xl space-y-5">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-mono font-bold text-[#10B981] uppercase tracking-[0.18em] block">
+                      {tr(currentLang, {
+                        en: 'VERIFIED TRAINING TELEMETRY & STANDINGS',
+                        es: 'CLASIFICACIÓN Y LECTURAS DE ENTRENAMIENTO VERIFICADAS',
+                        fr: 'CLASSEMENTS & MESURES D’ENTRAÎNEMENT VÉRIFIÉES',
+                        ar: 'لوحة المتصدرين والأبطال · قراءات التدريب الحيوية'
+                      })}
+                    </span>
+                    <h3 className="text-xl md:text-2xl font-extrabold text-white">
+                      {tr(currentLang, {
+                        en: 'Weekly (Top 10) & Monthly (Top 50) Champions Board',
+                        es: 'Campeones Semanales (Top 10) y Mensuales (Top 50)',
+                        fr: 'Champions Hebdomadaires (Top 10) & Mensuels (Top 50)',
+                        ar: 'أبطال الأسبوع (Top 10) وأبطال الشهر (Top 50) — أفضل النتائج'
+                      })}
+                    </h3>
                   </div>
 
-                  {/* Injury Prediction Launcher Card */}
-                  <div className="p-6 rounded-2xl bg-[#141624] transition-all flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-black font-anime text-[#E50914] uppercase tracking-wider block">
-                        GABBETT ACWR ENGINE
-                      </span>
-                      <h4 className="text-xl font-black font-anime text-white">
-                        {currentLang === 'ar' ? 'خوارزمية التنبؤ بالإصابات وتوازن الحمل' : 'Biomechanical Injury Prediction'}
-                      </h4>
-                      <p className="text-xs text-gray-300 font-bold">
-                        {currentLang === 'ar' ? 'تتبع الحمل الحاد والمزمن، إجهاد الأوتار، ومعامل الإصابات السابقة لحماية مفاصل الأبطال.' : 'Acute:chronic workload ratio analysis, tendon strain alerts, and preventative conditioning.'}
-                      </p>
-                    </div>
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
+                      type="button"
                       onClick={() => {
+                        soundFX.playButtonClick();
+                        setLeaderboardTab('weekly');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setView({ type: 'injuryPrediction' });
+                        setView({ type: 'leaderboard' });
                       }}
-                      className="w-full py-3 rounded-xl bg-[#E50914] hover:bg-[#ff1a26] text-white font-black font-anime text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(229,9,20,0.4)]"
+                      className="px-3.5 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs cursor-pointer transition-colors"
                     >
-                      <span>{currentLang === 'ar' ? 'تشغيل خوارزمية الإصابات' : 'Launch Injury Algorithm'}</span>
-                      <span>→</span>
+                      {tr(currentLang, { en: 'Weekly Top 10 →', es: 'Top 10 Semanal →', fr: 'Top 10 Hebdo →', ar: 'أبطال الأسبوع (10) →' })}
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundFX.playButtonClick();
+                        setLeaderboardTab('monthly');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setView({ type: 'leaderboard' });
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-[#10B981] hover:bg-[#34D399] text-[#050807] font-bold text-xs cursor-pointer transition-colors"
+                    >
+                      {tr(currentLang, { en: 'Monthly Top 50 →', es: 'Top 50 Mensual →', fr: 'Top 50 Mensuel →', ar: 'أبطال الشهر (50) →' })}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundFX.playButtonClick();
+                        setLeaderboardTab('allTime');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setView({ type: 'leaderboard' });
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-[#07080C] hover:bg-white/10 text-white border border-white/[0.12] font-semibold text-xs cursor-pointer transition-colors"
+                    >
+                      {tr(currentLang, { en: '300 Legion', es: 'Legión 300', fr: 'Légion 300', ar: 'فيلق 300' })}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Weekly Leaders Card */}
+                  <div className="p-4 rounded-xl bg-[#07080C] border border-white/[0.08] space-y-3">
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-[#D4AF37] font-bold">
+                        {tr(currentLang, { en: 'WEEKLY TOP 3 · TRAINING READINGS', es: 'TOP 3 SEMANAL · LECTURAS', fr: 'TOP 3 HEBDO · MESURES', ar: 'صدارة الأسبوع · قراءات التدريب' })}
+                      </span>
+                      <span className="text-slate-400 tabular-nums" dir="ltr">HRV · VO2 · HRS</span>
+                    </div>
+                    <div className="space-y-2">
+                      {WEEKLY_CHAMPIONS.slice(0, 3).map((ath) => (
+                        <div key={ath.id} className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-[#10131C] border border-white/[0.05]">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-xs font-mono font-bold text-[#D4AF37] w-5 shrink-0" dir="ltr">#{ath.rank}</span>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-white truncate">
+                                {currentLang === 'ar' && ath.nameAr ? ath.nameAr : ath.name}
+                              </div>
+                              <div className="text-[10px] font-mono text-slate-400 truncate">{ath.clubName}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] font-mono tabular-nums shrink-0" dir="ltr">
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-[#10B981]">HRV {ath.hrvMs}ms</span>
+                            <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-200">VO2 {ath.vo2Max}</span>
+                            <span className="font-bold text-[#D4AF37]">{ath.auraScore.toLocaleString('en-US')}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Monthly Leaders Card */}
+                  <div className="p-4 rounded-xl bg-[#07080C] border border-white/[0.08] space-y-3">
+                    <div className="flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-[#10B981] font-bold">
+                        {tr(currentLang, { en: 'MONTHLY TOP 50 · VOLUME & STABILITY', es: 'TOP 50 MENSUAL · VOLUMEN Y ESTABILIDAD', fr: 'TOP 50 MENSUEL · VOLUME & STABILITÉ', ar: 'أبطال الشهر (50) · الثبات وساعات التدريب' })}
+                      </span>
+                      <span className="text-slate-400 tabular-nums" dir="ltr">RHR · STAB · HRS</span>
+                    </div>
+                    <div className="space-y-2">
+                      {MONTHLY_CHAMPIONS.slice(0, 3).map((ath) => (
+                        <div key={`m-${ath.id}`} className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-[#10131C] border border-white/[0.05]">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-xs font-mono font-bold text-[#10B981] w-5 shrink-0" dir="ltr">#{ath.rank}</span>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-white truncate">
+                                {currentLang === 'ar' && ath.nameAr ? ath.nameAr : ath.name}
+                              </div>
+                              <div className="text-[10px] font-mono text-slate-400 truncate">{ath.clubName}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] font-mono tabular-nums shrink-0" dir="ltr">
+                            <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-200">{ath.trainingHours}h</span>
+                            <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-white/[0.05] text-[#00F0FF]">{ath.restingHr}bpm</span>
+                            <span className="font-bold text-[#10B981]">{ath.stabilityIndex}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* 3. Live Challenges & Randomized Trials Arena Showcase */}
+              {/* 3. Live Challenges & Trials Arena Showcase */}
               <LiveChallengesArena 
                 currentLang={currentLang}
                 onEnterArena={() => {
@@ -576,13 +996,13 @@ function App() {
                 }}
               />
 
-              {/* 4. Captivating Character Dojo & Hero Roster (Displaying Supreme Anime Artistry) */}
+              {/* 4. AI Bio-Enhanced Athlete Roster */}
               <InteractiveCharacterStage 
                 currentLang={currentLang} 
                 onExploreSection={(secId) => handleSelectHubSection(secId as SectionHubId)}
               />
 
-              {/* 5. The Visionary Founders Showcase (Yam Suw, Maram Kassab m.t.k, ARB) */}
+              {/* 5. The Visionary Founders Showcase (Yam Suw, M.T.K, ARB) */}
               <FoundersAndCommunity currentLang={currentLang} />
 
             </div>
@@ -602,7 +1022,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <YardCombatEngine 
@@ -625,7 +1045,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <CombatArena currentLang={currentLang} />
@@ -642,7 +1062,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <AIAnimeCoach currentLang={currentLang} />
@@ -682,10 +1102,10 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
-            <Leaderboard currentLang={currentLang} />
+            <Leaderboard currentLang={currentLang} initialTimeframe={leaderboardTab} />
           </div>
         )}
 
@@ -699,7 +1119,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <About currentLang={currentLang} />
@@ -716,7 +1136,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <AuraVisualizer 
@@ -814,7 +1234,9 @@ function App() {
                 creatorClub: { type: 'customClub' },
                 club: { type: 'customClub' },
                 yardCamp: { type: 'yardCamp' },
-                camp: { type: 'yardCamp' }
+                camp: { type: 'yardCamp' },
+                bazaruto: { type: 'bazaruto' },
+                resort: { type: 'bazaruto' }
               };
               if (viewMap[optionId]) {
                 setView(viewMap[optionId]);
@@ -853,7 +1275,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <SleepStudiesAlgorithm 
@@ -876,7 +1298,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#E50914] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <InjuryPredictionAlgorithm 
@@ -899,7 +1321,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#FFE600] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <SubscriberTiersShowcase 
@@ -938,7 +1360,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <YardGlobalCamp 
@@ -961,7 +1383,7 @@ function App() {
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : '← Back to Home'}</span>
+                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
               </button>
             </div>
             <div className="max-w-[1800px] mx-auto px-4 md:px-8">
@@ -1024,7 +1446,10 @@ function App() {
                 leaderboard: { type: 'leaderboard' },
                 journal: { type: 'championStory' },
                 tickets: { type: 'tickets' },
-                about: { type: 'about' }
+                about: { type: 'about' },
+                bazaruto: { type: 'bazaruto' },
+                yardCamp: { type: 'yardCamp' },
+                home: { type: 'home' }
               };
               if (map[viewId]) setView(map[viewId]);
             }}
@@ -1067,6 +1492,7 @@ function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         currentLang={currentLang}
+        initialMode={authModalMode}
       />
 
       {sharedAuraGuestData && (
@@ -1100,12 +1526,12 @@ function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
               setView({ type: 'ownerDashboard' });
             }}
-            className="flex items-center gap-2 text-xs font-black font-anime text-[#FFE600] hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-xs font-semibold text-[#D4AF37] hover:text-white transition-colors cursor-pointer"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
             <span className="truncate max-w-[130px]">👑 {ownerInfo.name}</span>
             <span className="text-[10px] text-gray-300 font-bold px-2 py-0.5 rounded-lg bg-black/60 border border-gray-800">
-              {currentLang === 'ar' ? 'لوحة المالك' : 'Dashboard'}
+              {tr(currentLang, { en: 'Dashboard', es: 'Panel', fr: 'Tableau', ar: 'لوحة المالك' })}
             </span>
           </button>
           <button 
@@ -1115,7 +1541,7 @@ function App() {
               setIsOwner(false);
             }}
             className="p-1 px-1.5 rounded-xl bg-red-950/50 hover:bg-red-900 text-red-400 hover:text-white text-[11px] font-bold transition-colors cursor-pointer"
-            title={currentLang === 'ar' ? 'تسجيل الخروج من حساب المالك' : 'Logout Owner'}
+            title={tr(currentLang, { en: 'Logout Owner', es: 'Salir del Panel', fr: 'Déconnexion Propriétaire', ar: 'تسجيل الخروج من حساب المالك' })}
           >
             ✕
           </button>

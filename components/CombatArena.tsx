@@ -26,7 +26,7 @@ import {
   Filter,
   UserCheck
 } from 'lucide-react';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { 
   LIVE_ARENA_IMAGE, 
@@ -70,7 +70,7 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
   {
     id: 'b-01',
     fighterName: 'yam suw',
-    opponentName: 'Titan Mecha Brawler',
+    opponentName: 'Lukas Weber',
     fighterAvatar: FOUNDER_YAM_SUW_IMAGE,
     opponentAvatar: TITAN_BRAWLER_IMAGE,
     outcome: 'VICTORY',
@@ -107,8 +107,8 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
   },
   {
     id: 'b-03',
-    fighterName: 'مرام كساب (m.t.k)',
-    opponentName: 'Ninja Kunoichi Apex',
+    fighterName: 'M.T.K',
+    opponentName: 'Nadia Navarro',
     fighterAvatar: FOUNDER_MTK_IMAGE,
     opponentAvatar: CYBER_SHINOBI_IMAGE,
     outcome: 'VICTORY',
@@ -127,9 +127,9 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
   {
     id: 'b-04',
     fighterName: 'yam suw',
-    opponentName: 'Jin Titan Brawler',
+    opponentName: 'Arjun Bajwa',
     fighterAvatar: FOUNDER_YAM_SUW_IMAGE,
-    opponentAvatar: REALISTIC_MMA_BRAWLER_IMAGE,
+    opponentAvatar: '/images/athlete_indian_wrestler.jpg',
     outcome: 'VICTORY',
     duration: '06:12',
     caloriesBurned: 420.5,
@@ -146,7 +146,7 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
   {
     id: 'b-05',
     fighterName: 'A.R.B',
-    opponentName: 'Boxing Valkyrie Champion',
+    opponentName: 'Camille Laurent',
     fighterAvatar: FOUNDER_ARB_IMAGE,
     opponentAvatar: BOXING_VALKYRIE_IMAGE,
     outcome: 'VICTORY',
@@ -166,6 +166,61 @@ const INITIAL_BATTLE_LOGS: BattleLogEntry[] = [
 
 export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
+
+  const localizeDivision = (en: string, ar: string) => {
+    if (isAr) return ar;
+    if (currentLang === 'es') {
+      const map: Record<string, string> = {
+        'Hyrox Endurance Heavyweight Grand Prix': 'Gran Premio Hyrox de Resistencia Pesada',
+        'Shaolin Tactical & Reflex Master League': 'Liga Maestra Shaolin de Táctica y Reflejos',
+        'Functional Mobility & Conditioning Grand Slam': 'Grand Slam de Movilidad Funcional y Acondicionamiento',
+        'Open 300 Iron Fist Championship': 'Campeonato Abierto Puño de Hierro 300',
+        'Tactical Striking Invitational': 'Invitacional de Golpeo Táctico',
+        'Hyrox Endurance Grand Prix': 'Gran Premio de Resistencia Hyrox',
+      };
+      return map[en] || en;
+    }
+    if (currentLang === 'fr') {
+      const map: Record<string, string> = {
+        'Hyrox Endurance Heavyweight Grand Prix': 'Grand Prix Hyrox Endurance Poids Lourds',
+        'Shaolin Tactical & Reflex Master League': 'Ligue Maître Shaolin Tactique & Réflexes',
+        'Functional Mobility & Conditioning Grand Slam': 'Grand Chelem Mobilité Fonctionnelle & Conditionnement',
+        'Open 300 Iron Fist Championship': 'Championnat Open Poing de Fer 300',
+        'Tactical Striking Invitational': 'Tournoi Sur Invitation Frappe Tactique',
+        'Hyrox Endurance Grand Prix': 'Grand Prix d\'Endurance Hyrox',
+      };
+      return map[en] || en;
+    }
+    return en;
+  };
+
+  const localizeMove = (en: string, ar: string) => {
+    if (isAr) return ar;
+    if (currentLang === 'es') {
+      const map: Record<string, string> = {
+        'Elemental Dragon Rush Knockout': 'Nocaut Asalto Dragón Elemental',
+        'Tactical Checkmate Counter-Parry': 'Contraataque Táctico Jaque Mate',
+        'Valkyrie Core Kinetic Surge': 'Impulso Cinético Valkiria',
+        'Four Elements Heavy Quake Strike': 'Golpe Sísmico Cuatro Elementos',
+        'Mindset Reflex Lockdown': 'Bloqueo Mental de Reflejos',
+        'Elemental Dragon Strike Finish': 'Remate Dragón Elemental',
+      };
+      return map[en] || en;
+    }
+    if (currentLang === 'fr') {
+      const map: Record<string, string> = {
+        'Elemental Dragon Rush Knockout': 'KO Assaut Dragon Élémentaire',
+        'Tactical Checkmate Counter-Parry': 'Contre-Parade Tactique Échec et Mat',
+        'Valkyrie Core Kinetic Surge': 'Vague Cinétique Valkyrie Core',
+        'Four Elements Heavy Quake Strike': 'Frappe Sismique Quatre Éléments',
+        'Mindset Reflex Lockdown': 'Verrouillage Mental des Réflexes',
+        'Elemental Dragon Strike Finish': 'Finition Frappe Dragon Élémentaire',
+      };
+      return map[en] || en;
+    }
+    return en;
+  };
 
   // Live Workout State
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -361,28 +416,36 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
 
   const filteredLogs = battleLogs.filter(log => {
     if (logFilter === 'YAM_SUW') return log.fighterName.toLowerCase().includes('yam suw');
-    if (logFilter === 'MTK') return log.fighterName.toLowerCase().includes('مرام') || log.fighterName.toLowerCase().includes('m.t.k');
+    if (logFilter === 'MTK') return log.fighterName.toUpperCase().includes('M.T.K');
     if (logFilter === 'ARB') return log.fighterName.toLowerCase().includes('a.r.b');
     return true;
   });
 
   return (
-    <section id="arena" className={`py-16 px-3 sm:px-4 md:px-12 bg-[#08090E] relative w-full max-w-full overflow-hidden overflow-x-hidden ${isAr ? 'text-right' : 'text-left'}`}>
+    <section id="arena" className={`py-16 px-3 sm:px-4 md:px-12 bg-[#07080C] relative w-full max-w-full overflow-hidden overflow-x-hidden ${isAr ? 'text-right' : 'text-left'}`}>
       
       <div className="max-w-[1800px] w-full max-w-full overflow-x-hidden mx-auto space-y-8">
         
         {/* Header Title */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181126] border border-[#00F0FF] text-xs font-black text-[#00F0FF] uppercase tracking-widest mb-3 shadow-[0_0_15px_#00F0FF]">
-              <Activity className="w-4 h-4 text-[#FFE600] animate-pulse" />
-              <span>{isAr ? 'حلبة القتال المباشرة HUD' : 'LIVE COMBAT ARENA HUD'}</span>
+            <div className="inline-flex items-center gap-2 text-[11px] font-mono text-[#D4AF37] uppercase tracking-[0.2em] mb-3">
+              <Activity className="w-4 h-4 text-[#10B981]" />
+              <span>{t('LIVE PERFORMANCE ARENA HUD', 'ARENA DE RENDIMIENTO EN VIVO HUD', 'ARÈNE PERFORMANCE EN DIRECT HUD', 'حلبة الأداء الحركي المباشرة')}</span>
             </div>
 
             <h2 className="text-4xl md:text-6xl font-black font-anime text-white">
               {isAr ? (
                 <>
                   حلبة القتال الحية <span className="bg-gradient-to-r from-[#00F0FF] via-[#FF007A] to-[#FFE600] bg-clip-text text-transparent">وسجل المعارك التاريخي</span>
+                </>
+              ) : currentLang === 'es' ? (
+                <>
+                  ARENA DE COMBATE EN VIVO <span className="bg-gradient-to-r from-[#00F0FF] via-[#FF007A] to-[#FFE600] bg-clip-text text-transparent">E HISTORIAL DE COMBATES</span>
+                </>
+              ) : currentLang === 'fr' ? (
+                <>
+                  ARÈNE DE COMBAT EN DIRECT <span className="bg-gradient-to-r from-[#00F0FF] via-[#FF007A] to-[#FFE600] bg-clip-text text-transparent">& JOURNAL DES COMBATS</span>
                 </>
               ) : (
                 <>
@@ -391,9 +454,12 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               )}
             </h2>
             <p className="text-gray-300 font-bold text-sm md:text-base mt-2">
-              {isAr 
-                ? 'عرض حي لمعدل نبضات القلب واستهلاك السعرات الحرارية وسجل تفاعلي كامل ومتحرك لنتائج وإحصائيات النزالات السابقة للمؤسسين والأبطال.'
-                : 'Real-time heart rate & calorie burn overlay with complete scrolling Battle Log history recording past fight results, combos, and biometric stats.'}
+              {t(
+                'Real-time heart rate & calorie burn overlay with complete scrolling Battle Log history recording past fight results, combos, and biometric stats.',
+                'Superposición de ritmo cardíaco y gasto calórico en tiempo real con registro histórico completo de combates, combos y métricas biométricas.',
+                'Superposition fréquence cardiaque et dépense calorique en temps réel avec historique complet des combats, combos et données biométriques.',
+                'عرض حي لمعدل نبضات القلب واستهلاك السعرات الحرارية وسجل تفاعلي كامل ومتحرك لنتائج وإحصائيات النزالات السابقة للمؤسسين والأبطال.'
+              )}
             </p>
           </div>
 
@@ -417,7 +483,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               }`}
             >
               {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              <span>{isActive ? (isAr ? 'إيقاف مؤقت' : 'PAUSE ARENA') : (isAr ? 'بدء الجولة الحية ⚡' : 'START LIVE ARENA ⚡')}</span>
+              <span>{isActive ? t('PAUSE ARENA', 'PAUSAR ARENA', 'PAUSE ARÈNE', 'إيقاف مؤقت') : t('START LIVE ARENA ⚡', 'INICIAR ARENA ⚡', 'LANCER ARÈNE ⚡', 'بدء الجولة الحية ⚡')}</span>
             </button>
 
             {/* Save Round to Log */}
@@ -425,10 +491,10 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               <button
                 onClick={handleFinishRound}
                 className="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-black text-xs font-anime flex items-center gap-1.5 transition-all"
-                title={isAr ? 'حفظ الجولة في سجل المعارك' : 'Finish Round & Save to Battle Log'}
+                title={t('Finish Round & Save to Battle Log', 'Finalizar ronda y guardar', 'Terminer le round et sauver', 'حفظ الجولة في سجل المعارك')}
               >
                 <Award className="w-4 h-4" />
-                <span>{isAr ? 'إنهاء وحفظ' : 'FINISH ROUND'}</span>
+                <span>{t('FINISH ROUND', 'FINALIZAR RONDA', 'TERMINER ROUND', 'إنهاء وحفظ')}</span>
               </button>
             )}
 
@@ -441,7 +507,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                 setWorkoutSeconds(0);
               }}
               className="p-2.5 rounded-xl bg-[#121420] border border-gray-900 text-gray-300 hover:text-white hover:border-gray-700 transition-all"
-              title={isAr ? 'إعادة تعيين العداد' : 'Reset Workout'}
+              title={t('Reset Workout', 'Reiniciar sesión', 'Réinitialiser', 'إعادة تعيين العداد')}
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -454,7 +520,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   ? 'bg-red-900 text-white border-red-800' 
                   : 'bg-[#121420] border-gray-900 text-gray-400 hover:text-white'
               }`}
-              title={cameraActive ? (isAr ? 'إيقاف الكاميرا' : 'Disable Camera') : (isAr ? 'تشغيل كاميرا النزال' : 'Enable Camera Feed')}
+              title={cameraActive ? t('Disable Camera', 'Desactivar cámara', 'Désactiver caméra', 'إيقاف الكاميرا') : t('Enable Camera Feed', 'Activar cámara', 'Activer caméra', 'تشغيل كاميرا النزال')}
             >
               {cameraActive ? <Camera className="w-4 h-4" /> : <CameraOff className="w-4 h-4" />}
             </button>
@@ -467,7 +533,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   ? 'bg-[#121420] text-white border-gray-800' 
                   : 'bg-[#121420] border-gray-900 text-gray-500'
               }`}
-              title={soundEnabled ? 'Mute Arena SFX' : 'Enable Arena SFX'}
+              title={soundEnabled ? t('Mute Arena SFX', 'Silenciar audio', 'Couper le son', 'كتم الصوت') : t('Enable Arena SFX', 'Activar audio', 'Activer le son', 'تفعيل الصوت')}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -476,7 +542,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
             <button
               onClick={toggleFullscreen}
               className="p-2.5 rounded-xl bg-[#121420] border border-gray-900 text-gray-400 hover:text-white transition-all"
-              title="Fullscreen Mode"
+              title={t('Fullscreen Mode', 'Pantalla completa', 'Plein écran', 'ملء الشاشة')}
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
@@ -526,7 +592,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   </div>
                 </div>
                 <span className="block text-[10px] font-black text-[#FFE600] font-anime bg-black/80 px-2 py-0.5 rounded text-center mt-1 shadow-md border border-[#FFE600]/40">
-                  {isAr ? 'الكم هنا!' : 'HIT!'}
+                  {t('HIT!', '¡GOLPE!', 'FRAPPE!', 'الكم هنا!')}
                 </span>
               </div>
             ))}
@@ -538,7 +604,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
             <div className="flex items-center gap-3">
               <div className="px-3.5 py-1 rounded-xl bg-[#E50914] text-white font-black font-anime text-sm md:text-base flex items-center gap-1.5 shadow-[0_0_15px_#E50914]">
                 <Flame className="w-4 h-4 fill-white" />
-                <span>ROUND 01</span>
+                <span>{t('ROUND 01', 'RONDA 01', 'ROUND 01', 'الجولة 01')}</span>
               </div>
               
               <div className="flex items-center gap-2">
@@ -549,7 +615,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
 
             {/* Heart Rate Intensity Zone Badge */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-300 hidden sm:inline">{isAr ? 'نطاق الجهد:' : 'AURA ZONE:'}</span>
+              <span className="text-xs font-bold text-gray-300 hidden sm:inline">{t('AURA ZONE:', 'ZONA AURA:', 'ZONE AURA:', 'نطاق الجهد:')}</span>
               <span className={`px-3 py-1 rounded-lg text-xs font-black font-anime uppercase tracking-wider shadow-md ${
                 activeZone === 'LIMIT_BREAK'
                   ? 'bg-[#E50914] text-white shadow-[0_0_20px_#E50914] animate-pulse'
@@ -557,7 +623,11 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                     ? 'bg-[#FFE600] text-black shadow-[0_0_15px_#FFE600]'
                     : 'bg-[#00F0FF] text-black shadow-[0_0_15px_#00F0FF]'
               }`}>
-                {activeZone === 'LIMIT_BREAK' ? '⚡ LIMIT BREAK (ANAEROBIC)' : activeZone === 'CARDIO' ? '🔥 HIGH CARDIO' : '💧 FAT BURN FLOW'}
+                {activeZone === 'LIMIT_BREAK'
+                  ? t('⚡ LIMIT BREAK (ANAEROBIC)', '⚡ LÍMITE MÁXIMO (ANAERÓBICO)', '⚡ DÉPASSEMENT (ANAÉROBIE)', '⚡ اختراق الحد (لا هوائي)')
+                  : activeZone === 'CARDIO'
+                    ? t('🔥 HIGH CARDIO', '🔥 CARDIO INTENSO', '🔥 CARDIO ÉLEVÉ', '🔥 كارديو عالي')
+                    : t('💧 FAT BURN FLOW', '💧 QUEMA GRASA', '💧 BRÛLE-GRAISSE', '💧 حرق الدهون')}
               </span>
             </div>
 
@@ -565,7 +635,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-[#FFE600] fill-[#FFE600] animate-bounce" />
               <div className="text-right">
-                <span className="text-[10px] text-gray-400 block font-bold">{isAr ? 'طاقة الهالة' : 'POWER LEVEL'}</span>
+                <span className="text-[10px] text-gray-400 block font-bold">{t('POWER LEVEL', 'NIVEL DE PODER', 'NIVEAU PUISSANCE', 'طاقة الهالة')}</span>
                 <span className="text-base md:text-xl font-black font-anime text-[#FFE600] neon-text-yellow">{powerAura} AP</span>
               </div>
             </div>
@@ -580,7 +650,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               </div>
             </div>
             <span className="mt-4 px-4 py-1 rounded-full bg-[#0A0B10]/80 border border-[#00F0FF] text-xs font-black font-anime text-[#00F0FF] tracking-widest backdrop-blur-md">
-              {isAr ? '🎯 حرك جسدك والكم الأهداف المضيئة' : '🎯 TARGET ACQUISITION SYSTEM'}
+              {t('🎯 TARGET ACQUISITION SYSTEM', '🎯 SISTEMA DE ADQUISICIÓN DE BLANCOS', '🎯 SYSTÈME DE CIBLAGE TACTIQUE', '🎯 حرك جسدك والكم الأهداف المضيئة')}
             </span>
           </div>
 
@@ -592,7 +662,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Heart className="w-5 h-5 text-[#FF007A] animate-ping" />
-                  <span className="text-xs font-black text-gray-300 uppercase">{isAr ? 'نبضات القلب MHR' : 'HEART RATE'}</span>
+                  <span className="text-xs font-black text-gray-300 uppercase">{t('HEART RATE', 'RITMO CARDÍACO', 'FRÉQUENCE CARDIAQUE', 'نبضات القلب MHR')}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-black font-anime text-[#FF007A] neon-text-pink">{heartRate}</span>
@@ -614,7 +684,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Flame className="w-5 h-5 text-[#FFE600] animate-bounce" />
-                  <span className="text-xs font-black text-gray-300 uppercase">{isAr ? 'السعرات المحروقة' : 'CALORIES BURNED'}</span>
+                  <span className="text-xs font-black text-gray-300 uppercase">{t('CALORIES BURNED', 'CALORÍAS QUEMADAS', 'CALORIES BRÛLÉES', 'السعرات المحروقة')}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-black font-anime text-[#FFE600] neon-text-yellow">{calories}</span>
@@ -632,17 +702,17 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-[#00F0FF]" />
-                  <span className="text-xs font-black text-gray-300 uppercase">{isAr ? 'اللكمات المتتالية' : 'STRIKE COMBOS'}</span>
+                  <span className="text-xs font-black text-gray-300 uppercase">{t('STRIKE COMBOS', 'COMBOS DE GOLPE', 'ENCHAÎNEMENTS', 'اللكمات المتتالية')}</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-black font-anime text-[#00F0FF] neon-text-cyan">{combos}</span>
-                  <span className="text-xs font-bold text-gray-400">HITS</span>
+                  <span className="text-xs font-bold text-gray-400">{t('HITS', 'GOLPES', 'COUPS', 'ضربة')}</span>
                 </div>
               </div>
 
               <div className="text-right">
                 <span className="text-xs font-black text-[#00F0FF] block">3x MULTIPLIER</span>
-                <span className="text-[10px] font-bold text-gray-400">{isAr ? 'مضاعف السرعة' : 'Overdrive Speed'}</span>
+                <span className="text-[10px] font-bold text-gray-400">{t('Overdrive Speed', 'Velocidad Overdrive', 'Vitesse Overdrive', 'مضاعف السرعة')}</span>
               </div>
             </div>
 
@@ -660,15 +730,18 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
               </div>
               <div>
                 <h3 className="text-xl md:text-2xl font-black font-anime text-white flex items-center gap-2">
-                  <span>{isAr ? 'سجل المعارك والنزالات السابقة' : 'ARENA BATTLE LOG & FIGHT HISTORY'}</span>
+                  <span>{t('ARENA BATTLE LOG & FIGHT HISTORY', 'REGISTRO E HISTORIAL DE COMBATES', 'JOURNAL ET HISTORIQUE DES COMBATS', 'سجل المعارك والنزالات السابقة')}</span>
                   <span className="text-xs bg-[#E50914] text-white px-2 py-0.5 rounded-full font-sans font-bold">
-                    {filteredLogs.length} LOGS
+                    {filteredLogs.length} {t('LOGS', 'REGISTROS', 'COMBATS', 'سجل')}
                   </span>
                 </h3>
                 <p className="text-xs text-gray-400 font-bold">
-                  {isAr 
-                    ? 'أرشيف تفصيلي يسجل إحصائيات المعارك السابقة: النبض، السعرات، الكومبو، ومكافآت YARDX' 
-                    : 'Historical fight telemetry: duration, max heart rate, strike accuracy, and token rewards.'}
+                  {t(
+                    'Historical fight telemetry: duration, max heart rate, strike accuracy, and token rewards.',
+                    'Telemetría histórica de combates: duración, ritmo cardíaco máximo, precisión y recompensas.',
+                    'Télémétrie historique : durée, fréquence cardiaque max, précision et récompenses.',
+                    'أرشيف تفصيلي يسجل إحصائيات المعارك السابقة: النبض، السعرات، الكومبو، ومكافآت YARDX'
+                  )}
                 </p>
               </div>
             </div>
@@ -681,7 +754,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   onClick={() => setLogFilter('ALL')}
                   className={`px-3 py-1 rounded-lg transition-all ${logFilter === 'ALL' ? 'bg-[#FFE600] text-black font-black' : 'text-gray-400 hover:text-white'}`}
                 >
-                  {isAr ? 'الكل' : 'ALL'}
+                  {t('ALL', 'TODOS', 'TOUS', 'الكل')}
                 </button>
                 <button
                   onClick={() => setLogFilter('YAM_SUW')}
@@ -691,9 +764,9 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                 </button>
                 <button
                   onClick={() => setLogFilter('MTK')}
-                  className={`px-3 py-1 rounded-lg transition-all ${logFilter === 'MTK' ? 'bg-[#00F0FF] text-black font-black' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-3 py-1 rounded-lg transition-all ${logFilter === 'MTK' ? 'bg-[#F472B6] text-[#07080C] font-bold' : 'text-slate-400 hover:text-white'}`}
                 >
-                  {isAr ? 'مرام (m.t.k)' : 'm.t.k'}
+                  M.T.K
                 </button>
                 <button
                   onClick={() => setLogFilter('ARB')}
@@ -750,14 +823,14 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                     </div>
 
                     <p className="text-xs font-bold text-[#FFE600]">
-                      {isAr ? log.divisionAr : log.divisionEn}
+                      {localizeDivision(log.divisionEn, log.divisionAr)}
                     </p>
 
                     <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono">
                       <span>{log.dateStr}</span>
                       <span>•</span>
                       <span className="text-[#00F0FF] font-bold">
-                        {isAr ? `الحركة القاضية: ${log.specialMoveAr}` : `Finish: ${log.specialMoveEn}`}
+                        {t('Finish:', 'Remate:', 'Finition:', 'الحركة القاضية:')} {localizeMove(log.specialMoveEn, log.specialMoveAr)}
                       </span>
                     </div>
                   </div>
@@ -778,7 +851,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   {/* Calories */}
                   <div className="text-center min-w-[70px]">
                     <span className="block text-sm font-black font-anime text-[#FFE600]">{log.caloriesBurned}</span>
-                    <span className="text-[10px] text-gray-400 uppercase font-bold">{isAr ? 'سعرة' : 'KCAL'}</span>
+                    <span className="text-[10px] text-gray-400 uppercase font-bold">{t('KCAL', 'KCAL', 'KCAL', 'سعرة')}</span>
                   </div>
 
                   {/* Max Heart Rate */}
@@ -790,7 +863,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   {/* Combos */}
                   <div className="text-center min-w-[70px]">
                     <span className="block text-sm font-black font-anime text-[#00F0FF]">{log.combosLanded}</span>
-                    <span className="text-[10px] text-gray-400 uppercase font-bold">{isAr ? 'ضربة' : 'HITS'}</span>
+                    <span className="text-[10px] text-gray-400 uppercase font-bold">{t('HITS', 'GOLPES', 'COUPS', 'ضربة')}</span>
                   </div>
 
                   {/* Reward */}
@@ -836,29 +909,29 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
 
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div className="p-3 bg-[#141624] rounded-xl border border-gray-800">
-                    <span className="text-xs text-gray-400 block font-bold">{isAr ? 'السعرات المحروقة' : 'Calories Burned'}</span>
+                    <span className="text-xs text-gray-400 block font-bold">{t('Calories Burned', 'Calorías Quemadas', 'Calories Brûlées', 'السعرات المحروقة')}</span>
                     <span className="text-2xl font-black text-[#FFE600] font-anime">{selectedLog.caloriesBurned} KCAL</span>
                   </div>
                   <div className="p-3 bg-[#141624] rounded-xl border border-gray-800">
-                    <span className="text-xs text-gray-400 block font-bold">{isAr ? 'أقصى نبض MHR' : 'Max Heart Rate'}</span>
+                    <span className="text-xs text-gray-400 block font-bold">{t('Max Heart Rate', 'Ritmo Cardíaco Máx', 'FC Max', 'أقصى نبض MHR')}</span>
                     <span className="text-2xl font-black text-[#FF007A] font-anime">{selectedLog.maxHeartRate} BPM</span>
                   </div>
                   <div className="p-3 bg-[#141624] rounded-xl border border-gray-800">
-                    <span className="text-xs text-gray-400 block font-bold">{isAr ? 'اللكمات الناجحة' : 'Combos Landed'}</span>
-                    <span className="text-2xl font-black text-[#00F0FF] font-anime">{selectedLog.combosLanded} HITS</span>
+                    <span className="text-xs text-gray-400 block font-bold">{t('Combos Landed', 'Combos Conectados', 'Combos Réussis', 'اللكمات الناجحة')}</span>
+                    <span className="text-2xl font-black text-[#00F0FF] font-anime">{selectedLog.combosLanded} {t('HITS', 'GOLPES', 'COUPS', 'ضربة')}</span>
                   </div>
                   <div className="p-3 bg-[#141624] rounded-xl border border-gray-800">
-                    <span className="text-xs text-gray-400 block font-bold">{isAr ? 'مكافأة النزال' : 'Reward Bounty'}</span>
+                    <span className="text-xs text-gray-400 block font-bold">{t('Reward Bounty', 'Recompensa', 'Récompense', 'مكافأة النزال')}</span>
                     <span className="text-xl font-black text-white font-anime">+{selectedLog.yardxReward} YARDX</span>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-[#141624] border border-[#FFE600]/30 text-xs font-bold text-gray-300 space-y-1">
                   <span className="text-[#FFE600] font-anime block uppercase tracking-wider">
-                    ⚡ {isAr ? 'الحركة القاضية الخاصة' : 'SIGNATURE SPECIAL MOVE'}:
+                    ⚡ {t('SIGNATURE SPECIAL MOVE', 'MOVIMIENTO ESPECIAL', 'TECHNIQUE SPÉCIALE', 'الحركة القاضية الخاصة')}:
                   </span>
                   <p className="text-white text-sm">
-                    {isAr ? selectedLog.specialMoveAr : selectedLog.specialMoveEn}
+                    {localizeMove(selectedLog.specialMoveEn, selectedLog.specialMoveAr)}
                   </p>
                 </div>
 
@@ -866,7 +939,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({ currentLang = 'en' }) 
                   onClick={() => setSelectedLog(null)}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00F0FF] to-[#FFE600] text-black font-black font-anime text-xs shadow-md"
                 >
-                  {isAr ? 'إغلاق السجل' : 'CLOSE RECORD'}
+                  {t('CLOSE RECORD', 'CERRAR REGISTRO', 'FERMER LE DOSSIER', 'إغلاق السجل')}
                 </button>
               </div>
             </div>

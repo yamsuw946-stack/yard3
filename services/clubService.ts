@@ -117,8 +117,8 @@ export const CLUB_THEME_COLORS = [
 export const INITIAL_AVAILABLE_ATHLETES: ClubMember[] = [
   {
     id: 'ath-1',
-    name: 'Ryu Hayabusa',
-    avatar: '/images/boxing_striker_kenji_1790712616545.jpg',
+    name: 'Kenji Sato',
+    avatar: '/images/ai_human_aerial_male.jpg',
     tier: 'Tier 3 Titan',
     streak: 18,
     powerLevel: 9420,
@@ -128,8 +128,8 @@ export const INITIAL_AVAILABLE_ATHLETES: ClubMember[] = [
   },
   {
     id: 'ath-2',
-    name: 'Mia Valkyrie',
-    avatar: '/images/anime_hero_front_1790810814864.jpg',
+    name: 'M.T.K',
+    avatar: '/images/mtk_anime_pink_pilates.jpg',
     tier: 'Tier 4 Overdrive',
     streak: 24,
     powerLevel: 9880,
@@ -139,41 +139,41 @@ export const INITIAL_AVAILABLE_ATHLETES: ClubMember[] = [
   },
   {
     id: 'ath-3',
-    name: 'Tarik Saiyan',
-    avatar: '/images/tarik_saiyan_overlord_1788741682523.jpg',
-    tier: 'Tier 3 Titan',
-    streak: 14,
-    powerLevel: 9150,
+    name: 'Isabella Silva',
+    avatar: '/images/woman_brazilian_fitness.jpg',
+    tier: 'Tier 4 Sovereign',
+    streak: 21,
+    powerLevel: 9690,
     joinedDate: '2026-03-20',
     isExternal: false,
     status: 'training',
   },
   {
     id: 'ath-4',
-    name: 'Sarah Blade',
-    avatar: '/images/ninja_kunoichi_shadow_1790712603497.jpg',
-    tier: 'Tier 2 Kinetic',
-    streak: 9,
-    powerLevel: 7850,
+    name: 'Noura Al-Rashid',
+    avatar: '/images/woman_levantine_striker.jpg',
+    tier: 'Tier 3 Titan',
+    streak: 17,
+    powerLevel: 9380,
     joinedDate: '2026-04-01',
     isExternal: false,
-    status: 'resting',
+    status: 'online',
   },
   {
     id: 'ath-5',
-    name: 'Jin Titan',
-    avatar: '/images/realistic_mma_brawler.jpg',
+    name: 'Anastasia Volkov',
+    avatar: '/images/woman_slavic_boxer.jpg',
     tier: 'Tier 3 Titan',
     streak: 19,
-    powerLevel: 9420,
+    powerLevel: 9540,
     joinedDate: '2026-04-04',
     isExternal: false,
     status: 'training',
   },
   {
     id: 'ath-6',
-    name: 'Ren Flame',
-    avatar: '/images/ren_flame_hashira_1788741696531.jpg',
+    name: 'Dr. Soren Mercer',
+    avatar: '/images/ai_human_performance_coach.jpg',
     tier: 'Tier 3 Titan',
     streak: 15,
     powerLevel: 9300,
@@ -186,41 +186,41 @@ export const INITIAL_AVAILABLE_ATHLETES: ClubMember[] = [
 export const PRESET_COMMUNITY_CLUBS = [
   {
     id: 'club-valkyrie',
-    name: 'VALKYRIE SPEED DOJO',
-    motto: 'Hyper-velocity sprint mechanics and pure kinetic breathing.',
+    name: 'YARD PILATES & MOBILITY LAB',
+    motto: 'Precision core alignment, emerald focus, and kinetic breathwork.',
     logoUrl: '🦅',
-    accentColor: '#00F0FF',
+    accentColor: '#D4AF37',
     followersCount: 342,
-    ownerName: 'Mia Valkyrie',
+    ownerName: 'M.T.K',
   },
   {
     id: 'club-flame',
-    name: 'FIRE HASHIRA COMBAT GYM',
-    motto: 'Relentless power output. Burning past the 100% threshold.',
+    name: 'APEX CONDITIONING ATELIER',
+    motto: 'Relentless power output engineered beyond standard thresholds.',
     logoUrl: '🔥',
-    accentColor: '#E50914',
+    accentColor: '#10B981',
     followersCount: 512,
-    ownerName: 'Ren Flame',
+    ownerName: 'Kenji Sato',
   },
   {
     id: 'club-shadow',
-    name: 'SHADOW HAYABUSA STRIKE',
-    motto: 'Silent footsteps, devastating lightning counter-strikes.',
+    name: 'NORDIC TACTICAL STRIKE',
+    motto: 'Precision speed drills, tactical footwork, and explosive recovery.',
     logoUrl: '⚔️',
-    accentColor: '#FFE600',
+    accentColor: '#D4AF37',
     followersCount: 289,
-    ownerName: 'Ryu Hayabusa',
+    ownerName: 'Victor Kael',
   },
 ];
 
 const DEFAULT_CLUB: ClubData = {
   id: 'club-titan-apex-300',
-  name: 'TITAN APEX STRIKE DOJO',
-  motto: 'Relentless speed, unbroken endurance. We train at 100% velocity.',
+  name: 'TITAN APEX PERFORMANCE CLUB',
+  motto: 'Precision speed, unbroken endurance, engineered daily discipline.',
   category: 'Boxing & Striking',
   logoUrl: '👑',
-  bannerUrl: '/images/live_arena_challenges_1790809292780.jpg',
-  accentColor: '#A855F7',
+  bannerUrl: '/images/ai_human_arena_duo.jpg',
+  accentColor: '#D4AF37',
   priceUSD: 30,
   ownerName: 'YAM SUW',
   ownerAvatar: '/images/yam_suw_athlete.jpg',
@@ -251,13 +251,13 @@ const DEFAULT_CLUB: ClubData = {
     {
       id: 'story-1',
       clubId: 'club-titan-apex-300',
-      clubName: 'TITAN APEX STRIKE DOJO',
-      clubLogo: '⚔️',
+      clubName: 'TITAN APEX PERFORMANCE CLUB',
+      clubLogo: '👑',
       authorName: 'YAM SUW',
       authorAvatar: '/images/yam_suw_athlete.jpg',
-      title: 'Dawn Heavy Bag 500 Combos 🥊',
-      caption: 'Completed morning neuromuscular conditioning. 500 power hooks & jabs. Heart rate peaked at 178 BPM. Squad, finish your daily drill today!',
-      mediaUrl: '/images/boxing_striker_kenji_1790712616545.jpg',
+      title: 'Dawn Heavy Bag 500 Combos',
+      caption: 'Completed morning neuromuscular conditioning. 500 power hooks & jabs. Heart rate peaked at 178 BPM.',
+      mediaUrl: '/images/ai_human_striker_male.jpg',
       mediaType: 'image',
       badgeType: 'SPARRING',
       durationMinutes: 45,
@@ -269,20 +269,20 @@ const DEFAULT_CLUB: ClubData = {
       reactions: { fire: 42, lightning: 29, muscle: 55, crown: 18, boxing: 63 },
       userReactions: ['fire', 'muscle'],
       comments: [
-        { id: 'c-1', authorName: 'Mia Valkyrie', authorAvatar: '/images/anime_hero_front_1790810814864.jpg', text: 'Insane velocity captain! Crushed my drill too ⚡', createdAt: Date.now() - 3000000 },
-        { id: 'c-2', authorName: 'Ren Flame', authorAvatar: '/images/ren_flame_hashira_1788741696531.jpg', text: 'Pure flame intensity 🔥 Keep pushing!', createdAt: Date.now() - 1500000 },
+        { id: 'c-1', authorName: 'M.T.K', authorAvatar: '/images/mtk_anime_pink_pilates.jpg', text: 'Refined form and velocity today. Pilates session locked in.', createdAt: Date.now() - 3000000 },
+        { id: 'c-2', authorName: 'Kenji Sato', authorAvatar: '/images/ai_human_aerial_male.jpg', text: 'Strong output. Keep pacing consistent.', createdAt: Date.now() - 1500000 },
       ]
     },
     {
       id: 'story-2',
       clubId: 'club-titan-apex-300',
-      clubName: 'TITAN APEX STRIKE DOJO',
-      clubLogo: '⚔️',
-      authorName: 'Mia Valkyrie',
-      authorAvatar: '/images/anime_hero_front_1790810814864.jpg',
-      title: 'Deep Cryo & HRV 98ms Recovery 💧',
-      caption: 'Post-Hyrox sprint recovery cycle. Optimal parasympathetic nervous system reboot. Stay hydrated champions!',
-      mediaUrl: '/images/anime_fast_recovery_cryo_1788741758354.jpg',
+      clubName: 'TITAN APEX PERFORMANCE CLUB',
+      clubLogo: '👑',
+      authorName: 'M.T.K',
+      authorAvatar: '/images/mtk_anime_pink_pilates.jpg',
+      title: 'Morning Pilates & HRV 98ms Recovery',
+      caption: 'Post-sprint Pilates alignment and deep parasympathetic nervous system reboot.',
+      mediaUrl: '/images/mtk_anime_pink_pilates.jpg',
       mediaType: 'image',
       badgeType: 'RECOVERY',
       durationMinutes: 25,
@@ -298,13 +298,13 @@ const DEFAULT_CLUB: ClubData = {
     {
       id: 'story-3',
       clubId: 'club-titan-apex-300',
-      clubName: 'TITAN APEX STRIKE DOJO',
-      clubLogo: '⚔️',
-      authorName: 'Ryu Hayabusa',
-      authorAvatar: '/images/boxing_striker_kenji_1790712616545.jpg',
-      title: '1,000 Pushups Gauntlet Completed ⚡',
-      caption: 'Unbroken sets of 50. Total time 32 minutes. Level 3 club members are pushing the limits this week!',
-      mediaUrl: '/images/live_arena_fighters_2050_1788741135197.jpg',
+      clubName: 'TITAN APEX PERFORMANCE CLUB',
+      clubLogo: '👑',
+      authorName: 'Isabella Silva',
+      authorAvatar: '/images/woman_brazilian_fitness.jpg',
+      title: '1,000 Calisthenics Gauntlet Completed',
+      caption: 'Unbroken sets of 50. Total time 32 minutes. Level 3 club athletes pushing telemetry standards.',
+      mediaUrl: '/images/woman_latina_sprinter.jpg',
       mediaType: 'image',
       badgeType: 'GAUNTLET',
       durationMinutes: 32,
@@ -341,10 +341,35 @@ const DEFAULT_CLUB: ClubData = {
   ],
 };
 
+const isLegacyImage = (url?: string): boolean => {
+  if (!url) return true;
+  return /anime_|boxing_striker|tarik_saiyan|ninja_kunoichi|ren_flame|live_arena_|realistic_mma_brawler/.test(url);
+};
+
 export const getCustomClubData = (): ClubData => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY_CLUB);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed: ClubData = JSON.parse(saved);
+      return {
+        ...parsed,
+        bannerUrl: isLegacyImage(parsed.bannerUrl) ? DEFAULT_CLUB.bannerUrl : parsed.bannerUrl,
+        ownerAvatar: isLegacyImage(parsed.ownerAvatar) ? DEFAULT_CLUB.ownerAvatar : parsed.ownerAvatar,
+        members: (parsed.members || []).map((m, idx) => ({
+          ...m,
+          avatar: isLegacyImage(m.avatar)
+            ? INITIAL_AVAILABLE_ATHLETES[idx % INITIAL_AVAILABLE_ATHLETES.length].avatar
+            : m.avatar,
+        })),
+        stories: (parsed.stories || []).map((st, idx) => ({
+          ...st,
+          authorAvatar: isLegacyImage(st.authorAvatar) ? DEFAULT_CLUB.ownerAvatar : st.authorAvatar,
+          mediaUrl: isLegacyImage(st.mediaUrl)
+            ? (DEFAULT_CLUB.stories[idx % DEFAULT_CLUB.stories.length]?.mediaUrl || '/images/ai_human_arena_duo.jpg')
+            : st.mediaUrl,
+        })),
+      };
+    }
   } catch {}
   return DEFAULT_CLUB;
 };

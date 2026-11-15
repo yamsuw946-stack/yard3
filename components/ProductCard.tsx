@@ -1,13 +1,13 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { Language } from '../i18n';
+import { Language, tr } from '../i18n';
 import { handleImageError } from '../constants';
-import { Check, Sparkles } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { soundFX } from '../services/soundFX';
 import { OwnerConfigService } from '../services/ownerConfigService';
 
@@ -24,7 +24,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
   );
   const [selectedGender, setSelectedGender] = useState<'men' | 'women'>(product.selectedGender || 'men');
 
-  // Synchronize with parent props when filter or product updates
   useEffect(() => {
     if (product.selectedGender) {
       setSelectedGender(product.selectedGender);
@@ -36,11 +35,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
   }, [product.selectedGender, product.selectedColor]);
 
   const colors = product.colors || [
-    { id: 'black', nameEn: 'Obsidian Black', nameAr: 'الأسود الليلي', hex: '#0D0E12', textColor: '#FFFFFF' },
-    { id: 'white', nameEn: 'Pearl White', nameAr: 'الأبيض النقي', hex: '#F8F9FA', textColor: '#000000' }
+    {
+      id: 'black',
+      nameEn: tr(currentLang, { en: 'Obsidian Black', es: 'Negro Obsidiana', fr: 'Noir Obsidienne', ar: 'الأسود الليلي' }),
+      nameAr: 'الأسود الليلي',
+      hex: '#0D0E12',
+      textColor: '#FFFFFF'
+    },
+    {
+      id: 'white',
+      nameEn: tr(currentLang, { en: 'Pearl White', es: 'Blanco Perla', fr: 'Blanc Perle', ar: 'الأبيض النقي' }),
+      nameAr: 'الأبيض النقي',
+      hex: '#F8F9FA',
+      textColor: '#000000'
+    }
   ];
 
-  const activeColor = colors.find(c => c.id === selectedColorId) || colors[0];
+  const activeColor = colors.find((c) => c.id === selectedColorId) || colors[0];
   const baseImage = product.isWomenOnly
     ? (selectedColorId === 'black' ? (product.menImageUrl || activeColor?.imageUrl) : (product.womenImageUrl || activeColor?.imageUrl))
     : product.isUnisex
@@ -50,6 +61,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
     : (product.menImageUrl || activeColor?.imageUrl || product.imageUrl);
 
   const displayImage = OwnerConfigService.getConfig().media.productImageOverrides?.[product.id] || baseImage;
+
+  const localizedCategory = (() => {
+    switch (product.category) {
+      case 'Wearable':
+        return tr(currentLang, { en: 'WEARABLE', es: 'TECNOLOGÍA VESTIBLE', fr: 'OBJET CONNECTÉ', ar: 'أجهزة ذكية' });
+      case 'Home':
+        return tr(currentLang, { en: 'HYDRATION', es: 'HIDRATACIÓN', fr: 'HYDRATATION', ar: 'الترطيب' });
+      case 'Apparel':
+        return tr(currentLang, { en: 'APPAREL', es: 'INDUMENTARIA', fr: 'TEXTILE SPORT', ar: 'ملابس رياضية' });
+      case 'Audio':
+        return tr(currentLang, { en: 'AUDIO', es: 'AUDIO', fr: 'AUDIO', ar: 'صوتيات' });
+      case 'Equipment':
+        return tr(currentLang, { en: 'EQUIPMENT', es: 'EQUIPAMIENTO', fr: 'ÉQUIPEMENT', ar: 'معدات' });
+      default:
+        return product.category.toUpperCase();
+    }
+  })();
 
   const handleColorClick = (e: React.MouseEvent, colorId: string) => {
     e.stopPropagation();
@@ -71,72 +99,94 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
   };
 
   return (
-    <div 
+    <div
       className="group relative flex flex-col bg-[#12131C] rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer shadow-xl hover:shadow-[0_0_25px_rgba(255,230,0,0.2)] hover:-translate-y-1.5"
       onClick={handleCardClick}
     >
-      {/* Brand YARD300 & S-Rank Badge with New Emblem */}
-      <div className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-[#07080D]/90 backdrop-blur-md rounded-xl text-[10px] font-black font-yard-logo italic text-gray-200 flex items-center gap-1.5 shadow-md">
-        <img 
-          src="/images/yard_red_black_white_logo.jpg" 
-          alt="YARD 300 Logo" 
+      <div className="absolute top-3 right-3 z-20 px-2.5 py-1 bg-[#07080D]/90 backdrop-blur-md rounded-xl text-[10px] font-black font-yard-brand text-gray-200 flex items-center gap-1.5 shadow-md" dir="ltr">
+        <img
+          src="/images/yard_red_black_white_logo.jpg"
+          alt="YARD 300 Logo"
           className="w-4 h-4 rounded object-cover shadow-[0_0_6px_rgba(229,9,20,0.8)]"
         />
-        <span>YARD<span className="text-[#E50914]">300</span></span>
+        <span>
+          YARD<span className="text-[#E50914]">300</span>
+        </span>
       </div>
 
       {/* Category Badge */}
       <div className="absolute top-3 left-3 z-20 px-2.5 py-1 bg-[#07080D]/90 backdrop-blur-md rounded-xl text-[10px] font-bold text-gray-300">
-        {product.category}
+        {localizedCategory}
       </div>
 
-      {/* Image Container - Borderless */}
+      {/* Image Container */}
       <div className="relative w-full aspect-square overflow-hidden bg-[#0C0E17]">
-        <img 
-          src={displayImage} 
-          alt={product.name} 
+        <img
+          src={displayImage}
+          alt={product.name}
           loading="lazy"
           decoding="async"
           onError={handleImageError}
           className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Small Discrete YARD 300 Emblem on corner */}
-        <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded-xl bg-black/85 backdrop-blur-sm flex items-center gap-1.5 shadow-md">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]"></span>
-          <span className="text-[10px] font-black font-yard-logo italic tracking-wide text-gray-200">
+        <div className="absolute bottom-3 left-3 z-20 px-2.5 py-1 rounded-xl bg-black/85 backdrop-blur-sm flex items-center gap-1.5 shadow-md" dir="ltr">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E50914]" />
+          <span className="text-[10px] font-black font-yard-brand tracking-wide text-gray-200">
             YARD<span className="text-[#FFE600]">300</span>
           </span>
         </div>
 
-        {/* Hover View Details Button */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-[2px]">
           <span className="px-5 py-2.5 rounded-xl bg-[#FFE600] hover:bg-white text-black font-black font-anime text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(255,230,0,0.5)] transform translate-y-2 group-hover:translate-y-0 transition-transform">
-            {isAr ? 'عرض تفاصيل العتاد ←' : 'VIEW DETAILS →'}
+            {tr(currentLang, {
+              en: 'VIEW DETAILS →',
+              es: 'VER DETALLES →',
+              fr: 'VOIR DÉTAILS →',
+              ar: 'عرض تفاصيل العتاد ←'
+            })}
           </span>
         </div>
       </div>
-      
+
       {/* Details Body */}
       <div className="p-6 flex flex-col flex-1 justify-between bg-[#12131C] space-y-4">
         <div>
-          {/* Edition / Gender Switcher */}
           <div className="flex items-center justify-between gap-2 mb-2 pb-2.5 border-b border-gray-800/60">
             {product.isMenOnly ? (
               <>
                 <span className="text-[10px] font-black font-anime text-[#00F0FF] flex items-center gap-1">
                   <span>⚔️</span>
-                  <span>{isAr ? 'رجالي متطور حصرياً:' : 'MEN ONLY (HYPER-EVOLVED):'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'MEN ONLY (TACTICAL):',
+                      es: 'SOLO HOMBRES (TÁCTICO):',
+                      fr: 'HOMMES UNIQUEMENT :',
+                      ar: 'رجالي متطور حصرياً:'
+                    })}
+                  </span>
                 </span>
                 <span className="text-[9px] font-mono text-gray-400 font-bold bg-[#141624] px-2 py-0.5 rounded-md border border-gray-800">
-                  {isAr ? 'بدون نسخة نسائية ⚡' : 'NO WOMEN VARIANT ⚡'}
+                  {tr(currentLang, {
+                    en: 'NO WOMEN VARIANT ⚡',
+                    es: 'SOLO MASCULINO ⚡',
+                    fr: 'EXCLUSIF HOMME ⚡',
+                    ar: 'بدون نسخة نسائية ⚡'
+                  })}
                 </span>
               </>
             ) : product.isWomenOnly ? (
               <>
                 <span className="text-[10px] font-black font-anime text-[#FF80BF] flex items-center gap-1">
                   <span>🌸</span>
-                  <span>{isAr ? 'نسائي حصري (لونين):' : 'WOMEN ONLY (2 COLORS):'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'WOMEN ONLY (2 COLORS):',
+                      es: 'SOLO MUJERES (2 COLORES):',
+                      fr: 'FEMMES UNIQUEMENT (2 COLORIS) :',
+                      ar: 'نسائي حصري (لونين):'
+                    })}
+                  </span>
                 </span>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -153,7 +203,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                         : 'bg-[#151722] text-gray-400 border border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'أبيض كوتور' : 'WHITE'}
+                    {tr(currentLang, { en: 'WHITE', es: 'BLANCO', fr: 'BLANC', ar: 'أبيض كوتور' })}
                   </button>
                   <button
                     type="button"
@@ -169,7 +219,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                         : 'bg-[#151722] text-gray-400 border border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'أسود ملكي' : 'BLACK'}
+                    {tr(currentLang, { en: 'BLACK', es: 'NEGRO', fr: 'NOIR', ar: 'أسود ملكي' })}
                   </button>
                 </div>
               </>
@@ -177,7 +227,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
               <>
                 <span className="text-[10px] font-black font-anime text-[#00F0FF] flex items-center gap-1">
                   <span>⚡</span>
-                  <span>{isAr ? 'نظارة موحدة (لونين):' : 'ONE VR (2 COLORS):'}</span>
+                  <span>
+                    {tr(currentLang, {
+                      en: 'UNISEX (2 COLORS):',
+                      es: 'UNISEX (2 COLORES):',
+                      fr: 'UNISEXE (2 COLORIS) :',
+                      ar: 'موحد للجنسين (لونين):'
+                    })}
+                  </span>
                 </span>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -193,7 +250,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                         : 'bg-[#151722] text-gray-400 border border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'أسود كربوني' : 'BLACK'}
+                    {tr(currentLang, { en: 'BLACK', es: 'NEGRO', fr: 'NOIR', ar: 'أسود' })}
                   </button>
                   <button
                     type="button"
@@ -208,14 +265,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                         : 'bg-[#151722] text-gray-400 border border-gray-800 hover:text-white'
                     }`}
                   >
-                    {isAr ? 'أبيض سيبراني' : 'WHITE'}
+                    {tr(currentLang, { en: 'WHITE', es: 'BLANCO', fr: 'BLANC', ar: 'أبيض' })}
                   </button>
                 </div>
               </>
             ) : (
               <>
                 <span className="text-[10px] font-black font-anime text-[#FFE600]">
-                  {isAr ? 'النسخة (متوفر للجنسين):' : 'EDITION (BOTH AVAILABLE):'}
+                  {tr(currentLang, {
+                    en: 'EDITION (MEN & WOMEN):',
+                    es: 'EDICIÓN (AMBOS):',
+                    fr: 'ÉDITION (MIXTE) :',
+                    ar: 'النسخة (رجالي ونسائي):'
+                  })}
                 </span>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -233,7 +295,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                     }`}
                   >
                     <span>⚔️</span>
-                    <span>{isAr ? 'رجالي (أسود)' : 'MEN (BLACK)'}</span>
+                    <span>{tr(currentLang, { en: 'MEN (BLACK)', es: 'HOMBRE', fr: 'HOMME', ar: 'رجالي' })}</span>
                   </button>
                   <button
                     type="button"
@@ -250,7 +312,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
                     }`}
                   >
                     <span>🌸</span>
-                    <span>{isAr ? 'نسائي (أبيض)' : 'WOMEN (WHITE)'}</span>
+                    <span>{tr(currentLang, { en: 'WOMEN (WHITE)', es: 'MUJER', fr: 'FEMME', ar: 'نسائي' })}</span>
                   </button>
                 </div>
               </>
@@ -260,10 +322,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
           {/* Dual Color Switcher Pill */}
           <div className="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-gray-800/80">
             <span className="text-[10px] font-black font-anime text-gray-400">
-              {isAr ? 'اللون المتاح:' : 'AVAILABLE COLORS:'}
+              {tr(currentLang, {
+                en: 'AVAILABLE COLORS:',
+                es: 'COLORES DISPONIBLES:',
+                fr: 'COLORIS DISPONIBLES :',
+                ar: 'الألوان المتاحة:'
+              })}
             </span>
             <div className="flex items-center gap-2">
-              {colors.map(col => {
+              {colors.map((col) => {
                 const isSelected = selectedColorId === col.id;
                 return (
                   <button
@@ -286,44 +353,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
 
           {/* Active Selection Tags */}
           <div className="mb-2 flex items-center gap-1.5 flex-wrap">
-            <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black border ${
-              selectedGender === 'men' 
-                ? 'bg-[#00F0FF]/10 text-[#00F0FF] border-[#00F0FF]/40' 
-                : 'bg-[#FF007A]/10 text-[#FF007A] border-[#FF007A]/40'
-            }`}>
-              {selectedGender === 'men' ? (isAr ? 'رجالي ⚔️' : 'Men’s Edition') : (isAr ? 'نسائي 🌸' : 'Women’s Edition')}
+            <span
+              className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-black border ${
+                selectedGender === 'men'
+                  ? 'bg-[#00F0FF]/10 text-[#00F0FF] border-[#00F0FF]/40'
+                  : 'bg-[#FF007A]/10 text-[#FF007A] border-[#FF007A]/40'
+              }`}
+            >
+              {selectedGender === 'men'
+                ? tr(currentLang, { en: 'Men’s Edition', es: 'Edición Hombre', fr: 'Édition Homme', ar: 'رجالي ⚔️' })
+                : tr(currentLang, { en: 'Women’s Edition', es: 'Edición Mujer', fr: 'Édition Femme', ar: 'نسائي 🌸' })}
             </span>
 
             <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-black bg-[#1A1D2E] text-[#FFE600] border border-gray-700">
-              {product.id === 'p12' 
-                ? (activeColor.id === 'white' ? 'Pro Gloves (White)' : 'Pro Gloves (Black)')
-                : product.id === 'p11'
-                ? (activeColor.id === 'white' ? 'Roman Bag (White)' : 'Roman Bag (Black)')
-                : product.id === 'p6'
-                ? (activeColor.id === 'white' ? 'Screenless Band (White)' : 'Screenless Band (Black)')
-                : product.id === 'p10'
-                ? (activeColor.id === 'white' ? 'Pilates Set (White)' : 'Pilates Set (Black)')
-                : activeColor.nameEn
-              }
+              {product.id === 'p6'
+                ? activeColor.id === 'white'
+                  ? tr(currentLang, { en: 'Screenless Band (White)', es: 'Pulsera (Blanca)', fr: 'Bracelet (Blanc)', ar: 'سوار بدون شاشة (أبيض)' })
+                  : tr(currentLang, { en: 'Screenless Band (Black)', es: 'Pulsera (Negra)', fr: 'Bracelet (Noir)', ar: 'سوار بدون شاشة (أسود)' })
+                : isAr
+                ? activeColor.nameAr
+                : activeColor.nameEn}
             </span>
           </div>
-
-          {/* Bespoke Gender Feature Highlight */}
-          {((selectedGender === 'men' && (product.menEditionDetailAr || product.menEditionDetailEn)) ||
-            (selectedGender === 'women' && (product.womenEditionDetailAr || product.womenEditionDetailEn))) && (
-            <div className="mb-2.5 px-2.5 py-1.5 rounded-xl bg-[#090A10] border border-gray-800 text-[10px] text-gray-300 leading-snug">
-              <span className="font-black text-[#FFE600] font-anime block mb-0.5">
-                {selectedGender === 'men' 
-                  ? (isAr ? '⚔️ ميزة النسخة الرجالية (الأسود):' : '⚔️ Men’s Feature (Black):') 
-                  : (isAr ? '🌸 ميزة النسخة النسائية (الأبيض):' : '🌸 Women’s Feature (White):')}
-              </span>
-              <span className="line-clamp-2 text-gray-400">
-                {selectedGender === 'men'
-                  ? (isAr ? product.menEditionDetailAr : product.menEditionDetailEn)
-                  : (isAr ? product.womenEditionDetailAr : product.womenEditionDetailEn)}
-              </span>
-            </div>
-          )}
 
           <h3 className="text-xl font-black font-anime text-white mb-1.5 group-hover:text-[#FFE600] transition-colors leading-snug">
             {product.name}
@@ -340,19 +391,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
         <div className="pt-4 border-t border-gray-800 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="text-[10px] text-gray-400 block font-bold">{isAr ? 'السعر الرسمي' : 'PRICE'}</span>
+              <span className="text-[10px] text-gray-400 block font-bold">
+                {tr(currentLang, { en: 'PRICE', es: 'PRECIO', fr: 'PRIX', ar: 'السعر الرسمي' })}
+              </span>
               {product.originalPrice && (
-                <span className="text-[9px] font-black font-anime px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                <span className="text-[9px] font-black font-anime px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" dir="ltr">
                   -$20 OFF
                 </span>
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow" dir="ltr">
+              <span className="text-2xl font-black text-[#FFE600] font-mono tracking-tight neon-text-yellow tabular-nums" dir="ltr">
                 ${product.price}
               </span>
               {product.originalPrice && (
-                <span className="text-xs line-through text-gray-500 font-mono" dir="ltr">
+                <span className="text-xs line-through text-gray-500 font-mono tabular-nums" dir="ltr">
                   ${product.originalPrice}
                 </span>
               )}
@@ -360,11 +413,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick, currentLang
           </div>
 
           <div className="px-4 py-2 rounded-xl bg-[#1A1C2C] hover:bg-[#FFE600] border border-gray-700 hover:border-[#FFE600] text-gray-200 hover:text-black text-xs font-black font-anime transition-all flex items-center gap-1.5">
-            <span>{isAr ? 'تجهيز العتاد' : 'EQUIP'}</span>
+            <span>{tr(currentLang, { en: 'EQUIP', es: 'ELEGIR', fr: 'CHOISIR', ar: 'تجهيز العتاد' })}</span>
             <span>{isAr ? '←' : '→'}</span>
           </div>
         </div>
-
       </div>
     </div>
   );
