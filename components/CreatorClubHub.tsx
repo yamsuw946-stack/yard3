@@ -306,30 +306,31 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 onClick={onBack}
                 className="px-4 py-2 rounded-xl bg-[#0C0E14] border border-white/[0.1] text-slate-300 hover:text-white hover:border-[#D4AF37]/50 transition-all text-xs font-semibold cursor-pointer flex items-center gap-2"
               >
-                ← {isEs ? 'VOLVER' : isFr ? 'RETOUR' : 'BACK'}
+                <span>{isAr ? '→' : '←'}</span>
+                <span>{tr(currentLang, { en: 'BACK', es: 'VOLVER', fr: 'RETOUR', ar: 'عودة' })}</span>
               </button>
             )}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#0C0E14] border border-white/[0.1] text-xs font-mono font-bold text-[#D4AF37]">
               <span className="w-2 h-2 rounded-full bg-[#10B981]"></span>
-              <span>{isEs ? 'SISTEMA DE CLUBES YARD300' : isFr ? 'SYSTÈME DE CLUBS YARD300' : 'YARD 300 CREATOR CLUBS'}</span>
+              <span>{tr(currentLang, { en: 'YARD 300 CREATOR CLUBS', es: 'SISTEMA DE CLUBES YARD300', fr: 'SYSTÈME DE CLUBS YARD300', ar: 'منظومة أندية يارد 300' })}</span>
             </div>
           </div>
 
           {/* Level Status & Quick Upgrade Toggle */}
           <div className="flex items-center gap-3">
             <div className="px-3 py-1.5 rounded-xl bg-[#111320] border border-gray-800 text-xs font-mono flex items-center gap-2">
-              <span className="text-gray-400">{isEs ? 'Tu Nivel:' : isFr ? 'Votre Niveau:' : 'Your Level:'}</span>
+              <span className="text-gray-400">{tr(currentLang, { en: 'Your Level:', es: 'Tu Nivel:', fr: 'Votre Niveau :', ar: 'مستواك الحالي:' })}</span>
               <span className={`font-black font-anime ${userLevel >= 3 ? 'text-[#C084FC]' : 'text-[#FFE600]'}`}>
-                {userLevel === 1 && 'LEVEL 1 (Iron Initiate)'}
-                {userLevel === 2 && 'LEVEL 2 (Kinetic Striker)'}
-                {userLevel === 3 && 'LEVEL 3 (Titan Apex Master)'}
-                {userLevel === 4 && 'LEVEL 4 (God-Tier Overdrive)'}
+                {userLevel === 1 && tr(currentLang, { en: 'LEVEL 1 (Iron Initiate)', es: 'NIVEL 1 (Iniciado)', fr: 'NIVEAU 1 (Initié)', ar: 'المستوى 1 (تأسيسي)' })}
+                {userLevel === 2 && tr(currentLang, { en: 'LEVEL 2 (Kinetic Striker)', es: 'NIVEL 2 (Cinético)', fr: 'NIVEAU 2 (Cinétique)', ar: 'المستوى 2 (متقدم)' })}
+                {userLevel === 3 && tr(currentLang, { en: 'LEVEL 3 (Titan Apex Master)', es: 'NIVEL 3 (Titan Apex)', fr: 'NIVEAU 3 (Titan Apex)', ar: 'المستوى 3 (تايتان أبيكس)' })}
+                {userLevel === 4 && tr(currentLang, { en: 'LEVEL 4 (God-Tier Overdrive)', es: 'NIVEL 4 (Overdrive)', fr: 'NIVEAU 4 (Overdrive)', ar: 'المستوى 4 (القمة المطلقة)' })}
               </span>
             </div>
 
             {/* Price Tag Badge */}
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#1E1130] to-[#0A261A] border border-[#A855F7]/50 text-xs font-mono">
-              <span className="text-gray-400">CLUB FEE:</span>
+              <span className="text-gray-400">{tr(currentLang, { en: 'CLUB FEE:', es: 'CUOTA CLUB:', fr: 'TARIF CLUB :', ar: 'رسوم النادي:' })}</span>
               <span className="text-[#10B981] font-black font-anime">$30 USD</span>
             </div>
 
@@ -340,12 +341,12 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#2c084f] via-[#480d7a] to-[#047857] border border-[#6b21a8] text-white text-xs font-black font-anime shadow-[0_0_20px_rgba(76,29,149,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
               >
                 <Crown className="w-3.5 h-3.5" />
-                <span>{isEs ? 'COMPRAR CLUB ($30 USD)' : isFr ? 'ACHETER CLUB (30 $)' : 'PURCHASE CLUB ($30 USD)'}</span>
+                <span>{tr(currentLang, { en: 'PURCHASE CLUB ($30 USD)', es: 'COMPRAR CLUB ($30 USD)', fr: 'ACHETER CLUB (30 $)', ar: 'شراء رخصة النادي ($30)' })}</span>
               </button>
             ) : (
               <div className="px-3 py-1.5 rounded-xl bg-[#9333EA]/20 border border-[#A855F7] text-[#C084FC] text-xs font-black font-anime flex items-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
                 <Crown className="w-3.5 h-3.5 text-[#10B981]" />
-                <span>VERIFIED OWNER ($30 LICENSE)</span>
+                <span>{tr(currentLang, { en: 'VERIFIED OWNER ($30 LICENSE)', es: 'PROPIETARIO VERIFICADO ($30)', fr: 'PROPRIÉTAIRE VÉRIFIÉ (30 $)', ar: 'مالك موثق (رخصة $30)' })}</span>
               </div>
             )}
           </div>
@@ -355,24 +356,24 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
         <div className="rounded-3xl overflow-hidden bg-gradient-to-r from-[#0C121E] via-[#090B14] to-[#120D1F] shadow-[0_15px_50px_rgba(0,0,0,0.8)] grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           <div className="lg:col-span-5 relative h-72 sm:h-80 lg:h-full min-h-[300px] overflow-hidden">
             <img 
-              src="/images/yard_tribe_champions.png" 
+              src="/images/ai_human_arena_duo.jpg" 
               alt="YARD 300 Tribe Champions - Build Your Tribe" 
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700"
               onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-transparent via-transparent to-[#090B14]/90" />
             <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-black font-anime text-emerald-400 border border-emerald-500/40">
-              BUILD YOUR TRIBE // 2050
+              {tr(currentLang, { en: 'BUILD YOUR TRIBE // 2050', es: 'CONSTRUYE TU TRIBU // 2050', fr: 'BÂTISSEZ VOTRE TRIBU // 2050', ar: 'ابنِ فريقك الرياضي // 2050' })}
             </div>
           </div>
 
           <div className="lg:col-span-7 p-6 sm:p-8 space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-black font-anime border border-emerald-500/40">
-                STRONGER TOGETHER // TRIBE SYSTEM
+                {tr(currentLang, { en: 'STRONGER TOGETHER · TRIBE SYSTEM', es: 'MÁS FUERTES JUNTOS · SISTEMA TRIBU', fr: 'PLUS FORTS ENSEMBLE · SYSTÈME TRIBU', ar: 'أقوى معاً · منظومة الأندية' })}
               </span>
               <span className="px-3 py-1 rounded-full bg-[#FFE600]/20 text-[#FFE600] text-xs font-black font-mono">
-                DISCIPLINE • COMMUNITY • PROGRESS • FREEDOM
+                {tr(currentLang, { en: 'DISCIPLINE · COMMUNITY · PROGRESS · FREEDOM', es: 'DISCIPLINA · COMUNIDAD · PROGRESO · LIBERTAD', fr: 'DISCIPLINE · COMMUNAUTÉ · PROGRÈS · LIBERTÉ', ar: 'انضباط · مجتمع · تطور · حرية' })}
               </span>
             </div>
 
@@ -473,7 +474,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               >
                 <span>{club.logoUrl}</span>
                 <div className="absolute -bottom-2 px-2.5 py-0.5 rounded-full bg-black/90 border border-gray-700 text-[10px] font-black font-anime text-[#FFE600]">
-                  CLUB DOJO
+                  {tr(currentLang, { en: 'CLUB HUB', es: 'CLUB', fr: 'CLUB', ar: 'النادي' })}
                 </div>
               </div>
 
@@ -491,11 +492,10 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   </span>
                   <span className="px-3 py-1 rounded-xl bg-black/60 border border-[#FFE600]/40 text-[#FFE600] text-xs font-black font-anime flex items-center gap-1">
                     <Crown className="w-3 h-3 text-[#FFE600]" />
-                    <span>FOUNDER: {club.ownerName}</span>
+                    <span>{tr(currentLang, { en: `FOUNDER: ${club.ownerName}`, es: `FUNDADOR: ${club.ownerName}`, fr: `FONDATEUR : ${club.ownerName}`, ar: `المؤسس: ${club.ownerName}` })}</span>
                   </span>
                   <span className="px-3 py-1 rounded-xl bg-gradient-to-r from-[#9333EA]/30 to-[#10B981]/20 border border-[#A855F7]/60 text-emerald-300 text-xs font-black font-anime flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span>
-                    <span>PRICE: $30 USD (CLUB PASS)</span>
+                    <span>{tr(currentLang, { en: 'PRICE: $30 USD (CLUB PASS)', es: 'PRECIO: $30 USD (PASE CLUB)', fr: 'PRIX : 30 $ USD (PASS CLUB)', ar: 'الرسم: $30 USD (بطاقة النادي)' })}</span>
                   </span>
                 </div>
 
@@ -516,7 +516,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 className="flex-1 lg:flex-none px-5 py-3 rounded-2xl bg-gradient-to-r from-[#9333EA] to-[#A855F7] text-white font-black font-anime text-xs shadow-[0_0_20px_rgba(168,85,247,0.5)] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <PlusCircle className="w-4 h-4 text-[#10B981]" />
-                <span>{isEs ? 'PUBLICAR HISTORIA' : isFr ? 'PUBLIER STORY' : 'POST CLUB STORY'}</span>
+                <span>{tr(currentLang, { en: 'POST CLUB STORY', es: 'PUBLICAR HISTORIA', fr: 'PUBLIER STORY', ar: 'نشر ستوري النادي' })}</span>
               </button>
 
               <button
@@ -524,13 +524,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 className="flex-1 lg:flex-none px-5 py-3 rounded-2xl bg-[#141624] border border-gray-700 hover:border-[#10B981] text-white font-black font-anime text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <Share2 className="w-4 h-4 text-[#10B981]" />
-                <span>{isEs ? 'INVITAR SEGUIDORES' : isFr ? 'INVITER MEMBRES' : 'RECRUIT FOLLOWERS'}</span>
+                <span>{tr(currentLang, { en: 'RECRUIT FOLLOWERS', es: 'INVITAR SEGUIDORES', fr: 'INVITER MEMBRES', ar: 'دعوة المتابعين' })}</span>
               </button>
 
               <button
                 onClick={() => setIsEditClubOpen(true)}
                 className="p-3 rounded-2xl bg-[#141624] border border-gray-700 hover:border-[#A855F7] text-gray-300 hover:text-[#C084FC] transition-all cursor-pointer"
-                title="Edit Club Branding & Logo"
+                title={tr(currentLang, { en: 'Edit Club Branding & Logo', es: 'Editar Marca y Logo', fr: 'Modifier Blason & Nom', ar: 'تعديل شعار واسم النادي' })}
               >
                 <Edit3 className="w-4 h-4" />
               </button>
@@ -546,10 +546,10 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black font-mono uppercase text-[#C084FC]">
-                    {isEs ? 'ENLACE DIRECTO DEL CLUB' : isFr ? 'LIEN DIRECT DU CLUB' : 'DIRECT CLUB ACCESS LINK'}
+                    {tr(currentLang, { en: 'DIRECT CLUB ACCESS LINK', es: 'ENLACE DIRECTO DEL CLUB', fr: 'LIEN DIRECT DU CLUB', ar: 'الرابط المباشر للنادي' })}
                   </span>
                   <span className="text-[9px] bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40 px-1.5 rounded font-mono font-bold">
-                    $30 ACTIVE PASS
+                    {tr(currentLang, { en: '$30 ACTIVE PASS', es: 'PASE ACTIVO $30', fr: 'PASS ACTIF 30 $', ar: 'رخصة $30 مفعلة' })}
                   </span>
                 </div>
                 <div className="text-xs font-mono text-gray-300 truncate select-all mt-0.5">
@@ -563,10 +563,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 type="button"
                 onClick={handleCopyInviteLink}
                 className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-[#9333EA] to-[#A855F7] hover:from-[#A855F7] hover:to-[#9333EA] text-white font-anime font-black text-xs flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all cursor-pointer active:scale-95"
-                title="Copy Test Link"
               >
                 {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedLink ? 'LINK COPIED ✓' : 'COPY TEST LINK'}</span>
+                <span>
+                  {copiedLink
+                    ? tr(currentLang, { en: 'LINK COPIED ✓', es: '¡ENLACE COPIADO! ✓', fr: 'LIEN COPIÉ ✓', ar: 'تم نسخ الرابط ✓' })
+                    : tr(currentLang, { en: 'COPY CLUB LINK', es: 'COPIAR ENLACE', fr: 'COPIER LE LIEN', ar: 'نسخ رابط النادي' })}
+                </span>
               </button>
 
               <button
@@ -576,17 +579,16 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   window.location.hash = `club=${club.inviteCode}`;
                 }}
                 className="px-3 py-2 rounded-xl bg-[#121422] border border-gray-700 hover:border-[#10B981] text-gray-300 hover:text-white font-anime font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                title="Test Link Directly In Page"
               >
                 <Play className="w-3.5 h-3.5 text-[#10B981]" />
-                <span>TEST IN URL</span>
+                <span>{tr(currentLang, { en: 'OPEN URL', es: 'ABRIR URL', fr: 'OUVRIR URL', ar: 'فتح الرابط' })}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setShowQrModal(true)}
                 className="p-2 rounded-xl bg-[#121422] border border-gray-700 hover:border-[#A855F7] text-gray-300 hover:text-white transition-all cursor-pointer"
-                title="Display QR Code"
+                title="QR"
               >
                 <QrCode className="w-4 h-4 text-[#C084FC]" />
               </button>
@@ -598,66 +600,66 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             <div className="p-4 rounded-2xl bg-black/40 border border-gray-800/70">
               <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase mb-1">
                 <Users className="w-4 h-4 text-[#00F0FF]" />
-                <span>{isEs ? 'Seguidores y Miembros' : isFr ? 'Followers & Membres' : 'Followers & Members'}</span>
+                <span>{tr(currentLang, { en: 'Followers & Members', es: 'Seguidores y Miembros', fr: 'Followers & Membres', ar: 'المتابعون والأعضاء' })}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-white">
                 {club.followersCount.toLocaleString('en-US')}
               </span>
               <span className="block text-[11px] text-emerald-400 font-mono mt-0.5">
-                +{club.members.length} verified roster
+                {tr(currentLang, { en: `+${club.members.length} verified roster`, es: `+${club.members.length} en el roster`, fr: `+${club.members.length} membres vérifiés`, ar: `+${club.members.length} رياضي موثق` })}
               </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-black/40 border border-gray-800/70">
               <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase mb-1">
                 <Sparkles className="w-4 h-4 text-[#FFE600]" />
-                <span>{isEs ? 'Puntos de Aura del Club' : isFr ? 'Points d\'Aura du Club' : 'Total Club Aura XP'}</span>
+                <span>{tr(currentLang, { en: 'Total Club Aura XP', es: 'Puntos Aura del Club', fr: 'Points Aura du Club', ar: 'مجموع نقاط طاقة النادي' })}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-[#FFE600]">
                 {club.totalAuraScore.toLocaleString('en-US')}
               </span>
               <span className="block text-[11px] text-gray-400 font-mono mt-0.5">
-                Top 1% Global Ranking
+                {tr(currentLang, { en: 'Top 1% Global Ranking', es: 'Top 1% Mundial', fr: 'Top 1% Mondial', ar: 'ضمن أفضل 1% عالمياً' })}
               </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-black/40 border border-gray-800/70">
               <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase mb-1">
                 <Dumbbell className="w-4 h-4 text-[#E50914]" />
-                <span>{isEs ? 'Entrenamientos Semanales' : isFr ? 'Entraînements Semaine' : 'Weekly Workouts'}</span>
+                <span>{tr(currentLang, { en: 'Weekly Workouts', es: 'Entrenamientos Semanales', fr: 'Séances de la Semaine', ar: 'التمارين الأسبوعية' })}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-white">
                 {club.weeklyWorkouts}
               </span>
               <span className="block text-[11px] text-gray-400 font-mono mt-0.5">
-                Target: 500 completed
+                {tr(currentLang, { en: 'Target: 500 completed', es: 'Meta: 500 completadas', fr: 'Objectif : 500 séances', ar: 'الهدف: 500 تمرين مكتمل' })}
               </span>
             </div>
 
             <div className="p-4 rounded-2xl bg-black/40 border border-gray-800/70">
               <div className="flex items-center gap-2 text-gray-400 text-xs font-bold uppercase mb-1">
                 <Radio className="w-4 h-4 text-[#A855F7]" />
-                <span>{isEs ? 'Historias Activas (24h)' : isFr ? 'Stories Actives (24h)' : 'Live Stories (24h)'}</span>
+                <span>{tr(currentLang, { en: 'Live Stories (24h)', es: 'Historias Activas (24h)', fr: 'Stories Actives (24h)', ar: 'الستوريات النشطة (24 س)' })}</span>
               </div>
               <span className="text-2xl md:text-3xl font-black font-anime text-[#A855F7]">
-                {club.stories.length} Live
+                {club.stories.length} {tr(currentLang, { en: 'Live', es: 'Activas', fr: 'Actives', ar: 'نشط' })}
               </span>
               <span className="block text-[11px] text-gray-400 font-mono mt-0.5">
-                Updates from squad
+                {tr(currentLang, { en: 'Updates from squad', es: 'Novedades del equipo', fr: 'Actualités de l’équipe', ar: 'تحديثات الفريق اليومية' })}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 24-HOUR CLUB STORIES REEL (Instagram / WhatsApp Style) */}
+        {/* 24-HOUR CLUB STORIES REEL */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-lg font-black font-anime text-white">
-                {isEs ? 'HISTORIAS DEL CLUB (24H)' : isFr ? 'STORIES DU CLUB (24H)' : 'CLUB STORIES & DRILLS (24H)'}
+                {tr(currentLang, { en: 'CLUB STORIES & DRILLS (24H)', es: 'HISTORIAS DEL CLUB (24H)', fr: 'STORIES DU CLUB (24H)', ar: 'ستوريات وتمارين النادي (24 ساعة)' })}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#E50914]/20 border border-[#E50914] text-[#E50914] text-[10px] font-black font-anime animate-pulse">
-                LIVE
+              <span className="px-2.5 py-0.5 rounded-full bg-[#E50914]/20 border border-[#E50914] text-[#E50914] text-[10px] font-black font-anime">
+                {tr(currentLang, { en: 'LIVE', es: 'EN VIVO', fr: 'DIRECT', ar: 'مباشر' })}
               </span>
             </div>
 
@@ -666,7 +668,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               className="text-xs font-bold font-anime text-[#00F0FF] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5" />
-              <span>{isEs ? '+ Nueva Historia' : isFr ? '+ Nouvelle Story' : '+ Post Story'}</span>
+              <span>{tr(currentLang, { en: 'Post Story', es: '+ Nueva Historia', fr: '+ Nouvelle Story', ar: '+ نشر ستوري' })}</span>
             </button>
           </div>
 
@@ -684,7 +686,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 </div>
               </div>
               <span className="text-[11px] font-black font-anime text-gray-300 group-hover:text-white max-w-[80px] text-center truncate">
-                {isEs ? 'Añadir' : isFr ? 'Ajouter' : 'New Story'}
+                {tr(currentLang, { en: 'New Story', es: 'Añadir', fr: 'Ajouter', ar: 'إضافة ستوري' })}
               </span>
             </button>
 
@@ -742,7 +744,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             }`}
           >
             <Radio className="w-4 h-4 text-[#E50914]" />
-            <span>{isEs ? 'HISTORIAS Y PUBLICACIONES' : isFr ? 'STORIES & PUBLICATIONS' : 'STORIES & FEED'}</span>
+            <span>{tr(currentLang, { en: 'STORIES & FEED', es: 'HISTORIAS Y PUBLICACIONES', fr: 'STORIES & PUBLICATIONS', ar: 'الستوريات والمنشورات' })}</span>
           </button>
 
           <button
@@ -754,7 +756,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             }`}
           >
             <Users className="w-4 h-4 text-[#00F0FF]" />
-            <span>{isEs ? 'SEGUIDORES Y ATLETAS' : isFr ? 'FOLLOWERS & ATHLÈTES' : 'FOLLOWERS & ATHLETES'} ({club.followersCount})</span>
+            <span>{tr(currentLang, { en: 'FOLLOWERS & ATHLETES', es: 'SEGUIDORES Y ATLETAS', fr: 'FOLLOWERS & ATHLÈTES', ar: 'المتابعون والرياضيون' })} ({club.followersCount})</span>
           </button>
 
           <button
@@ -766,7 +768,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             }`}
           >
             <Dumbbell className="w-4 h-4 text-[#FFE600]" />
-            <span>{isEs ? 'DESAFÍO DIARIO DEL CLUB' : isFr ? 'DÉFI QUOTIDIEN DU CLUB' : 'DAILY SQUAD DRILL'}</span>
+            <span>{tr(currentLang, { en: 'DAILY SQUAD DRILL', es: 'DESAFÍO DIARIO DEL CLUB', fr: 'DÉFI QUOTIDIEN DU CLUB', ar: 'التحدي اليومي للنادي' })}</span>
           </button>
 
           <button
@@ -778,7 +780,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             }`}
           >
             <Swords className="w-4 h-4 text-[#A855F7]" />
-            <span>{isEs ? 'EXPLORAR OTROS CLUBES' : isFr ? 'EXPLORER AUTRES CLUBS' : 'EXPLORE COMMUNITY CLUBS'}</span>
+            <span>{tr(currentLang, { en: 'EXPLORE COMMUNITY CLUBS', es: 'EXPLORAR OTROS CLUBES', fr: 'EXPLORER AUTRES CLUBS', ar: 'استكشاف أندية المجتمع' })}</span>
           </button>
         </div>
 
@@ -888,7 +890,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                       className="text-xs font-black font-anime text-[#FFE600] hover:text-white flex items-center gap-1 cursor-pointer"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>VIEW 24H</span>
+                      <span>{tr(currentLang, { en: 'VIEW 24H', es: 'VER 24H', fr: 'VOIR 24H', ar: 'مشاهدة 24 ساعة' })}</span>
                     </button>
                   </div>
                 </div>
@@ -903,20 +905,21 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             
             {/* External Invite Link Section (Direct Web & Mobile URL) */}
             <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-[#111322] to-[#1A1C30] border-2 border-[#00F0FF]/50 shadow-[0_0_30px_rgba(0,240,255,0.2)] flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-2 text-center md:text-left">
+              <div className="space-y-2 text-center md:text-start">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F0FF]/20 border border-[#00F0FF]/40 text-[#00F0FF] text-xs font-black font-anime">
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>{isEs ? 'INVITACIÓN EXTERNA (WEB Y MÓVIL)' : isFr ? 'INVITATION EXTERNE (WEB & MOBILE)' : 'EXTERNAL INVITE LINK (WEB & MOBILE)'}</span>
+                  <span>{tr(currentLang, { en: 'EXTERNAL INVITE LINK (WEB & MOBILE)', es: 'INVITACIÓN EXTERNA (WEB Y MÓVIL)', fr: 'INVITATION EXTERNE (WEB & MOBILE)', ar: 'رابط الدعوة الخارجي (الويب والجوال)' })}</span>
                 </div>
                 <h3 className="text-xl md:text-2xl font-black font-anime text-white">
-                  {isEs ? 'Invita a Amigos y Compañeros de Gimnasio a Seguir Tu Club' : isFr ? 'Invitez vos Amis et Partenaires d\'Entraînement' : 'Invite Friends & Gym Buddies to Follow Your Club'}
+                  {tr(currentLang, { en: 'Invite Friends & Gym Buddies to Follow Your Club', es: 'Invita a Amigos y Compañeros de Gimnasio a Seguir Tu Club', fr: 'Invitez vos Amis et Partenaires d’Entraînement', ar: 'ادعُ أصدقاءك وزملاء التمرين لمتابعة ناديك الرياضي' })}
                 </h3>
                 <p className="text-xs md:text-sm text-gray-300 max-w-xl">
-                  {isEs 
-                    ? 'Comparte el enlace exclusivo o el código QR de tu club a través de WhatsApp, redes sociales o email para que otros se unan a tus entrenamientos y vean tus historias.' 
-                    : isFr 
-                    ? 'Partagez le lien direct de votre club ou votre QR code via WhatsApp ou réseaux sociaux pour permettre à quiconque de suivre vos stories et entraînements.' 
-                    : 'Share your club\'s unique URL or QR code across WhatsApp, Instagram, or Telegram. Anyone who taps the link follows your club and joins your squad routines.'}
+                  {tr(currentLang, {
+                    en: 'Share your club’s unique URL or QR code across WhatsApp, Instagram, or Telegram. Anyone who taps the link follows your club and joins your squad routines.',
+                    es: 'Comparte el enlace exclusivo o el código QR de tu club a través de WhatsApp, redes sociales o email para que otros se unan a tus entrenamientos y vean tus historias.',
+                    fr: 'Partagez le lien direct de votre club ou votre QR code via WhatsApp ou réseaux sociaux pour permettre à quiconque de suivre vos stories et entraînements.',
+                    ar: 'شارك رابط ناديك أو رمز QR عبر واتساب وإنستغرام وتيليغرام لينضم الجميع فوراً لمتابعة ستوريات وتمارين فريقك.'
+                  })}
                 </p>
               </div>
 
@@ -926,7 +929,11 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   className="px-6 py-3.5 rounded-2xl bg-[#00F0FF] text-black font-black font-anime text-xs shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
                 >
                   {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedLink ? (isEs ? '¡ENLACE COPIADO!' : isFr ? 'LIEN COPIÉ !' : 'LINK COPIED!') : (isEs ? 'COPIAR ENLACE DE INVITACIÓN' : isFr ? 'COPIER LE LIEN D\'INVITATION' : 'COPY CLUB INVITE LINK')}</span>
+                  <span>
+                    {copiedLink
+                      ? tr(currentLang, { en: 'LINK COPIED!', es: '¡ENLACE COPIADO!', fr: 'LIEN COPIÉ !', ar: 'تم نسخ الرابط!' })
+                      : tr(currentLang, { en: 'COPY CLUB INVITE LINK', es: 'COPIAR ENLACE DE INVITACIÓN', fr: 'COPIER LE LIEN D’INVITATION', ar: 'نسخ رابط الدعوة' })}
+                  </span>
                 </button>
 
                 <button
@@ -934,7 +941,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   className="px-5 py-3.5 rounded-2xl bg-[#141624] border border-gray-700 hover:border-white text-white font-black font-anime text-xs transition-all cursor-pointer flex items-center gap-2"
                 >
                   <QrCode className="w-4 h-4 text-[#FFE600]" />
-                  <span>{isEs ? 'VER CÓDIGO QR' : isFr ? 'VOIR QR CODE' : 'SHOW QR CODE'}</span>
+                  <span>{tr(currentLang, { en: 'SHOW QR CODE', es: 'VER CÓDIGO QR', fr: 'VOIR QR CODE', ar: 'عرض رمز QR' })}</span>
                 </button>
               </div>
             </div>
@@ -944,14 +951,15 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-black font-anime text-white">
-                    {isEs ? 'ROSTER OFICIAL Y CONEXIÓN DE MIEMBROS' : isFr ? 'EFFECTIF ET CONNEXIONS ENTRE MEMBRES' : 'OFFICIAL SQUAD ATHLETES & SUBSCRIBER NETWORK'}
+                    {tr(currentLang, { en: 'OFFICIAL SQUAD ATHLETES & SUBSCRIBER NETWORK', es: 'ROSTER OFICIAL Y CONEXIÓN DE MIEMBROS', fr: 'EFFECTIF ET CONNEXIONS ENTRE MEMBRES', ar: 'القائمة الرسمية للأبطال وشبكة الأعضاء' })}
                   </h3>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    {isEs 
-                      ? 'Todos los suscriptores pueden añadirse como amigos, compartir rutinas e interactuar con historias.' 
-                      : isFr 
-                      ? 'Tous les abonnés peuvent s\'ajouter en amis, partager des routines et interagir avec les stories.' 
-                      : 'All subscribers can add each other as squad friends, broadcast workouts, and interact with 24h stories.'}
+                    {tr(currentLang, {
+                      en: 'All subscribers can add each other as squad friends, broadcast workouts, and interact with 24h stories.',
+                      es: 'Todos los suscriptores pueden añadirse como amigos, compartir rutinas e interactuar con historias.',
+                      fr: 'Tous les abonnés peuvent s’ajouter en amis, partager des routines et interagir avec les stories.',
+                      ar: 'يمكن لجميع المشتركين إضافة بعضهم كأصدقاء في النادي ومشاركة التمارين والتفاعل مع الستوريات.'
+                    })}
                   </p>
                 </div>
 
@@ -964,7 +972,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                         memberFilter === 'all' ? 'bg-[#00F0FF] text-black font-black' : 'text-gray-400 hover:text-white'
                       }`}
                     >
-                      {isEs ? 'Todos los Atletas' : isFr ? 'Tous les Athlètes' : 'All Roster'} ({club.members.length})
+                      {tr(currentLang, { en: 'All Roster', es: 'Todos los Atletas', fr: 'Tous les Athlètes', ar: 'جميع الأعضاء' })} ({club.members.length})
                     </button>
                     <button
                       onClick={() => setMemberFilter('connected')}
@@ -973,7 +981,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                       }`}
                     >
                       <UserCheck className="w-3.5 h-3.5" />
-                      <span>{isEs ? 'Mis Amigos' : isFr ? 'Mes Amis' : 'My Friends'}</span>
+                      <span>{tr(currentLang, { en: 'My Friends', es: 'Mis Amigos', fr: 'Mes Amis', ar: 'أصدقائي' })}</span>
                       <span className="px-1.5 py-0.2 rounded-full bg-black/40 text-[10px] font-mono">
                         {club.members.filter(m => connectedSubscribers.includes(m.id)).length}
                       </span>
@@ -985,7 +993,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                     className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#E50914] to-[#FFE600] text-black font-black font-anime text-xs hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
                   >
                     <PlusCircle className="w-3.5 h-3.5" />
-                    <span>{isEs ? '+ Reclutar Atleta' : isFr ? '+ Recruter Athlète' : '+ Add Community Athlete'}</span>
+                    <span>{tr(currentLang, { en: '+ Add Community Athlete', es: '+ Reclutar Atleta', fr: '+ Recruter Athlète', ar: '+ استقطاب بطل للنادي' })}</span>
                   </button>
                 </div>
               </div>
@@ -1017,7 +1025,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                                 onError={handleImageError}
                               />
                               {isConnected && (
-                                <div className="absolute top-0 right-0 w-3 h-3 bg-[#10B981] rounded-full border border-black" title="Connected Squad Friend" />
+                                <div className="absolute top-0 right-0 w-3 h-3 bg-[#10B981] rounded-full border border-black" />
                               )}
                             </div>
                             <div>
@@ -1033,8 +1041,8 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                                 {member.tier}
                               </span>
                               <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono mt-0.5">
-                                <span>⚡ {member.streak}d streak</span>
-                                <span>•</span>
+                                <span>⚡ {member.streak}d</span>
+                                <span>·</span>
                                 <span className={member.status === 'training' ? 'text-emerald-400 font-bold' : 'text-gray-400'}>
                                   {member.status.toUpperCase()}
                                 </span>
@@ -1049,7 +1057,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                                 removeClubMember(member.id);
                               }}
                               className="p-1.5 text-gray-500 hover:text-red-400 transition-colors cursor-pointer"
-                              title="Remove from Roster"
+                              aria-label="Remove"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -1061,8 +1069,8 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                           <div className="pt-3 border-t border-gray-800/80 flex items-center justify-between">
                             <span className="text-[10px] font-mono text-gray-400">
                               {isConnected 
-                                ? (isEs ? 'Amigo Conectado ✓' : isFr ? 'Ami Connecté ✓' : 'Squad Friend ✓')
-                                : (isEs ? 'No conectado' : isFr ? 'Non connecté' : 'Not Connected')}
+                                ? tr(currentLang, { en: 'Squad Friend ✓', es: 'Amigo Conectado ✓', fr: 'Ami Connecté ✓', ar: 'صديق في الفريق ✓' })
+                                : tr(currentLang, { en: 'Not Connected', es: 'No conectado', fr: 'Non connecté', ar: 'غير متصل' })}
                             </span>
 
                             <button
@@ -1076,12 +1084,12 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                               {isConnected ? (
                                 <>
                                   <UserCheck className="w-3.5 h-3.5 text-[#10B981]" />
-                                  <span>{isEs ? 'CONECTADO ✓' : isFr ? 'CONNECTÉ ✓' : 'CONNECTED ✓'}</span>
+                                  <span>{tr(currentLang, { en: 'CONNECTED ✓', es: 'CONECTADO ✓', fr: 'CONNECTÉ ✓', ar: 'تمت الإضافة ✓' })}</span>
                                 </>
                               ) : (
                                 <>
                                   <UserPlus className="w-3.5 h-3.5 text-[#00F0FF]" />
-                                  <span>{isEs ? '+ AÑADIR AMIGO' : isFr ? '+ AJOUTER AMI' : '+ ADD FRIEND'}</span>
+                                  <span>{tr(currentLang, { en: '+ ADD FRIEND', es: '+ AÑADIR AMIGO', fr: '+ AJOUTER AMI', ar: '+ إضافة صديق' })}</span>
                                 </>
                               )}
                             </button>
@@ -1102,7 +1110,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFE600]/20 text-[#FFE600] text-xs font-black font-anime border border-[#FFE600]/40 mb-2">
                   <Flame className="w-3.5 h-3.5" />
-                  <span>DAILY CLUB MANDATE // 24H DRILL</span>
+                  <span>{tr(currentLang, { en: 'DAILY CLUB MANDATE · 24H DRILL', es: 'RETO DIARIO DEL CLUB · 24H', fr: 'DÉFI QUOTIDIEN DU CLUB · 24H', ar: 'التحدي اليومي الإلزامي للنادي · 24 ساعة' })}</span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-black font-anime text-white">
                   {club.dailyDrill.title}
@@ -1112,12 +1120,17 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 </p>
               </div>
 
-              <div className="text-right">
+              <div className={isAr ? 'text-right' : 'text-right'}>
                 <span className="block text-2xl font-black font-anime text-[#FFE600]">
                   +{club.dailyDrill.xpReward} YARDX
                 </span>
                 <span className="text-xs text-gray-400 font-mono">
-                  {club.dailyDrill.completedCount} members completed today
+                  {tr(currentLang, {
+                    en: `${club.dailyDrill.completedCount} members completed today`,
+                    es: `${club.dailyDrill.completedCount} miembros completaron hoy`,
+                    fr: `${club.dailyDrill.completedCount} membres ont terminé aujourd’hui`,
+                    ar: `أتم التمرين اليوم ${club.dailyDrill.completedCount} عضواً`
+                  })}
                 </span>
               </div>
             </div>
@@ -1132,7 +1145,12 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                     {club.dailyDrill.targetReps}
                   </span>
                   <span className="text-xs text-gray-400">
-                    Log your completion to boost club ranking and earn bonus aura tokens.
+                    {tr(currentLang, {
+                      en: 'Log your completion to boost club ranking and earn bonus aura tokens.',
+                      es: 'Registra tu entrenamiento para subir el rango del club y ganar puntos.',
+                      fr: 'Enregistrez votre séance pour améliorer le classement du club.',
+                      ar: 'سجل إتمامك للتحدي لرفع تصنيف النادي وكسب نقاط الطاقة الإضافية.'
+                    })}
                   </span>
                 </div>
               </div>
@@ -1150,7 +1168,11 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 }`}
               >
                 <Check className="w-4 h-4" />
-                <span>{drillCompleted ? 'DRILL COMPLETED (+350 YARDX) ✅' : 'EXECUTE & LOG DRILL NOW ⚡'}</span>
+                <span>
+                  {drillCompleted
+                    ? tr(currentLang, { en: 'DRILL COMPLETED (+350 YARDX) ✅', es: 'RETO COMPLETADO (+350 YARDX) ✅', fr: 'DÉFI TERMINÉ (+350 YARDX) ✅', ar: 'تم إتمام التحدي (+350 YARDX) ✅' })
+                    : tr(currentLang, { en: 'EXECUTE & LOG DRILL NOW ⚡', es: 'REGISTRAR RETO AHORA ⚡', fr: 'VALIDER LE DÉFI ⚡', ar: 'تنفيذ وتسجيل التحدي الآن ⚡' })}
+                </span>
               </button>
             </div>
           </div>
@@ -1161,10 +1183,15 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-black font-anime text-white">
-                {isEs ? 'CLUBES ACTIVOS EN LA COMUNIDAD YARD300' : isFr ? 'CLUBS ACTIFS DE LA COMMUNAUTÉ YARD300' : 'EXPLORE YARD300 COMMUNITY SQUADS'}
+                {tr(currentLang, { en: 'EXPLORE YARD300 COMMUNITY SQUADS', es: 'CLUBES ACTIVOS EN LA COMUNIDAD YARD300', fr: 'CLUBS ACTIFS DE LA COMMUNAUTÉ YARD300', ar: 'استكشاف أندية مجتمع يارد 300' })}
               </h3>
               <p className="text-xs text-gray-400">
-                {isEs ? 'Descubre otros clubes creados por atletas de Nivel 3 y 4 y sigue sus rutinas.' : isFr ? 'Découvrez d\'autres clubs créés par des athlètes de Niveau 3 et 4.' : 'Discover clubs founded by elite Level 3 and Level 4 warriors.'}
+                {tr(currentLang, {
+                  en: 'Discover clubs founded by elite Level 3 and Level 4 athletes.',
+                  es: 'Descubre otros clubes creados por atletas de Nivel 3 y 4 y sigue sus rutinas.',
+                  fr: 'Découvrez d’autres clubs créés par des athlètes de Niveau 3 et 4.',
+                  ar: 'اكتشف الأندية التي أسسها أبطال المستوى الثالث والرابع وتابع تمارينهم.'
+                })}
               </p>
             </div>
 
@@ -1193,16 +1220,17 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
                   <div className="pt-4 border-t border-gray-800 flex items-center justify-between">
                     <span className="text-xs font-mono text-gray-400">
-                      Founder: <strong className="text-white">{c.ownerName}</strong>
+                      {tr(currentLang, { en: 'Founder:', es: 'Fundador:', fr: 'Fondateur :', ar: 'المؤسس:' })} <strong className="text-white">{c.ownerName}</strong>
                     </span>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
                         soundFX.playSuccess();
-                        alert(`Following ${c.name}! You will now receive their daily stories.`);
+                        const btn = e.currentTarget;
+                        btn.textContent = tr(currentLang, { en: 'FOLLOWING ✓', es: 'SIGUIENDO ✓', fr: 'SUIVI ✓', ar: 'تمت المتابعة ✓' });
                       }}
                       className="px-4 py-2 rounded-xl bg-[#141624] border border-gray-700 hover:border-white text-xs font-black font-anime text-white hover:scale-105 transition-all cursor-pointer"
                     >
-                      + FOLLOW SQUAD
+                      {tr(currentLang, { en: '+ FOLLOW SQUAD', es: '+ SEGUIR CLUB', fr: '+ SUIVRE CLUB', ar: '+ متابعة النادي' })}
                     </button>
                   </div>
                 </div>
@@ -1226,45 +1254,45 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
             <div>
               <h2 className="text-2xl font-black font-anime text-white">
-                {isEs ? 'PERSONALIZAR TU CLUB' : isFr ? 'PERSONNALISER VOTRE CLUB' : 'CUSTOMIZE YOUR CLUB BRAND'}
+                {tr(currentLang, { en: 'CUSTOMIZE YOUR CLUB BRAND', es: 'PERSONALIZAR TU CLUB', fr: 'PERSONNALISER VOTRE CLUB', ar: 'تخصيص هوية وشعار النادي' })}
               </h2>
               <p className="text-xs text-gray-400 mt-1">
-                {isEs ? 'Edita el nombre, el lema y el logotipo que verán tus seguidores.' : isFr ? 'Modifiez le nom, la devise et le blason de votre club.' : 'Choose the custom badge, title, and theme of your athletic club.'}
+                {tr(currentLang, { en: 'Choose the custom badge, title, and theme of your athletic club.', es: 'Edita el nombre, el lema y el logotipo que verán tus seguidores.', fr: 'Modifiez le nom, la devise et le blason de votre club.', ar: 'اختر اسم ناديك وشعاره ولونه المميز الذي يراه متابعوك.' })}
               </p>
             </div>
 
             <form onSubmit={handleSaveClubInfo} className="space-y-4">
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                  Club Name
+                  {tr(currentLang, { en: 'Club Name', es: 'Nombre del Club', fr: 'Nom du Club', ar: 'اسم النادي' })}
                 </label>
                 <input 
                   type="text" 
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl bg-black/60 border border-gray-700 text-white font-anime text-sm focus:border-[#E50914] outline-none"
-                  placeholder="e.g. TOKYO CYBER STRIKE"
+                  placeholder="YARD APEX CLUB"
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                  Club Motto / Bio
+                  {tr(currentLang, { en: 'Club Motto / Bio', es: 'Lema del Club / Bio', fr: 'Devise du Club / Bio', ar: 'شعار النادي والوصف' })}
                 </label>
                 <textarea 
                   value={editMotto}
                   onChange={(e) => setEditMotto(e.target.value)}
                   rows={2}
                   className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-gray-700 text-white text-xs focus:border-[#E50914] outline-none"
-                  placeholder="e.g. Relentless speed, unbroken endurance."
+                  placeholder={tr(currentLang, { en: 'Relentless discipline, unbroken endurance.', es: 'Disciplina constante, resistencia inquebrantable.', fr: 'Discipline constante, endurance sans faille.', ar: 'انضباط متواصل وقدرة تحمل لا تنكسر.' })}
                 />
               </div>
 
               {/* Logo / Badge Selection */}
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-2">
-                  Select Club Emblem / Logo
+                  {tr(currentLang, { en: 'Select Club Emblem / Logo', es: 'Seleccionar Emblema del Club', fr: 'Sélectionner l’Emblème', ar: 'اختر شعار النادي' })}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {CLUB_LOGO_PRESETS.map((p) => (
@@ -1288,7 +1316,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               {/* Theme Accent Color */}
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-2">
-                  Accent Color Glow
+                  {tr(currentLang, { en: 'Accent Color Glow', es: 'Color de Acento', fr: 'Couleur d’Accentuation', ar: 'لون الإضاءة والشعار' })}
                 </label>
                 <div className="flex items-center gap-3">
                   {CLUB_THEME_COLORS.map((c) => (
@@ -1312,13 +1340,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   onClick={() => setIsEditClubOpen(false)}
                   className="px-5 py-2.5 rounded-xl bg-gray-800 text-gray-300 font-anime text-xs cursor-pointer"
                 >
-                  Cancel
+                  {tr(currentLang, { en: 'Cancel', es: 'Cancelar', fr: 'Annuler', ar: 'إلغاء' })}
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-[#E50914] text-white font-black font-anime text-xs shadow-[0_0_20px_rgba(229,9,20,0.6)] cursor-pointer"
                 >
-                  Save Changes ⚡
+                  {tr(currentLang, { en: 'Save Changes ⚡', es: 'Guardar Cambios ⚡', fr: 'Enregistrer ⚡', ar: 'حفظ التعديلات ⚡' })}
                 </button>
               </div>
             </form>
@@ -1340,28 +1368,27 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#A855F7]/20 text-[#A855F7] text-[10px] font-black font-anime border border-[#A855F7]/40 mb-1">
                 <Radio className="w-3 h-3" />
-                <span>24-HOUR BROADCAST</span>
+                <span>{tr(currentLang, { en: '24-HOUR BROADCAST', es: 'EMISIÓN 24 HORAS', fr: 'DIFFUSION 24 HEURES', ar: 'بث ستوري 24 ساعة' })}</span>
               </div>
               <h2 className="text-2xl font-black font-anime text-white">
-                {isEs ? 'PUBLICAR HISTORIA EN EL CLUB' : isFr ? 'PUBLIER UNE STORY AU CLUB' : 'BROADCAST CLUB STORY (24H)'}
+                {tr(currentLang, { en: 'BROADCAST CLUB STORY (24H)', es: 'PUBLICAR HISTORIA EN EL CLUB', fr: 'PUBLIER UNE STORY AU CLUB', ar: 'نشر ستوري تدريب للنادي (24 ساعة)' })}
               </h2>
               <p className="text-xs text-gray-400">
-                {isEs ? 'Comparte tu entrenamiento diario, un desafío o un hito de recuperación con todos tus seguidores.' : isFr ? 'Partagez votre entraînement ou défi du jour avec tous vos followers.' : 'Post your daily workout drill, sparring combo, or recovery log to your followers.'}
+                {tr(currentLang, { en: 'Post your daily workout drill, sparring combo, or recovery log to your followers.', es: 'Comparte tu entrenamiento diario, un desafío o un hito de recuperación con todos tus seguidores.', fr: 'Partagez votre entraînement ou défi du jour avec tous vos followers.', ar: 'شارك تمرينك اليومي أو التحدي الجديد أو خطة التعافي مع جميع متابعي ناديك.' })}
               </p>
             </div>
 
             <form onSubmit={handlePublishStory} className="space-y-4">
-              {/* DEVICE UPLOAD SECTION (MOBILE CAMERA / PC FILES) */}
+              {/* DEVICE UPLOAD SECTION */}
               <div className="space-y-2">
                 <label className="block text-xs font-black font-anime text-[#FFE600] uppercase flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Upload className="w-3.5 h-3.5" />
-                    <span>{isEs ? 'SUBIR FOTO O VÍDEO DESDE TU DISPOSITIVO (MÓVIL / PC)' : isFr ? 'TÉLÉVERSER PHOTO OU VIDÉO DEPUIS L\'APPAREIL' : 'UPLOAD PHOTO OR VIDEO FROM DEVICE (MOBILE / PC)'}</span>
+                    <span>{tr(currentLang, { en: 'UPLOAD PHOTO OR VIDEO FROM DEVICE (MOBILE / PC)', es: 'SUBIR FOTO O VÍDEO DESDE TU DISPOSITIVO', fr: 'TÉLÉVERSER PHOTO OU VIDÉO DEPUIS L’APPAREIL', ar: 'رفع صورة أو فيديو من جهازك (جوال أو كمبيوتر)' })}</span>
                   </span>
-                  <span className="text-[10px] text-gray-400 font-mono">JPG, PNG, MP4, WEBM</span>
+                  <span className="text-[10px] text-gray-400 font-mono">JPG, PNG, MP4</span>
                 </label>
 
-                {/* Hidden File Input */}
                 <input 
                   type="file" 
                   ref={fileInputRef}
@@ -1370,7 +1397,6 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   className="hidden"
                 />
 
-                {/* Upload Trigger Area */}
                 {!uploadedMediaPreview ? (
                   <div 
                     onClick={() => fileInputRef.current?.click()}
@@ -1396,23 +1422,22 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                     </div>
                     <div>
                       <span className="block text-sm font-black font-anime text-white">
-                        {isEs ? 'Toca para Elegir Archivo o Tomar Foto / Vídeo' : isFr ? 'Touchez pour Choisir ou Filmer' : 'Tap to Choose File or Capture Video / Photo'}
+                        {tr(currentLang, { en: 'Tap to Choose File or Capture Video / Photo', es: 'Toca para Elegir Archivo o Tomar Foto / Vídeo', fr: 'Touchez pour Choisir ou Filmer', ar: 'اضغط لاختيار صورة أو فيديو من جهازك' })}
                       </span>
                       <span className="block text-xs text-gray-400 mt-1">
-                        {isEs ? 'Compatible con cámara de móvil o archivos de ordenador' : isFr ? 'Compatible caméra smartphone ou fichiers PC' : 'Compatible with smartphone camera roll & computer storage'}
+                        {tr(currentLang, { en: 'Compatible with smartphone camera roll & computer storage', es: 'Compatible con cámara de móvil o archivos de ordenador', fr: 'Compatible caméra smartphone ou fichiers PC', ar: 'متوافق مع كاميرا الجوال وملفات الكمبيوتر' })}
                       </span>
                     </div>
                     <div className="flex items-center justify-center gap-3 pt-1">
                       <span className="px-2.5 py-1 rounded-full bg-[#141624] border border-gray-700 text-[10px] font-mono text-[#00F0FF] flex items-center gap-1">
-                        <ImageIcon className="w-3 h-3" /> Image
+                        <ImageIcon className="w-3 h-3" /> {tr(currentLang, { en: 'Image', es: 'Imagen', fr: 'Image', ar: 'صورة' })}
                       </span>
                       <span className="px-2.5 py-1 rounded-full bg-[#141624] border border-gray-700 text-[10px] font-mono text-[#FFE600] flex items-center gap-1">
-                        <VideoIcon className="w-3 h-3" /> Video (MP4)
+                        <VideoIcon className="w-3 h-3" /> {tr(currentLang, { en: 'Video (MP4)', es: 'Vídeo (MP4)', fr: 'Vidéo (MP4)', ar: 'فيديو' })}
                       </span>
                     </div>
                   </div>
                 ) : (
-                  /* Media Live Preview Card */
                   <div className="p-3 rounded-2xl bg-black/80 border-2 border-[#10B981] relative overflow-hidden space-y-2">
                     <div className="h-44 rounded-xl overflow-hidden bg-black relative flex items-center justify-center">
                       {uploadedFileType === 'video' ? (
@@ -1431,13 +1456,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                       )}
                       <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-black/80 border border-emerald-400 text-emerald-300 text-[10px] font-mono font-bold flex items-center gap-1">
                         <Check className="w-3 h-3 text-emerald-400" />
-                        {uploadedFileType === 'video' ? 'VIDEO READY' : 'PHOTO READY'}
+                        {tr(currentLang, { en: 'READY', es: 'LISTO', fr: 'PRÊT', ar: 'جاهز' })}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between text-xs font-mono px-1">
                       <span className="text-gray-300 truncate max-w-[220px]">
-                        📁 {uploadedFileName || 'Uploaded device media'}
+                        📁 {uploadedFileName || 'Media'}
                       </span>
                       <button
                         type="button"
@@ -1448,7 +1473,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                         }}
                         className="text-[#00F0FF] hover:underline font-anime font-black text-xs cursor-pointer"
                       >
-                        {isEs ? 'Cambiar archivo' : isFr ? 'Changer' : 'Change File'}
+                        {tr(currentLang, { en: 'Change File', es: 'Cambiar archivo', fr: 'Changer', ar: 'تغيير الملف' })}
                       </button>
                     </div>
                   </div>
@@ -1457,7 +1482,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                  {isEs ? 'Título de la Historia / Ejercicio' : isFr ? 'Titre de la Story / Défi' : 'Story Title / Drill Name'}
+                  {tr(currentLang, { en: 'Story Title / Drill Name', es: 'Título de la Historia / Ejercicio', fr: 'Titre de la Story / Défi', ar: 'عنوان الستوري أو التمرين' })}
                 </label>
                 <input 
                   type="text" 
@@ -1471,48 +1496,48 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
               <div>
                 <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                  {isEs ? 'Notas y Descripción del Entrenamiento' : isFr ? 'Notes & Description de Séance' : 'Story Notes & Workout Caption'}
+                  {tr(currentLang, { en: 'Story Notes & Workout Caption', es: 'Notas y Descripción del Entrenamiento', fr: 'Notes & Description de Séance', ar: 'ملاحظات ووصف التمرين' })}
                 </label>
                 <textarea 
                   value={newStoryCaption}
                   onChange={(e) => setNewStoryCaption(e.target.value)}
                   rows={2}
                   className="w-full px-4 py-2.5 rounded-xl bg-black/60 border border-gray-700 text-white text-xs focus:border-[#A855F7] outline-none"
-                  placeholder="e.g. 5 rounds of high-intensity hooks & cross combos. Squad, let's complete today's quota!"
+                  placeholder={tr(currentLang, { en: '5 rounds of high-intensity strikes & cardio intervals.', es: '5 asaltos de alta intensidad y resistencia.', fr: '5 rounds haute intensité et endurance.', ar: '5 جولات عالية الشدة مع فترات استشفاء.' })}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                    {isEs ? 'Categoría' : isFr ? 'Catégorie' : 'Story Category'}
+                    {tr(currentLang, { en: 'Story Category', es: 'Categoría', fr: 'Catégorie', ar: 'التصنيف' })}
                   </label>
                   <select
                     value={newStoryType}
                     onChange={(e) => setNewStoryType(e.target.value as any)}
                     className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-gray-700 text-white text-xs font-anime outline-none"
                   >
-                    <option value="DRILL">DRILL (Training)</option>
-                    <option value="SPARRING">SPARRING (Combat)</option>
-                    <option value="RECOVERY">RECOVERY (Sleep/Cryo)</option>
-                    <option value="GAUNTLET">GAUNTLET (Challenge)</option>
-                    <option value="STREAK">STREAK (Milestone)</option>
+                    <option value="DRILL">DRILL</option>
+                    <option value="SPARRING">SPARRING</option>
+                    <option value="RECOVERY">RECOVERY</option>
+                    <option value="GAUNTLET">GAUNTLET</option>
+                    <option value="STREAK">STREAK</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                    {isEs ? 'Intensidad' : isFr ? 'Intensité' : 'Intensity Level'}
+                    {tr(currentLang, { en: 'Intensity Level', es: 'Intensidad', fr: 'Intensité', ar: 'مستوى الشدة' })}
                   </label>
                   <select
                     value={newStoryIntensity}
                     onChange={(e) => setNewStoryIntensity(e.target.value as any)}
                     className="w-full px-3 py-2.5 rounded-xl bg-black/60 border border-gray-700 text-white text-xs font-anime outline-none"
                   >
-                    <option value="LOW">LOW INTENSITY</option>
-                    <option value="MEDIUM">MEDIUM INTENSITY</option>
-                    <option value="HIGH">HIGH INTENSITY</option>
-                    <option value="MAX OVERDRIVE">MAX OVERDRIVE ⚡</option>
+                    <option value="LOW">{tr(currentLang, { en: 'LOW INTENSITY', es: 'INTENSIDAD BAJA', fr: 'FAIBLE INTENSITÉ', ar: 'شدة خفيفة' })}</option>
+                    <option value="MEDIUM">{tr(currentLang, { en: 'MEDIUM INTENSITY', es: 'INTENSIDAD MEDIA', fr: 'INTENSITÉ MOYENNE', ar: 'شدة متوسطة' })}</option>
+                    <option value="HIGH">{tr(currentLang, { en: 'HIGH INTENSITY', es: 'ALTA INTENSIDAD', fr: 'HAUTE INTENSITÉ', ar: 'شدة عالية' })}</option>
+                    <option value="MAX OVERDRIVE">{tr(currentLang, { en: 'MAX OUTPUT', es: 'MÁXIMA POTENCIA', fr: 'PUISSANCE MAX', ar: 'أقصى طاقة' })}</option>
                   </select>
                 </div>
               </div>
@@ -1520,7 +1545,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                    {isEs ? 'Duración (Minutos)' : isFr ? 'Durée (Minutes)' : 'Duration (Minutes)'}
+                    {tr(currentLang, { en: 'Duration (Minutes)', es: 'Duración (Minutos)', fr: 'Durée (Minutes)', ar: 'المدة (بالدقائق)' })}
                   </label>
                   <input 
                     type="number" 
@@ -1534,7 +1559,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
                 <div>
                   <label className="block text-xs font-black font-anime text-gray-300 uppercase mb-1">
-                    {isEs ? 'Calorías Quemadas (kcal)' : isFr ? 'Calories Estimées (kcal)' : 'Estimated Calories (kcal)'}
+                    {tr(currentLang, { en: 'Estimated Calories (kcal)', es: 'Calorías Quemadas (kcal)', fr: 'Calories Estimées (kcal)', ar: 'السعرات الحرارية (kcal)' })}
                   </label>
                   <input 
                     type="number" 
@@ -1553,13 +1578,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   onClick={() => setIsNewStoryOpen(false)}
                   className="px-5 py-2.5 rounded-xl bg-gray-800 text-gray-300 font-anime text-xs cursor-pointer"
                 >
-                  {isEs ? 'Cancelar' : isFr ? 'Annuler' : 'Cancel'}
+                  {tr(currentLang, { en: 'Cancel', es: 'Cancelar', fr: 'Annuler', ar: 'إلغاء' })}
                 </button>
                 <button
                   type="submit"
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#A855F7] to-[#E50914] text-white font-black font-anime text-xs shadow-[0_0_20px_rgba(255,0,122,0.6)] cursor-pointer"
                 >
-                  {isEs ? 'Publicar Historia (24h) ⚡' : isFr ? 'Diffuser la Story (24h) ⚡' : 'Broadcast Story (24h) ⚡'}
+                  {tr(currentLang, { en: 'Broadcast Story (24h) ⚡', es: 'Publicar Historia (24h) ⚡', fr: 'Diffuser la Story (24h) ⚡', ar: 'نشر الستوري (24 ساعة) ⚡' })}
                 </button>
               </div>
             </form>
@@ -1708,13 +1733,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 </div>
 
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
                     soundFX.playStrikeHit();
-                    alert(`Workout drill added to your training log! +75 AP earned.`);
+                    e.currentTarget.textContent = tr(currentLang, { en: 'JOINED (+75 AP) ✓', es: 'UNIDO (+75 AP) ✓', fr: 'REJOINT (+75 AP) ✓', ar: 'تم الانضمام ✓' });
                   }}
                   className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#E50914] to-[#FFE600] text-black text-[11px] font-black font-anime shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0"
                 >
-                  JOIN DRILL ⚡
+                  {tr(currentLang, { en: 'JOIN DRILL ⚡', es: 'UNIRSE AL RETO ⚡', fr: 'REJOINDRE ⚡', ar: 'شارك التمرين ⚡' })}
                 </button>
               </div>
 
@@ -1731,19 +1756,18 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                   </div>
                 )}
 
-                {/* Comment input form */}
                 <form onSubmit={handleAddStoryComment} className="flex items-center gap-1.5">
                   <input 
                     type="text"
                     value={storyCommentInput}
                     onChange={(e) => setStoryCommentInput(e.target.value)}
-                    placeholder={isEs ? 'Escribe un comentario...' : isFr ? 'Écrire un commentaire...' : 'Type a cheer / reaction...'}
+                    placeholder={tr(currentLang, { en: 'Type a comment...', es: 'Escribe un comentario...', fr: 'Écrire un commentaire...', ar: 'اكتب تعليقاً أو تشجيعاً...' })}
                     className="flex-1 px-3 py-1.5 rounded-xl bg-black/60 border border-gray-700 text-white text-xs outline-none focus:border-[#00F0FF]"
                   />
                   <button
                     type="submit"
                     className="p-2 rounded-xl bg-[#00F0FF] text-black hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                    title="Send comment"
+                    aria-label="Send comment"
                   >
                     <Send className="w-3.5 h-3.5" />
                   </button>
@@ -1769,10 +1793,9 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
             <div className="space-y-1">
               <span className="text-3xl">{club.logoUrl}</span>
               <h3 className="text-xl font-black font-anime text-white">{club.name}</h3>
-              <p className="text-xs text-gray-400">Scan to follow club & view daily stories</p>
+              <p className="text-xs text-gray-400">{tr(currentLang, { en: 'Scan to follow club & view daily stories', es: 'Escanea para seguir el club', fr: 'Scannez pour suivre le club', ar: 'امسح الرمز لمتابعة النادي ومشاهدة الستوريات' })}</p>
             </div>
 
-            {/* Stylized QR Box */}
             <div className="w-56 h-56 mx-auto bg-white p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 shadow-2xl">
               <div className="w-full h-full border-4 border-black p-2 flex flex-col items-center justify-center space-y-2">
                 <QrCode className="w-32 h-32 text-black" />
@@ -1791,7 +1814,11 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
               className="w-full py-3 rounded-xl bg-[#00F0FF] text-black font-black font-anime text-xs shadow-lg hover:scale-105 transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedLink ? 'COPIED TO CLIPBOARD!' : 'COPY DIRECT LINK'}</span>
+              <span>
+                {copiedLink
+                  ? tr(currentLang, { en: 'COPIED TO CLIPBOARD!', es: '¡COPIADO!', fr: 'COPIÉ !', ar: 'تم النسخ!' })
+                  : tr(currentLang, { en: 'COPY DIRECT LINK', es: 'COPIAR ENLACE DIRECTO', fr: 'COPIER LE LIEN DIRECT', ar: 'نسخ الرابط المباشر' })}
+              </span>
             </button>
           </div>
         </div>
@@ -1810,14 +1837,13 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
 
             <div>
               <h2 className="text-2xl font-black font-anime text-white">
-                {isEs ? 'RECLUTAR ATLETAS DE LA COMUNIDAD' : isFr ? 'RECRUTER DES ATHLÈTES DE LA COMMUNAUTÉ' : 'RECRUIT COMMUNITY ATHLETES'}
+                {tr(currentLang, { en: 'RECRUIT COMMUNITY ATHLETES', es: 'RECLUTAR ATLETAS DE LA COMUNIDAD', fr: 'RECRUTER DES ATHLÈTES DE LA COMMUNAUTÉ', ar: 'استقطاب أبطال المجتمع لناديك' })}
               </h2>
               <p className="text-xs text-gray-400 mt-1">
-                {isEs ? 'Invita a los mejores guerreros de la plataforma a unirse al roster de tu club.' : isFr ? 'Invitez les meilleurs combattants de la plateforme à rejoindre votre club.' : 'Add verified fighters from YARD300 to train together in your squad.'}
+                {tr(currentLang, { en: 'Add verified athletes from YARD300 to train together in your squad.', es: 'Invita a los mejores atletas de la plataforma a unirse al roster de tu club.', fr: 'Invitez les meilleurs athlètes de la plateforme à rejoindre votre club.', ar: 'أضف الرياضيين الموثقين في يارد 300 للتدريب معاً ضمن فريقك.' })}
               </p>
             </div>
 
-            {/* List of candidates */}
             <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
               {INITIAL_AVAILABLE_ATHLETES.map((ath) => {
                 const isAlreadyIn = club.members.some((m) => m.name === ath.name);
@@ -1837,7 +1863,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                       </div>
                       <div>
                         <span className="block text-sm font-black font-anime text-white">{ath.name}</span>
-                        <span className="block text-[11px] text-[#FFE600] font-mono">{ath.tier} • {ath.streak}d streak</span>
+                        <span className="block text-[11px] text-[#FFE600] font-mono">{ath.tier} · {ath.streak}d</span>
                       </div>
                     </div>
 
@@ -1851,11 +1877,11 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                       }`}
                     >
                       {isAlreadyIn ? (
-                        <span>ALREADY IN SQUAD</span>
+                        <span>{tr(currentLang, { en: 'IN SQUAD', es: 'EN EL CLUB', fr: 'DANS LE CLUB', ar: 'مضاف بالفعل' })}</span>
                       ) : (
                         <>
                           <PlusCircle className="w-3.5 h-3.5" />
-                          <span>RECRUIT TO CLUB</span>
+                          <span>{tr(currentLang, { en: 'RECRUIT', es: 'RECLUTAR', fr: 'RECRUTER', ar: 'إضافة للنادي' })}</span>
                         </>
                       )}
                     </button>
@@ -1869,7 +1895,7 @@ export const CreatorClubHub: React.FC<CreatorClubHubProps> = ({
                 onClick={() => setIsInviteModalOpen(false)}
                 className="px-6 py-2.5 rounded-xl bg-gray-800 text-gray-300 font-anime text-xs cursor-pointer"
               >
-                Done
+                {tr(currentLang, { en: 'Done', es: 'Listo', fr: 'Terminé', ar: 'تم' })}
               </button>
             </div>
           </div>

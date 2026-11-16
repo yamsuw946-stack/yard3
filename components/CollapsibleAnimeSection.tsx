@@ -16,10 +16,16 @@ import { handleImageError } from '../constants';
 export interface CollapsibleAnimeSectionProps {
   id: string;
   titleEn: string;
+  titleEs?: string;
+  titleFr?: string;
   titleAr: string;
   subtitleEn: string;
+  subtitleEs?: string;
+  subtitleFr?: string;
   subtitleAr: string;
   badgeEn: string;
+  badgeEs?: string;
+  badgeFr?: string;
   badgeAr: string;
   badgeColor?: string; // hex color
   animeImage: string;
@@ -28,27 +34,62 @@ export interface CollapsibleAnimeSectionProps {
   onToggle: () => void;
   children: React.ReactNode;
   statEn?: string;
+  statEs?: string;
+  statFr?: string;
   statAr?: string;
 }
 
 export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = ({
   id,
   titleEn,
+  titleEs,
+  titleFr,
   titleAr,
   subtitleEn,
+  subtitleEs,
+  subtitleFr,
   subtitleAr,
   badgeEn,
+  badgeEs,
+  badgeFr,
   badgeAr,
-  badgeColor = '#E50914',
+  badgeColor = '#10B981',
   animeImage,
   currentLang = 'en',
   isOpen,
   onToggle,
   children,
   statEn,
+  statEs,
+  statFr,
   statAr
 }) => {
-  const isAr = currentLang === 'ar';
+  const displayTitle = tr(currentLang, {
+    en: titleEn,
+    es: titleEs || titleEn,
+    fr: titleFr || titleEn,
+    ar: titleAr
+  });
+  const displaySubtitle = tr(currentLang, {
+    en: subtitleEn,
+    es: subtitleEs || subtitleEn,
+    fr: subtitleFr || subtitleEn,
+    ar: subtitleAr
+  });
+  const displayBadge = tr(currentLang, {
+    en: badgeEn,
+    es: badgeEs || badgeEn,
+    fr: badgeFr || badgeEn,
+    ar: badgeAr
+  });
+  const displayStat = (statEn || statAr)
+    ? tr(currentLang, {
+        en: statEn || '',
+        es: statEs || statEn || '',
+        fr: statFr || statEn || '',
+        ar: statAr || statEn || ''
+      })
+    : '';
 
   const handleHeaderClick = () => {
     soundFX.playButtonClick();
@@ -61,16 +102,16 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
       className="my-4 md:my-5 scroll-mt-24 max-w-[1700px] w-full max-w-full overflow-hidden overflow-x-hidden mx-auto px-2 sm:px-3 md:px-6 transition-all duration-300"
     >
       <div 
-        className={`rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-400 ${
+        className={`rounded-2xl md:rounded-3xl overflow-hidden transition-all duration-400 border ${
           isOpen 
-            ? 'bg-[#0E101A] shadow-[0_15px_40px_rgba(0,0,0,0.85)]' 
-            : 'bg-[#10121D]/90 shadow-[0_8px_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(229,9,20,0.25)]'
+            ? 'bg-[#080D0B] border-emerald-500/30 shadow-[0_15px_40px_rgba(0,0,0,0.85)]' 
+            : 'bg-[#070B09]/95 border-emerald-500/15 shadow-[0_8px_20px_rgba(0,0,0,0.6)] hover:border-emerald-400/40'
         }`}
       >
-        {/* Sleek, Compact Anime Header Card with Side Picture */}
+        {/* Sleek, Compact Section Header Card with Side Picture */}
         <div 
           onClick={handleHeaderClick}
-          className="relative group cursor-pointer select-none p-3 sm:p-4 md:p-5 flex items-center justify-between gap-3 sm:gap-4 md:gap-6 bg-gradient-to-r from-[#121422] via-[#0E101A] to-[#141624] hover:bg-[#151728] transition-all"
+          className="relative group cursor-pointer select-none p-3 sm:p-4 md:p-5 flex items-center justify-between gap-3 sm:gap-4 md:gap-6 bg-gradient-to-r from-[#080D0B] via-[#050807] to-[#0A120E] hover:bg-[#0D1612] transition-all"
         >
           {/* Subtle neon bottom accent */}
           <div 
@@ -80,10 +121,10 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
             }}
           ></div>
 
-          {/* Left / Side Content: Anime Avatar Picture + Titles */}
+          {/* Left / Side Content: Avatar Picture + Titles */}
           <div className="flex items-center gap-3 sm:gap-4 md:gap-5 min-w-0 flex-1">
             
-            {/* Clean Borderless High-Def Anime Avatar Image beside the section */}
+            {/* Clean Borderless High-Def Avatar Image beside the section */}
             <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl overflow-hidden transition-transform duration-300 group-hover:scale-105 shadow-lg group-hover:shadow-[0_0_20px_currentColor]"
               style={{
                 color: badgeColor
@@ -91,7 +132,7 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
             >
               <img loading="lazy" decoding="async" 
                 src={animeImage} 
-                alt={titleEn}
+                alt={displayTitle}
                 onError={handleImageError}
                 className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
               />
@@ -116,17 +157,17 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
                   }}
                 >
                   <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  <span>{isAr ? badgeAr : badgeEn}</span>
+                  <span>{displayBadge}</span>
                 </span>
 
-                {(statEn || statAr) && (
-                  <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-[#181A28] text-gray-300 text-[10px] md:text-xs font-bold font-anime">
-                    {isAr ? statAr : statEn}
+                {displayStat && (
+                  <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-[#0C1411] border border-emerald-500/20 text-gray-300 text-[10px] md:text-xs font-bold font-anime">
+                    {displayStat}
                   </span>
                 )}
 
                 {isOpen && (
-                  <span className="inline-flex items-center gap-1 text-[10px] text-[#FFE600] font-bold font-anime">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-bold font-anime">
                     <CheckCircle2 className="w-3 h-3" />
                     <span className="hidden md:inline">{tr(currentLang, { en: 'ACTIVE', es: 'ACTIVO', fr: 'ACTIF', ar: 'مفتوح' })}</span>
                   </span>
@@ -134,13 +175,13 @@ export const CollapsibleAnimeSection: React.FC<CollapsibleAnimeSectionProps> = (
               </div>
 
               {/* Section Main Title */}
-              <h3 className="text-base sm:text-lg md:text-xl font-black font-anime text-white group-hover:text-[#FFE600] transition-colors leading-snug truncate">
-                {isAr ? titleAr : titleEn}
+              <h3 className="text-base sm:text-lg md:text-xl font-black font-anime text-white group-hover:text-emerald-300 transition-colors leading-snug truncate">
+                {displayTitle}
               </h3>
 
               {/* Subtitle / Description */}
               <p className="text-[11px] sm:text-xs text-gray-400 font-bold truncate max-w-xl mt-0.5">
-                {isAr ? subtitleAr : subtitleEn}
+                {displaySubtitle}
               </p>
             </div>
 

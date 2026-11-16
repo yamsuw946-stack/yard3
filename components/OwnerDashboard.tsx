@@ -1011,7 +1011,7 @@ export const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                   <p className="text-xs text-gray-400 mt-1">
                     {isAr 
                       ? 'يمكنك تغيير صورة الخلفية الرئيسية للهيرو، أو شعار البراند، وستنعكس فوراً على المتجر.'
-                      : 'Customize the main hero anime warrior background, banner, and brand logo.'}
+                      : 'Customize the main hero champion background, banner, and brand logo.'}
                   </p>
                 </div>
               </div>

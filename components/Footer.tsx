@@ -285,7 +285,7 @@ const Footer: React.FC<FooterProps> = ({ currentLang = 'en' }) => {
         </p>
 
         <p className="mt-1 md:mt-0 text-slate-500 font-mono text-[10px] tracking-wider uppercase">
-          YARD 300 // AYMAN AL SUWAIDI · GLOBAL PERFORMANCE ATELIER
+          YARD 300 // GLOBAL PERFORMANCE ATELIER · BAZARUTO 2027
         </p>
       </div>
     </footer>

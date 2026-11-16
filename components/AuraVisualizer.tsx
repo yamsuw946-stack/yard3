@@ -53,8 +53,8 @@ interface PresetAvatar {
 const PRESET_AVATARS: PresetAvatar[] = [
   {
     id: 'mtk',
-    name: 'M.T.K · Pilates Elite',
-    nameAr: 'M.T.K · نخبة البيلاتس',
+    name: 'm t k · Pilates Elite',
+    nameAr: 'm t k · نخبة البيلاتس',
     url: FOUNDER_MTK_IMAGE,
     rank: 'S-RANK #1'
   },

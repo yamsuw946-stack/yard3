@@ -7,6 +7,7 @@ import React from 'react';
 import { Product, JournalArticle } from './types';
 
 export const HERO_IMAGE = '/images/hero_banderas_muscular.jpg';
+export const YARD_COMMUNITY_TRIO_IMAGE = '/images/yard_community_trio.jpg';
 export const SHAOLIN_MONASTERY_IMAGE = '/images/shaolin_mountain_monastery.jpg';
 export const REALISTIC_ANIME_STRIKER_IMAGE = '/images/ai_human_striker_male.jpg';
 export const REALISTIC_VALKYRIE_IMAGE = '/images/ai_human_valkyrie_female.jpg';
@@ -32,14 +33,18 @@ export const CHALLENGER_IMAGE = '/images/athlete_mexican_boxer.jpg';
 export const JOURNAL_RECOVERY_IMAGE = '/images/recovery_journal_lab.jpg';
 export const JOURNAL_MINDSET_IMAGE = '/images/athlete_mindset_track.jpg';
 export const JOURNAL_GEAR_IMAGE = '/images/journal_gear_tech.jpg';
-export const YARD_BAZARUTO_RESORT_IMAGE = '/images/yard_bazaruto_resort_v2.jpg';
+export const YARD_ARCH_BOARD_IMAGE = '/images/yard_arch_board.jpg';
+export const YARD_BAZARUTO_RESORT_IMAGE = '/images/yard_arch_board.jpg';
 export const YARD_BAZARUTO_VILLA_IMAGE = '/images/yard_bazaruto_villa.jpg';
 export const YARD_BAZARUTO_VILLA_BEDROOM_IMAGE = '/images/yard_villa_bedroom.jpg';
 export const YARD_BAZARUTO_VILLA_LIVING_IMAGE = '/images/yard_villa_living.jpg';
 export const YARD_BAZARUTO_VILLA_BATHROOM_IMAGE = '/images/yard_villa_bathroom.jpg';
 export const YARD_BAZARUTO_VILLA_DINING_IMAGE = '/images/yard_villa_dining.jpg';
-export const YARD_BAZARUTO_ENTERTAINMENT_MALL_IMAGE = '/images/yard_hub_mall.jpg';
-export const YARD_ISLAND_AERIAL_NIGHT_IMAGE = '/images/bazaruto_aerial_night_v3.jpg';
+export const YARD_BAZARUTO_ENTERTAINMENT_MALL_IMAGE = '/images/yard_mall_pavilion.jpg';
+export const YARD_ISLAND_AERIAL_NIGHT_IMAGE = '/images/yard_aerial_master_v2.jpg';
+export const YARD_SPORTS_HOSPITAL_IMAGE = '/images/yard_sports_hospital.jpg';
+export const YARD_ROOFTOP_VIEW_IMAGE = '/images/yard_rooftop_view_v2.jpg';
+export const YARD_MARINA_HELIPAD_IMAGE = '/images/yard_marina_helipad.jpg';
 
 // Live Tournaments, Community Founders & Hero Showcase
 export const YARD300_BRAND_LOGO = '/images/yard_official_logo.jpg';
@@ -52,7 +57,7 @@ export const YARD_WRAPS_IMAGE = '/images/yard_wraps_mockup.jpg';
 export const LIVE_ARENA_CHALLENGES_IMAGE = '/images/athlete_british_pentathlete.jpg';
 export const ANIME_HERO_ROSTER_IMAGE = '/images/athlete_turkish_weightlifter.jpg';
 export const FOUNDER_YAM_SUW_IMAGE = '/images/yam_suw_athlete.jpg';
-export const FOUNDER_MTK_IMAGE = '/images/mtk_anime_pink_pilates.jpg';
+export const FOUNDER_MTK_IMAGE = '/images/mtk_pilates_anime.jpg';
 export const FOUNDER_ARB_IMAGE = '/images/arb_athlete.jpg';
 
 export const ANIME_FIGHTER_RYU_IMAGE = '/images/ai_human_striker_male.jpg';

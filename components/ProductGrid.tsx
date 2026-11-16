@@ -43,12 +43,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
   return (
     <div className="max-w-[1800px] w-full max-w-full overflow-x-hidden mx-auto px-3 sm:px-4 md:px-8 py-8">
       {/* Header Banner */}
-      <div className="relative p-6 md:p-10 rounded-3xl bg-gradient-to-r from-[#0C0E1A] via-[#141628] to-[#0A0C16] shadow-[0_0_40px_rgba(0,240,255,0.15)] mb-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#00F0FF]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative p-6 md:p-10 rounded-3xl bg-gradient-to-r from-[#050807] via-[#080D0B] to-[#050807] border border-[#10B981]/25 shadow-[0_0_40px_rgba(16,185,129,0.12)] mb-10 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#10B981]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F0FF]/20 text-[#00F0FF] text-xs font-black font-anime uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-[#FFE600] animate-bounce" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-xs font-black font-anime uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37] animate-bounce" />
               <span>
                 {isEs ? 'COLECCIÓN EXCLUSIVA 300 UNIDADES' : isFr ? 'COLLECTION EXCLUSIVE 300 PIÈCES' : isAr ? 'إصدار حصري محدود — 300 قطعة فقط' : 'STRICTLY SERIALIZED // 300 PIECES ONLY'}
               </span>
@@ -64,17 +64,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
             </h1>
             <p className="text-xs md:text-sm text-gray-300 max-w-2xl font-bold leading-relaxed">
               {isEs
-                ? 'Tejidos de tecnología militar, diseño anime cinético e ingeniería de prevención de lesiones. Solo 300 unidades producidas por modelo.'
+                ? 'Tejidos de tecnología militar, diseño biomecánico cinético e ingeniería de prevención de lesiones. Solo 300 unidades producidas por modelo.'
                 : isFr
-                ? 'Tissus d\'ingénierie avancée, design anime cinétique et prévention des blessures. Seulement 300 unités numérotées par modèle.'
+                ? 'Tissus d\'ingénierie avancée, design biomécanique cinétique et prévention des blessures. Seulement 300 unités numérotées par modèle.'
                 : isAr
-                ? 'أقمشة رياضية متطورة بمواصفات نخبوية وتصميم أنمي حركي مانع للإجهاد. ننتج 300 قطعة فقط لكل تصميم لضمان التميز المطلق.'
-                : 'Military-grade athletic textiles, kinetic anime contours, and injury-reduction mechanics. Strictly 300 serialized units minted per drop.'}
+                ? 'أقمشة رياضية متطورة بمواصفات نخبوية وتصميم هندسي حركي مانع للإجهاد. ننتج 300 قطعة فقط لكل تصميم لضمان التميز المطلق.'
+                : 'Military-grade athletic textiles, kinetic aerodynamic contours, and injury-reduction mechanics. Strictly 300 serialized units minted per drop.'}
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <div className="px-4 py-3 rounded-2xl bg-[#141624] text-center font-mono">
+            <div className="px-4 py-3 rounded-2xl bg-[#0D1512] border border-white/10 text-center font-mono">
               <span className="block text-[10px] text-gray-400 uppercase">
                 {isEs ? 'ESTADO DEL LOTE' : isFr ? 'STATUT DU LOT' : isAr ? 'حالة الدفعة' : 'BATCH STATUS'}
               </span>
@@ -86,13 +86,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
         </div>
 
         {/* Filter Toolbar */}
-        <div className="mt-8 pt-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
           {/* Gender Filter */}
-          <div className="flex items-center bg-[#0E101D] p-1 rounded-2xl text-xs font-anime">
+          <div className="flex items-center bg-[#0D1512] border border-white/10 p-1 rounded-2xl text-xs font-anime">
             <button
               onClick={() => setSelectedGender('all')}
               className={`px-4 py-2 rounded-xl transition-all cursor-pointer font-black ${
-                selectedGender === 'all' ? 'bg-[#00F0FF] text-black shadow-md' : 'text-gray-400 hover:text-white'
+                selectedGender === 'all' ? 'bg-[#10B981] text-[#050807] shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {isEs ? 'Todos' : isFr ? 'Tous' : isAr ? 'الكل' : 'ALL'}
@@ -100,7 +100,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
             <button
               onClick={() => setSelectedGender('men')}
               className={`px-4 py-2 rounded-xl transition-all cursor-pointer font-black ${
-                selectedGender === 'men' ? 'bg-[#E50914] text-white shadow-md' : 'text-gray-400 hover:text-white'
+                selectedGender === 'men' ? 'bg-[#D4AF37] text-[#050807] shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {isEs ? 'Hombres' : isFr ? 'Hommes' : isAr ? 'رجالي' : 'MEN'}
@@ -108,7 +108,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, currentLang =
             <button
               onClick={() => setSelectedGender('women')}
               className={`px-4 py-2 rounded-xl transition-all cursor-pointer font-black ${
-                selectedGender === 'women' ? 'bg-[#FF007A] text-white shadow-md' : 'text-gray-400 hover:text-white'
+                selectedGender === 'women' ? 'bg-white text-[#050807] shadow-md' : 'text-gray-400 hover:text-white'
               }`}
             >
               {isEs ? 'Mujeres' : isFr ? 'Femmes' : isAr ? 'نسائي' : 'WOMEN'}

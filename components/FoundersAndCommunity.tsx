@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from 'react';
+/**
+ * FoundersAndCommunity.tsx
+ * Showcase of the three founders of YARD 300 with 4-language parity and obsidian-emerald theme.
+ */
+
+import React, { useState } from 'react';
 import {
   Award,
   Brain,
@@ -6,7 +11,6 @@ import {
 } from 'lucide-react';
 import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
-import { OwnerConfigService } from '../services/ownerConfigService';
 import {
   FOUNDER_YAM_SUW_IMAGE,
   FOUNDER_MTK_IMAGE,
@@ -20,47 +24,67 @@ interface FoundersAndCommunityProps {
   onExploreCommunity?: () => void;
 }
 
+interface LocalizedText {
+  en: string;
+  es: string;
+  fr: string;
+  ar: string;
+}
+
 interface FounderProfile {
   id: string;
-  name: string;
-  nameAr: string;
+  name: LocalizedText;
   fullName: string;
-  role: { en: string; es: string; fr: string; ar: string };
-  discipline: { en: string; es: string; fr: string; ar: string };
-  specialization: { en: string; es: string; fr: string; ar: string };
-  cardRank: { en: string; es: string; fr: string; ar: string };
+  role: LocalizedText;
+  discipline: LocalizedText;
+  specialization: LocalizedText;
   elementColor: string;
   image: string;
-  credentials: { en: string[]; es: string[]; fr: string[]; ar: string[] };
+  cardRank: LocalizedText;
+  credentials: {
+    en: string[];
+    es: string[];
+    fr: string[];
+    ar: string[];
+  };
 }
 
 const FOUNDERS: FounderProfile[] = [
   {
     id: 'yam-suw',
-    name: 'yam suw',
-    nameAr: 'يام سو (Yam Suw)',
+    name: {
+      en: 'yam suw',
+      es: 'yam suw',
+      fr: 'yam suw',
+      ar: 'يام سو (Yam Suw)'
+    },
     fullName: 'Yam Suw',
     role: {
-      en: 'Co-Founder · Shaolin Fighter & Head Coach',
-      es: 'Cofundador · Luchador Shaolín y Entrenador Principal',
-      fr: 'Co-Fondateur · Combattant Shaolin & Coach Principal',
+      en: 'Co-Founder • Shaolin Fighter & Head Coach',
+      es: 'Cofundador • Luchador Shaolin y Entrenador Jefe',
+      fr: 'Co-Fondateur • Combattant Shaolin & Coach Principal',
       ar: 'المؤسس المشارك • مقاتل شاولين والمدرب الرئيسي'
     },
     discipline: {
       en: 'Shaolin Martial Arts, Calisthenics & Hyrox Championships',
-      es: 'Artes Marciales Shaolín, Calistenia y Campeonatos Hyrox',
+      es: 'Artes Marciales Shaolin, Calistenia y Campeonatos Hyrox',
       fr: 'Arts Martiaux Shaolin, Callisthénie & Championnats Hyrox',
       ar: 'فنون شاولين القتالية، الكاليستنكس وبطولات هايروكس العالمية'
     },
     specialization: {
       en: 'Shaolin combat conditioning, iron bodyweight levers, and functional race pacing',
-      es: 'Acondicionamiento de combate Shaolín, palancas de peso corporal y ritmo funcional',
-      fr: 'Conditionnement martial Shaolin, figures poids de corps et gestion de course',
-      ar: 'اللياقة القتالية للشاولين، رافعات وزن الجسم الفولاذية، وتنظيم وتيرة السباقات'
+      es: 'Acondicionamiento de combate Shaolin, palancas corporales de hierro y ritmo funcional de carrera',
+      fr: 'Conditionnement martial Shaolin, leviers corporels de fer et gestion de rythme Hyrox',
+      ar: 'اللياقة القتالية للشاولين، رافعات وزن الجسم الفولاذية، وتنظيم وتيرة سباقات التحمل'
     },
-    elementColor: '#D4AF37',
+    elementColor: '#10B981',
     image: FOUNDER_YAM_SUW_IMAGE,
-    cardRank: { en: 'PRO COACH', es: 'ENTRENADOR PRO', fr: 'COACH PRO', ar: 'المدرب الرئيسي' },
+    cardRank: {
+      en: 'PRO COACH',
+      es: 'ENTRENADOR PRO',
+      fr: 'COACH PRO',
+      ar: 'المدرب الرئيسي'
+    },
     credentials: {
       en: [
         'Shaolin Martial Arts Master',
@@ -69,16 +93,16 @@ const FOUNDERS: FounderProfile[] = [
         'High-Performance Conditioning Architect'
       ],
       es: [
-        'Maestro en Artes Marciales Shaolín',
+        'Maestro en Artes Marciales Shaolin',
         'Atleta Profesional de Combate y Resistencia',
         'Competidor de Hyrox y Calistenia',
-        'Arquitecto de Alto Rendimiento'
+        'Arquitecto de Acondicionamiento de Alto Rendimiento'
       ],
       fr: [
         'Maître en Arts Martiaux Shaolin',
-        'Athlète Professionnel Combat & Endurance',
+        'Athlète Professionnel de Combat & Endurance',
         'Compétiteur Hyrox & Callisthénie',
-        'Architecte de Haute Performance'
+        'Architecte de Préparation Haute Performance'
       ],
       ar: [
         'معلم فنون شاولين القتالية',
@@ -90,79 +114,97 @@ const FOUNDERS: FounderProfile[] = [
   },
   {
     id: 'mtk',
-    name: 'M.T.K',
-    nameAr: 'M.T.K',
-    fullName: 'M.T.K · Elite Pilates & Functional Conditioning Architect',
+    name: {
+      en: 'm t k',
+      es: 'm t k',
+      fr: 'm t k',
+      ar: 'm t k'
+    },
+    fullName: 'm t k',
     role: {
-      en: 'Co-Founder · Pilates, Functional Flow & Recovery Lead',
-      es: 'Cofundadora · Pilates, Flujo Funcional y Recuperación',
-      fr: 'Co-Fondatrice · Pilates, Flow Fonctionnel & Récupération',
-      ar: 'المؤسس المشارك · قيادة البيلاتس واللياقة الوظيفية والاستشفاء'
+      en: 'Co-Founder & Elite Conditioning & Recovery Coach',
+      es: 'Cofundadora y Entrenadora de Élite en Acondicionamiento y Recuperación',
+      fr: 'Co-Fondatrice & Coach Élite Conditionnement & Récupération',
+      ar: 'المؤسس المشارك وكوتش النخبة للياقة الوظيفية والاستشفاء'
     },
     discipline: {
-      en: 'Reformer Pilates, Core Biomechanics & Injury Recovery',
-      es: 'Pilates Reformer, Biomecánica Central y Recuperación',
-      fr: 'Pilates Reformer, Biomécanique Core & Récupération',
-      ar: 'بيلاتس ريفورمر، الميكانيكا الحيوية للجذع والاستشفاء الرياضي'
+      en: 'Functional Fitness, Athletic Conditioning & Injury Recovery',
+      es: 'Fitness Funcional, Acondicionamiento Atlético y Recuperación',
+      fr: 'Fitness Fonctionnel, Conditionnement & Prévention des Blessures',
+      ar: 'اللياقة البدنية الوظيفية، الإعداد البدني الرياضي والاستشفاء من الإصابات'
     },
     specialization: {
-      en: 'Core stabilization, muscular alignment, functional flexibility, and post-session recovery',
-      es: 'Estabilización central, alineación muscular, flexibilidad y recuperación neurológica',
-      fr: 'Stabilisation du tronc, alignement musculaire, souplesse et récupération post-séance',
-      ar: 'استقرار عضلات الجذع، التناسق العضلي، المرونة الوظيفية وبروتوكولات الاستشفاء'
+      en: 'Biomechanical load balance, functional athletic endurance, core stabilization, and post-match recovery',
+      es: 'Equilibrio de carga biomecánica, resistencia funcional atlética, estabilidad del core y recuperación post-combate',
+      fr: 'Équilibre des charges biomécaniques, endurance fonctionnelle, gainage profond et récupération post-combat',
+      ar: 'توازن الأحمال الميكانيكية الحيوية، التحمل الوظيفي للرياضيين، استقرار الجذع، وبروتوكولات التعافي بعد النزالات'
     },
-    elementColor: '#F472B6',
+    elementColor: '#34D399',
     image: FOUNDER_MTK_IMAGE,
-    cardRank: { en: 'PILATES ARCHITECT', es: 'ARQUITECTA PILATES', fr: 'ARCHITECTE PILATES', ar: 'قيادة البيلاتس' },
+    cardRank: {
+      en: 'PRO COACH',
+      es: 'COACH PRO',
+      fr: 'COACH PRO',
+      ar: 'كوتش محترف'
+    },
     credentials: {
       en: [
-        'Reformer Pilates & Core Flow Architect',
+        'Functional Conditioning Specialist',
         'Athletic Biomechanics & Injury Rehab',
         'Endurance & Mobility Master Coach'
       ],
       es: [
-        'Arquitecta de Pilates Reformer y Core Flow',
-        'Biomecánica Atlética y Rehabilitación',
-        'Maestra Entrenadora de Movilidad'
+        'Especialista en Acondicionamiento Funcional',
+        'Biomecánica Atlética y Rehabilitación de Lesiones',
+        'Master Coach de Resistencia y Movilidad'
       ],
       fr: [
-        'Architecte Pilates Reformer & Core Flow',
-        'Biomécanique Athlétique & Rééducation',
-        'Coach Maître Endurance & Mobilité'
+        'Spécialiste en Conditionnement Fonctionnel',
+        'Biomécanique Athlétique & Prévention',
+        'Master Coach Endurance & Mobilité'
       ],
       ar: [
-        'مصممة برامج البيلاتس والتوازن الحركي المتكامل',
+        'أخصائية الإعداد البدني والوظيفي الرياضي',
         'الميكانيكا الحيوية والوقاية من الإصابات',
-        'كوتش معتمد في المرونة الديناميكية والاستشفاء'
+        'كوتش معتمد في التحمل والمرونة الديناميكية'
       ]
     }
   },
   {
     id: 'arb',
-    name: 'A.R.B',
-    nameAr: 'إي آر بي (A.R.B)',
+    name: {
+      en: 'A.R.B',
+      es: 'A.R.B',
+      fr: 'A.R.B',
+      ar: 'إي آر بي (A.R.B)'
+    },
     fullName: 'A.R.B',
     role: {
       en: 'Co-Founder & Combat Strategy Coach',
       es: 'Cofundador y Entrenador de Estrategia de Combate',
-      fr: 'Co-Fondateur & Coach Stratégie de Combat',
+      fr: 'Co-Fondateur & Coach de Stratégie Martiale',
       ar: 'المؤسس المشارك ومدرب الاستراتيجيات القتالية'
     },
     discipline: {
       en: 'Shaolin Martial Arts & Fight Psychology',
-      es: 'Artes Marciales Shaolín y Psicología del Combate',
+      es: 'Artes Marciales Shaolin y Psicología del Combate',
       fr: 'Arts Martiaux Shaolin & Psychologie du Combat',
       ar: 'فنون شاولين القتالية وعلم النفس القتالي التنافسي'
     },
     specialization: {
-      en: 'Striking mechanics, counter-angles, reaction drills, and competitive mental toughness',
+      en: 'Striking mechanics, counter-angles, reaction drills, and competitive match mental toughness',
       es: 'Mecánica de golpeo, ángulos de contraataque, reflejos y fortaleza mental competitiva',
-      fr: 'Mécanique de frappe, angles de contre, réflexes et force mentale compétitive',
-      ar: 'ميكانيكا اللكم والركل، زوايا الهجوم المرتد، سرعة رد الفعل والصلابة الذهنية'
+      fr: 'Mécanique de frappe, angles de contre, exercices de réaction et mental de compétition',
+      ar: 'ميكانيكا اللكم والركل، زوايا الهجوم المرتد، تمارين سرعة رد الفعل، والصلابة الذهنية التنافسية'
     },
     elementColor: '#D4AF37',
     image: FOUNDER_ARB_IMAGE,
-    cardRank: { en: 'TACTICAL COACH', es: 'COACH TÁCTICO', fr: 'COACH TACTIQUE', ar: 'مدرب تكتيكي' },
+    cardRank: {
+      en: 'TACTICAL COACH',
+      es: 'COACH TÁCTICO',
+      fr: 'COACH TACTIQUE',
+      ar: 'مدرب تكتيكي'
+    },
     credentials: {
       en: [
         'Tactical Fight Strategy Master',
@@ -170,13 +212,13 @@ const FOUNDERS: FounderProfile[] = [
         'Zen Fighter Competitive Mindset'
       ],
       es: [
-        'Maestro de Estrategia Táctica de Combate',
-        'Velocidad de Reacción y Contragolpe',
+        'Maestro en Estrategia Táctica de Combate',
+        'Velocidad de Reacción y Contraataque',
         'Mentalidad Competitiva Zen'
       ],
       fr: [
         'Maître en Stratégie Tactique de Combat',
-        'Vitesse de Réaction & Contre-Attaque',
+        'Vitesse de Réaction & Contre-Frappe',
         'Mentalité Compétitive Zen'
       ],
       ar: [
@@ -190,35 +232,13 @@ const FOUNDERS: FounderProfile[] = [
 
 export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
+  const t = (en: string, es: string, fr: string, ar: string) => tr(currentLang, { en, es, fr, ar });
   const [activeFounderId, setActiveFounderId] = useState<string>('yam-suw');
-  const [founderOverrides, setFounderOverrides] = useState(() => OwnerConfigService.getConfig().siteSettings?.founderOverrides || {});
-
-  useEffect(() => {
-    return OwnerConfigService.subscribe((cfg) => {
-      setFounderOverrides(cfg.siteSettings?.founderOverrides || {});
-    });
-  }, []);
-
-  const configuredFounders = FOUNDERS.map((f) => {
-    const ov = founderOverrides[f.id];
-    if (!ov) return f;
-    return {
-      ...f,
-      name: ov.name || f.name,
-      nameAr: ov.nameAr || f.nameAr,
-      role: {
-        ...f.role,
-        en: ov.role || f.role.en,
-        ar: ov.roleAr || f.role.ar
-      },
-      image: ov.image || f.image
-    };
-  });
 
   const [userAthleteName, setUserAthleteName] = useState<string>('');
   const [userDiscipline, setUserDiscipline] = useState<'hyrox' | 'boxing' | 'pilates' | 'crossfit'>('hyrox');
   const [userEffortLevel, setUserEffortLevel] = useState<number>(85);
-  const [, setGeneratedCard] = useState<boolean>(false);
+  const [generatedCard, setGeneratedCard] = useState<boolean>(false);
 
   const handleGenerateCard = (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,60 +247,56 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
     setGeneratedCard(true);
   };
 
-  const getCredentialsList = (creds: { en: string[]; es: string[]; fr: string[]; ar: string[] }) => {
-    if (currentLang === 'ar') return creds.ar;
-    if (currentLang === 'es') return creds.es;
-    if (currentLang === 'fr') return creds.fr;
-    return creds.en;
-  };
-
   return (
-    <section id="community" className={`relative my-5 max-w-[1680px] w-full overflow-hidden mx-auto px-3 sm:px-5 md:px-6 ${isAr ? 'text-right' : 'text-left'}`}>
-      {/* Compact Header */}
-      <div className="text-center max-w-2xl mx-auto mb-5 space-y-1.5">
-        <div className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#D4AF37] uppercase tracking-[0.2em]">
-          <Award className="w-3 h-3" />
+    <section
+      id="community"
+      className={`relative my-10 max-w-[1800px] w-full overflow-hidden mx-auto px-4 md:px-8 ${
+        isAr ? 'text-right' : 'text-left'
+      }`}
+    >
+      {/* Header */}
+      <div className="text-center max-w-3xl mx-auto mb-8 space-y-2.5">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#080D0B] border border-emerald-500/30 text-[11px] font-black text-emerald-300 font-anime">
+          <Award className="w-3.5 h-3.5 text-[#D4AF37]" />
           <span>
-            {tr(currentLang, {
-              en: 'YARD 300 EXECUTIVE COACHING LEADERSHIP',
-              es: 'LIDERAZGO EJECUTIVO Y ENTRENAMIENTO YARD 300',
-              fr: 'DIRECTION SPORTIVE & COACHING YARD 300',
-              ar: 'القيادة التأسيسية والخبرات التدريبية لـ YARD 300'
-            })}
+            {t(
+              'YARD 300 THE THREE FOUNDERS & EXECUTIVE COACHING LEADERSHIP',
+              'LOS TRES FUNDADORES DE YARD 300 Y DIRECCIÓN TÉCNICA',
+              'LES TROIS FONDATEURS YARD 300 & DIRECTION SPORTIVE',
+              'المؤسسون الثلاثة والقيادة التدريبية لـ YARD 300'
+            )}
           </span>
         </div>
 
-        <h2 className="text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">
-          {tr(currentLang, {
-            en: 'THE THREE FOUNDERS ',
-            es: 'LOS TRES FUNDADORES ',
-            fr: 'LES TROIS FONDATEURS ',
-            ar: 'المؤسسون الثلاثة '
-          })}
+        <h2 className="text-2xl md:text-4xl font-black font-anime text-white leading-tight">
+          {t('THE THREE FOUNDERS ', 'LOS TRES FUNDADORES ', 'LES TROIS FONDATEURS ', 'المؤسسون الثلاثة ')}
           <span className="text-[#D4AF37]">
-            {tr(currentLang, {
-              en: '& ATHLETIC DISCIPLINES',
-              es: 'Y DISCIPLINAS ATLÉTICAS',
-              fr: '& DISCIPLINES ATHLÉTIQUES',
-              ar: 'والتخصصات القيادية'
-            })}
+            {t('& ATHLETIC DISCIPLINES', 'Y DISCIPLINAS ATLÉTICAS', '& DISCIPLINES ATHLÉTIQUES', '& التخصصات الرياضية القتالية')}
           </span>
         </h2>
 
-        <p className="text-[11px] md:text-xs text-slate-400 max-w-xl mx-auto leading-relaxed">
-          {tr(currentLang, {
-            en: 'Meet the leadership behind YARD 300: athletic performance engineering, martial mastery, Reformer Pilates, and proactive recovery.',
-            es: 'Conoce a los fundadores de YARD 300: ingeniería de rendimiento, maestría marcial, Pilates Reformer y recuperación proactiva.',
-            fr: 'Découvrez la direction de YARD 300 : ingénierie de performance, maîtrise martiale, Pilates Reformer et récupération.',
-            ar: 'تعرف على القيادة المؤسسة لـ YARD 300: رواد هندسة الأداء البدني، فنون الشاولين، البيلاتس المتكامل، والاستشفاء.'
-          })}
+        <p className="text-xs md:text-sm text-slate-300 font-medium max-w-2xl mx-auto">
+          {t(
+            'Meet the visionary leadership and founding athletes behind YARD 300: pioneering athletic performance engineering, martial arts mastery, functional conditioning, and proactive recovery.',
+            'Conoce a los fundadores y atletas detrás de YARD 300: pioneros en ingeniería del rendimiento, artes marciales, acondicionamiento funcional y recuperación proactiva.',
+            'Découvrez les fondateurs et athlètes visionnaires derrière YARD 300 : ingénierie de performance, maîtrise martiale, conditionnement fonctionnel et récupération active.',
+            'تعرف على القيادة الملهمة والرياضيين المؤسسين الثلاثة وراء YARD 300: رواد هندسة الأداء البدني، فنون القتال للشاولين، واللياقة الوظيفية والاستشفاء.'
+          )}
         </p>
       </div>
 
-      {/* 3 Compact Founders Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto mb-6">
-        {configuredFounders.map((founder) => {
+      {/* 3 Founders Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto mb-10">
+        {FOUNDERS.map((founder) => {
           const isSelected = founder.id === activeFounderId;
+          const creds =
+            currentLang === 'ar'
+              ? founder.credentials.ar
+              : currentLang === 'es'
+                ? founder.credentials.es
+                : currentLang === 'fr'
+                  ? founder.credentials.fr
+                  : founder.credentials.en;
 
           return (
             <div
@@ -289,79 +305,75 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
                 soundFX.playButtonClick();
                 setActiveFounderId(founder.id);
               }}
-              className={`rounded-xl p-3 bg-[#0C0E14] border transition-all duration-200 flex flex-col cursor-pointer group ${
+              className={`rounded-2xl p-4 bg-[#080D0B] border transition-all duration-300 flex flex-col cursor-pointer group ${
                 isSelected
-                  ? 'border-[#D4AF37]/60 bg-[#12151E]'
-                  : 'border-white/[0.08] hover:border-white/20'
+                  ? 'border-emerald-400/70 shadow-[0_0_25px_rgba(16,185,129,0.22)] bg-[#0C1411]'
+                  : 'border-white/[0.08] hover:border-emerald-500/35 hover:bg-[#0A110E]'
               }`}
             >
-              <div className="relative w-full aspect-[4/4] rounded-lg overflow-hidden mb-3 bg-[#07080C]">
+              {/* Portrait */}
+              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden mb-3.5 bg-black">
                 <img
                   loading="lazy"
                   decoding="async"
                   src={founder.image}
-                  alt={isAr ? founder.nameAr : founder.fullName}
-                  onError={handleImageError}
+                  alt={tr(currentLang, founder.name)}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+                  onError={handleImageError}
+                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07080C] via-transparent to-transparent opacity-85" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050807] via-transparent to-transparent opacity-85" />
 
-                <div className="absolute top-2 left-2 right-2 flex justify-between items-center">
+                <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center">
                   <span
-                    className="px-2 py-0.5 rounded text-[9px] font-bold tracking-wider text-[#07080C] uppercase"
+                    className="px-2 py-0.5 rounded text-[9px] font-black font-anime text-black shadow-md uppercase"
                     style={{ backgroundColor: founder.elementColor }}
                   >
                     {tr(currentLang, founder.cardRank)}
                   </span>
-                  <div className="flex items-center gap-1 bg-[#07080C]/85 backdrop-blur-md px-1.5 py-0.5 rounded border border-white/10">
-                    <img
-                      src="/images/yard_red_black_white_logo.jpg"
-                      alt="YARD 300 Logo"
-                      referrerPolicy="no-referrer"
-                      className="w-3 h-3 rounded object-cover"
-                    />
-                    <span className="text-[9px] font-bold text-white tracking-wider">
-                      YARD<span className="text-[#D4AF37]">300</span>
+                  <div className="flex items-center gap-1.5 bg-black/85 backdrop-blur-md px-2 py-1 rounded-lg border border-emerald-500/30">
+                    <span className="text-[9px] font-black text-white font-yard-logo italic tracking-wider">
+                      YARD<span className="text-emerald-400">300</span>
                     </span>
                   </div>
                 </div>
 
                 <div className={`absolute bottom-2.5 left-2.5 right-2.5 ${isAr ? 'text-right' : 'text-left'}`}>
-                  <h3 className="text-lg font-bold text-white tracking-tight">
-                    {isAr ? founder.nameAr : founder.name}
+                  <h3 className="text-xl font-black font-anime text-white">
+                    {tr(currentLang, founder.name)}
                   </h3>
-                  <span className="text-[10px] font-medium text-[#D4AF37] block">
+                  <span className="text-[11px] font-bold text-[#D4AF37] block">
                     {tr(currentLang, founder.role)}
                   </span>
                 </div>
               </div>
 
-              <div className={`space-y-1.5 text-[11px] ${isAr ? 'text-right' : 'text-left'}`}>
-                <div className="p-2 rounded-lg bg-[#0A0B10] border border-white/[0.06]">
-                  <span className="text-[9px] uppercase font-bold text-slate-400 block mb-0.5">
-                    {tr(currentLang, { en: 'Discipline:', es: 'Disciplina:', fr: 'Discipline :', ar: 'التخصص الرياضي:' })}
+              {/* Athletic Discipline & Specialization */}
+              <div className={`space-y-2 text-xs ${isAr ? 'text-right' : 'text-left'}`}>
+                <div className="p-2.5 rounded-lg bg-[#050807] border border-white/[0.06]">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5 font-anime">
+                    {t('Discipline:', 'Disciplina:', 'Discipline :', 'التخصص الرياضي:')}
                   </span>
-                  <span className="font-semibold text-white text-[11px] block">
+                  <span className="font-bold text-white text-[12px] block">
                     {tr(currentLang, founder.discipline)}
                   </span>
                 </div>
 
-                <div className="p-2 rounded-lg bg-[#0A0B10] border border-white/[0.06]">
-                  <span className="text-[9px] uppercase font-bold text-slate-400 block mb-0.5">
-                    {tr(currentLang, { en: 'Specialization:', es: 'Especialización:', fr: 'Spécialisation :', ar: 'مجال الاحتراف:' })}
+                <div className="p-2.5 rounded-lg bg-[#050807] border border-white/[0.06]">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-0.5 font-anime">
+                    {t('Specialization:', 'Especialización:', 'Spécialisation :', 'مجال الاحتراف:')}
                   </span>
-                  <p className="text-slate-300 leading-snug text-[10px]">
+                  <p className="text-slate-300 font-medium leading-relaxed text-[11px]">
                     {tr(currentLang, founder.specialization)}
                   </p>
                 </div>
 
-                <div className="p-2 rounded-lg bg-[#0E101A] border border-white/[0.05]">
-                  <span className="text-[9px] uppercase font-bold text-[#D4AF37] block mb-1">
-                    {tr(currentLang, { en: 'Core Credentials:', es: 'Credenciales:', fr: 'Qualifications :', ar: 'الاعتمادات والإنجازات:' })}
+                <div className="p-2.5 rounded-lg bg-[#060B09] border border-emerald-500/20">
+                  <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-1 font-anime">
+                    {t('Core Credentials:', 'Credenciales Clave:', 'Accréditations Clés :', 'الاعتمادات والإنجازات:')}
                   </span>
-                  <ul className="space-y-0.5">
-                    {getCredentialsList(founder.credentials).slice(0, 3).map((cred, idx) => (
+                  <ul className="space-y-1">
+                    {creds.map((cred, idx) => (
                       <li key={idx} className="text-[10px] text-slate-300 flex items-center gap-1.5">
                         <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
                         <span>{cred}</span>
@@ -375,167 +387,152 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
         })}
       </div>
 
-      {/* Compact Interactive Athlete Battle Card Forge */}
-      <div className="rounded-2xl bg-[#0C0E14] border border-white/[0.08] p-4 sm:p-6 mb-5 max-w-5xl mx-auto">
-        <div className="text-center space-y-1.5 mb-5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-white/[0.06] border border-white/15 text-[10px] font-mono text-[#D4AF37]">
-            <Award className="w-3 h-3" />
-            <span>
-              {tr(currentLang, {
-                en: 'FORGE YOUR CUSTOM ATHLETE CARD',
-                es: 'FORJA TU TARJETA ATLÉTICA PERSONALIZADA',
-                fr: 'CRÉEZ VOTRE CARTE ATHLÈTE PERSONNALISÉE',
-                ar: 'اصنع بطاقتك الرياضية المعتمدة'
-              })}
-            </span>
+      {/* Interactive Athlete Battle Card Minting Feature */}
+      <div className="rounded-3xl bg-gradient-to-r from-[#080D0B] via-[#0B1410] to-[#080D0B] border border-emerald-500/25 p-6 md:p-10 shadow-xl mb-10">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center space-y-2.5 mb-7">
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-black text-emerald-300 font-anime">
+              <Award className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>
+                {t(
+                  'FORGE YOUR CUSTOM ATHLETE CARD',
+                  'FORJA TU TARJETA DE ATLETA',
+                  'FORGEZ VOTRE CARTE ATHLÈTE',
+                  'اصنع بطاقتك الرياضية المعتمدة'
+                )}
+              </span>
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black font-anime text-white">
+              {t(
+                'Every Athlete Earns Their Card Based on Effort & Discipline',
+                'Cada Atleta Gana su Tarjeta con Esfuerzo y Disciplina',
+                'Chaque Athlète Mérite sa Carte par Discipline & Effort',
+                'كل رياضي يكسب بطاقته بناءً على الانضباط والجهد'
+              )}
+            </h3>
+            <p className="text-xs md:text-sm text-slate-300 font-bold max-w-xl mx-auto">
+              {t(
+                'Enter your warrior handle, discipline, and training effort to forge your official personalized YARD battle card!',
+                'Ingresa tu nombre de guerra, disciplina y nivel de esfuerzo semanal para generar tu tarjeta oficial YARD.',
+                'Entrez votre nom d’athlète, votre discipline et votre effort hebdomadaire pour générer votre carte officielle YARD.',
+                'أدخل اسمك الحركي، رياضتك، ونسبة مجهودك التدريبي لتوليد بطاقة معركة YARD رسمية خاصة بك!'
+              )}
+            </p>
           </div>
-          <h3 className="text-lg md:text-2xl font-extrabold text-white">
-            {tr(currentLang, {
-              en: 'Every Athlete Earns Their Card Based on Effort & Discipline',
-              es: 'Cada Atleta Gana su Tarjeta Mediante Esfuerzo y Disciplina',
-              fr: 'Chaque Athlète Mérite Sa Carte Par l’Effort et la Discipline',
-              ar: 'كل رياضي يكسب بطاقته بناءً على الانضباط والجهد'
-            })}
-          </h3>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
-          <form onSubmit={handleGenerateCard} className={`space-y-3 bg-[#07080C] p-4 rounded-xl border border-white/[0.08] ${isAr ? 'text-right' : 'text-left'}`}>
-            <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
-                {tr(currentLang, {
-                  en: 'Warrior Name / Handle:',
-                  es: 'Nombre de Atleta:',
-                  fr: 'Nom d’Athlète :',
-                  ar: 'اسم المحارب / الاسم المستعار:'
-                })}
-              </label>
-              <input
-                type="text"
-                value={userAthleteName}
-                onChange={(e) => setUserAthleteName(e.target.value)}
-                placeholder={tr(currentLang, {
-                  en: 'e.g., Shadow Striker Ken',
-                  es: 'ej., Shadow Striker Ken',
-                  fr: 'ex., Shadow Striker Ken',
-                  ar: 'مثال: Shadow Striker'
-                })}
-                className="w-full px-3 py-2 rounded-lg bg-[#12151E] border border-white/[0.1] text-white text-xs focus:border-[#D4AF37] outline-none"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-slate-300 mb-1">
-                {tr(currentLang, {
-                  en: 'Athletic Discipline:',
-                  es: 'Disciplina Atlética:',
-                  fr: 'Discipline Athlétique :',
-                  ar: 'الرياضة أو التخصص البدني:'
-                })}
-              </label>
-              <select
-                value={userDiscipline}
-                onChange={(e) => setUserDiscipline(e.target.value as 'hyrox' | 'boxing' | 'pilates' | 'crossfit')}
-                className="w-full px-3 py-2 rounded-lg bg-[#12151E] border border-white/[0.1] text-white text-xs focus:border-[#D4AF37] outline-none cursor-pointer"
-              >
-                <option value="hyrox">
-                  {tr(currentLang, { en: 'Hyrox Endurance Pro', es: 'Hyrox Resistencia Pro', fr: 'Hyrox Endurance Pro', ar: 'سباقات هايروكس للتحمل (Hyrox Pro)' })}
-                </option>
-                <option value="boxing">
-                  {tr(currentLang, { en: 'Shaolin & Boxing Striker', es: 'Boxeo y Shaolín', fr: 'Boxe & Shaolin Striker', ar: 'ملاكمة وشاولين سترايكينج' })}
-                </option>
-                <option value="pilates">
-                  {tr(currentLang, { en: 'Mobility & Functional Recovery', es: 'Movilidad y Recuperación', fr: 'Mobilité & Récupération', ar: 'مرونة واستشفاء حركي' })}
-                </option>
-                <option value="crossfit">
-                  {tr(currentLang, { en: 'Functional Gauntlet', es: 'Circuito Funcional', fr: 'Circuit Fonctionnel', ar: 'كروس فيت وتمارين وظيفية' })}
-                </option>
-              </select>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-[11px] font-bold text-slate-300 mb-1">
-                <span>
-                  {tr(currentLang, {
-                    en: 'Weekly Training Effort:',
-                    es: 'Nivel de Esfuerzo Semanal:',
-                    fr: 'Niveau d’Effort Hebdomadaire :',
-                    ar: 'مستوى الجهد والالتزام الأسبوعي:'
-                  })}
-                </span>
-                <span className="text-[#D4AF37] font-mono tabular-nums">{userEffortLevel}%</span>
-              </div>
-              <input
-                type="range"
-                min="50"
-                max="100"
-                value={userEffortLevel}
-                onChange={(e) => setUserEffortLevel(Number(e.target.value))}
-                className="w-full accent-[#D4AF37] cursor-pointer"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-lg bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-extrabold text-xs transition-colors cursor-pointer"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <form
+              onSubmit={handleGenerateCard}
+              className={`space-y-4 bg-[#050807] p-6 rounded-2xl border border-white/[0.08] ${
+                isAr ? 'text-right' : 'text-left'
+              }`}
             >
-              {tr(currentLang, {
-                en: 'GENERATE MY BATTLE CARD',
-                es: 'GENERAR MI TARJETA',
-                fr: 'GÉNÉRER MA CARTE',
-                ar: 'توليد بطاقة المعركة الرسمية'
-              })}
-            </button>
-          </form>
-
-          {/* Compact Card Preview */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-xs rounded-2xl p-4 bg-[#07080C] border border-white/[0.1] text-center space-y-2.5">
-              <div className="flex justify-between items-center">
-                <span className="text-[9px] font-mono font-bold bg-[#D4AF37] text-[#07080C] px-2 py-0.5 rounded">
-                  {userEffortLevel >= 90 ? 'S-RANK GOD' : userEffortLevel >= 75 ? 'A-RANK PRO' : 'CHALLENGER'}
-                </span>
-                <span className="text-[10px] font-mono font-bold text-[#D4AF37] tabular-nums" dir="ltr">
-                  {Math.round(userEffortLevel * 99.5)} AP
-                </span>
-              </div>
-
-              <div className="w-full h-36 rounded-xl overflow-hidden relative">
-                <img
-                  loading="lazy"
-                  decoding="async"
-                  src={CHALLENGER_IMAGE}
-                  alt="Athlete Avatar"
-                  onError={handleImageError}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-top"
+              <div>
+                <label className="block text-xs font-black text-slate-300 mb-2 font-anime">
+                  {t('Warrior Name / Handle:', 'Nombre de Guerrero / Alias:', 'Nom d’Athlète / Pseudo :', 'اسم المحارب / الاسم المستعار:')}
+                </label>
+                <input
+                  type="text"
+                  value={userAthleteName}
+                  onChange={(e) => setUserAthleteName(e.target.value)}
+                  placeholder={t('e.g., Shadow Striker Ken', 'ej., Shadow Striker Ken', 'ex. Shadow Striker Ken', 'مثال: Shadow Striker')}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/[0.12] text-white font-bold text-sm focus:border-emerald-400 outline-none"
+                  required
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#07080C] via-transparent to-transparent" />
-                <div className="absolute bottom-2 left-2 right-2 text-xs font-bold text-white">
-                  {userAthleteName || tr(currentLang, {
-                    en: 'Future YARD Champion',
-                    es: 'Futuro Campeón YARD',
-                    fr: 'Futur Champion YARD',
-                    ar: 'بطل YARD القادم'
-                  })}
-                </div>
               </div>
 
-              <div className={`space-y-1 text-[11px] font-medium text-slate-300 ${isAr ? 'text-right' : 'text-left'}`}>
-                <div className="flex justify-between border-b border-white/[0.06] pb-1">
-                  <span>{tr(currentLang, { en: 'Discipline:', es: 'Disciplina:', fr: 'Discipline :', ar: 'التخصص:' })}</span>
-                  <span className="text-white uppercase font-mono">{userDiscipline}</span>
-                </div>
-                <div className="flex justify-between border-b border-white/[0.06] pb-1">
-                  <span>{tr(currentLang, { en: 'Effort Score:', es: 'Puntaje Esfuerzo:', fr: 'Score Effort :', ar: 'نقاط الجهد:' })}</span>
+              <div>
+                <label className="block text-xs font-black text-slate-300 mb-2 font-anime">
+                  {t('Athletic Discipline:', 'Disciplina Atlética:', 'Discipline Sportive :', 'الرياضة أو التخصص البدني:')}
+                </label>
+                <select
+                  value={userDiscipline}
+                  onChange={(e) => setUserDiscipline(e.target.value as any)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/[0.12] text-white font-bold text-sm focus:border-emerald-400 outline-none cursor-pointer"
+                >
+                  <option value="hyrox">
+                    {t('Hyrox Endurance Pro', 'Hyrox Resistencia Pro', 'Hyrox Endurance Pro', 'سباقات هايروكس للتحمل (Hyrox Pro)')}
+                  </option>
+                  <option value="boxing">
+                    {t('Shaolin & Boxing Striker', 'Combate Shaolin y Boxeo', 'Combattant Shaolin & Boxe', 'ملاكمة وشاولين سترايكينج (Shaolin & Boxing)')}
+                  </option>
+                  <option value="pilates">
+                    {t('Mobility & Functional Recovery', 'Movilidad y Recuperación Funcional', 'Mobilité & Récupération Fonctionnelle', 'مرونة واستشفاء حركي (Mobility & Functional Recovery)')}
+                  </option>
+                  <option value="crossfit">
+                    {t('Functional Gauntlet', 'Circuito Funcional', 'Parcours Fonctionnel', 'كروس فيت وتمارين وظيفية (Functional Gauntlet)')}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-bold text-slate-300 mb-2 font-anime">
+                  <span>{t('Weekly Training Effort Level:', 'Esfuerzo Semanal de Entreno:', 'Niveau d’Effort Hebdomadaire :', 'مستوى الجهد والالتزام الأسبوعي:')}</span>
                   <span className="text-[#D4AF37] font-mono tabular-nums">{userEffortLevel}%</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>{tr(currentLang, { en: 'YARD Registry:', es: 'Registro YARD:', fr: 'Registre YARD :', ar: 'سجل YARD:' })}</span>
-                  <span className="text-emerald-400 font-bold">
-                    ✓ {tr(currentLang, { en: 'VERIFIED WARRIOR', es: 'VERIFICADO', fr: 'VÉRIFIÉ', ar: 'محارب معتمد' })}
+                <input
+                  type="range"
+                  min="50"
+                  max="100"
+                  value={userEffortLevel}
+                  onChange={(e) => setUserEffortLevel(Number(e.target.value))}
+                  className="w-full accent-emerald-500 cursor-pointer"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:scale-[1.01] transition-all cursor-pointer"
+              >
+                {t('GENERATE MY BATTLE CARD', 'GENERAR MI TARJETA DE COMBATE', 'GÉNÉRER MA CARTE DE COMBAT', 'توليد بطاقة المعركة الرسمية')}
+              </button>
+            </form>
+
+            {/* Generated Card Display */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-sm rounded-3xl p-6 bg-[#050807] border border-emerald-500/35 shadow-[0_0_30px_rgba(16,185,129,0.18)] relative text-center">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-[10px] font-black bg-emerald-500 text-black px-2 py-0.5 rounded font-anime">
+                    {userEffortLevel >= 90 ? 'S-RANK GOD' : userEffortLevel >= 75 ? 'A-RANK PRO' : 'CHALLENGER'}
                   </span>
+                  <span className="text-[10px] font-black text-[#D4AF37] font-mono tabular-nums" dir="ltr">
+                    {Math.round(userEffortLevel * 99.5)} AP
+                  </span>
+                </div>
+
+                <div className="w-full h-44 rounded-2xl overflow-hidden mb-4 relative">
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={CHALLENGER_IMAGE}
+                    alt="Athlete Avatar"
+                    referrerPolicy="no-referrer"
+                    onError={handleImageError}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050807] via-transparent to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-xs font-black text-white font-anime">
+                    {userAthleteName || t('Future YARD Champion', 'Futuro Campeón YARD', 'Futur Champion YARD', 'بطل YARD القادم')}
+                  </div>
+                </div>
+
+                <div className={`space-y-1.5 text-xs font-bold text-slate-300 ${isAr ? 'text-right' : 'text-left'}`}>
+                  <div className="flex justify-between border-b border-white/[0.08] pb-1">
+                    <span>{t('Discipline:', 'Disciplina:', 'Discipline :', 'التخصص:')}</span>
+                    <span className="text-white uppercase font-mono">{userDiscipline}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-white/[0.08] pb-1">
+                    <span>{t('Effort Score:', 'Nivel de Esfuerzo:', 'Score d’Effort :', 'نقاط الجهد:')}</span>
+                    <span className="text-[#D4AF37] font-mono tabular-nums">{userEffortLevel}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t('YARD Registry:', 'Registro YARD:', 'Registre YARD :', 'سجل YARD:')}</span>
+                    <span className="text-emerald-400 font-bold">
+                      &#10003; {generatedCard
+                        ? t('MINTED CREDENTIAL', 'CREDENCIAL EMITIDA', 'CARTE ÉMISE', 'تم إصدار البطاقة')
+                        : t('VERIFIED WARRIOR', 'GUERRERO VERIFICADO', 'GUERRIER VÉRIFIÉ', 'محارب معتمد')}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -543,103 +540,77 @@ export const FoundersAndCommunity: React.FC<FoundersAndCommunityProps> = ({ curr
         </div>
       </div>
 
-      {/* Compact Creed & Mindset */}
-      <div className="rounded-2xl bg-[#0C0E14] border border-white/[0.08] p-4 sm:p-6 max-w-5xl mx-auto">
-        <div className="max-w-3xl mx-auto text-center space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-white/[0.06] border border-white/15 text-[10px] font-mono text-[#D4AF37]">
-            <Brain className="w-3.5 h-3.5" />
+      {/* Creed & Mindset */}
+      <div className="rounded-3xl bg-gradient-to-r from-[#080D0B] via-[#0B1410] to-[#080D0B] border border-white/[0.08] p-6 md:p-10">
+        <div className="max-w-4xl mx-auto text-center space-y-5">
+          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs font-black text-emerald-300 font-anime">
+            <Brain className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>
-              {tr(currentLang, {
-                en: 'THE YARD MINDSET & CREED',
-                es: 'MENTALIDAD Y CREDO YARD',
-                fr: 'ESPRIT & CREDO YARD',
-                ar: 'عقيدة وفلسفة YARD 300'
-              })}
+              {t('THE YARD MINDSET & CREED', 'MENTALIDAD Y CREDO YARD 300', 'ESPRIT & CREDO YARD 300', 'عقيدة وفلسفة YARD 300')}
             </span>
           </div>
 
-          <h3 className="text-lg md:text-2xl font-extrabold text-white">
-            {tr(currentLang, {
-              en: '“THE BODY ACHIEVES WHAT THE MIND BELIEVES”',
-              es: '“EL CUERPO LOGRA LO QUE LA MENTE CREE”',
-              fr: '« LE CORPS ACCOMPLIT CE QUE L’ESPRIT CROIT »',
-              ar: '«الجسد يُحقق ما يؤمن به العقل»'
-            })}
+          <h3 className="text-2xl md:text-4xl font-black text-white font-anime">
+            {t(
+              '“THE BODY ACHIEVES WHAT THE MIND BELIEVES”',
+              '“EL CUERPO LOGRA LO QUE LA MENTE CREE”',
+              '« LE CORPS ACCOMPLIT CE QUE L’ESPRIT CROIT »',
+              '«الجسد يُحقق ما يؤمن به العقل»'
+            )}
           </h3>
 
-          <p className="text-[11px] md:text-xs text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            {tr(currentLang, {
-              en: 'At YARD 300, limits are mental constructs. We merge endurance with strategic composure—discipline transmutes ordinary sweat into S-Rank performance.',
-              es: 'En YARD 300, los límites son mentales. Fusionamos resistencia extrema con serenidad estratégica para forjar rendimiento S-Rank.',
-              fr: 'Chez YARD 300, les limites sont mentales. Nous unissons endurance suprême et calme stratégique pour atteindre le rang S-Rank.',
-              ar: 'في YARD 300، الحدود مجرد وهم ذهني. ندمج التحمل البدني مع هدوء الزن الاستراتيجي لتحويل العرق إلى أداء أسطوري S-Rank.'
-            })}
+          <p className="text-xs md:text-sm text-slate-300 font-bold leading-relaxed max-w-2xl mx-auto">
+            {t(
+              'At YARD 300, limits are mental constructs. We merge supreme physical endurance with strategic zen composure. Discipline is the crucible that transmutes ordinary sweat into legendary S-Rank performance.',
+              'En YARD 300, los límites son mentales.Combinamos resistencia física suprema con calma estratégica Zen para convertir el esfuerzo diario en rendimiento legendario.',
+              'Chez YARD 300, les limites sont mentales. Nous fusionnons l’endurance physique suprême et le calme stratégique Zen pour forger des performances S-Rank.',
+              'في YARD 300، الحدود ليست سوى وهم ذهني. نحن ندمج التحمل البدني الأقصى مع هدوء الزن الاستراتيجي؛ فالانضباط هو البوتقة التي تحول عرق التمارين العادي إلى أداء أسطوري برتبة S-Rank.'
+            )}
           </p>
 
-          <div className={`grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 ${isAr ? 'text-right' : 'text-left'}`}>
-            <div className="p-3 rounded-xl bg-[#07080C] border border-white/[0.07] space-y-1">
-              <div className="flex items-center gap-1.5 text-white font-bold text-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
-                <span>
-                  {tr(currentLang, {
-                    en: '1. Relentless Sweat',
-                    es: '1. Esfuerzo Constante',
-                    fr: '1. Effort Constant',
-                    ar: '1. استمرارية العرق والجهد'
-                  })}
-                </span>
+          <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 pt-2 ${isAr ? 'text-right' : 'text-left'}`}>
+            <div className="p-4 rounded-2xl bg-[#050807] border border-white/[0.08] space-y-2">
+              <div className="flex items-center gap-2 text-white font-black font-anime text-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>{t('1. Relentless Sweat', '1. Esfuerzo Constante', '1. Effort Constant', '1. استمرارية العرق والجهد')}</span>
               </div>
-              <p className="text-[10px] text-slate-400">
-                {tr(currentLang, {
-                  en: 'Consistency beats fleeting motivation every single day.',
-                  es: 'La constancia supera siempre a la motivación pasajera.',
-                  fr: 'La régularité surpasse la motivation passagère.',
-                  ar: 'الانضباط يتفوق على التحفيز اللحظي في كل الظروف.'
-                })}
+              <p className="text-[11px] text-slate-400 font-bold">
+                {t(
+                  'Consistency over fleeting motivation. The arena calls regardless of the weather.',
+                  'La constancia supera la motivación pasajera. La arena exige presencia cada día.',
+                  'La régularité surpasse la motivation éphémère. L’arène appelle par tous les temps.',
+                  'الانضباط يتفوق على التحفيز اللحظي؛ الحلبة تنادي في كل الظروف.'
+                )}
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-[#07080C] border border-white/[0.07] space-y-1">
-              <div className="flex items-center gap-1.5 text-[#D4AF37] font-bold text-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37]" />
-                <span>
-                  {tr(currentLang, {
-                    en: '2. Zen Composure',
-                    es: '2. Serenidad Táctica',
-                    fr: '2. Calme Stratégique',
-                    ar: '2. هدوء الزن والتنفس'
-                  })}
-                </span>
+            <div className="p-4 rounded-2xl bg-[#050807] border border-white/[0.08] space-y-2">
+              <div className="flex items-center gap-2 text-[#D4AF37] font-black font-anime text-xs">
+                <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
+                <span>{t('2. Zen Composure', '2. Calma y Respiración Zen', '2. Maîtrise & Respiration Zen', '2. هدوء الزن والتنفس')}</span>
               </div>
-              <p className="text-[10px] text-slate-400">
-                {tr(currentLang, {
-                  en: 'Breathwork and bio-energy balance prevent burnout.',
-                  es: 'Respiración táctica y equilibrio bioenergético contra el agotamiento.',
-                  fr: 'Respiration tactique et équilibre bio-énergétique anti-épuisement.',
-                  ar: 'التنفس التكتيكي لحماية الجسد وتفادي الاحتراق البدني.'
-                })}
+              <p className="text-[11px] text-slate-400 font-bold">
+                {t(
+                  'Breathwork and bio-energy alchemical harmony to prevent physical and mental burnout.',
+                  'Control respiratorio y armonía bioenergética para prevenir el agotamiento físico y mental.',
+                  'Maîtrise du souffle et équilibre bioénergétique pour prévenir tout surmenage.',
+                  'التنفس التكتيكي وتناغم الطاقة الحيوية لحماية الجسد وتفادي الاحتراق.'
+                )}
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-[#07080C] border border-white/[0.07] space-y-1">
-              <div className="flex items-center gap-1.5 text-white font-bold text-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#38BDF8]" />
-                <span>
-                  {tr(currentLang, {
-                    en: '3. Brotherhood of 300',
-                    es: '3. Hermandad de los 300',
-                    fr: '3. Fraternité des 300',
-                    ar: '3. أخوة الـ 300 محارب'
-                  })}
-                </span>
+            <div className="p-4 rounded-2xl bg-[#050807] border border-white/[0.08] space-y-2">
+              <div className="flex items-center gap-2 text-emerald-300 font-black font-anime text-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                <span>{t('3. Brotherhood of 300', '3. Hermandad de los 300', '3. Fraternité des 300', '3. أخوة الـ 300 محارب')}</span>
               </div>
-              <p className="text-[10px] text-slate-400">
-                {tr(currentLang, {
-                  en: 'Every warrior elevates their comrade toward new records.',
-                  es: 'Cada guerrero impulsa a su compañero hacia nuevos récords.',
-                  fr: 'Chaque guerrier élève son camarade vers de nouveaux records.',
-                  ar: 'كل مقاتل يرتقي برفيقه ونحتفل بالإنجازات كفيلق موحد.'
-                })}
+              <p className="text-[11px] text-slate-400 font-bold">
+                {t(
+                  'Every warrior elevates their comrade. We celebrate PRs and championships as one unified legion.',
+                  'Cada atleta impulsa al equipo. Celebramos récords y campeonatos como una sola legión.',
+                  'Chaque athlète élève ses pairs. Nous célébrons les records comme une légion unie.',
+                  'كل مقاتل يرتقي برفيقه؛ نحتفل بالأرقام القياسية والبطولات كفيلق موحد.'
+                )}
               </p>
             </div>
           </div>

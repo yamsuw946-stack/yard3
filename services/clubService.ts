@@ -128,8 +128,8 @@ export const INITIAL_AVAILABLE_ATHLETES: ClubMember[] = [
   },
   {
     id: 'ath-2',
-    name: 'M.T.K',
-    avatar: '/images/mtk_anime_pink_pilates.jpg',
+    name: 'm t k',
+    avatar: '/images/mtk_pilates_anime.jpg',
     tier: 'Tier 4 Overdrive',
     streak: 24,
     powerLevel: 9880,
@@ -191,7 +191,7 @@ export const PRESET_COMMUNITY_CLUBS = [
     logoUrl: '🦅',
     accentColor: '#D4AF37',
     followersCount: 342,
-    ownerName: 'M.T.K',
+    ownerName: 'm t k',
   },
   {
     id: 'club-flame',
@@ -269,7 +269,7 @@ const DEFAULT_CLUB: ClubData = {
       reactions: { fire: 42, lightning: 29, muscle: 55, crown: 18, boxing: 63 },
       userReactions: ['fire', 'muscle'],
       comments: [
-        { id: 'c-1', authorName: 'M.T.K', authorAvatar: '/images/mtk_anime_pink_pilates.jpg', text: 'Refined form and velocity today. Pilates session locked in.', createdAt: Date.now() - 3000000 },
+        { id: 'c-1', authorName: 'm t k', authorAvatar: '/images/mtk_pilates_anime.jpg', text: 'Refined form and velocity today. Pilates session locked in.', createdAt: Date.now() - 3000000 },
         { id: 'c-2', authorName: 'Kenji Sato', authorAvatar: '/images/ai_human_aerial_male.jpg', text: 'Strong output. Keep pacing consistent.', createdAt: Date.now() - 1500000 },
       ]
     },
@@ -278,11 +278,11 @@ const DEFAULT_CLUB: ClubData = {
       clubId: 'club-titan-apex-300',
       clubName: 'TITAN APEX PERFORMANCE CLUB',
       clubLogo: '👑',
-      authorName: 'M.T.K',
-      authorAvatar: '/images/mtk_anime_pink_pilates.jpg',
+      authorName: 'm t k',
+      authorAvatar: '/images/mtk_pilates_anime.jpg',
       title: 'Morning Pilates & HRV 98ms Recovery',
       caption: 'Post-sprint Pilates alignment and deep parasympathetic nervous system reboot.',
-      mediaUrl: '/images/mtk_anime_pink_pilates.jpg',
+      mediaUrl: '/images/mtk_pilates_anime.jpg',
       mediaType: 'image',
       badgeType: 'RECOVERY',
       durationMinutes: 25,
@@ -343,7 +343,7 @@ const DEFAULT_CLUB: ClubData = {
 
 const isLegacyImage = (url?: string): boolean => {
   if (!url) return true;
-  return /anime_|boxing_striker|tarik_saiyan|ninja_kunoichi|ren_flame|live_arena_|realistic_mma_brawler/.test(url);
+  return /anime_|mtk_anime|boxing_striker|tarik_saiyan|ninja_kunoichi|ren_flame|live_arena_|realistic_|yard_tribe_champions|yard_brand_hero/.test(url);
 };
 
 export const getCustomClubData = (): ClubData => {

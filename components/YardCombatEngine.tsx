@@ -973,11 +973,11 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             })}
           </p>
 
-          {/* Featured Anime Hero Champion Visual Banner */}
+          {/* Featured Athlete Champion Visual Banner */}
           <div className="w-full max-w-4xl mt-4 rounded-3xl overflow-hidden shadow-[0_0_35px_rgba(0,240,255,0.3)] relative group">
             <img loading="lazy" decoding="async" 
               src={HERO_IMAGE} 
-              alt="Aura Champion Anime Athlete" 
+              alt="YARD 300 Elite Combat Athlete" 
               onError={handleImageError}
               className="w-full h-64 md:h-80 object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
@@ -1012,12 +1012,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
         </div>
 
         {/* ------------------------------------------------------------- */}
-        {/* ANIME TRAINING MODE TRIGGER & WORKOUT HUD */}
+        {/* HIGH-INTENSITY COMBAT OVERDRIVE WORKOUT HUD */}
         {/* ------------------------------------------------------------- */}
         <div className="mb-16">
           {!isTrainingActive && !isCompleted && (
             <div className="relative overflow-hidden bg-gradient-to-r from-[#181A28] via-[#12131C] to-[#181A28] border-2 border-[#FFE600] rounded-3xl p-8 shadow-[0_0_40px_rgba(255,230,0,0.25)] text-center group">
-              {/* Background anime speedlines pattern */}
+              {/* Background kinetic speedlines pattern */}
               <div className="absolute inset-0 bg-speedlines opacity-30 pointer-events-none"></div>
               
               <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
@@ -1032,19 +1032,19 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
                 <h3 className="text-3xl md:text-5xl font-black font-anime text-white leading-tight">
                   ⚡ {tr(currentLang, {
-                    en: 'ANIME TRAINING MODE (3-MIN WORKOUT)',
-                    es: 'MODO ENTRENAMIENTO ANIME (3 MIN)',
-                    fr: 'MODE ENTRAÎNEMENT ANIME (3 MIN)',
-                    ar: 'وضع التدريب الأنمي (3 دقائق)'
+                    en: '3-MIN COMBAT OVERDRIVE WORKOUT',
+                    es: 'ENTRENAMIENTO OVERDRIVE DE 3 MIN',
+                    fr: 'ENTRAÎNEMENT OVERDRIVE (3 MIN)',
+                    ar: 'وضع التدريب القتالي الفائق (3 دقائق)'
                   })}
                 </h3>
 
                 <p className="text-gray-300 font-bold text-sm md:text-base leading-relaxed">
                   {tr(currentLang, {
-                    en: 'Experience an exhilarating 3-minute anime combat workout! Break past power level 9000, land rapid punch combos, and channel supernatural warrior focus with automatic daily training load sync (+75 AU).',
-                    es: '¡Vive un intenso entrenamiento anime de 3 minutos! Supera el nivel de poder 9000, conecta combos rápidos y sincroniza automáticamente +75 AU a tu carga diaria.',
-                    fr: 'Vivez un entraînement combat anime de 3 minutes ! Dépassez 9000 de puissance, enchaînez les combos et synchronisez automatiquement +75 AU à votre charge.',
-                    ar: 'خض تجربة تدريبية حماسية لمدة 3 دقائق بنمط الأنمي القتالي! ارفع طاقتك لأكثر من 9000، سدد لكمات متتالية، وفكّر كأبطال الأنمي الخارقين مع تعزيز تلقائي لمؤشرات حمولتك اليومية (+75 AU).'
+                    en: 'Experience an exhilarating 3-minute elite combat workout! Surpass 9,000 AU output, land rapid strike combos, and lock in championship focus with automatic daily training load sync (+75 AU).',
+                    es: '¡Vive un intenso entrenamiento de combate de 3 minutos! Supera el nivel 9000, conecta combos rápidos y sincroniza automáticamente +75 AU a tu carga diaria.',
+                    fr: 'Vivez un entraînement combat haute intensité de 3 minutes ! Dépassez 9000 de puissance, enchaînez les combos et synchronisez +75 AU.',
+                    ar: 'خض تجربة تدريبية حماسية لمدة 3 دقائق بأعلى شدة قتالية! ارفع طاقتك لأكثر من 9000، سدد لكمات متتالية، وعزّز جاهزيتك التنافسية مع مزامنة تلقائية لحمل التدريب اليومي (+75 AU).'
                   })}
                 </p>
 
@@ -1054,9 +1054,9 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                     className="px-8 py-4 rounded-2xl bg-[#FF007A] hover:bg-[#FF007A]/80 text-white font-black font-anime text-lg shadow-[0_0_30px_#FF007A] hover:scale-105 transition-all flex items-center gap-3 border-2 border-white/20"
                   >
                     <span>⚡ {tr(currentLang, {
-                      en: 'START ANIME TRAINING MODE (3 MINUTES)',
-                      es: 'INICIAR MODO ANIME (3 MINUTOS)',
-                      fr: 'LANCER LE MODE ANIME (3 MINUTES)',
+                      en: 'START 3-MINUTE COMBAT OVERDRIVE',
+                      es: 'INICIAR OVERDRIVE (3 MINUTOS)',
+                      fr: 'LANCER OVERDRIVE (3 MINUTES)',
                       ar: 'بدء وضع التدريب القتالي (3 دقائق)'
                     })}</span>
                     <span className="text-xl">➔</span>
@@ -1066,11 +1066,11 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
             </div>
           )}
 
-          {/* ACTIVE 3-MINUTE ANIME WORKOUT HUD */}
+          {/* ACTIVE 3-MINUTE COMBAT OVERDRIVE WORKOUT HUD */}
           {isTrainingActive && (
             <div className={`relative overflow-hidden bg-[#0A0B10] rounded-3xl p-6 md:p-10 border-4 transition-all duration-200 anim-aura-border ${isShaking ? 'anim-shake' : ''}`}>
               
-              {/* Radial Anime Speed Lines Background */}
+              {/* Radial Kinetic Speed Lines Background */}
               <div className="absolute inset-0 anim-speed-lines pointer-events-none bg-[radial-gradient(circle_at_center,_rgba(255,0,122,0.15)_0%,_transparent_70%)]"></div>
 
               {/* Floating Combat Strike Text Popups */}
@@ -1096,7 +1096,7 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
                   <span className="w-4 h-4 rounded-full bg-[#FF007A] animate-ping"></span>
                   <div>
                     <span className="text-xs font-black font-anime text-[#FF007A] block">
-                      LIVE ANIME COMBAT WORKOUT // OVERDRIVE
+                      LIVE COMBAT OVERDRIVE // BIOMETRIC SYNC
                     </span>
                     <h3 className="text-xl md:text-2xl font-black font-anime text-white">
                       {phaseTitle}
@@ -1307,12 +1307,12 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
               <div className="absolute inset-0 bg-speedlines opacity-20 pointer-events-none"></div>
 
               <div className="inline-block px-6 py-2 rounded-full bg-[#FFE600] text-black font-black font-anime text-sm shadow-[0_0_20px_#FFE600]">
-                🏆 S-RANK ANIME CHAMPION CLEAR // 勝利完了
+                🏆 S-RANK COMBAT CHAMPION CLEAR
               </div>
 
               <h3 className="text-4xl md:text-6xl font-black font-anime text-white leading-tight">
                 {tr(currentLang, {
-                  en: 'ANIME TRAINING MODE COMPLETE!',
+                  en: 'OVERDRIVE TRAINING COMPLETE!',
                   es: '¡MODO ENTRENAMIENTO COMPLETADO!',
                   fr: 'MODE ENTRAÎNEMENT TERMINÉ !',
                   ar: 'اكتمل وضع التدريب القتالي!'
@@ -1629,10 +1629,10 @@ const YardCombatEngine: React.FC<YardCombatEngineProps> = ({ currentLang, onNavi
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Left Column: Captain Aura Anime Avatar & Microphone Control */}
+            {/* Left Column: Captain Aura Coach Avatar & Microphone Control */}
             <div className="lg:col-span-5 bg-[#0A0B10] p-6 rounded-2xl border border-[#FF007A]/30 flex flex-col items-center justify-center text-center space-y-4 relative">
               
-              {/* Captain Aura Anime Coach Avatar Card */}
+              {/* Captain Aura Coach Avatar Card */}
               <div className="w-full flex items-center gap-3 bg-[#141622] p-2.5 rounded-xl border border-[#FF007A]/40 mb-2">
                 <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 relative">
                   <img loading="lazy" decoding="async" 

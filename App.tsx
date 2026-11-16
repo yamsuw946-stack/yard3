@@ -8,27 +8,23 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductGrid from './components/ProductGrid';
 import About from './components/About';
-import Journal from './components/Journal';
 import Assistant from './components/Assistant';
 import Footer from './components/Footer';
 import ProductDetail from './components/ProductDetail';
 import JournalDetail from './components/JournalDetail';
 import CartDrawer from './components/CartDrawer';
 import { MobileAppNotice } from './components/MobileAppNotice';
-import { Leaderboard, WEEKLY_CHAMPIONS, MONTHLY_CHAMPIONS } from './components/Leaderboard';
+import { Leaderboard } from './components/Leaderboard';
 import { AIAnimeCoach } from './components/AIAnimeCoach';
 import { CombatArena } from './components/CombatArena';
-import { SectionHubNav, SectionHubId } from './components/SectionHubNav';
 import { InteractiveCharacterStage } from './components/InteractiveCharacterStage';
 import { LaunchAnnouncementModal } from './components/LaunchAnnouncementModal';
-import { CollapsibleAnimeSection } from './components/CollapsibleAnimeSection';
 import { LiveChallengesArena } from './components/LiveChallengesArena';
 import { MetaMaskModal } from './components/MetaMaskModal';
 import AppDownloadModal from './components/AppDownloadModal';
 import { SharedAuraModal } from './components/SharedAuraModal';
 import { FoundersAndCommunity } from './components/FoundersAndCommunity';
 import { AuthModal } from './components/AuthModal';
-import { authService } from './services/authService';
 import { GlobalSponsorsShowcase } from './components/GlobalSponsorsShowcase';
 import { BazarutoResortSanctuary } from './components/BazarutoResortSanctuary';
 
@@ -47,62 +43,75 @@ const OwnerDashboard = React.lazy(() => import('./components/OwnerDashboard').th
 const OptionsServicesHub = React.lazy(() => import('./components/OptionsServicesHub').then(m => ({ default: m.OptionsServicesHub })));
 const TicketsEventsHub = React.lazy(() => import('./components/TicketsEventsHub').then(m => ({ default: m.TicketsEventsHub })));
 import { OwnerConfigService } from './services/ownerConfigService';
+import { authService } from './services/authService';
 import { ShaolinMonasteryBackground } from './components/ShaolinMonasteryBackground';
 import { getSharedAuraFromUrl, SharedAuraData } from './services/shareAuraService';
-import { 
-  HERO_IMAGE, 
-  SAMURAI_RONIN_IMAGE, 
-  NINJA_KUNOICHI_IMAGE, 
-  LIVE_ARENA_IMAGE, 
-  AI_COACH_IMAGE, 
-  VALKYRIE_NEON_IMAGE, 
-  TARIK_SAIYAN_IMAGE, 
-  ABOUT_SQUAD_IMAGE, 
-  JOURNAL_GEAR_IMAGE 
-} from './constants';
-import { Product, JournalArticle, ViewState } from './types';
+import { Product, ViewState } from './types';
 import { Language, LANGUAGES, tr } from './i18n';
 import { soundFX } from './services/soundFX';
-import {
-  BiometricEngineService,
-  evaluateSleepArchitecture,
-  evaluateInjuryRisk,
-  BiometricTelemetryState
-} from './services/biometricEngine';
 
-// Executive Chamber Loading Fallback
+// Sleek Cyber Chamber Loading Fallback
 const CyberLoadingFallback: React.FC = () => (
   <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 space-y-4">
-    <div className="w-12 h-12 rounded-2xl bg-[#0C0E14] border border-[#D4AF37]/40 flex items-center justify-center shadow-lg">
-      <div className="w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+    <div className="w-12 h-12 rounded-2xl bg-[#050807] border border-emerald-500/50 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse">
+      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
     </div>
-    <span className="text-xs font-mono font-bold text-[#D4AF37] tracking-widest uppercase">
+    <span className="text-xs font-mono font-black text-emerald-400 tracking-widest uppercase">
       LOADING YARD 300 CHAMBER...
     </span>
   </div>
 );
+
+const VALID_LANGS: Language[] = ['en', 'es', 'fr', 'ar'];
+
+const SECTION_VIEW_MAP: Record<string, ViewState> = {
+  yardengine: { type: 'yardEngine' },
+  sleepstudies: { type: 'sleepStudies' },
+  injuryprediction: { type: 'injuryPrediction' },
+  leaderboard: { type: 'leaderboard' },
+  tickets: { type: 'tickets' },
+  ticketsevents: { type: 'tickets' },
+  bazaruto: { type: 'bazaruto' },
+  bazarutoresort: { type: 'bazaruto' },
+  resort: { type: 'bazaruto' },
+  options: { type: 'options' },
+  yardcamp: { type: 'yardCamp' },
+  camp: { type: 'yardCamp' },
+  customclub: { type: 'customClub' },
+  club: { type: 'customClub' },
+  products: { type: 'products' },
+  store: { type: 'products' },
+  arena: { type: 'arena' },
+  combatarena: { type: 'arena' },
+  auravisualizer: { type: 'auraVisualizer' },
+  aicoach: { type: 'aiCoach' },
+  subscribertiers: { type: 'subscriberTiers' },
+  subscriberties: { type: 'subscriberTiers' },
+  subscribetiers: { type: 'subscriberTiers' },
+  tiers: { type: 'subscriberTiers' },
+  championstory: { type: 'championStory' },
+  journal: { type: 'championStory' },
+  about: { type: 'about' },
+  profile: { type: 'profile' },
+  founders: { type: 'home' },
+  community: { type: 'home' },
+};
 
 function App() {
   const [view, setView] = useState<ViewState>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.toLowerCase();
       const params = new URLSearchParams(window.location.search);
-      const section = (params.get('section') || '').toLowerCase();
-      const target = section || hash.replace('#', '');
-      if (target.includes('club')) return { type: 'customClub' };
-      if (target === 'owner' || target === 'admin' || target === 'dashboard') return { type: 'ownerDashboard' };
-      if (target === 'yardengine' || target === 'engine') return { type: 'yardEngine' };
-      if (target === 'sleepstudies' || target === 'sleep') return { type: 'sleepStudies' };
-      if (target === 'injuryprediction' || target === 'injury') return { type: 'injuryPrediction' };
-      if (target === 'leaderboard') return { type: 'leaderboard' };
-      if (target === 'ticketsevents' || target === 'tickets') return { type: 'ticketsEvents' };
-      if (target === 'bazarutoresort' || target === 'resort') return { type: 'bazarutoResort' };
-      if (target === 'options') return { type: 'options' };
-      if (target === 'camp') return { type: 'camp' };
-      if (target === 'founders') return { type: 'founders' };
-      if (target === 'tiers' || target === 'subscribertier' || target === 'subscribertiers') return { type: 'subscriberTiers' };
-      if (target === 'arena') return { type: 'arena' };
-      if (target === 'aicoach') return { type: 'aiCoach' };
+      const sectionParam = params.get('section')?.toLowerCase();
+      if (sectionParam && SECTION_VIEW_MAP[sectionParam]) {
+        return SECTION_VIEW_MAP[sectionParam];
+      }
+      if (hash.includes('club') || window.location.search.toLowerCase().includes('club')) {
+        return { type: 'customClub' };
+      }
+      if (hash === '#owner' || hash === '#admin') {
+        return { type: 'ownerDashboard' };
+      }
     }
     return { type: 'home' };
   });
@@ -110,30 +119,24 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAppDownloadOpen, setIsAppDownloadOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
-  const [verificationToast, setVerificationToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [currentLang, setCurrentLang] = useState<Language>(() => {
     if (typeof window !== 'undefined') {
-      const urlLang = new URLSearchParams(window.location.search).get('lang')?.toLowerCase();
-      if (urlLang === 'en' || urlLang === 'es' || urlLang === 'fr' || urlLang === 'ar') {
+      const urlLang = new URLSearchParams(window.location.search).get('lang');
+      if (urlLang && VALID_LANGS.includes(urlLang as Language)) {
         localStorage.setItem('yard300_lang', urlLang);
         return urlLang as Language;
       }
     }
     const saved = localStorage.getItem('yard300_lang');
-    if (saved === 'en' || saved === 'es' || saved === 'fr' || saved === 'ar') {
+    if (saved && VALID_LANGS.includes(saved as Language)) {
       return saved as Language;
     }
-    // Official language is English by default (English, Español, Français)
     localStorage.setItem('yard300_lang', 'en');
     return 'en';
   });
-  // Permanent Cyber Night Black Mode - Day/Night toggle disabled per user request
+  // Permanent Obsidian Emerald Mode
   const theme: 'dark' = 'dark';
 
-  // Focused Interactive Hub Section State
-  const [activeSection, setActiveSection] = useState<SectionHubId | null>('yardEngine');
-  const [showAllSections, setShowAllSections] = useState<boolean>(false);
   const [isMetaMaskOpen, setIsMetaMaskOpen] = useState<boolean>(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(() => {
     return localStorage.getItem('yard300_wallet_address');
@@ -143,57 +146,25 @@ function App() {
   });
   const [isOwner, setIsOwner] = useState<boolean>(() => OwnerConfigService.isOwnerLoggedIn());
   const [ownerInfo, setOwnerInfo] = useState(() => OwnerConfigService.getOwnerInfo());
-  const [leaderboardTab, setLeaderboardTab] = useState<'weekly' | 'monthly' | 'allTime'>('weekly');
-  const [liveTelemetry, setLiveTelemetry] = useState<BiometricTelemetryState>(() =>
-    BiometricEngineService.getState()
-  );
 
+  // Listen for url changes that may contain shared aura tokens or owner auth changes
   useEffect(() => {
-    return BiometricEngineService.subscribe((next) => setLiveTelemetry(next));
-  }, []);
-
-  // Process 1-click email verification links on load & hash/url changes + listen for auth events
-  useEffect(() => {
-    const runUrlVerification = () => {
-      const verifyResult = authService.checkAndProcessUrlVerification();
-      if (verifyResult.success && verifyResult.user) {
-        soundFX.playSuccess();
-        soundFX.playPowerUp();
-        setVerificationToast({
-          type: 'success',
-          text: tr(currentLang, {
-            en: `Email confirmed! Welcome, ${verifyResult.user.name}.`,
-            es: `¡Correo confirmado! Bienvenido, ${verifyResult.user.name}.`,
-            fr: `E-mail confirmé ! Bienvenue, ${verifyResult.user.name}.`,
-            ar: `تم تأكيد البريد وتفعيل الحساب! أهلاً بك يا ${verifyResult.user.name}.`
-          })
-        });
-      } else if (verifyResult.error) {
-        setVerificationToast({ type: 'error', text: verifyResult.error });
-      }
-    };
-
     const checkAuraInUrl = () => {
       const data = getSharedAuraFromUrl();
       if (data) {
         setSharedAuraGuestData(data);
       }
-      runUrlVerification();
     };
     const handleAuthChange = () => {
       setIsOwner(OwnerConfigService.isOwnerLoggedIn());
       setOwnerInfo(OwnerConfigService.getOwnerInfo());
     };
-    const handleOpenAuth = (e: Event) => {
-      const detail = (e as CustomEvent<{ mode?: 'login' | 'register' }>).detail;
-      setAuthModalMode(detail?.mode === 'register' ? 'register' : 'login');
+    const handleOpenAuth = () => {
       setIsAuthModalOpen(true);
     };
     const handleCartClear = () => {
       setCartItems([]);
     };
-
-    runUrlVerification();
     window.addEventListener('hashchange', checkAuraInUrl);
     window.addEventListener('popstate', checkAuraInUrl);
     window.addEventListener('yard300_owner_auth_changed', handleAuthChange);
@@ -206,74 +177,173 @@ function App() {
       window.removeEventListener('yard300_open_auth', handleOpenAuth);
       window.removeEventListener('yard300_cart_clear', handleCartClear);
     };
-  }, [currentLang]);
+  }, []);
 
-  // Collapsible state for each individual section: default open active section (yardEngine), others neat & collapsed to eliminate clutter
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    yardEngine: true,
-    'aura-visualizer': false,
-    arena: false,
-    'ai-coach': false,
-    products: false,
-    leaderboard: false,
-    about: false,
-    journal: false,
-  });
-
-  const toggleSection = (secId: string) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [secId]: !prev[secId]
-    }));
-  };
-
-  const handleToggleAllSections = () => {
-    const anyClosed = Object.values(openSections).some(v => !v);
-    const newTarget = anyClosed; // if any closed, expand all; otherwise collapse all except core
-    setOpenSections({
-      yardEngine: true,
-      'aura-visualizer': newTarget,
-      arena: newTarget,
-      'ai-coach': newTarget,
-      products: newTarget,
-      leaderboard: newTarget,
-      about: newTarget,
-      journal: newTarget,
-    });
-    setShowAllSections(newTarget);
-  };
+  const [urlVerifyBanner, setUrlVerifyBanner] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('yard300_lang', currentLang);
     const langInfo = LANGUAGES.find(l => l.code === currentLang);
-    const dir = langInfo?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr');
+    const dir = langInfo?.dir || 'ltr';
     document.documentElement.dir = dir;
     document.documentElement.lang = currentLang;
+  }, [currentLang]);
 
-    const seoTitle = tr(currentLang, {
-      en: 'YARD 300 – Combat Health, Bio-Performance & Ayman Alsuwaidi',
-      es: 'YARD 300 – Salud de Combate, Biometría y Ayman Alsuwaidi',
-      fr: 'YARD 300 – Santé de Combat, Biométrie & Ayman Alsuwaidi',
-      ar: 'YARD 300 – الأداء الرياضي والصحة القتالية — أيمن السويدي'
-    });
-    const seoDesc = tr(currentLang, {
-      en: 'YARD 300 by Ayman Alsuwaidi (Yam Suw): AI biometric injury prediction, sleep lab, athletic performance gear & Jan 5, 2027 10-challenge nature championship.',
-      es: 'YARD 300 por Ayman Alsuwaidi (Yam Suw): predicción biométrica de lesiones, laboratorio del sueño, equipamiento élite y campeonato del 5 de enero de 2027.',
-      fr: 'YARD 300 par Ayman Alsuwaidi (Yam Suw) : prédiction biométrique des blessures, laboratoire du sommeil, équipement élite et championnat du 5 janvier 2027.',
-      ar: 'منصة YARD 300 بقيادة أيمن السويدي (Yam Suw): التنبؤ بالإصابات بالذكاء الاصطناعي، مختبر النوم، عتاد الأبطال وبطولة التحديات الـ 10 في 5 يناير 2027.'
-    });
-
-    document.title = seoTitle;
-    const updateMeta = (selector: string, val: string) => {
-      const el = document.querySelector(selector);
-      if (el) el.setAttribute('content', val);
+  // Dynamic Google Search SEO Title & Description sync per View and Language
+  useEffect(() => {
+    const viewTitles: Record<string, { en: string; es: string; fr: string; ar: string }> = {
+      home: {
+        en: 'YARD 300 | Combat Health, Bio-Performance & Bazaruto Sanctuary',
+        es: 'YARD 300 | Rendimiento Atlético, Prevención ACWR y Santuario Bazaruto',
+        fr: 'YARD 300 | Performance Biométrique, Prévention ACWR & Sanctuaire Bazaruto',
+        ar: 'YARD 300 | منصة الذكاء البيومتري، المتجر الفاخر ومنتجع بازاروتو'
+      },
+      products: {
+        en: 'Luxury Combat Store (300 Serialized Units) | YARD 300',
+        es: 'Tienda Exclusiva (300 Unidades) | YARD 300',
+        fr: 'Boutique Luxe (300 Pièces) | YARD 300',
+        ar: 'متجر عتاد الأبطال الفاخر (300 قطعة) | YARD 300'
+      },
+      bazaruto: {
+        en: 'Bazaruto Bio-Recovery Island Resort (Oct 2027) | YARD 300',
+        es: 'Resort de Biorrecuperación Bazaruto (Oct 2027) | YARD 300',
+        fr: 'Sanctuaire & Resort Bazaruto (Oct 2027) | YARD 300',
+        ar: 'منتجع وملاذ يارد الصحي · أرخبيل بازاروتو (أكتوبر 2027) | YARD 300'
+      },
+      leaderboard: {
+        en: 'Weekly Top 10 & Monthly Top 50 Champions Leaderboard | YARD 300',
+        es: 'Clasificación Semanal (10) y Mensual (50) de Campeones | YARD 300',
+        fr: 'Classement Hebdo (10) & Mensuel (50) des Champions | YARD 300',
+        ar: 'لوحة المتصدرين والأبطال الأسبوعية والشهرية وقراءات التدريب | YARD 300'
+      },
+      tickets: {
+        en: '10-Challenge Nature Endurance Championship (Jan 5, 2027) | YARD 300',
+        es: 'Campeonato de Resistencia 10 Desafíos (5 Ene 2027) | YARD 300',
+        fr: 'Championnat d’Endurance 10 Défis (5 Jan 2027) | YARD 300',
+        ar: 'تذاكر بطولة الطبيعة للتحمل (5 يناير 2027) | YARD 300'
+      },
+      options: {
+        en: 'Options & Performance Services Hub | YARD 300',
+        es: 'Centro de Opciones y Servicios | YARD 300',
+        fr: 'Pôle Options & Services | YARD 300',
+        ar: 'بوابة الخيارات والخدمات الشاملة | YARD 300'
+      },
+      yardEngine: {
+        en: 'YARD 300 Biometric & ACWR Injury Engine | YARD 300',
+        es: 'Motor Biométrico ACWR y Sueño | YARD 300',
+        fr: 'Moteur Biométrique ACWR & Sommeil | YARD 300',
+        ar: 'محرك YARD 300 للذكاء البيومتري والتدريب | YARD 300'
+      },
+      sleepStudies: {
+        en: 'Sleep Studies & Deep Recovery Algorithm | YARD 300',
+        es: 'Algoritmo de Estudios del Sueño y Recuperación | YARD 300',
+        fr: 'Algorithme Études du Sommeil & Récupération | YARD 300',
+        ar: 'خوارزمية دراسات النوم والاستشفاء العميق | YARD 300'
+      },
+      injuryPrediction: {
+        en: 'ACWR Injury Prediction Algorithm (7-Day Risk) | YARD 300',
+        es: 'Algoritmo Predictivo de Lesiones ACWR | YARD 300',
+        fr: 'Algorithme Prédictif de Blessures ACWR | YARD 300',
+        ar: 'خوارزمية التنبؤ بالإصابات وتحليل الحمل ACWR | YARD 300'
+      },
+      customClub: {
+        en: 'Build Your 3D Elite Athletic Club ($30/yr) | YARD 300',
+        es: 'Crea Tu Club Atlético 3D ($30/año) | YARD 300',
+        fr: 'Créez Votre Club Athlétique 3D (30 $/an) | YARD 300',
+        ar: 'أنشئ ناديك الرياضي المخصص ثلاثي الأبعاد | YARD 300'
+      },
+      yardCamp: {
+        en: 'YARD 300 Global Nature Training Camp | YARD 300',
+        es: 'Campamento Global de Entrenamiento en la Naturaleza | YARD 300',
+        fr: 'Camp Mondial d’Entraînement Nature YARD 300',
+        ar: 'معسكر YARD العالمي للتحدي والتدريب | YARD 300'
+      },
+      aiCoach: {
+        en: 'Biometric Tactical AI Coach | YARD 300',
+        es: 'Entrenador Táctico Biométrico IA | YARD 300',
+        fr: 'Coach Tactique Biométrique IA | YARD 300',
+        ar: 'المدرب التكتيكي الذكي وتحليلات الجهد | YARD 300'
+      },
+      arena: {
+        en: 'Live Combat & Performance Telemetry Arena | YARD 300',
+        es: 'Arena de Combate y Telemetría en Vivo | YARD 300',
+        fr: 'Arène de Combat & Télémétrie en Direct | YARD 300',
+        ar: 'حلبة القتال والتدريب التفاعلي المباشر | YARD 300'
+      },
+      auraVisualizer: {
+        en: 'Bio-Kinetic Aura Visualizer Studio | YARD 300',
+        es: 'Estudio Visualizador Bio-Cinético Aura | YARD 300',
+        fr: 'Studio Visualiseur Bio-Cinétique Aura | YARD 300',
+        ar: 'مرسم الهالة الحيوية والطاقة البدنية | YARD 300'
+      },
+      subscriberTiers: {
+        en: 'Membership Tiers & YARDX Credentials | YARD 300',
+        es: 'Niveles de Membresía y Credenciales YARDX | YARD 300',
+        fr: 'Niveaux d’Abonnement & Certificats YARDX | YARD 300',
+        ar: 'مستويات العضوية وجوائز YARDX | YARD 300'
+      },
+      championStory: {
+        en: 'Champion Stories & Sports Science Journal | YARD 300',
+        es: 'Historias de Campeones y Ciencia Deportiva | YARD 300',
+        fr: 'Histoires de Champions & Science du Sport | YARD 300',
+        ar: 'قصص الأبطال وأبحاث الطب الرياضي | YARD 300'
+      },
+      about: {
+        en: 'Philosophy & Global Standards | YARD 300',
+        es: 'Filosofía y Estándares Globales | YARD 300',
+        fr: 'Philosophie & Standards Mondiaux | YARD 300',
+        ar: 'فلسفة YARD 300 ومعايير النخبة | YARD 300'
+      },
+      profile: {
+        en: 'Athlete Profile & Wearables Telemetry | YARD 300',
+        es: 'Perfil del Atleta y Telemetría de Relojes | YARD 300',
+        fr: 'Profil Athlète & Télémétrie Connectée | YARD 300',
+        ar: 'الملف الشخصي للبطل وربط الأجهزة الذكية | YARD 300'
+      }
     };
-    updateMeta('meta[name="description"]', seoDesc);
-    updateMeta('meta[property="og:title"]', seoTitle);
-    updateMeta('meta[property="og:description"]', seoDesc);
-    updateMeta('meta[name="twitter:title"]', seoTitle);
-    updateMeta('meta[name="twitter:description"]', seoDesc);
-  }, [currentLang, view]);
+    const fallbackTitle = {
+      en: 'YARD 300 | Elite Combat Performance & Biometrics',
+      es: 'YARD 300 | Rendimiento de Combate y Biometría',
+      fr: 'YARD 300 | Performance de Combat & Biométrie',
+      ar: 'YARD 300 | منصة الأداء القتالي والقياسات الحيوية'
+    };
+    document.title = tr(currentLang, viewTitles[view.type] || fallbackTitle);
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute(
+        'content',
+        tr(currentLang, {
+          en: 'YARD 300 by Ayman Alsuwaidi & Amal Belnour — ACWR injury prediction, sleep recovery architecture, Weekly & Monthly Champions telemetry, 300-unit luxury apparel, 10-Challenge Championship (Jan 5, 2027), and Bazaruto Bio-Recovery Resort.',
+          es: 'YARD 300 — Predicción de lesiones ACWR, laboratorio del sueño, clasificación de campeones, tienda exclusiva de 300 unidades, Campeonato del 5 de enero 2027 y Resort Bazaruto.',
+          fr: 'YARD 300 — Prédiction des blessures ACWR, laboratoire du sommeil, classement des champions, boutique luxe 300 pièces, Championnat du 5 janvier 2027 et Resort Bazaruto.',
+          ar: 'منصة YARD 300 (أيمن السويدي وأمل بالنور) — خوارزميات التنبؤ بالإصابات ACWR، دراسات النوم، لوحة المتصدرين والأبطال، المتجر الفاخر (300 قطعة)، بطولة 5 يناير 2027، ومنتجع بازاروتو.'
+        })
+      );
+    }
+  }, [view.type, currentLang]);
+
+  // Process 1-click cryptographic URL email verification token (?verifyToken=...&email=...) on launch
+  useEffect(() => {
+    const checkUrlVerify = () => {
+      const res = authService.checkAndProcessUrlVerification();
+      if (res.success && res.user) {
+        soundFX.playSuccess();
+        setUrlVerifyBanner(
+          tr(currentLang, {
+            en: `Account verified & signed in as ${res.user.name}!`,
+            es: `¡Cuenta verificada e iniciada como ${res.user.name}!`,
+            fr: `Compte vérifié et connecté pour ${res.user.name} !`,
+            ar: `تم تأكيد وتفعيل حسابك بنجاح! أهلاً بك يا ${res.user.name}.`
+          })
+        );
+        setTimeout(() => setUrlVerifyBanner(null), 5500);
+      }
+    };
+    checkUrlVerify();
+    window.addEventListener('popstate', checkUrlVerify);
+    return () => window.removeEventListener('popstate', checkUrlVerify);
+  }, [currentLang]);
 
   // Enforce pure obsidian cyber night mode permanently
   useEffect(() => {
@@ -282,28 +352,39 @@ function App() {
     document.body.classList.remove('light-theme');
   }, []);
 
-  // Initial Hash Detection & Hash Change Navigation (e.g., #club, #yardEngine)
+  // Initial Hash & ?section=founders Detection + Open-Profile Listener
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const section = params.get('section')?.toLowerCase();
+    if (section === 'founders' || section === 'community') {
+      setTimeout(() => {
+        const el = document.getElementById('community');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 250);
+    }
+
+    const handleOpenProfileEvt = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setView({ type: 'profile' });
+    };
+    window.addEventListener('yard300_open_profile', handleOpenProfileEvt);
+
     const handleHashNav = () => {
       const rawHash = window.location.hash.replace('#', '');
-      if (rawHash) {
-        if (rawHash.toLowerCase().includes('club')) {
+      if (rawHash && !rawHash.includes('verify=')) {
+        const low = rawHash.toLowerCase();
+        if (low.includes('club')) {
           setView({ type: 'customClub' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
-        if (rawHash === 'tiers' || rawHash === 'subscriberTiers') {
+        if (SECTION_VIEW_MAP[low]) {
+          setView(SECTION_VIEW_MAP[low]);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        if (low === 'subscribertier' || low === 'subscribertier' || low === 'subscribertiers') {
           setView({ type: 'subscriberTiers' });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
-        if (rawHash === 'options') {
-          setView({ type: 'options' });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
-        if (rawHash === 'owner' || rawHash === 'admin' || rawHash === 'dashboard') {
-          setView({ type: 'ownerDashboard' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
@@ -322,6 +403,7 @@ function App() {
     return () => {
       clearTimeout(timer);
       window.removeEventListener('hashchange', handleHashNav);
+      window.removeEventListener('yard300_open_profile', handleOpenProfileEvt);
     };
   }, []);
 
@@ -339,24 +421,13 @@ function App() {
     return () => window.removeEventListener('click', handleGlobalClick);
   }, []);
 
-  // Mobile App Download Modal Event Listener + Ctrl/Cmd+Shift+Y Owner Control Shortcut
+  // Mobile App Download Modal Event Listener
   useEffect(() => {
     const handleOpenAppDownload = () => {
       setIsAppDownloadOpen(true);
     };
-    const handleControlShortcut = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'y') {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setView({ type: 'ownerDashboard' });
-      }
-    };
     window.addEventListener('open-app-download', handleOpenAppDownload);
-    window.addEventListener('keydown', handleControlShortcut);
-    return () => {
-      window.removeEventListener('open-app-download', handleOpenAppDownload);
-      window.removeEventListener('keydown', handleControlShortcut);
-    };
+    return () => window.removeEventListener('open-app-download', handleOpenAppDownload);
   }, []);
 
   // Handle navigation (clicks on Navbar or Footer links)
@@ -420,9 +491,9 @@ function App() {
     setTimeout(() => scrollToSection(targetId), 100);
   };
 
-  const handleSelectHubSection = (id: SectionHubId | string) => {
+  const handleSelectHubSection = (id: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     if (id === 'customClub') {
       setView({ type: 'customClub' });
       return;
@@ -459,7 +530,7 @@ function App() {
       setView({ type: 'auraVisualizer' });
       return;
     }
-    if (id === 'combatArena') {
+    if (id === 'combatArena' || id === 'arena') {
       setView({ type: 'arena' });
       return;
     }
@@ -468,12 +539,7 @@ function App() {
       return;
     }
     if (id === 'products') {
-      if (view.type !== 'home') {
-        setView({ type: 'home' });
-        setTimeout(() => scrollToSection('products'), 150);
-      } else {
-        scrollToSection('products');
-      }
+      setView({ type: 'products' });
       return;
     }
     if (id === 'tickets') {
@@ -493,7 +559,7 @@ function App() {
       return;
     }
 
-    setActiveSection(id as SectionHubId);
+    setView({ type: 'options' });
   };
 
   const scrollToSection = (targetId: string) => {
@@ -539,36 +605,23 @@ function App() {
   };
 
   const isRTL = currentLang === 'ar';
+  const backLabel = tr(currentLang, {
+    en: '← Back to Home',
+    es: '← Volver al Inicio',
+    fr: "← Retour à l'Accueil",
+    ar: '→ العودة للرئيسية'
+  });
+  const backBtnClass =
+    'inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#080D0B] hover:bg-emerald-500 text-emerald-400 hover:text-black border border-emerald-500/30 text-xs font-black font-anime cursor-pointer transition-all shadow-md';
 
   return (
-    <div className={`min-h-screen w-full max-w-full overflow-x-hidden bg-[#000000] font-sans text-[#F0F4FF] selection:bg-[#E50914] selection:text-white relative ${isRTL ? 'dir-rtl' : 'dir-ltr'}`}>
+    <div className={`min-h-screen w-full max-w-full overflow-x-hidden bg-[#050807] font-sans text-[#F0F4FF] selection:bg-emerald-500 selection:text-black relative ${isRTL ? 'dir-rtl' : 'dir-ltr'}`}>
       
       {/* Dynamic Animated Shaolin Training Monastery Background */}
       <ShaolinMonasteryBackground currentLang={currentLang} />
 
       {/* 20-Day Official Launch Announcement Google-Style Dismissible Popup Ad */}
       <LaunchAnnouncementModal currentLang={currentLang} />
-
-      {verificationToast && (
-        <div
-          role="status"
-          className={`fixed top-16 left-1/2 -translate-x-1/2 z-[130] px-4 py-2.5 rounded-xl border shadow-xl flex items-center gap-3 text-xs font-semibold backdrop-blur-md ${
-            verificationToast.type === 'success'
-              ? 'bg-emerald-950/90 border-emerald-400/60 text-emerald-200'
-              : 'bg-red-950/90 border-red-400/60 text-red-200'
-          }`}
-        >
-          <span>{verificationToast.text}</span>
-          <button
-            type="button"
-            onClick={() => setVerificationToast(null)}
-            className="text-white/70 hover:text-white font-bold cursor-pointer"
-            aria-label="Dismiss"
-          >
-            ✕
-          </button>
-        </div>
-      )}
 
       {view.type !== 'checkout' && (
         <Navbar 
@@ -584,14 +637,17 @@ function App() {
             onLanguageChange={setCurrentLang}
             onOpenMetaMask={() => setIsMetaMaskOpen(true)}
             walletAddress={walletAddress}
-            onOpenAuth={(mode = 'login') => {
-              setAuthModalMode(mode);
-              setIsAuthModalOpen(true);
-            }}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
         />
       )}
       
       <main className="w-full max-w-full overflow-x-hidden">
+        {urlVerifyBanner && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[110] px-5 py-3 rounded-2xl bg-[#080D0B] border-2 border-emerald-400 text-emerald-300 font-bold text-xs shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-2.5 animate-fade-in">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+            <span>{urlVerifyBanner}</span>
+          </div>
+        )}
         {view.type === 'home' && (
           <>
             <Hero 
@@ -604,390 +660,129 @@ function App() {
                 else if (target === 'sleepStudies') setView({ type: 'sleepStudies' });
                 else if (target === 'injuryPrediction') setView({ type: 'injuryPrediction' });
                 else if (target === 'arena') setView({ type: 'arena' });
-                else if (target === 'leaderboard') {
-                  setLeaderboardTab('weekly');
-                  setView({ type: 'leaderboard' });
-                } else if (target === 'subscriberTiers') {
+                else if (target === 'leaderboard') setView({ type: 'leaderboard' });
+                else if (target === 'tickets') setView({ type: 'tickets' });
+                else if (target === 'products') setView({ type: 'products' });
+                else if (target === 'bazaruto') setView({ type: 'bazaruto' });
+                else if (target === 'subscriberTiers') {
                   const el = document.getElementById('subscriber-tiers');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
             />
             
-            {/* Visual Anchor & Interactive Experience Container */}
-            <div className="max-w-[1680px] w-full max-w-full overflow-x-hidden mx-auto px-3 sm:px-5 md:px-8 space-y-6 md:space-y-8">
+            {/* Compact Visual Anchor & Interactive Experience Container */}
+            <div className="max-w-[1800px] w-full max-w-full overflow-x-hidden mx-auto px-4 md:px-8 space-y-8 md:space-y-10">
               
               {/* 1. Subscriber Tiers & Earned Credentials Showcase (4 Levels) */}
-              <SubscriberTiersShowcase
-                currentLang={currentLang}
-                onNavigateToClub={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'customClub' });
-                }}
-              />
+              <SubscriberTiersShowcase currentLang={currentLang} />
 
-              {/* Official Global Sponsors & Sports Performance Partners */}
+              {/* 2. Official Global Sponsors (Compact Obsidian Strip) */}
               <GlobalSponsorsShowcase currentLang={currentLang} />
 
-              {/* 2. Interactive Clinical Algorithms Launcher (Sleep Studies & ACWR Injury Prediction) */}
-              {(() => {
-                const sleepEval = evaluateSleepArchitecture(liveTelemetry);
-                const injuryEval = evaluateInjuryRisk(liveTelemetry);
-                return (
-                  <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-[#0C0E14] border border-white/[0.08] shadow-xl">
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
-                      <div className="max-w-3xl space-y-1.5">
-                        <span className="text-[10px] font-mono font-bold text-[#D4AF37] uppercase tracking-[0.18em] block">
-                          {tr(currentLang, {
-                            en: 'LIVE CLINICAL ALGORITHMIC LABS',
-                            es: 'LABORATORIOS CLÍNICOS ALGORÍTMICOS EN VIVO',
-                            fr: 'LABORATOIRES CLINIQUES ALGORITHMIQUES EN DIRECT',
-                            ar: 'الخوارزميات السريرية والبيومترية الحية'
-                          })}
-                        </span>
-                        <h3 className="text-xl md:text-2xl font-extrabold text-white">
-                          {tr(currentLang, {
-                            en: 'Sleep Studies & Biomechanical Injury Prediction',
-                            es: 'Estudios del Sueño y Predicción Biomecánica de Lesiones',
-                            fr: 'Études du Sommeil et Prédiction Biomécanique des Blessures',
-                            ar: 'خوارزمية دراسات النوم ونموذج التنبؤ بالإصابات'
-                          })}
-                        </h3>
-                        <p className="text-xs text-slate-300 leading-relaxed">
-                          {tr(currentLang, {
-                            en: 'Interactive precision algorithms calculating Stage-3 deep sleep GH synthesis, sleep debt, and 7-day predictive soft-tissue strain risk.',
-                            es: 'Algoritmos de precisión que calculan la síntesis de GH en sueño profundo NREM3, deuda de sueño y riesgo de sobrecarga a 7 días.',
-                            fr: 'Algorithmes de précision calculant la synthèse GH en sommeil profond NREM3, la dette de sommeil et le risque musculaire sur 7 jours.',
-                            ar: 'أدوات حسابية تفاعلية تحلل دورات النوم العميق واستشفاء هرمون النمو، وتتنبأ بمخاطر التمزقات العضلية وفق معيار الحمل الحاد والمزمن (ACWR).'
-                          })}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-[#121622] border border-white/[0.08] font-mono text-[11px] tabular-nums shrink-0" dir="ltr">
-                        <span className="text-slate-400">
-                          {tr(currentLang, { en: 'READINESS', es: 'LISTO', fr: 'PRÉPA', ar: 'READINESS' })}
-                        </span>
-                        <span className="text-[#D4AF37] font-bold">{sleepEval.overallScore}%</span>
-                        <span className="text-slate-600">|</span>
-                        <span className="text-slate-400">ACWR</span>
-                        <span className="text-[#10B981] font-bold">{injuryEval.acwr.toFixed(2)}</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Sleep Studies Live Card */}
-                      <div className="p-4 sm:p-5 rounded-xl bg-[#121622] border border-white/[0.07] hover:border-[#D4AF37]/45 transition-all flex flex-col justify-between space-y-3.5">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-[10px] font-mono font-bold text-[#D4AF37] uppercase tracking-wider">
-                              {tr(currentLang, {
-                                en: 'CLINICAL SLEEP LAB',
-                                es: 'LAB DE SUEÑO',
-                                fr: 'LABO SOMMEIL',
-                                ar: 'مختبر النوم'
-                              })} · {sleepEval.recoveryState.includes('Optimal')
-                                ? tr(currentLang, { en: 'OPTIMAL ANABOLIC', es: 'ANABÓLICO ÓPTIMO', fr: 'ANABOLIQUE OPTIMAL', ar: 'ذروة التعافي البنائي' })
-                                : sleepEval.recoveryState.includes('Balanced')
-                                ? tr(currentLang, { en: 'BALANCED RECOVERY', es: 'RECUPERACIÓN EQUILIBRADA', fr: 'RÉCUPÉRATION ÉQUILIBRÉE', ar: 'تعافٍ متوازن' })
-                                : tr(currentLang, { en: 'SUPPRESSED / DEBT', es: 'DÉFICIT DE SUEÑO', fr: 'DETTE DE SOMMEIL', ar: 'نقص وتعافٍ منخفض' })}
-                            </span>
-                            <span className="text-[11px] font-mono font-bold text-white tabular-nums" dir="ltr">
-                              {liveTelemetry.totalSleepHours.toFixed(1)}h · NREM3 {liveTelemetry.deepSleepPercent}%
-                            </span>
-                          </div>
-
-                          <div>
-                            <h4 className="text-base md:text-lg font-bold text-white">
-                              {tr(currentLang, {
-                                en: 'Sleep Architecture & Recovery Lab',
-                                es: 'Arquitectura del Sueño y Recuperación',
-                                fr: 'Architecture du Sommeil et Récupération',
-                                ar: 'خوارزمية دراسات النوم وهندسة التعافي'
-                              })}
-                            </h4>
-                            <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                              {tr(currentLang, {
-                                en: 'Evaluate deep sleep stages, REM reflex consolidation, and athletic sleep debt.',
-                                es: 'Evalúa las fases de sueño profundo, consolidación REM y deuda de sueño atlética.',
-                                fr: 'Évaluez les phases NREM3, la consolidation REM et la dette de sommeil athlétique.',
-                                ar: 'تحليل أطوار النوم العميق NREM3 و REM والدين التراكمي وجاهزية الجهاز العصبي.'
-                              })}
-                            </p>
-                          </div>
-
-                          {/* Live Hypnogram Micro-Preview */}
-                          <div className="p-2.5 rounded-xl bg-[#07080C] border border-white/[0.06] flex items-center justify-between gap-3">
-                            <svg viewBox="0 0 180 38" className="w-32 sm:w-36 h-9 shrink-0" aria-hidden="true">
-                              <polyline
-                                fill="none"
-                                stroke="#D4AF37"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                points="2,8 22,8 26,31 52,31 58,18 76,18 82,10 100,10 106,30 132,30 138,14 162,14 176,8"
-                              />
-                            </svg>
-                            <div className="grid grid-cols-2 gap-3 text-[11px] font-mono tabular-nums" dir="ltr">
-                              <div>
-                                <span className="text-slate-500 block text-[9px]">
-                                  {tr(currentLang, { en: 'GH SYNTH', es: 'SÍNTESIS GH', fr: 'SYNTHÈSE GH', ar: 'GH SYNTH' })}
-                                </span>
-                                <span className="text-[#D4AF37] font-bold">
-                                  {sleepEval.growthHormoneEst.includes('Peak')
-                                    ? tr(currentLang, { en: 'Peak Release', es: 'Pico Máximo', fr: 'Pic Maximal', ar: 'إفراز ذروي' })
-                                    : sleepEval.growthHormoneEst.includes('Moderate')
-                                    ? tr(currentLang, { en: 'Moderate', es: 'Moderado', fr: 'Modéré', ar: 'متوسط' })
-                                    : tr(currentLang, { en: 'Blunted', es: 'Reducido', fr: 'Réduit', ar: 'منخفض' })}
-                                </span>
-                              </div>
-                              <div>
-                                <span className="text-slate-500 block text-[9px]">SPO2</span>
-                                <span className="text-[#10B981] font-bold">{liveTelemetry.baselineSpo2}%</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setView({ type: 'sleepStudies' });
-                          }}
-                          className="w-full py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <span>
-                            {tr(currentLang, {
-                              en: 'Open Sleep Lab Telemetry',
-                              es: 'Abrir Telemetría del Sueño',
-                              fr: 'Ouvrir le Labo Sommeil',
-                              ar: 'تشغيل مختبر النوم الحي'
-                            })}
-                          </span>
-                          <span>→</span>
-                        </button>
-                      </div>
-
-                      {/* Injury Prediction Live Card */}
-                      <div className="p-4 sm:p-5 rounded-xl bg-[#121622] border border-white/[0.07] hover:border-[#10B981]/45 transition-all flex flex-col justify-between space-y-3.5">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-[10px] font-mono font-bold text-[#10B981] uppercase tracking-wider">
-                              {tr(currentLang, {
-                                en: 'GABBETT ACWR ENGINE',
-                                es: 'MOTOR GABBETT ACWR',
-                                fr: 'MOTEUR GABBETT ACWR',
-                                ar: 'محرك ACWR الوقائي'
-                              })} · {injuryEval.horizonDays.includes('Optimal')
-                                ? tr(currentLang, { en: '7D+ OPTIMAL', es: '7D+ ÓPTIMO', fr: '7J+ OPTIMAL', ar: 'آمن +7 أيام' })
-                                : injuryEval.horizonDays.includes('4–7')
-                                ? tr(currentLang, { en: '4-7D HORIZON', es: '4-7 DÍAS', fr: '4-7 JOURS', ar: 'أفق 4-7 أيام' })
-                                : injuryEval.horizonDays.includes('48–72')
-                                ? tr(currentLang, { en: '48-72H WATCH', es: '48-72 HORAS', fr: '48-72 HEURES', ar: 'مراقبة 72 ساعة' })
-                                : tr(currentLang, { en: '24H ALERT', es: 'ALERTA 24H', fr: 'ALERTE 24H', ar: 'تنبيه 24 ساعة' })}
-                            </span>
-                            <span className="text-[11px] font-mono font-bold tabular-nums" style={{ color: injuryEval.riskColor }} dir="ltr">
-                              {tr(currentLang, { en: 'RISK', es: 'RIESGO', fr: 'RISQUE', ar: 'RISK' })} {injuryEval.totalRisk}% · ACWR {injuryEval.acwr.toFixed(2)}
-                            </span>
-                          </div>
-
-                          <div>
-                            <h4 className="text-base md:text-lg font-bold text-white">
-                              {tr(currentLang, {
-                                en: 'Biomechanical Injury Prediction',
-                                es: 'Predicción Biomecánica de Lesiones',
-                                fr: 'Prédiction Biomécanique des Blessures',
-                                ar: 'خوارزمية التنبؤ بالإصابات وتوازن الحمل'
-                              })}
-                            </h4>
-                            <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                              {tr(currentLang, {
-                                en: 'Acute:chronic workload ratio analysis, tendon strain alerts, and preventative conditioning.',
-                                es: 'Análisis de carga aguda/crónica, alertas de tensión tendinosa y acondicionamiento preventivo.',
-                                fr: 'Analyse du ratio charge aiguë/chronique, alertes tendineuses et préparation préventive.',
-                                ar: 'تتبع الحمل الحاد والمزمن، إجهاد الأوتار، ومعامل الإصابات السابقة لحماية مفاصل الأبطال.'
-                              })}
-                            </p>
-                          </div>
-
-                          {/* Live 7-Day Strain Risk Sparkline */}
-                          <div className="p-2.5 rounded-xl bg-[#07080C] border border-white/[0.06] flex items-center justify-between gap-3">
-                            <svg viewBox="0 0 180 38" className="w-32 sm:w-36 h-9 shrink-0" aria-hidden="true">
-                              <rect x="0" y="12" width="180" height="14" fill="#10B981" fillOpacity="0.1" rx="2" />
-                              <polyline
-                                fill="none"
-                                stroke="#10B981"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                points="2,28 30,24 58,26 86,19 114,22 144,16 176,14"
-                              />
-                            </svg>
-                            <div className="grid grid-cols-2 gap-3 text-[11px] font-mono tabular-nums" dir="ltr">
-                              <div>
-                                <span className="text-slate-500 block text-[9px]">
-                                  {tr(currentLang, { en: 'STRAIN', es: 'CARGA', fr: 'CHARGE', ar: 'STRAIN' })}
-                                </span>
-                                <span className="text-white font-bold">{injuryEval.fosterStrain}</span>
-                              </div>
-                              <div>
-                                <span className="text-slate-500 block text-[9px]">
-                                  {tr(currentLang, { en: 'CONFIDENCE', es: 'CONFIANZA', fr: 'FIABILITÉ', ar: 'CONFIDENCE' })}
-                                </span>
-                                <span className="text-[#10B981] font-bold">{injuryEval.confidencePercent}%</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setView({ type: 'injuryPrediction' });
-                          }}
-                          className="w-full py-2.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-[#07080C] font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                          <span>
-                            {tr(currentLang, {
-                              en: 'Open Injury Radar Engine',
-                              es: 'Abrir Radar de Lesiones',
-                              fr: 'Ouvrir le Radar Blessures',
-                              ar: 'تشغيل محرك التنبؤ بالإصابات'
-                            })}
-                          </span>
-                          <span>→</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* 2B. Weekly (Top 10) & Monthly (Top 50) Champions + Training Telemetry Readings Preview */}
-              <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-[#0C0E14] border border-emerald-500/25 shadow-xl space-y-5">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-mono font-bold text-[#10B981] uppercase tracking-[0.18em] block">
-                      {tr(currentLang, {
-                        en: 'VERIFIED TRAINING TELEMETRY & STANDINGS',
-                        es: 'CLASIFICACIÓN Y LECTURAS DE ENTRENAMIENTO VERIFICADAS',
-                        fr: 'CLASSEMENTS & MESURES D’ENTRAÎNEMENT VÉRIFIÉES',
-                        ar: 'لوحة المتصدرين والأبطال · قراءات التدريب الحيوية'
-                      })}
-                    </span>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-white">
-                      {tr(currentLang, {
-                        en: 'Weekly (Top 10) & Monthly (Top 50) Champions Board',
-                        es: 'Campeones Semanales (Top 10) y Mensuales (Top 50)',
-                        fr: 'Champions Hebdomadaires (Top 10) & Mensuels (Top 50)',
-                        ar: 'أبطال الأسبوع (Top 10) وأبطال الشهر (Top 50) — أفضل النتائج'
-                      })}
-                    </h3>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundFX.playButtonClick();
-                        setLeaderboardTab('weekly');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setView({ type: 'leaderboard' });
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs cursor-pointer transition-colors"
-                    >
-                      {tr(currentLang, { en: 'Weekly Top 10 →', es: 'Top 10 Semanal →', fr: 'Top 10 Hebdo →', ar: 'أبطال الأسبوع (10) →' })}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundFX.playButtonClick();
-                        setLeaderboardTab('monthly');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setView({ type: 'leaderboard' });
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-[#10B981] hover:bg-[#34D399] text-[#050807] font-bold text-xs cursor-pointer transition-colors"
-                    >
-                      {tr(currentLang, { en: 'Monthly Top 50 →', es: 'Top 50 Mensual →', fr: 'Top 50 Mensuel →', ar: 'أبطال الشهر (50) →' })}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundFX.playButtonClick();
-                        setLeaderboardTab('allTime');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setView({ type: 'leaderboard' });
-                      }}
-                      className="px-3.5 py-2 rounded-xl bg-[#07080C] hover:bg-white/10 text-white border border-white/[0.12] font-semibold text-xs cursor-pointer transition-colors"
-                    >
-                      {tr(currentLang, { en: '300 Legion', es: 'Legión 300', fr: 'Légion 300', ar: 'فيلق 300' })}
-                    </button>
-                  </div>
+              {/* 4. Interactive Clinical Algorithms Launcher (Sleep Studies & ACWR Injury Prediction) */}
+              <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-br from-[#080D0B] via-[#050807] to-[#0A110E] border border-emerald-500/25 shadow-[0_0_30px_rgba(16,185,129,0.12)]">
+                <div className="max-w-3xl mb-6 space-y-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[11px] font-black font-anime uppercase tracking-wider">
+                    ⚡ {tr(currentLang, {
+                      en: 'CLINICAL ALGORITHMIC LABS',
+                      es: 'LABORATORIOS ALGORÍTMICOS CLÍNICOS',
+                      fr: 'LABORATOIRES ALGORITHMIQUES CLINIQUES',
+                      ar: 'الخوارزميات السريرية والبيومترية'
+                    })}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-black font-anime text-white">
+                    {tr(currentLang, {
+                      en: 'Sleep Studies & Biomechanical Injury Prediction',
+                      es: 'Estudios del Sueño y Predicción Biomecánica de Lesiones',
+                      fr: 'Études du Sommeil & Prédiction Biomécanique des Blessures',
+                      ar: 'خوارزمية دراسات النوم ونموذج التنبؤ بالإصابات'
+                    })}
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-300 font-bold leading-relaxed">
+                    {tr(currentLang, {
+                      en: 'Interactive precision algorithms calculating Stage-3 deep sleep GH synthesis, sleep debt, and 7-day predictive soft-tissue strain risk.',
+                      es: 'Algoritmos de precisión interactivos que calculan la síntesis de GH en sueño profundo, deuda de sueño y riesgo de sobrecarga a 7 días.',
+                      fr: 'Algorithmes interactifs mesurant la synthèse GH en sommeil profond NREM3, la dette de sommeil et le risque tendineux à 7 jours.',
+                      ar: 'أدوات حسابية تفاعلية تحلل دورات النوم العميق واستشفاء هرمون النمو، وتتنبأ بمخاطر التمزقات العضلية وفق معيار الحمل الحاد والمزمن (ACWR).'
+                    })}
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Weekly Leaders Card */}
-                  <div className="p-4 rounded-xl bg-[#07080C] border border-white/[0.08] space-y-3">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="text-[#D4AF37] font-bold">
-                        {tr(currentLang, { en: 'WEEKLY TOP 3 · TRAINING READINGS', es: 'TOP 3 SEMANAL · LECTURAS', fr: 'TOP 3 HEBDO · MESURES', ar: 'صدارة الأسبوع · قراءات التدريب' })}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Sleep Studies Launcher Card */}
+                  <div className="p-5 rounded-2xl bg-[#0A100D] border border-emerald-500/20 hover:border-emerald-400/50 transition-all flex flex-col justify-between space-y-4">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-black font-mono text-emerald-400 uppercase tracking-wider block">
+                        CLINICAL SLEEP LAB // NREM3 + REM
                       </span>
-                      <span className="text-slate-400 tabular-nums" dir="ltr">HRV · VO2 · HRS</span>
+                      <h4 className="text-lg font-black font-anime text-white">
+                        {tr(currentLang, {
+                          en: 'Sleep Architecture & Recovery Lab',
+                          es: 'Arquitectura del Sueño y Recuperación',
+                          fr: 'Architecture du Sommeil & Récupération',
+                          ar: 'خوارزمية دراسات النوم وهندسة التعافي'
+                        })}
+                      </h4>
+                      <p className="text-xs text-gray-300 font-bold">
+                        {tr(currentLang, {
+                          en: 'Evaluate deep sleep stages, REM reflex consolidation, and athletic sleep debt.',
+                          es: 'Evalúa fases de sueño profundo, consolidación REM y deuda de sueño atlética.',
+                          fr: 'Évaluez les phases profondes, la consolidation REM et la dette de sommeil.',
+                          ar: 'تحليل أطوار النوم العميق NREM3 و REM والدين التراكمي وجاهزية الجهاز العصبي.'
+                        })}
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      {WEEKLY_CHAMPIONS.slice(0, 3).map((ath) => (
-                        <div key={ath.id} className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-[#10131C] border border-white/[0.05]">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="text-xs font-mono font-bold text-[#D4AF37] w-5 shrink-0" dir="ltr">#{ath.rank}</span>
-                            <div className="min-w-0">
-                              <div className="text-xs font-bold text-white truncate">
-                                {currentLang === 'ar' && ath.nameAr ? ath.nameAr : ath.name}
-                              </div>
-                              <div className="text-[10px] font-mono text-slate-400 truncate">{ath.clubName}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 text-[10px] font-mono tabular-nums shrink-0" dir="ltr">
-                            <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-[#10B981]">HRV {ath.hrvMs}ms</span>
-                            <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-200">VO2 {ath.vo2Max}</span>
-                            <span className="font-bold text-[#D4AF37]">{ath.auraScore.toLocaleString('en-US')}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <button
+                      onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setView({ type: 'sleepStudies' });
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                    >
+                      <span>{tr(currentLang, { en: 'Launch Sleep Algorithm', es: 'Iniciar Algoritmo de Sueño', fr: 'Lancer Algorithme Sommeil', ar: 'تشغيل خوارزمية النوم' })}</span>
+                      <span>{isRTL ? '←' : '→'}</span>
+                    </button>
                   </div>
 
-                  {/* Monthly Leaders Card */}
-                  <div className="p-4 rounded-xl bg-[#07080C] border border-white/[0.08] space-y-3">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="text-[#10B981] font-bold">
-                        {tr(currentLang, { en: 'MONTHLY TOP 50 · VOLUME & STABILITY', es: 'TOP 50 MENSUAL · VOLUMEN Y ESTABILIDAD', fr: 'TOP 50 MENSUEL · VOLUME & STABILITÉ', ar: 'أبطال الشهر (50) · الثبات وساعات التدريب' })}
+                  {/* Injury Prediction Launcher Card */}
+                  <div className="p-5 rounded-2xl bg-[#0A100D] border border-[#D4AF37]/25 hover:border-[#D4AF37]/60 transition-all flex flex-col justify-between space-y-4">
+                    <div className="space-y-1.5">
+                      <span className="text-[10px] font-black font-mono text-[#D4AF37] uppercase tracking-wider block">
+                        GABBETT ACWR ENGINE // 7-DAY HORIZON
                       </span>
-                      <span className="text-slate-400 tabular-nums" dir="ltr">RHR · STAB · HRS</span>
+                      <h4 className="text-lg font-black font-anime text-white">
+                        {tr(currentLang, {
+                          en: 'Biomechanical Injury Prediction',
+                          es: 'Predicción Biomecánica de Lesiones',
+                          fr: 'Prédiction Biomécanique des Blessures',
+                          ar: 'خوارزمية التنبؤ بالإصابات وتوازن الحمل'
+                        })}
+                      </h4>
+                      <p className="text-xs text-gray-300 font-bold">
+                        {tr(currentLang, {
+                          en: 'Acute:chronic workload ratio analysis, tendon strain alerts, and preventative conditioning.',
+                          es: 'Análisis de carga aguda:crónica, alertas de tendones y prevención de sobrecarga.',
+                          fr: 'Analyse du ratio de charge aiguë:chronique et prévention des blessures.',
+                          ar: 'تتبع الحمل الحاد والمزمن، إجهاد الأوتار، ومعامل الإصابات السابقة لحماية مفاصل الأبطال.'
+                        })}
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      {MONTHLY_CHAMPIONS.slice(0, 3).map((ath) => (
-                        <div key={`m-${ath.id}`} className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-[#10131C] border border-white/[0.05]">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className="text-xs font-mono font-bold text-[#10B981] w-5 shrink-0" dir="ltr">#{ath.rank}</span>
-                            <div className="min-w-0">
-                              <div className="text-xs font-bold text-white truncate">
-                                {currentLang === 'ar' && ath.nameAr ? ath.nameAr : ath.name}
-                              </div>
-                              <div className="text-[10px] font-mono text-slate-400 truncate">{ath.clubName}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 text-[10px] font-mono tabular-nums shrink-0" dir="ltr">
-                            <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-200">{ath.trainingHours}h</span>
-                            <span className="hidden sm:inline px-1.5 py-0.5 rounded bg-white/[0.05] text-[#00F0FF]">{ath.restingHr}bpm</span>
-                            <span className="font-bold text-[#10B981]">{ath.stabilityIndex}%</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <button
+                      onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setView({ type: 'injuryPrediction' });
+                      }}
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-amber-400 hover:opacity-95 text-black font-black font-anime text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(212,175,55,0.3)]"
+                    >
+                      <span>{tr(currentLang, { en: 'Launch Injury Algorithm', es: 'Iniciar Algoritmo ACWR', fr: 'Lancer Algorithme ACWR', ar: 'تشغيل خوارزمية الإصابات' })}</span>
+                      <span>{isRTL ? '←' : '→'}</span>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* 3. Live Challenges & Trials Arena Showcase */}
+              {/* 4. Live Challenges & Randomized Trials Arena Showcase */}
               <LiveChallengesArena 
                 currentLang={currentLang}
                 onEnterArena={() => {
@@ -996,13 +791,13 @@ function App() {
                 }}
               />
 
-              {/* 4. AI Bio-Enhanced Athlete Roster */}
+              {/* 5. Interactive Athletic Champions Stage */}
               <InteractiveCharacterStage 
                 currentLang={currentLang} 
-                onExploreSection={(secId) => handleSelectHubSection(secId as SectionHubId)}
+                onExploreSection={(secId) => handleSelectHubSection(secId)}
               />
 
-              {/* 5. The Visionary Founders Showcase (Yam Suw, M.T.K, ARB) */}
+              {/* 6. The Visionary Founders Showcase */}
               <FoundersAndCommunity currentLang={currentLang} />
 
             </div>
@@ -1016,21 +811,15 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <YardCombatEngine 
               currentLang={currentLang} 
-              onNavigateToProfile={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'profile' });
-              }}
+              onNavigateToProfile={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'profile' }); }}
             />
           </div>
         )}
@@ -1039,13 +828,10 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <CombatArena currentLang={currentLang} />
@@ -1056,13 +842,10 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <AIAnimeCoach currentLang={currentLang} />
@@ -1073,13 +856,10 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all shadow-md"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{currentLang === 'ar' ? '→ العودة للرئيسية' : currentLang === 'fr' ? "← Retour à l'Accueil" : currentLang === 'es' ? '← Volver al Inicio' : '← Back to Home'}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <ProductGrid 
@@ -1096,16 +876,13 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
-            <Leaderboard currentLang={currentLang} initialTimeframe={leaderboardTab} />
+            <Leaderboard currentLang={currentLang} />
           </div>
         )}
 
@@ -1113,13 +890,10 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <About currentLang={currentLang} />
@@ -1130,21 +904,15 @@ function App() {
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
               <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
+                className={backBtnClass}
               >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+                <span>{backLabel}</span>
               </button>
             </div>
             <AuraVisualizer 
               currentLang={currentLang}
-              onNavigateToProfile={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'profile' });
-              }}
+              onNavigateToProfile={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'profile' }); }}
             />
           </div>
         )}
@@ -1236,7 +1004,8 @@ function App() {
                 yardCamp: { type: 'yardCamp' },
                 camp: { type: 'yardCamp' },
                 bazaruto: { type: 'bazaruto' },
-                resort: { type: 'bazaruto' }
+                resort: { type: 'bazaruto' },
+                ownerDashboard: { type: 'ownerDashboard' }
               };
               if (viewMap[optionId]) {
                 setView(viewMap[optionId]);
@@ -1268,22 +1037,13 @@ function App() {
         {view.type === 'sleepStudies' && (
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#00F0FF] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
-              >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+              <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }} className={backBtnClass}>
+                <span>{backLabel}</span>
               </button>
             </div>
             <SleepStudiesAlgorithm 
               currentLang={currentLang} 
-              onClose={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'home' });
-              }}
+              onClose={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
             />
           </div>
         )}
@@ -1291,22 +1051,13 @@ function App() {
         {view.type === 'injuryPrediction' && (
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#E50914] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
-              >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+              <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }} className={backBtnClass}>
+                <span>{backLabel}</span>
               </button>
             </div>
             <InjuryPredictionAlgorithm 
               currentLang={currentLang} 
-              onClose={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'home' });
-              }}
+              onClose={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
             />
           </div>
         )}
@@ -1314,22 +1065,13 @@ function App() {
         {view.type === 'subscriberTiers' && (
           <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-[#1a1c2e] text-[#FFE600] hover:text-white border border-gray-800 text-xs font-black font-anime cursor-pointer transition-all"
-              >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+              <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }} className={backBtnClass}>
+                <span>{backLabel}</span>
               </button>
             </div>
             <SubscriberTiersShowcase 
               currentLang={currentLang} 
-              onNavigateToClub={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'customClub' });
-              }}
+              onNavigateToClub={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'customClub' }); }}
             />
           </div>
         )}
@@ -1338,61 +1080,37 @@ function App() {
           <div className="pt-20 w-full max-w-full overflow-x-hidden">
             <CreatorClubHub 
               currentLang={currentLang}
-              onNavigateToTiers={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'subscriberTiers' });
-              }}
-              onBack={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'home' });
-              }}
+              onNavigateToTiers={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'subscriberTiers' }); }}
+              onBack={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }}
             />
           </div>
         )}
 
         {view.type === 'yardCamp' && (
-          <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden bg-black min-h-screen">
+          <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden bg-[#050807] min-h-screen">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
-              >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+              <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }} className={backBtnClass}>
+                <span>{backLabel}</span>
               </button>
             </div>
             <YardGlobalCamp 
               currentLang={currentLang} 
-              onExploreGear={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setView({ type: 'products' });
-              }} 
+              onExploreGear={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'products' }); }} 
             />
           </div>
         )}
 
         {view.type === 'bazaruto' && (
-          <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden bg-black min-h-screen">
+          <div className="pt-24 pb-20 w-full max-w-full overflow-x-hidden bg-[#050807] min-h-screen">
             <div className="max-w-[1800px] w-full max-w-full mx-auto px-4 md:px-8 mb-4">
-              <button 
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'home' });
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#141622] hover:bg-white text-white hover:text-black text-xs font-black font-anime cursor-pointer transition-all shadow-md"
-              >
-                <span>{tr(currentLang, { en: '← Back to Home', es: '← Volver al Inicio', fr: "← Retour à l'Accueil", ar: '→ العودة للرئيسية' })}</span>
+              <button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'home' }); }} className={backBtnClass}>
+                <span>{backLabel}</span>
               </button>
             </div>
             <div className="max-w-[1800px] mx-auto px-4 md:px-8">
               <BazarutoResortSanctuary 
                 currentLang={currentLang}
-                onExploreEvents={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setView({ type: 'tickets' });
-                }}
+                onExploreEvents={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setView({ type: 'tickets' }); }}
               />
             </div>
           </div>
@@ -1443,13 +1161,13 @@ function App() {
                 aiCoach: { type: 'aiCoach' },
                 products: { type: 'products' },
                 customClub: { type: 'customClub' },
+                yardCamp: { type: 'yardCamp' },
+                bazaruto: { type: 'bazaruto' },
+                resort: { type: 'bazaruto' },
                 leaderboard: { type: 'leaderboard' },
                 journal: { type: 'championStory' },
                 tickets: { type: 'tickets' },
-                about: { type: 'about' },
-                bazaruto: { type: 'bazaruto' },
-                yardCamp: { type: 'yardCamp' },
-                home: { type: 'home' }
+                about: { type: 'about' }
               };
               if (map[viewId]) setView(map[viewId]);
             }}
@@ -1492,7 +1210,6 @@ function App() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         currentLang={currentLang}
-        initialMode={authModalMode}
       />
 
       {sharedAuraGuestData && (
@@ -1518,7 +1235,7 @@ function App() {
       {isOwner && view.type !== 'ownerDashboard' && (
         <aside 
           aria-label="Owner Quick Access"
-          className={`fixed bottom-5 ${currentLang === 'ar' ? 'left-5' : 'right-5'} z-50 flex items-center gap-2 p-1.5 px-3 rounded-2xl bg-[#0B0D17]/95 border-2 border-[#FFE600]/70 shadow-[0_0_35px_rgba(255,230,0,0.35)] backdrop-blur-xl animate-fade-in`}
+          className={`fixed bottom-5 ${currentLang === 'ar' ? 'left-5' : 'right-5'} z-50 flex items-center gap-2 p-1.5 px-3 rounded-2xl bg-[#080D0B]/95 border border-[#D4AF37]/60 shadow-[0_0_25px_rgba(212,175,55,0.25)] backdrop-blur-xl animate-fade-in`}
         >
           <button 
             type="button"
@@ -1526,11 +1243,11 @@ function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
               setView({ type: 'ownerDashboard' });
             }}
-            className="flex items-center gap-2 text-xs font-semibold text-[#D4AF37] hover:text-white transition-colors cursor-pointer"
+            className="flex items-center gap-2 text-xs font-black font-anime text-[#D4AF37] hover:text-white transition-colors cursor-pointer"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
             <span className="truncate max-w-[130px]">👑 {ownerInfo.name}</span>
-            <span className="text-[10px] text-gray-300 font-bold px-2 py-0.5 rounded-lg bg-black/60 border border-gray-800">
+            <span className="text-[10px] text-gray-300 font-bold px-2 py-0.5 rounded-lg bg-black/60 border border-emerald-500/30">
               {tr(currentLang, { en: 'Dashboard', es: 'Panel', fr: 'Tableau', ar: 'لوحة المالك' })}
             </span>
           </button>
@@ -1541,7 +1258,7 @@ function App() {
               setIsOwner(false);
             }}
             className="p-1 px-1.5 rounded-xl bg-red-950/50 hover:bg-red-900 text-red-400 hover:text-white text-[11px] font-bold transition-colors cursor-pointer"
-            title={tr(currentLang, { en: 'Logout Owner', es: 'Salir del Panel', fr: 'Déconnexion Propriétaire', ar: 'تسجيل الخروج من حساب المالك' })}
+            title={tr(currentLang, { en: 'Logout Owner', es: 'Cerrar Propietario', fr: 'Déconnexion', ar: 'تسجيل الخروج من حساب المالك' })}
           >
             ✕
           </button>

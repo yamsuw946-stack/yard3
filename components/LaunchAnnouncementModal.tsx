@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
-import { SAMURAI_RONIN_IMAGE, NINJA_KUNOICHI_IMAGE, YARD300_BRAND_LOGO, handleImageError } from '../constants';
+import { HERO_IMAGE, YARD300_BRAND_LOGO, handleImageError } from '../constants';
 import { getLaunchTargetTimestamp, calculateLaunchTimeRemaining, LaunchTimeRemaining } from '../utils/launchCountdown';
 
 interface LaunchAnnouncementModalProps {
@@ -95,12 +95,12 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
         <div className="p-6 md:p-8 pt-12 md:pt-14">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             
-            {/* Left Graphic with Samurai / Ninja theme */}
+            {/* Left Graphic with YARD 300 Elite Champion */}
             <div className="md:col-span-5 relative flex items-center justify-center">
               <div className="relative w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden border-2 border-[#E50914] shadow-[0_0_30px_rgba(229,9,20,0.5)]">
                 <img 
-                  src={SAMURAI_RONIN_IMAGE} 
-                  alt="YARD300 Samurai Warrior" 
+                  src={HERO_IMAGE} 
+                  alt="YARD 300 Elite Athlete" 
                   onError={handleImageError}
                   loading="lazy"
                   decoding="async"
@@ -109,7 +109,7 @@ export const LaunchAnnouncementModal: React.FC<LaunchAnnouncementModalProps> = (
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0B10] via-transparent to-transparent"></div>
                 <div className="absolute bottom-2 left-2 right-2 text-center">
                   <span className="text-[10px] font-black font-anime text-[#FFE600] tracking-widest uppercase bg-black/70 px-2 py-0.5 rounded border border-[#FFE600]/40">
-                    {t('CYBER SAMURAI 2050', 'SAMURÁI CIBERNÉTICO 2050', 'SAMOURAÏ CYBER 2050', 'محارب الساموراي 2050')}
+                    {t('YARD 300 ELITE', 'ÉLITE YARD 300', 'ÉLITE YARD 300', 'أبطال النخبة YARD 300')}
                   </span>
                 </div>
               </div>

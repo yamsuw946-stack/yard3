@@ -314,14 +314,14 @@ export const DEFAULT_SITE_VIDEOS: SiteVideoItem[] = [
 export const DEFAULT_INITIAL_ARTICLES: CustomArticleData[] = [
   {
     id: 1,
-    titleEn: 'Samurai Warrior Mindset: Shattering Limits Past 100% & Conquering Muscle Fatigue',
-    titleAr: 'عقلية محارب الساموراي: كسر الحدود 100% وتحطيم سقف الإجهاد العضلي',
+    titleEn: 'Elite Combat Mindset: Shattering Limits Past 100% & Conquering Muscle Fatigue',
+    titleAr: 'عقلية البطل النخبوي: كسر الحدود 100% وتحطيم سقف الإجهاد العضلي',
     dateEn: 'September 28, 2026',
     dateAr: '28 سبتمبر 2026',
     excerptEn: "The difference between an ordinary lifter and an elite combat champion isn't genetics — it's razor-sharp focus, tactical discipline, and pushing through deep burn.",
     excerptAr: 'الفرق بين الممارس العادي وبطل القتال الخارق ليس في الجينات، بل في التركيز الشرس والانضباط التكتيكي ومواصلة الضغط عند أعلى درجات الاحتراق.',
-    contentEn: 'When muscles burn and your mind screams to drop the barbell, the inner samurai awakens. In the YARD300 combat philosophy, fixed ceilings do not exist; fatigue is merely the neurological bell signaling that real growth has begun.\n\nSynthesizing neuromuscular coordination, endurance hormone monitoring, and tactical deep combat respiration allows you to shatter the 100% threshold safely.\n\n"The katana is forged only in fierce flame, and champion muscle is sculpted only by annihilating self-doubt!"',
-    contentAr: 'عندما تشعر باحتراق أليافك العضلية ويطالبك عقلك بالتوقف، يظهر محارب الساموراي الكامن بداخلك. في منهجية YARD300، لا نؤمن بالحدود الثابتة؛ فالإرهاق مجرد إشارة عصبية عابرة تعلن بدء التدريب الحقيقي.\n\nدمج التوافق العصبي العضلي، ومراقبة هرمونات التحمل، والتنفس القتالي العميق يتيح لك تحقيق كومبو لا نهائي وكسر حاجز الـ 100% دون التعرض للإصابات المفاجئة.\n\n"النصل لا يُصقل إلا باللهب العالي، وعضلات البطل لا تُبنى إلا بكسر حاجز الخوف!"',
+    contentEn: 'When muscles burn and your mind screams to stop, the inner champion awakens. In the YARD300 combat philosophy, fixed ceilings do not exist; fatigue is merely the neurological bell signaling that real growth has begun.\n\nSynthesizing neuromuscular coordination, endurance hormone monitoring, and tactical deep combat respiration allows you to shatter the 100% threshold safely.\n\n"Discipline is forged under maximum load, and champion muscle is sculpted only by annihilating self-doubt!"',
+    contentAr: 'عندما تشعر باحتراق أليافك العضلية ويطالبك عقلك بالتوقف، يظهر البطل الحقيقي الكامن بداخلك. في منهجية YARD300، لا نؤمن بالحدود الثابتة؛ فالإرهاق مجرد إشارة عصبية عابرة تعلن بدء التدريب الحقيقي.\n\nدمج التوافق العصبي العضلي، ومراقبة هرمونات التحمل، والتنفس القتالي العميق يتيح لك تحقيق كومبو لا نهائي وكسر حاجز الـ 100% دون التعرض للإصابات المفاجئة.\n\n"الإرادة تُصقل تحت الضغط العالي، وعضلات البطل لا تُبنى إلا بكسر حاجز الخوف!"',
     image: JOURNAL_MINDSET_IMAGE,
     category: 'Mindset & Combat',
     author: 'Yam Suw & Team YARD'
@@ -363,9 +363,9 @@ export const DEFAULT_RESORT_CONFIG: ResortOverrideConfig = {
   titleAr: 'منتجع يارد الصحي —',
   subtitleHighlightEn: 'Luxury Recovery & Coastal Hospitality',
   subtitleHighlightAr: 'ملاذ الاستشفاء والضيافة الساحلية',
-  overviewEn: 'A coastal recovery sanctuary in the Bazaruto Archipelago opening October 2027 — uniting 10 private villas, a boutique hotel, entertainment promenade, lagoon pool, 4 global restaurants, a dedicated sand & combat gym wing, and a specialized sports & mental wellness hospital.',
-  overviewAr: 'ملاذ ساحلي متكامل على رمال أرخبيل بازاروتو يستقبل زواره بدءاً من أكتوبر 2027؛ يجمع بين 10 فيلل شاطئية مستقلة، وفندق بوتيكي، ومنطقة ترفيهية ومول متكامل، وصالة قتالية على الرمال، و4 مطاعم عالمية، ومستشفى متخصص في الطب الرياضي والتأهيل النفسي.',
-  architectName: 'Ayman .A. suwaidi',
+  overviewEn: 'A coastal recovery sanctuary in the Bazaruto Archipelago opening October 2027 — uniting 10 sculptural wood-and-glass beachfront villas, a 2-story boutique hotel, a two-story entertainment mall (26 global brands, 4 restaurants, 4 cafés including a rooftop terrace, VIP nightclub, cinema & theater), a 30-berth deep-water yacht marina, private VIP helipad, lagoon pool, sand combat gym wing, and a specialized sports injury hospital.',
+  overviewAr: 'ملاذ ساحلي متكامل على رمال أرخبيل بازاروتو يستقبل زواره بدءاً من أكتوبر 2027؛ يجمع بين 10 فيلل شاطئية مستقلة بتصميم خشبي وزجاجي مقوّس، وفندق بوتيكي من طابقين، ومول ترفيهي من دورين يضم 26 براند عالمي و4 مطاعم و4 كافيهات أحدها روف ونادي ليلي وسينما ومسرح ترفيه، مع مرسى يخوت عميق يتسع حتى 30 يختاً ومهبط هليكوبتر VIP خاص، وصالة قتالية على الرمال، ومستشفى متخصص في الإصابات الرياضية والتأهيل.',
+  architectName: 'Architectural Signature',
   heroPanoramaImage: YARD_BAZARUTO_RESORT_IMAGE,
   aerialNightImage: YARD_ISLAND_AERIAL_NIGHT_IMAGE
 };
@@ -389,8 +389,8 @@ export const DEFAULT_BRAND_SITE_SETTINGS: BrandSiteSettings = {
       image: FOUNDER_YAM_SUW_IMAGE
     },
     'mtk': {
-      name: 'M.T.K',
-      nameAr: 'M.T.K',
+      name: 'm t k',
+      nameAr: 'm t k',
       role: 'Co-Founder · Pilates, Functional Flow & Recovery Lead',
       roleAr: 'المؤسس المشارك · قيادة البيلاتس واللياقة الوظيفية والاستشفاء',
       image: FOUNDER_MTK_IMAGE
@@ -447,7 +447,8 @@ export class OwnerConfigService {
       if (stored) {
         const parsed = JSON.parse(stored);
         const rawMedia = { ...DEFAULT_SITE_CONFIG.media, ...(parsed.media || {}) };
-        const isLegacyPath = (u?: string) => !u || /anime_|cyber_|yard_brand_hero|boxing_|tarik_|live_arena_/.test(u);
+        const isLegacyPath = (u?: string) =>
+          !u || /anime_|cyber_|yard_brand_hero|yard_tribe_champions|mtk_anime|ticket_shaolin|ticket_tokyo|realistic_|boxing_|tarik_|live_arena_/.test(u);
         const sanitizedMedia: SiteMediaConfig = {
           ...rawMedia,
           heroImage: isLegacyPath(rawMedia.heroImage) ? HERO_IMAGE : rawMedia.heroImage,
@@ -461,13 +462,17 @@ export class OwnerConfigService {
             : v.posterUrl
         }));
         const rawResort = { ...DEFAULT_RESORT_CONFIG, ...(parsed.resort || {}) };
-        // Ensure latest resort assets when older stored defaults exist
-        if (rawResort.heroPanoramaImage === '/images/yard_bazaruto_resort.jpg') {
+        // Ensure latest resort architectural presentation assets when older stored defaults exist
+        if (
+          rawResort.heroPanoramaImage === '/images/yard_bazaruto_resort.jpg' ||
+          rawResort.heroPanoramaImage === '/images/yard_bazaruto_resort_v2.jpg'
+        ) {
           rawResort.heroPanoramaImage = YARD_BAZARUTO_RESORT_IMAGE;
         }
         if (
           rawResort.aerialNightImage === '/images/bazaruto_island_aerial_night.jpg' ||
-          rawResort.aerialNightImage === '/images/bazaruto_aerial_night_v2.jpg'
+          rawResort.aerialNightImage === '/images/bazaruto_aerial_night_v2.jpg' ||
+          rawResort.aerialNightImage === '/images/bazaruto_aerial_night_v3.jpg'
         ) {
           rawResort.aerialNightImage = YARD_ISLAND_AERIAL_NIGHT_IMAGE;
         }

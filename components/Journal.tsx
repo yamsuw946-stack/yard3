@@ -41,7 +41,7 @@ const Journal: React.FC<JournalProps> = ({ currentLang = 'en', onArticleClick })
                 en: 'WARRIOR JOURNAL & STRATEGY 2027',
                 es: 'DIARIO DEL GUERRERO Y ESTRATEGIA 2027',
                 fr: 'JOURNAL DU GUERRIER & STRATÉGIE 2027',
-                ar: 'أسرار تدريب الساموراي وعقلية النخبة 2027',
+                ar: 'أسرار تدريب الأبطال وعقلية النخبة 2027',
               })}
             </span>
             <h2 className="text-4xl md:text-6xl font-black font-anime text-white">

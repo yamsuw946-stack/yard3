@@ -36,7 +36,7 @@ import {
   EyeOff,
   ShieldAlert
 } from 'lucide-react';
-import { Language, tr } from '../i18n';
+import { Language } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { handleImageError } from '../constants';
 
@@ -193,8 +193,7 @@ const EXPEDITION_PLANS: CampExpeditionPlan[] = [
   }
 ];
 
-export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: propLang = 'en', onExploreGear }) => {
-  const currentLang = propLang as Language;
+export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang = 'en', onExploreGear }) => {
   const isAr = currentLang === 'ar';
   const isFr = currentLang === 'fr';
   const isEs = currentLang === 'es';
@@ -453,42 +452,22 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <span className="text-xs font-black font-anime text-[#10B981] uppercase tracking-wider block">
-                {tr(currentLang, {
-                  en: 'THE 3 GRAND ANNUAL EXPEDITIONS // 300 SPOTS EACH',
-                  es: 'LAS 3 EXPEDICIONES ANUALES // 300 PLAZAS CADA UNA',
-                  fr: 'LES 3 EXPÉDITIONS ANNUELLES // 300 PLACES CHACUNE',
-                  ar: 'مغامرات العام الثلاث // 300 مقعد لكل مغامرة',
-                })}
+                {isAr ? 'مغامرات العام الثلاث // 300 مقعد لكل مغامرة' : isFr ? 'LES 3 GRANDES EXPÉDITIONS ANNUELLES // 300 PLACES CHACUNE' : isEs ? 'LAS 3 GRANDES EXPEDICIONES ANUALES // 300 PLAZAS CADA UNA' : 'THE 3 GRAND ANNUAL EXPEDITIONS // 300 SPOTS EACH'}
               </span>
               <h2 className="text-3xl sm:text-4xl font-black font-anime text-white">
-                {tr(currentLang, {
-                  en: 'The 3 Annual Expeditions (300 Athletes Per Camp)',
-                  es: 'Las 3 Expediciones Anuales (300 Atletas por Campamento)',
-                  fr: 'Les 3 Expéditions Annuelles (300 Athlètes par Camp)',
-                  ar: 'المغامرات الثلاث حول العالم (300 شخص لكل مخيم)',
-                })}
+                {isAr ? 'المغامرات الثلاث حول العالم (300 شخص لكل مخيم)' : isFr ? 'Les 3 Expéditions Annuelles (300 Athlètes par Camp)' : isEs ? 'Las 3 Expediciones Anuales (300 Atletas por Campamento)' : 'The 3 Annual Expeditions (300 Athletes Per Camp)'}
               </h2>
               <p className="text-xs text-gray-400 font-bold mt-1">
-                {tr(currentLang, {
-                  en: 'Exact timing and secret coordinates revealed strictly to accepted athletes post-screening',
-                  es: 'Fechas exactas y coordenadas secretas reveladas solo a atletas aceptados tras evaluación',
-                  fr: 'Dates exactes et coordonnées secrètes révélées uniquement aux athlètes sélectionnés',
-                  ar: 'المواعيد والإحداثيات تعلن رسمياً للمشاركين المقبولين فقط بعد اجتياز الفحص البيومتري',
-                })}
+                {isAr ? 'المواعيد والإحداثيات تعلن رسمياً للمشاركين المقبولين فقط بعد اجتياز الفحص البيومتري' : isFr ? 'Calendrier exact et coordonnées secrètes dévoilés uniquement aux athlètes acceptés' : isEs ? 'Fechas exactas y coordenadas secretas reveladas solo a los atletas seleccionados' : 'Exact timing and secret coordinates revealed strictly to accepted athletes post-screening'}
               </p>
             </div>
             
-            <span className="text-xs font-mono font-bold text-[#FFE600] bg-black px-3 py-1.5 rounded-xl">
-              {tr(currentLang, {
-                en: '300 SPOTS / CAMP',
-                es: '300 PLAZAS / CAMP',
-                fr: '300 PLACES / CAMP',
-                ar: '300 مقعد لكل مخيم',
-              })}
+            <span className="text-xs font-mono font-bold text-[#FFE600] bg-black px-3 py-1.5 rounded-xl border border-white/10">
+              {isAr ? '300 مقعد لكل مخيم' : isFr ? '300 PLACES / CAMP' : isEs ? '300 PLAZAS / CAMP' : '300 SPOTS / CAMP'}
             </span>
           </div>
 
-          {/* Cards for the 3 Expeditions - Compact, Clean, Unique Photos & No Duplication */}
+          {/* Cards for the 3 Expeditions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {EXPEDITION_PLANS.map((exp) => {
               const isSelected = selectedPlan === exp.id;
@@ -507,7 +486,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                     soundFX.playButtonClick();
                     setSelectedPlan(exp.id);
                   }}
-                  className={`rounded-3xl p-6 bg-[#0D0E17] transition-all duration-300 cursor-pointer flex flex-col justify-between group border border-white/5 ${isSelected ? "shadow-[0_0_35px_rgba(255,255,255,0.15)] bg-[#121422] border-[#FFE600]/40 scale-[1.01]" : "hover:bg-[#10121D] hover:border-white/20"}`}
+                  className={`rounded-3xl p-6 bg-[#080D0B] transition-all duration-300 cursor-pointer flex flex-col justify-between group border ${isSelected ? "shadow-[0_0_35px_rgba(16,185,129,0.2)] bg-[#0C1411] border-emerald-400/50 scale-[1.01]" : "border-white/10 hover:bg-[#0B120F] hover:border-white/25"}`}
                 >
                   <div className="space-y-4">
                     {/* Header badge */}
@@ -519,7 +498,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                         {seasonLabel}
                       </span>
                       <span className="text-[11px] font-mono font-black text-white bg-black/80 px-2.5 py-1 rounded-lg border border-white/10">
-                        300 ATHLETES
+                        {isAr ? '300 رياضي' : isFr ? '300 ATHLÈTES' : isEs ? '300 ATLETAS' : '300 ATHLETES'}
                       </span>
                     </div>
 
@@ -620,90 +599,65 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
         {/* ==================================================================== */}
         {/* WHAT IS INCLUDED IN THE ALL-INCLUSIVE CAMP RETREAT                   */}
         {/* ==================================================================== */}
-        <div className="p-8 md:p-14 rounded-3xl bg-gradient-to-r from-[#0E1018] via-[#10121C] to-[#0E1018] shadow-2xl space-y-8">
+        <div className="p-8 md:p-14 rounded-3xl bg-gradient-to-r from-[#080D0B] via-[#0B1410] to-[#080D0B] border border-white/[0.08] shadow-2xl space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-black font-anime text-[#A855F7] uppercase tracking-wider">
-              {tr(currentLang, { en: 'THE 300 ROYAL PRIVILEGES', es: 'PRIVILEGIOS REALES DE LOS 300', fr: 'LES PRIVILÈGES ROYAUX DES 300', ar: 'امتيازات معسكر الـ 300 الملكية الشاملة' })}
+            <span className="text-xs font-black font-anime text-emerald-400 uppercase tracking-wider">
+              {isAr ? 'امتيازات معسكر الـ 300 الملكية الشاملة' : isFr ? 'PRIVILÈGES ROYAUX DES 300' : isEs ? 'PRIVILEGIOS REALES DE LOS 300' : 'THE 300 ROYAL PRIVILEGES'}
             </span>
             <h2 className="text-3xl sm:text-4xl font-black font-anime text-white">
-              {tr(currentLang, { en: 'What is Included in Your 300 Camp Retreat?', es: '¿Qué Incluye tu Retiro Campamento 300?', fr: 'Ce Que Comprend Votre Retraite Camp 300 ?', ar: 'ما الذي تتضمنه باقة المعسكر الاستثنائية؟' })}
+              {isAr ? 'ما الذي تتضمنه باقة المعسكر الاستثنائية؟' : isFr ? 'Ce qui est Inclus dans Votre Retraite 300' : isEs ? '¿Qué Incluye tu Retiro Campamento 300?' : 'What is Included in Your 300 Camp Retreat?'}
             </h2>
             <p className="text-xs sm:text-sm text-gray-400 font-bold">
-              {tr(currentLang, {
-                en: 'A 5-star athletic and wild retreat engineered for the top 300 athletes per camp',
-                es: 'Un retiro atlético 5 estrellas diseñado para los 300 mejores atletas por campamento',
-                fr: 'Une retraite athlétique 5 étoiles conçue pour l\'élite des 300 athlètes par camp',
-                ar: 'إقامة ملكية وتجربة تدريب فريدة دون أي عناء لوجستي لـ 300 رياضي في كل مخيم',
-              })}
+              {isAr ? 'إقامة ملكية وتجربة تدريب فريدة دون أي عناء لوجستي لـ 300 رياضي في كل مخيم' : isFr ? 'Un camp d’élite 5 étoiles en pleine nature pour 300 athlètes par session' : isEs ? 'Un retiro atlético 5 estrellas en naturaleza virgen para 300 atletas por campamento' : 'A 5-star athletic and wild retreat engineered for the top 300 athletes per camp'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-6 rounded-2xl bg-black/60 space-y-3">
+            <div className="p-6 rounded-2xl bg-black/60 border border-white/5 space-y-3">
               <div className="w-12 h-12 rounded-xl bg-[#FFE600]/15 flex items-center justify-center text-[#FFE600]">
                 <Crown className="w-6 h-6" />
               </div>
               <h3 className="font-anime font-black text-base text-white">
-                {tr(currentLang, { en: 'Private 5-Star Wilderness Retreat', es: 'Retiro Privado 5 Estrellas', fr: 'Retraite Privée 5 Étoiles', ar: 'إقامة 5 نجوم في منتجع سري' })}
+                {isAr ? 'إقامة 5 نجوم في منتجع سري' : isFr ? 'Retraite Privée 5 Étoiles' : isEs ? 'Retiro Privado 5 Estrellas' : 'Private 5-Star Wilderness Retreat'}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed">
-                {tr(currentLang, {
-                  en: 'Luxury private suites with sound-dampened acoustics and recovery sleep design.',
-                  es: 'Suites privadas de lujo con acústica aislada y arquitectura para sueño profundo.',
-                  fr: 'Suites privées de luxe avec acoustique isolée et design optimisé pour le sommeil profond.',
-                  ar: 'أجنحة فاخرة مجهزة ببيئة هادئة ومولدات أكسجين لضمان أقصى درجات النوم العميق NREM3.',
-                })}
+                {isAr ? 'أجنحة فاخرة مجهزة ببيئة هادئة ومولدات أكسجين لضمان أقصى درجات النوم العميق NREM3.' : isFr ? 'Suites luxueuses isolées acoustiquement pour optimiser la récupération profonde NREM3.' : isEs ? 'Suites privadas con diseño acústico y de recuperación profunda NREM3.' : 'Luxury private suites with sound-dampened acoustics and recovery sleep design.'}
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-black/60 space-y-3">
+            <div className="p-6 rounded-2xl bg-black/60 border border-white/5 space-y-3">
               <div className="w-12 h-12 rounded-xl bg-[#10B981]/15 flex items-center justify-center text-[#10B981]">
                 <HeartPulse className="w-6 h-6" />
               </div>
               <h3 className="font-anime font-black text-base text-white">
-                {tr(currentLang, { en: 'Chef-Prepared Performance Fuel', es: 'Nutrición de Alto Rendimiento', fr: 'Nutrition Sportive par Chefs', ar: 'تغذية قتالية وطهاة متخصصون' })}
+                {isAr ? 'تغذية قتالية وطهاة متخصصون' : isFr ? 'Nutrition de Performance par Chef' : isEs ? 'Nutrición de Combate por Chef' : 'Chef-Prepared Performance Fuel'}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed">
-                {tr(currentLang, {
-                  en: '4 daily gourmet meals and customized macros tailored to your biometric strain.',
-                  es: '4 comidas gourmet diarias y macros calibrados según tu carga biométrica.',
-                  fr: '4 repas gastronomiques par jour et macros calibrées sur votre charge biométrique.',
-                  ar: '4 وجبات يومية عالية البروتين ومضادات الأكسدة مصممة طبقاً لبيانات حرق السعرات.',
-                })}
+                {isAr ? '4 وجبات يومية عالية البروتين ومضادات الأكسدة مصممة طبقاً لبيانات حرق السعرات.' : isFr ? '4 repas gastronomiques quotidiens calibrés selon votre dépense biométrique.' : isEs ? '4 comidas diarias diseñadas por chefs según tus datos biométricos.' : '4 daily gourmet meals and customized macros tailored to your biometric strain.'}
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-black/60 space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-[#A855F7]/15 flex items-center justify-center text-[#A855F7]">
+            <div className="p-6 rounded-2xl bg-black/60 border border-white/5 space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center text-emerald-400">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="font-anime font-black text-base text-white">
-                {tr(currentLang, { en: 'Full Serialized Gear & Ring', es: 'Equipamiento Completo y Anillo', fr: 'Équipement Complet & Bague', ar: 'عتاد وأجهزة YARD 300 الكاملة' })}
+                {isAr ? 'عتاد وأجهزة YARD 300 الكاملة' : isFr ? 'Équipement Complet YARD 300' : isEs ? 'Equipamiento Completo YARD 300' : 'Full Serialized Gear & Ring'}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed">
-                {tr(currentLang, {
-                  en: 'YARD biometric ring, screenless band, combat compression apparel, and hydration vessel.',
-                  es: 'Anillo biométrico YARD, banda sin pantalla, indumentaria técnica y botella térmica.',
-                  fr: 'Bague biométrique YARD, bracelet sans écran, tenue de combat et gourde technique.',
-                  ar: 'خاتم التيتانيوم الذكي المرقم، السوار النسيجي، قمصان القتال، ووعاء الترطيب الهندسي.',
-                })}
+                {isAr ? 'خاتم التيتانيوم الذكي المرقم، السوار النسيجي، قمصان القتال، ووعاء الترطيب الهندسي.' : isFr ? 'Bague titane biométrique, bracelet sans écran, tenues de combat et gourde.' : isEs ? 'Anillo biométrico de titanio, banda sin pantalla, ropa de combate y botella.' : 'YARD biometric ring, screenless band, combat compression apparel, and hydration vessel.'}
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-black/60 space-y-3">
+            <div className="p-6 rounded-2xl bg-black/60 border border-white/5 space-y-3">
               <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-white">
                 <Users className="w-6 h-6" />
               </div>
               <h3 className="font-anime font-black text-base text-white">
-                {tr(currentLang, { en: 'Direct Leadership by Founders', es: 'Liderazgo Directo de Fundadores', fr: 'Direction Directe des Fondateurs', ar: 'إشراف مباشر من المؤسسين' })}
+                {isAr ? 'إشراف مباشر من المؤسسين' : isFr ? 'Direction par les Fondateurs' : isEs ? 'Liderazgo de los Fundadores' : 'Direct Leadership by Founders'}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed">
-                {tr(currentLang, {
-                  en: 'Intensive daily masterclasses and mentorship directly led by the founders and the international coaching crew.',
-                  es: 'Acompañamiento cercano y clases magistrales dirigidas por los fundadores y el equipo global de entrenadores.',
-                  fr: 'Accompagnement intensif et masterclasses dirigés par les fondateurs et l\'équipe internationale de coachs.',
-                  ar: 'مرافقة تدريبية وتوجيه استراتيجي مباشر من المؤسسين وباقي فريق المدربين حول العالم.',
-                })}
+                {isAr ? 'مرافقة تدريبية وتوجيه استراتيجي مباشر من المؤسسين وباقي فريق المدربين حول العالم.' : isFr ? "Accompagnement intensif et masterclasses dirigés par les fondateurs et l'équipe internationale de coachs." : isEs ? 'Acompañamiento cercano y clases magistrales dirigidas por los fundadores y el equipo global de entrenadores.' : 'Intensive daily masterclasses and mentorship directly led by the founders and the international coaching crew.'}
               </p>
             </div>
           </div>
@@ -712,21 +666,22 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
         {/* ==================================================================== */}
         {/* APPLICATION CALL TO ACTION (300 SPOTS PER CAMP)                      */}
         {/* ==================================================================== */}
-        <div className="p-8 sm:p-14 rounded-3xl bg-black text-center space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="p-8 sm:p-14 rounded-3xl bg-[#050807] border border-emerald-500/25 text-center space-y-6 shadow-2xl relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3">
             <span className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider block">
-              {tr(currentLang, { en: 'MERIT-BASED SELECTION // 300 PER CAMP', es: 'SELECCIÓN POR MÉRITO // 300 POR CAMP', fr: 'SÉLECTION AU MÉRITE // 300 PAR CAMP', ar: 'بوابة الترشح لمعسكر الـ 300 رياضي' })}
+              {isAr ? 'بوابة الترشح لمعسكر الـ 300 رياضي' : isFr ? 'SÉLECTION AU MÉRITE // 300 PAR CAMP' : isEs ? 'SELECCIÓN POR MÉRITO // 300 POR CAMP' : 'MERIT-BASED SELECTION // 300 PER CAMP'}
             </span>
             <h2 className="text-3xl sm:text-5xl font-black font-anime text-white">
-              {tr(currentLang, { en: 'Ready to Step Into the 300 Crucible?', es: '¿Listo para Entrar al Crisol de los 300?', fr: 'Prêt à Rejoindre le Creuset des 300 ?', ar: 'هل تمتلك الشجاعة لخوض المغامرة مع فريقنا؟' })}
+              {isAr ? 'هل تمتلك الشجاعة لخوض المغامرة مع فريقنا؟' : isFr ? 'Prêt à Rejoindre le Camp des 300 ?' : isEs ? '¿Listo para el Crisol de los 300?' : 'Ready to Step Into the 300 Crucible?'}
             </h2>
             <p className="text-sm text-gray-300 font-bold leading-relaxed">
-              {tr(currentLang, {
-                en: 'Candidates are screened based on fitness, commitment, and martial spirit. Exactly 300 athletes per camp to guarantee personal, intense coaching under the founders and global crew.',
-                es: 'Los candidatos son evaluados por su condición física, disciplina y espíritu marcial. Exactamente 300 atletas por campamento.',
-                fr: 'Les candidats sont sélectionnés selon leur condition physique, discipline et engagement. Exactement 300 athlètes par camp.',
-                ar: 'يتم اختيار المشاركين بناءً على اللياقة، الانضباط، والروح القتالية. يتم قبول 300 شخص فقط لكل مخيم لتأكيد تجربة فريدة وتدريب قاسي ومركز تحت إشراف المؤسسين وباقي فريق المدربين.',
-              })}
+              {isAr
+                ? 'يتم اختيار المشاركين بناءً على اللياقة، الانضباط، والروح القتالية. يتم قبول 300 شخص فقط لكل مخيم لتأكيد تجربة فريدة وتدريب قاسي ومركز تحت إشراف المؤسسين وباقي فريق المدربين.'
+                : isFr
+                ? 'Les candidats sont sélectionnés selon leur condition, discipline et esprit martial. Strictement 300 athlètes par camp pour garantir un coaching intense avec les fondateurs.'
+                : isEs
+                ? 'Los candidatos son evaluados por su condición física, disciplina y espíritu marcial. Exactamente 300 atletas por campamento bajo los fundadores.'
+                : 'Candidates are screened based on fitness, commitment, and martial spirit. Exactly 300 athletes per camp to guarantee personal, intense coaching under the founders and global crew.'}
             </p>
           </div>
 
@@ -737,19 +692,19 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                 soundFX.playButtonClick();
                 setIsApplyModalOpen(true);
               }}
-              className="px-8 py-4 rounded-2xl bg-white hover:bg-[#FFE600] text-black font-black font-anime text-sm transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.4)] flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+              className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-sm transition-all duration-300 shadow-[0_0_25px_rgba(16,185,129,0.4)] flex items-center gap-2 cursor-pointer"
             >
               <Send className="w-4 h-4 text-black" />
-              <span>{tr(currentLang, { en: 'SUBMIT CANDIDATE APPLICATION NOW', es: 'ENVIAR POSTULACIÓN AHORA', fr: 'SOUMETTRE MA CANDIDATURE', ar: 'تقديم طلب الترشح الآن (300 مقعد للمخيم)' })}</span>
+              <span>{isAr ? 'تقديم طلب الترشح الآن (300 مقعد للمخيم)' : isFr ? 'SOUMETTRE MA CANDIDATURE (300 PLACES)' : isEs ? 'ENVIAR SOLICITUD OFICIAL (300 PLAZAS)' : 'SUBMIT CANDIDATE APPLICATION NOW'}</span>
             </button>
 
             {onExploreGear && (
               <button
                 type="button"
                 onClick={onExploreGear}
-                className="px-6 py-4 rounded-2xl bg-[#141624] hover:bg-[#1E2135] text-gray-300 hover:text-white font-anime font-black text-sm transition-all cursor-pointer"
+                className="px-6 py-4 rounded-2xl bg-[#0C1411] hover:bg-white/10 border border-white/10 text-gray-200 hover:text-white font-anime font-black text-sm transition-all cursor-pointer"
               >
-                {tr(currentLang, { en: 'Browse Official Camp Gear', es: 'Explorar Equipamiento Oficial', fr: 'Voir l\'Équipement Officiel', ar: 'استعراض عتاد المعسكر في المتجر' })}
+                {isAr ? 'استعراض عتاد المعسكر في المتجر' : isFr ? 'Découvrir l’Équipement Officiel' : isEs ? 'Ver Equipamiento Oficial del Camp' : 'Browse Official Camp Gear'}
               </button>
             )}
           </div>
@@ -762,18 +717,18 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
       {/* ==================================================================== */}
       {isApplyModalOpen && (
         <div 
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto yard-slim-scrollbar"
           onClick={handleCloseModal}
         >
           <div 
-            className="w-full max-w-xl bg-[#0D0F1A] rounded-3xl p-6 sm:p-8 shadow-[0_0_60px_rgba(255,230,0,0.3)] relative text-white my-8"
+            className="w-full max-w-xl bg-[#080D0B] border border-emerald-500/35 rounded-3xl p-6 sm:p-8 shadow-2xl relative text-white my-8"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
               type="button"
               onClick={handleCloseModal}
-              className="absolute top-5 right-5 p-2 rounded-xl bg-[#161828] text-gray-400 hover:text-white cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-xl bg-[#0C1411] text-gray-400 hover:text-white cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -782,40 +737,41 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
               <form onSubmit={handleApplySubmit} className="space-y-5">
                 <div>
                   <span className="text-xs font-black font-anime text-[#FFE600] uppercase tracking-wider block">
-                    {tr(currentLang, { en: 'OFFICIAL CANDIDATE REGISTRATION // 300 PER CAMP', es: 'REGISTRO OFICIAL // 300 POR CAMP', fr: 'INSCRIPTION OFFICIELLE // 300 PAR CAMP', ar: 'استمارة الترشح الرسمية // 300 شخص لكل مخيم' })}
+                    {isAr ? 'استمارة الترشح الرسمية // 300 شخص لكل مخيم' : isFr ? 'INSCRIPTION OFFICIELLE // 300 PAR CAMP' : isEs ? 'REGISTRO OFICIAL // 300 POR CAMP' : 'OFFICIAL CANDIDATE REGISTRATION // 300 PER CAMP'}
                   </span>
                   <h3 className="text-2xl font-black font-anime text-white mt-1">
-                    {tr(currentLang, { en: 'Apply for YARD 300 Global Camp', es: 'Postular al Campamento YARD 300', fr: 'Postuler au Camp Mondial YARD 300', ar: 'طلب الانضمام لمعسكر YARD 300 الدولي' })}
+                    {isAr ? 'طلب الانضمام لمعسكر YARD 300 الدولي' : isFr ? 'Postuler au Camp Mondial YARD 300' : isEs ? 'Solicitar Campamento Global YARD 300' : 'Apply for YARD 300 Global Camp'}
                   </h3>
                   <p className="text-xs text-gray-400 font-bold mt-1">
-                    {tr(currentLang, {
-                      en: `Selected: ${currentPlanData.titleEn} (300 spots)`,
-                      es: `Seleccionado: ${currentPlanData.titleEs} (300 plazas)`,
-                      fr: `Sélectionné : ${currentPlanData.titleFr} (300 places)`,
-                      ar: `المغامرة المختارة: ${currentPlanData.titleAr} (300 مقعد)`,
-                    })}
+                    {isAr 
+                      ? `المغامرة المختارة: ${currentPlanData.titleAr} (300 مقعد)`
+                      : isFr
+                        ? `Sélection : ${currentPlanData.titleFr} (300 places)`
+                        : isEs
+                          ? `Selección: ${currentPlanData.titleEs} (300 plazas)`
+                          : `Selected: ${currentPlanData.titleEn} (300 spots)`}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-300 mb-1">
-                      {tr(currentLang, { en: 'Athlete Full Name:', es: 'Nombre Completo del Atleta:', fr: 'Nom Complet de l\'Athlète :', ar: 'الاسم الكامل للرياضي:' })}
+                      {isAr ? 'الاسم الكامل للرياضي:' : isFr ? 'Nom Complet :' : isEs ? 'Nombre Completo:' : 'Athlete Full Name:'}
                     </label>
                     <input 
                       type="text"
                       required
                       value={athleteName}
                       onChange={(e) => setAthleteName(e.target.value)}
-                      placeholder={tr(currentLang, { en: 'e.g. Alexander Vance', es: 'ej. Carlos Mendoza', fr: 'ex. Lucas Laurent', ar: 'مثال: أسامة المحارب' })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600]"
+                      placeholder={isAr ? 'مثال: أسامة المحارب' : isEs ? 'Ej. Carlos Mendoza' : isFr ? 'Ex. Alexandre Vance' : 'e.g. Alexander Vance'}
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-gray-300 mb-1">
-                        {tr(currentLang, { en: 'Email Address:', es: 'Correo Electrónico:', fr: 'Adresse E-mail :', ar: 'البريد الإلكتروني:' })}
+                        {isAr ? 'البريد الإلكتروني:' : isFr ? 'Adresse E-mail :' : isEs ? 'Correo Electrónico:' : 'Email Address:'}
                       </label>
                       <input 
                         type="email"
@@ -823,19 +779,19 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                         value={athleteEmail}
                         onChange={(e) => setAthleteEmail(e.target.value)}
                         placeholder="athlete@domain.com"
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600]"
+                        className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-300 mb-1">
-                        {tr(currentLang, { en: 'Phone / WhatsApp:', es: 'Teléfono / WhatsApp:', fr: 'Téléphone / WhatsApp :', ar: 'رقم الهاتف / الواتساب:' })}
+                        {isAr ? 'رقم الهاتف / الواتساب:' : isFr ? 'Téléphone / WhatsApp :' : isEs ? 'Teléfono / WhatsApp:' : 'Phone / WhatsApp:'}
                       </label>
                       <input 
                         type="tel"
                         value={athletePhone}
                         onChange={(e) => setAthletePhone(e.target.value)}
                         placeholder="+1 555 019 300"
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600]"
+                        className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400"
                       />
                     </div>
                   </div>
@@ -843,52 +799,47 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-gray-300 mb-1">
-                        {tr(currentLang, { en: 'Primary Sport / Discipline:', es: 'Deporte / Disciplina Principal:', fr: 'Sport / Discipline :', ar: 'التخصص الرياضي:' })}
+                        {isAr ? 'التخصص الرياضي:' : isFr ? 'Discipline Principale :' : isEs ? 'Disciplina Principal:' : 'Primary Sport / Discipline:'}
                       </label>
                       <select
                         value={athleteSport}
                         onChange={(e) => setAthleteSport(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600]"
+                        className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400"
                       >
-                        <option value="combat">{tr(currentLang, { en: 'Combat Sports & Boxing', es: 'Deportes de Combate y Boxeo', fr: 'Sports de Combat & Boxe', ar: 'فنون قتالية وملاكمة' })}</option>
-                        <option value="hyrox">{tr(currentLang, { en: 'Hyrox & Functional Fitness', es: 'Hyrox y Fitness Funcional', fr: 'Hyrox & Fitness Fonctionnel', ar: 'سباقات هايروكس ولياقة' })}</option>
-                        <option value="calisthenics">{tr(currentLang, { en: 'Calisthenics & Gymnastics', es: 'Calistenia y Gimnasia', fr: 'Callisthénie & Gymnastique', ar: 'كاليستنكس ووزن الجسم' })}</option>
-                        <option value="running">{tr(currentLang, { en: 'Marathon & Trail Endurance', es: 'Maratón y Trail de Resistencia', fr: 'Marathon & Trail Endurance', ar: 'ماراثون وتحمل طويل' })}</option>
-                        <option value="crossfit">{tr(currentLang, { en: 'CrossFit & Olympic Lifting', es: 'CrossFit y Halterofilia', fr: 'CrossFit & Haltérophilie', ar: 'كروس فيت ورفع أثقال' })}</option>
+                        <option value="combat">{isAr ? 'فنون قتالية وملاكمة' : isFr ? 'Combat & Boxe' : isEs ? 'Combate y Boxeo' : 'Combat Sports & Boxing'}</option>
+                        <option value="hyrox">{isAr ? 'سباقات هايروكس ولياقة' : isFr ? 'Hyrox & Fonctionnel' : isEs ? 'Hyrox y Funcional' : 'Hyrox & Functional Fitness'}</option>
+                        <option value="calisthenics">{isAr ? 'كاليستنكس ووزن الجسم' : isFr ? 'Callisthénie' : isEs ? 'Calistenia' : 'Calisthenics & Gymnastics'}</option>
+                        <option value="running">{isAr ? 'ماراثون وتحمل طويل' : isFr ? 'Marathon & Trail' : isEs ? 'Maratón y Trail' : 'Marathon & Trail Endurance'}</option>
+                        <option value="crossfit">{isAr ? 'كروس فيت ورفع أثقال' : isFr ? 'CrossFit' : isEs ? 'CrossFit' : 'CrossFit & Olympic Lifting'}</option>
                       </select>
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold text-gray-300 mb-1">
-                        {tr(currentLang, { en: 'Years of Training Experience:', es: 'Años de Experiencia:', fr: 'Années d\'Expérience :', ar: 'سنوات الخبرة في التدريب:' })}
+                        {isAr ? 'سنوات الخبرة في التدريب:' : isFr ? 'Années d’Expérience :' : isEs ? 'Años de Experiencia:' : 'Years of Experience:'}
                       </label>
                       <select
                         value={yearsExperience}
                         onChange={(e) => setYearsExperience(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600]"
+                        className="w-full px-4 py-2.5 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400"
                       >
-                        <option value="1-2">{tr(currentLang, { en: '1 - 2 Years', es: '1 - 2 Años', fr: '1 - 2 Ans', ar: '1 - 2 سنة (مبتدئ جاد)' })}</option>
-                        <option value="3-5">{tr(currentLang, { en: '3 - 5 Years', es: '3 - 5 Años', fr: '3 - 5 Ans', ar: '3 - 5 سنوات (مستوى متقدم)' })}</option>
-                        <option value="5+">{tr(currentLang, { en: '5+ Years (Pro Athlete)', es: '5+ Años (Profesional)', fr: '5+ Ans (Athlète Pro)', ar: '+5 سنوات (رياضي محترف)' })}</option>
+                        <option value="1-2">{isAr ? '1 - 2 سنة' : isFr ? '1 - 2 ans' : isEs ? '1 - 2 años' : '1 - 2 Years'}</option>
+                        <option value="3-5">{isAr ? '3 - 5 سنوات' : isFr ? '3 - 5 ans' : isEs ? '3 - 5 años' : '3 - 5 Years'}</option>
+                        <option value="5+">{isAr ? '+5 سنوات (محترف)' : isFr ? '5+ ans (Pro)' : isEs ? '5+ años (Pro)' : '5+ Years (Pro Athlete)'}</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-300 mb-1">
-                      {tr(currentLang, { en: 'Why Do You Want to Join the 300 Crucible?', es: '¿Por qué quieres unirte al Crisol 300?', fr: 'Pourquoi rejoindre le Creuset des 300 ?', ar: 'لماذا ترغب في الانضمام إلى معسكر الـ 300؟' })}
+                      {isAr ? 'لماذا ترغب في الانضمام إلى معسكر الـ 300؟' : isFr ? 'Pourquoi rejoindre le camp des 300 ?' : isEs ? '¿Por qué deseas unirte al campamento?' : 'Why Do You Want to Join the 300 Crucible?'}
                     </label>
                     <textarea 
                       rows={3}
                       value={motivationNote}
                       onChange={(e) => setMotivationNote(e.target.value)}
-                      placeholder={tr(currentLang, {
-                        en: 'Describe your athletic goals, achievements, and mindset...',
-                        es: 'Describe tus metas atléticas, logros y mentalidad...',
-                        fr: 'Décrivez vos objectifs sportifs, palmarès et état d\'esprit...',
-                        ar: 'أذكر أهدافك البدنية وأهم تطلعاتك مع فريق التدريب تحت إشراف المؤسسين...',
-                      })}
-                      className="w-full px-4 py-2 rounded-xl bg-[#141624] text-white text-xs font-bold outline-none focus:ring-2 focus:ring-[#FFE600] resize-none"
+                      placeholder={isAr ? 'أذكر أهدافك البدنية وأهم تطلعاتك...' : isFr ? 'Vos objectifs sportifs...' : isEs ? 'Describe tus metas atléticas...' : 'Describe your athletic goals and mindset...'}
+                      className="w-full px-4 py-2 rounded-xl bg-[#0C1411] border border-white/10 text-white text-xs font-bold outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
                     />
                   </div>
                 </div>
@@ -896,17 +847,12 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#FFE600] to-[#FFD700] hover:from-white hover:to-white text-black font-black font-anime text-sm transition-all shadow-[0_0_20px_rgba(255,230,0,0.4)] cursor-pointer"
+                    className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-sm transition-all cursor-pointer"
                   >
-                    {tr(currentLang, { en: 'SUBMIT CANDIDATE APPLICATION', es: 'ENVIAR POSTULACIÓN OFICIAL', fr: 'SOUMETTRE MA CANDIDATURE', ar: 'إرسال طلب الترشح الرسمي (300 مقعد)' })}
+                    {isAr ? 'إرسال طلب الترشح الرسمي (300 مقعد)' : isFr ? 'ENVOYER MA CANDIDATURE (300 PLACES)' : isEs ? 'ENVIAR SOLICITUD OFICIAL (300 PLAZAS)' : 'SUBMIT CANDIDATE APPLICATION'}
                   </button>
                   <p className="text-[10px] text-gray-500 text-center font-bold mt-2">
-                    {tr(currentLang, {
-                      en: 'Your profile and biometrics will be screened within 48 hours.',
-                      es: 'Tu perfil y biometría serán evaluados en 48 horas.',
-                      fr: 'Votre profil et votre biométrie seront analysés sous 48h.',
-                      ar: 'سيقوم طاقم المعسكر والمدربين بمراجعة أرقامك الحيوية والرد خلال 48 ساعة.',
-                    })}
+                    {isAr ? 'سيقوم طاقم المعسكر والمدربين بمراجعة أرقامك الحيوية والرد خلال 48 ساعة.' : isFr ? 'Votre profil sera étudié sous 48h.' : isEs ? 'Tu perfil será evaluado en 48 horas.' : 'Your profile and biometrics will be screened within 48 hours.'}
                   </p>
                 </div>
               </form>
@@ -918,20 +864,21 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
 
                 <div>
                   <h3 className="text-2xl font-black font-anime text-white">
-                    {tr(currentLang, { en: 'Candidate Application Received! ⚡', es: '¡Postulación Recibida! ⚡', fr: 'Candidature Reçue ! ⚡', ar: 'تم استلام طلب ترشحك بنجاح! ⚡' })}
+                    {isAr ? 'تم استلام طلب ترشحك بنجاح! ⚡' : isFr ? 'Candidature Reçue avec Succès ! ⚡' : isEs ? '¡Solicitud Recibida con Éxito! ⚡' : 'Candidate Application Received! ⚡'}
                   </h3>
                   <p className="text-sm text-gray-300 font-bold mt-2 max-w-md mx-auto leading-relaxed">
-                    {tr(currentLang, {
-                      en: `Thank you ${athleteName}. Your dossier has been logged under priority #YARD-CAMP. Our team will contact you at ${athleteEmail}.`,
-                      es: `Gracias ${athleteName}. Tu dossier ha sido registrado con prioridad #YARD-CAMP. Te contactaremos en ${athleteEmail}.`,
-                      fr: `Merci ${athleteName}. Votre dossier est enregistré en priorité #YARD-CAMP. Nous vous contacterons à ${athleteEmail}.`,
-                      ar: `شكراً لك يا ${athleteName}، تم تسجيل بياناتك في قائمة ترشيحات معسكر الـ 300. تم حجز رقم أولوية برقم #YARD-CAMP وسيتم التواصل عبر بريدك ${athleteEmail}.`,
-                    })}
+                    {isAr
+                      ? `شكراً لك يا ${athleteName}، تم تسجيل بياناتك في قائمة ترشيحات معسكر الـ 300 (#YARD-CAMP) وسيتم التواصل عبر ${athleteEmail}.`
+                      : isFr
+                        ? `Merci ${athleteName}. Votre dossier est enregistré (#YARD-CAMP) pour ${athleteEmail}.`
+                        : isEs
+                          ? `Gracias ${athleteName}. Tu registro #YARD-CAMP ha sido enviado para ${athleteEmail}.`
+                          : `Thank you ${athleteName}. Your dossier has been logged under #YARD-CAMP for ${athleteEmail}.`}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-black text-xs font-mono text-[#FFE600] text-center">
-                  <span>{tr(currentLang, { en: 'Status: Under Biometric Review (Strictly 300 Per Camp)', es: 'Estado: En Revisión Biométrica (300 por Camp)', fr: 'Statut : En Cours d\'Examen Biométrique (300 par Camp)', ar: 'حالة الطلب: قيد المراجعة البيومترية (300 مقعد لكل مخيم)' })}</span>
+                  <span>{isAr ? 'حالة الطلب: قيد المراجعة البيومترية (300 مقعد لكل مخيم)' : isFr ? 'Statut : Examen Biométrique (300/camp)' : isEs ? 'Estado: Revisión Biométrica (300/camp)' : 'Status: Under Biometric Review (300 Per Camp)'}</span>
                 </div>
 
                 <button
@@ -939,7 +886,7 @@ export const YardGlobalCamp: React.FC<YardGlobalCampProps> = ({ currentLang: pro
                   onClick={handleCloseModal}
                   className="px-6 py-2.5 rounded-xl bg-white text-black font-black font-anime text-xs cursor-pointer hover:bg-gray-200"
                 >
-                  {tr(currentLang, { en: 'Done, Close Window', es: 'Listo, Cerrar Ventana', fr: 'Terminer et Fermer', ar: 'تم، إغلاق النافذة' })}
+                  {isAr ? 'تم، إغلاق النافذة' : isFr ? 'Fermer la Fenêtre' : isEs ? 'Cerrar Ventana' : 'Done, Close Window'}
                 </button>
               </div>
             )}

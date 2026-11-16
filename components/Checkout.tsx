@@ -10,7 +10,6 @@ import {
   Wallet, 
   CheckCircle2, 
   AlertCircle, 
-  ExternalLink, 
   ShieldCheck, 
   Sparkles, 
   RefreshCw, 
@@ -24,7 +23,6 @@ import {
   Copy,
   Check,
   Receipt,
-  FileCheck2,
   Printer
 } from 'lucide-react';
 import { soundFX } from '../services/soundFX';
@@ -68,8 +66,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
   currentLang = 'en',
   onSuccess 
 }) => {
-  const isFr = currentLang === 'fr';
-  const isEs = currentLang === 'es';
+  const isAr = currentLang === 'ar';
 
   const currentUser = authService.getCurrentUser();
   const subtotal = items.reduce((sum, item) => sum + item.price, 0);
@@ -84,9 +81,8 @@ export const Checkout: React.FC<CheckoutProps> = ({
   const [cardHolder, setCardHolder] = useState(currentUser?.name || '');
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
-  const [postalCode, setPostalCode] = useState('');
   const [shippingAddress, setShippingAddress] = useState('777 Champions Blvd, S-Rank Training Ground');
-  const [shippingCity, setShippingCity] = useState('Los Angeles, CA');
+  const [shippingCity] = useState('Los Angeles, CA');
 
   // Processing & Success State
   const [isProcessing, setIsProcessing] = useState(false);
@@ -98,22 +94,19 @@ export const Checkout: React.FC<CheckoutProps> = ({
   // MetaMask Web3 State
   const [hasMetaMask, setHasMetaMask] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
-  const [networkName, setNetworkName] = useState('Ethereum Mainnet');
+  const [networkName] = useState('Ethereum Mainnet');
   const [isConnecting, setIsConnecting] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
 
   // ETH Conversion rate
   const ethEquivalent = (total / 2650).toFixed(4);
   const TREASURY_WALLET_ADDRESS = OwnerConfigService.getTreasuryAddress('eth') || '0x8C7Fcba5c8A96c6F9A83f077606A0911a949a93E';
 
-  // Format Card Number (adds space every 4 digits)
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, '').substring(0, 16);
     const formatted = raw.match(/.{1,4}/g)?.join(' ') || raw;
     setCardNumber(formatted);
   };
 
-  // Format Expiry (MM/YY)
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let raw = e.target.value.replace(/\D/g, '').substring(0, 4);
     if (raw.length >= 3) {
@@ -122,7 +115,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
     setExpiry(raw);
   };
 
-  // Detect MetaMask on mount
   useEffect(() => {
     if (typeof window !== 'undefined' && window.ethereum) {
       setHasMetaMask(true);
@@ -137,17 +129,17 @@ export const Checkout: React.FC<CheckoutProps> = ({
     }
   }, []);
 
-  // Connect MetaMask
   const connectMetaMask = async () => {
     soundFX.playButtonClick();
     setFormError(null);
     if (!window.ethereum) {
       setFormError(
-        isFr 
-          ? 'Extension MetaMask introuvable dans votre navigateur.' 
-          : isEs 
-          ? 'Extensión MetaMask no detectada en su navegador.' 
-          : 'MetaMask extension not detected in your browser.'
+        tr(currentLang, {
+          ar: 'إضافة MetaMask غير مثبتة في متصفحك.',
+          fr: 'Extension MetaMask introuvable dans votre navigateur.',
+          es: 'Extensión MetaMask no detectada en su navegador.',
+          en: 'MetaMask extension not detected in your browser.'
+        })
       );
       return;
     }
@@ -160,13 +152,20 @@ export const Checkout: React.FC<CheckoutProps> = ({
         soundFX.playSuccess();
       }
     } catch (err: any) {
-      setFormError(err?.message || 'Failed to connect MetaMask');
+      setFormError(
+        err?.message ||
+          tr(currentLang, {
+            ar: 'فشل الاتصال بمحفظة MetaMask.',
+            fr: 'Échec de connexion à MetaMask.',
+            es: 'Error al conectar MetaMask.',
+            en: 'Failed to connect MetaMask'
+          })
+      );
     } finally {
       setIsConnecting(false);
     }
   };
 
-  // Complete Order Persistence helper
   const finalizeOrder = async (methodLabel: string, txRef: string) => {
     const orderId = `ORD-YARD-${Math.floor(100000 + Math.random() * 900000)}`;
     const now = new Date();
@@ -187,7 +186,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
       status: 'PAID'
     };
 
-    // Save order in localStorage
     try {
       const existingRaw = localStorage.getItem('yard300_orders');
       const existingOrders: PlacedOrder[] = existingRaw ? JSON.parse(existingRaw) : [];
@@ -195,7 +193,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
       localStorage.setItem('yard300_orders', JSON.stringify(existingOrders));
     } catch {}
 
-    // Dispatch clear cart event & trigger audio
     localStorage.removeItem('yard300_cart');
     window.dispatchEvent(new CustomEvent('yard300_cart_clear'));
     window.dispatchEvent(new CustomEvent('yard300_order_placed', { detail: newOrder }));
@@ -203,7 +200,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
     soundFX.playSuccess();
     soundFX.playPowerUp();
 
-    // Send itemized confirmation email
     await emailService.sendOrderReceipt(newOrder.athleteEmail, {
       id: newOrder.id,
       total: newOrder.total,
@@ -215,7 +211,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
     onSuccess?.();
   };
 
-  // Card Payment Handler with Luhn & Expiry Validation
   const handleCardPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
@@ -224,11 +219,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     if (cleanCard.length < 15) {
       soundFX.playError();
       setFormError(
-        isFr 
-          ? 'Numéro de carte incomplet (16 chiffres requis).' 
-          : isEs 
-          ? 'Número de tarjeta incompleto (16 dígitos requeridos).' 
-          : 'Incomplete card number (16 digits required).'
+        tr(currentLang, {
+          ar: 'رقم البطاقة غير مكتمل (مطلوب 16 رقماً).',
+          fr: 'Numéro de carte incomplet (16 chiffres requis).',
+          es: 'Número de tarjeta incompleto (16 dígitos requeridos).',
+          en: 'Incomplete card number (16 digits required).'
+        })
       );
       return;
     }
@@ -236,11 +232,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     if (!expiry || !expiry.includes('/')) {
       soundFX.playError();
       setFormError(
-        isFr 
-          ? 'Date d’expiration invalide (MM/AA).' 
-          : isEs 
-          ? 'Fecha de expiración inválida (MM/AA).' 
-          : 'Invalid expiration date (MM/YY).'
+        tr(currentLang, {
+          ar: 'تاريخ الانتهاء غير صالح (MM/YY).',
+          fr: 'Date d’expiration invalide (MM/AA).',
+          es: 'Fecha de expiración inválida (MM/AA).',
+          en: 'Invalid expiration date (MM/YY).'
+        })
       );
       return;
     }
@@ -248,11 +245,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     if (cvv.length < 3) {
       soundFX.playError();
       setFormError(
-        isFr 
-          ? 'Code de sécurité CVV invalide (3 ou 4 chiffres).' 
-          : isEs 
-          ? 'Código de seguridad CVV inválido (3 o 4 dígitos).' 
-          : 'Invalid CVV security code (3 or 4 digits).'
+        tr(currentLang, {
+          ar: 'رمز الأمان CVV غير صالح (3 أو 4 أرقام).',
+          fr: 'Code de sécurité CVV invalide (3 ou 4 chiffres).',
+          es: 'Código de seguridad CVV inválido (3 o 4 dígitos).',
+          en: 'Invalid CVV security code (3 or 4 digits).'
+        })
       );
       return;
     }
@@ -261,33 +259,33 @@ export const Checkout: React.FC<CheckoutProps> = ({
       setIsProcessing(true);
       soundFX.playButtonClick();
 
-      // Realistic Step 1: Biometric & TLS handshake
       setProcessStep(
-        isFr 
-          ? '1/3 : Chiffrement du jeton de paiement sécurisé TLS 256-bit...' 
-          : isEs 
-          ? '1/3 : Cifrando token de pago seguro TLS 256-bit...' 
-          : '1/3 : Encrypting TLS 256-bit payment authorization token...'
+        tr(currentLang, {
+          ar: '1/3 : تشفير بوابة الدفع الآمنة TLS 256-bit...',
+          fr: '1/3 : Chiffrement du jeton de paiement sécurisé TLS 256-bit...',
+          es: '1/3 : Cifrando token de pago seguro TLS 256-bit...',
+          en: '1/3 : Encrypting TLS 256-bit payment authorization token...'
+        })
       );
       await new Promise(r => setTimeout(r, 700));
 
-      // Realistic Step 2: Gateway clearance
       setProcessStep(
-        isFr 
-          ? '2/3 : Autorisation bancaire auprès du réseau Visa / Mastercard...' 
-          : isEs 
-          ? '2/3 : Autorización bancaria con red Visa / Mastercard...' 
-          : '2/3 : Authorizing transaction with Visa / Mastercard network...'
+        tr(currentLang, {
+          ar: '2/3 : اعتماد المعاملة البنكية عبر Visa / Mastercard...',
+          fr: '2/3 : Autorisation bancaire auprès du réseau Visa / Mastercard...',
+          es: '2/3 : Autorización bancaria con red Visa / Mastercard...',
+          en: '2/3 : Authorizing transaction with Visa / Mastercard network...'
+        })
       );
       await new Promise(r => setTimeout(r, 800));
 
-      // Realistic Step 3: Vault confirmation
       setProcessStep(
-        isFr 
-          ? '3/3 : Génération du reçu officiel et validation de la commande...' 
-          : isEs 
-          ? '3/3 : Generando recibo oficial y validando el pedido...' 
-          : '3/3 : Generating official invoice & confirming gear dispatch...'
+        tr(currentLang, {
+          ar: '3/3 : إصدار الفاتورة الرقمية وتأكيد تجهيز العتاد...',
+          fr: '3/3 : Génération du reçu officiel et validation de la commande...',
+          es: '3/3 : Generando recibo oficial y validando el pedido...',
+          en: '3/3 : Generating official invoice & confirming gear dispatch...'
+        })
       );
       await new Promise(r => setTimeout(r, 600));
 
@@ -297,11 +295,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     } catch {
       soundFX.playError();
       setFormError(
-        isFr 
-          ? 'Échec du traitement du paiement.' 
-          : isEs 
-          ? 'Fallo al procesar el pago.' 
-          : 'Payment processing failed.'
+        tr(currentLang, {
+          ar: 'فشل تنفيذ عملية الدفع.',
+          fr: 'Échec du traitement du paiement.',
+          es: 'Fallo al procesar el pago.',
+          en: 'Payment processing failed.'
+        })
       );
     } finally {
       setIsProcessing(false);
@@ -309,7 +308,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
     }
   };
 
-  // MetaMask Web3 Payment
   const handleMetaMaskPayment = async () => {
     soundFX.playButtonClick();
     setFormError(null);
@@ -322,11 +320,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     try {
       setIsProcessing(true);
       setProcessStep(
-        isFr 
-          ? 'Transmission de la transaction à MetaMask...' 
-          : isEs 
-          ? 'Transmitiendo transacción a MetaMask...' 
-          : 'Transmitting transaction request to MetaMask...'
+        tr(currentLang, {
+          ar: 'جارٍ إرسال طلب التوقيع إلى محفظة MetaMask...',
+          fr: 'Transmission de la transaction à MetaMask...',
+          es: 'Transmitiendo transacción a MetaMask...',
+          en: 'Transmitting transaction request to MetaMask...'
+        })
       );
 
       const recipientAddress = TREASURY_WALLET_ADDRESS;
@@ -349,17 +348,20 @@ export const Checkout: React.FC<CheckoutProps> = ({
         } catch (chainErr: any) {
           if (chainErr?.code === 4001) {
             throw new Error(
-              isFr ? 'Transaction rejetée dans MetaMask.' : isEs ? 'Transacción rechazada en MetaMask.' : 'Transaction rejected in MetaMask.'
+              tr(currentLang, {
+                ar: 'تم رفض المعاملة داخل MetaMask.',
+                fr: 'Transaction rejetée dans MetaMask.',
+                es: 'Transacción rechazada en MetaMask.',
+                en: 'Transaction rejected in MetaMask.'
+              })
             );
           }
-          // Fallback simulation hash for testnets
           tx = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`;
         }
       } else {
         tx = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`;
       }
 
-      setTxHash(tx);
       await finalizeOrder('MetaMask Web3 (Ethereum)', tx);
     } catch (err: any) {
       soundFX.playError();
@@ -370,7 +372,6 @@ export const Checkout: React.FC<CheckoutProps> = ({
     }
   };
 
-  // Apple Pay / Google Pay / PayPal handler
   const handleInstantWalletPayment = async (provider: 'applepay' | 'googlepay' | 'paypal') => {
     soundFX.playButtonClick();
     setFormError(null);
@@ -383,11 +384,12 @@ export const Checkout: React.FC<CheckoutProps> = ({
     };
 
     setProcessStep(
-      isFr 
-        ? `Connexion sécurisée à ${providerNames[provider]}...` 
-        : isEs 
-        ? `Conexión segura con ${providerNames[provider]}...` 
-        : `Authenticating secure transaction with ${providerNames[provider]}...`
+      tr(currentLang, {
+        ar: `جارٍ المصادقة الآمنة عبر ${providerNames[provider]}...`,
+        fr: `Connexion sécurisée à ${providerNames[provider]}...`,
+        es: `Conexión segura con ${providerNames[provider]}...`,
+        en: `Authenticating secure transaction with ${providerNames[provider]}...`
+      })
     );
 
     await new Promise(r => setTimeout(r, 1200));
@@ -398,69 +400,85 @@ export const Checkout: React.FC<CheckoutProps> = ({
     setProcessStep('');
   };
 
-  // If order was COMPLETED, display the full official receipt!
+  // COMPLETED ORDER RECEIPT
   if (completedOrder) {
     return (
-      <div className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-[#0A0B10] text-white text-left dir-ltr">
+      <div
+        dir={isAr ? 'rtl' : 'ltr'}
+        className={`min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-[#050807] text-white ${isAr ? 'text-right' : 'text-left'}`}
+      >
         <div className="max-w-3xl mx-auto space-y-6">
-          
-          {/* Header Badge */}
-          <div className="bg-[#121422] border-2 border-emerald-500/60 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(16,185,129,0.3)] space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-6">
+          <div className="bg-[#080D0B] border-2 border-[#10B981]/60 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(16,185,129,0.25)] space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.5)]">
+                <div className="w-14 h-14 rounded-2xl bg-[#10B981]/15 border-2 border-[#10B981] flex items-center justify-center text-[#10B981] shadow-[0_0_25px_rgba(16,185,129,0.4)]">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black font-anime text-emerald-400 tracking-widest uppercase block">
-                    YARD 300 // ORDER CLEARED & PAID
+                  <span className="text-[10px] font-black font-anime text-[#10B981] tracking-widest uppercase block">
+                    {tr(currentLang, {
+                      ar: 'YARD 300 // تم الدفع وتأكيد الطلب',
+                      fr: 'YARD 300 // COMMANDE PAYÉE & VALIDÉE',
+                      es: 'YARD 300 // PEDIDO PAGADO Y CONFIRMADO',
+                      en: 'YARD 300 // ORDER CLEARED & PAID'
+                    })}
                   </span>
                   <h1 className="text-2xl sm:text-3xl font-black font-anime text-white">
-                    {isFr ? 'Commande Validée et Payée !' : isEs ? '¡Pedido Confirmado y Pagado!' : 'Order Confirmed & Cleared!'}
+                    {tr(currentLang, {
+                      ar: 'تم تأكيد الطلب والدفع بنجاح!',
+                      fr: 'Commande Validée et Payée !',
+                      es: '¡Pedido Confirmado y Pagado!',
+                      en: 'Order Confirmed & Cleared!'
+                    })}
                   </h1>
                 </div>
               </div>
 
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/60 text-emerald-400 font-mono text-xs font-bold">
-                {tr(currentLang, { en: 'STATUS: PAID ⚡', es: 'ESTADO: PAGADO ⚡', fr: 'STATUT : PAYÉ ⚡', ar: 'الحالة: مدفوع ⚡' })}
+              <span className="px-3 py-1 rounded-full bg-[#10B981]/20 border border-[#10B981]/60 text-[#10B981] font-mono text-xs font-bold">
+                {tr(currentLang, { ar: 'الحالة: مدفوع ✓', fr: 'STATUT : PAYÉ ✓', es: 'ESTADO: PAGADO ✓', en: 'STATUS: PAID ✓' })}
               </span>
             </div>
 
             {/* Order Details Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+              <div className="p-3 rounded-xl bg-black/50 border border-white/10">
                 <span className="text-[10px] text-gray-400 block font-mono">
-                  {tr(currentLang, { en: 'ORDER ID', es: 'ID PEDIDO', fr: 'N° COMMANDE', ar: 'رقم الطلب' })}
+                  {tr(currentLang, { ar: 'رقم الطلب', fr: 'ID COMMANDE', es: 'ID PEDIDO', en: 'ORDER ID' })}
                 </span>
-                <span className="font-bold text-white font-mono">{completedOrder.id}</span>
+                <span className="font-bold text-white font-mono tabular-nums" dir="ltr">{completedOrder.id}</span>
               </div>
-              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+              <div className="p-3 rounded-xl bg-black/50 border border-white/10">
                 <span className="text-[10px] text-gray-400 block font-mono">
-                  {tr(currentLang, { en: 'DATE', es: 'FECHA', fr: 'DATE', ar: 'التاريخ' })}
+                  {tr(currentLang, { ar: 'التاريخ', fr: 'DATE', es: 'FECHA', en: 'DATE' })}
                 </span>
-                <span className="font-bold text-white">{completedOrder.date}</span>
+                <span className="font-bold text-white tabular-nums" dir="ltr">{completedOrder.date}</span>
               </div>
-              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+              <div className="p-3 rounded-xl bg-black/50 border border-white/10">
                 <span className="text-[10px] text-gray-400 block font-mono">
-                  {tr(currentLang, { en: 'METHOD', es: 'MÉTODO', fr: 'MOYEN', ar: 'الوسيلة' })}
+                  {tr(currentLang, { ar: 'الوسيلة', fr: 'MÉTHODE', es: 'MÉTODO', en: 'METHOD' })}
                 </span>
-                <span className="font-bold text-emerald-400">{completedOrder.paymentMethod}</span>
+                <span className="font-bold text-[#10B981]">{completedOrder.paymentMethod}</span>
               </div>
-              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+              <div className="p-3 rounded-xl bg-black/50 border border-white/10">
                 <span className="text-[10px] text-gray-400 block font-mono">
-                  {tr(currentLang, { en: 'TOTAL PAID', es: 'TOTAL PAGADO', fr: 'TOTAL PAYÉ', ar: 'الإجمالي' })}
+                  {tr(currentLang, { ar: 'الإجمالي المدفوع', fr: 'TOTAL PAYÉ', es: 'TOTAL PAGADO', en: 'TOTAL PAID' })}
                 </span>
-                <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${completedOrder.total}</span>
+                <span className="font-black text-[#D4AF37] font-mono text-sm tabular-nums" dir="ltr">${completedOrder.total}</span>
               </div>
             </div>
 
             {/* Transaction Ref */}
-            <div className="p-3 bg-black/60 rounded-xl border border-gray-800 flex items-center justify-between text-xs font-mono">
+            <div className="p-3 bg-black/60 rounded-xl border border-white/10 flex items-center justify-between text-xs font-mono">
               <div className="space-y-0.5 overflow-hidden">
                 <span className="text-[10px] text-gray-400 block">
-                  {tr(currentLang, { en: 'TRANSACTION REFERENCE:', es: 'REFERENCIA DE TRANSACCIÓN:', fr: 'RÉFÉRENCE DE TRANSACTION :', ar: 'مرجع العملية:' })}
+                  {tr(currentLang, {
+                    ar: 'مرجع المعاملة الرقمي:',
+                    fr: 'RÉFÉRENCE DE TRANSACTION :',
+                    es: 'REFERENCIA DE TRANSACCIÓN:',
+                    en: 'TRANSACTION REFERENCE:'
+                  })}
                 </span>
-                <span className="text-cyan-300 font-bold truncate block">{completedOrder.transactionRef}</span>
+                <span className="text-[#10B981] font-bold truncate block" dir="ltr">{completedOrder.transactionRef}</span>
               </div>
               <button
                 type="button"
@@ -470,13 +488,13 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   soundFX.playButtonClick();
                   setTimeout(() => setCopiedTx(false), 2000);
                 }}
-                className="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-[#0D1512] hover:bg-emerald-950 border border-white/10 text-gray-200 text-[11px] font-bold flex items-center gap-1 cursor-pointer shrink-0"
               >
-                {copiedTx ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                {copiedTx ? <Check className="w-3.5 h-3.5 text-[#10B981]" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>
                   {copiedTx
-                    ? tr(currentLang, { en: 'Copied', es: 'Copiado', fr: 'Copié', ar: 'تم النسخ' })
-                    : tr(currentLang, { en: 'Copy', es: 'Copiar', fr: 'Copier', ar: 'نسخ' })}
+                    ? tr(currentLang, { ar: 'تم النسخ', fr: 'Copié', es: 'Copiado', en: 'Copied' })
+                    : tr(currentLang, { ar: 'نسخ', fr: 'Copier', es: 'Copiar', en: 'Copy' })}
                 </span>
               </button>
             </div>
@@ -484,43 +502,62 @@ export const Checkout: React.FC<CheckoutProps> = ({
             {/* Purchased Items List */}
             <div className="space-y-3">
               <h3 className="text-xs font-black font-anime text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Receipt className="w-4 h-4 text-emerald-400" />
-                <span>{tr(currentLang, { en: 'Purchased Gear', es: 'Artículos Comprados', fr: 'Articles Achetés', ar: 'المشتريات' })}</span>
+                <Receipt className="w-4 h-4 text-[#10B981]" />
+                <span>
+                  {tr(currentLang, {
+                    ar: 'القطع المختارة والمشتراة',
+                    fr: 'Articles Achetés',
+                    es: 'Artículos Comprados',
+                    en: 'Purchased Gear'
+                  })}
+                </span>
               </h3>
               <div className="space-y-2">
                 {completedOrder.items.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-[#161828] rounded-xl border border-gray-800 text-xs">
+                  <div key={idx} className="flex items-center justify-between p-3 bg-[#0D1512] rounded-xl border border-white/10 text-xs">
                     <div className="flex items-center gap-3">
-                      <img src={item.imageUrl} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-gray-700" />
+                      <img src={item.imageUrl} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-white/15" />
                       <div>
                         <span className="font-bold text-white block">{item.name}</span>
                         <span className="text-[10px] text-gray-400">{item.category} {item.size ? `• ${item.size}` : ''}</span>
                       </div>
                     </div>
-                    <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${item.price}</span>
+                    <span className="font-black text-[#D4AF37] font-mono text-sm tabular-nums" dir="ltr">${item.price}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Shipping Info */}
-            <div className="p-3.5 bg-black/40 rounded-xl border border-gray-800 text-xs space-y-1">
+            <div className="p-3.5 bg-black/50 rounded-xl border border-white/10 text-xs space-y-1">
               <span className="text-[10px] text-gray-400 uppercase font-mono block">
-                {tr(currentLang, { en: 'DELIVERY ADDRESS & ATHLETE:', es: 'DIRECCIÓN Y ATLETA:', fr: 'ADRESSE DE LIVRAISON & ATHLÈTE :', ar: 'عنوان التوصيل والرياضي:' })}
+                {tr(currentLang, {
+                  ar: 'عنوان التسليم وبيانات الرياضي:',
+                  fr: 'ADRESSE DE LIVRAISON & ATHLÈTE :',
+                  es: 'DIRECCIÓN DE ENTREGA Y ATLETA:',
+                  en: 'DELIVERY ADDRESS & ATHLETE:'
+                })}
               </span>
               <p className="font-bold text-white">{completedOrder.athleteName} ({completedOrder.athleteEmail})</p>
               <p className="text-gray-300">{completedOrder.shippingAddress}</p>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-800">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-white/10">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-black font-anime text-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="flex-1 py-3 rounded-xl bg-[#0D1512] hover:bg-emerald-950/60 border border-white/10 text-white font-black font-anime text-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
-                <Printer className="w-4 h-4" />
-                <span>{isFr ? 'Imprimer le Reçu' : isEs ? 'Imprimir Recibo' : 'Print Invoice Receipt'}</span>
+                <Printer className="w-4 h-4 text-[#10B981]" />
+                <span>
+                  {tr(currentLang, {
+                    ar: 'طباعة الفاتورة الرسمية',
+                    fr: 'Imprimer le Reçu',
+                    es: 'Imprimir Recibo',
+                    en: 'Print Invoice Receipt'
+                  })}
+                </span>
               </button>
 
               <button
@@ -529,51 +566,79 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   soundFX.playButtonClick();
                   onBack();
                 }}
-                className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                className="flex-1 py-3 rounded-xl bg-[#10B981] hover:bg-emerald-400 text-[#050807] font-black font-anime text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>{isFr ? 'Retourner au Magasin' : isEs ? 'Volver a la Tienda' : 'Return to Gear Store'}</span>
+                <span>
+                  {tr(currentLang, {
+                    ar: 'العودة إلى متجر العتاد',
+                    fr: 'Retourner au Magasin',
+                    es: 'Volver a la Tienda',
+                    en: 'Return to Gear Store'
+                  })}
+                </span>
               </button>
             </div>
-
           </div>
-
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-[#0A0B10] text-white text-left dir-ltr">
+    <div
+      dir={isAr ? 'rtl' : 'ltr'}
+      className={`min-h-screen pt-28 pb-24 px-4 sm:px-6 bg-[#050807] text-white ${isAr ? 'text-right' : 'text-left'}`}
+    >
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Back Button */}
         <button 
           onClick={onBack}
-          className="group inline-flex items-center gap-2 text-xs font-black font-anime text-[#00F0FF] hover:text-white transition-colors cursor-pointer"
+          className="group inline-flex items-center gap-2 text-xs font-black font-anime text-[#10B981] hover:text-[#D4AF37] transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>{isFr ? 'Retour au Magasin' : isEs ? 'Volver a la Tienda' : 'Back to Gear Store'}</span>
+          <ArrowLeft className={`w-4 h-4 transition-transform ${isAr ? 'rotate-180 group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
+          <span>
+            {tr(currentLang, {
+              ar: 'العودة إلى المتجر الفاخر',
+              fr: 'Retour au Magasin',
+              es: 'Volver a la Tienda',
+              en: 'Back to Gear Store'
+            })}
+          </span>
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           
           {/* Main Checkout Panel */}
-          <div className="lg:col-span-7 bg-[#121422] p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-6">
+          <div className="lg:col-span-7 bg-[#080D0B] p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6 shadow-2xl">
             <div>
-              <span className="text-[10px] font-black font-anime text-[#00F0FF] tracking-widest uppercase block mb-1">
-                YARD 300 // ENCRYPTED CHECKOUT
+              <span className="text-[10px] font-black font-anime text-[#10B981] tracking-widest uppercase block mb-1">
+                {tr(currentLang, {
+                  ar: 'YARD 300 // بوابة الدفع المشفرة 256-BIT',
+                  fr: 'YARD 300 // PAIEMENT CHIFFRÉ 256-BIT',
+                  es: 'YARD 300 // PAGO CIFRADO 256-BIT',
+                  en: 'YARD 300 // ENCRYPTED CHECKOUT'
+                })}
               </span>
               <h1 className="text-2xl sm:text-3xl font-black font-anime text-white flex items-center gap-2">
-                <span>{isFr ? 'Paiement Sécurisé du Matériel' : isEs ? 'Pago Seguro de Equipamiento' : 'Secure Gear Checkout'}</span>
-                <Sparkles className="w-5 h-5 text-[#FFE600]" />
+                <span>
+                  {tr(currentLang, {
+                    ar: 'إتمام الطلب والدفع الآمن للعتاد',
+                    fr: 'Paiement Sécurisé du Matériel',
+                    es: 'Pago Seguro de Equipamiento',
+                    en: 'Secure Gear Checkout'
+                  })}
+                </span>
+                <Sparkles className="w-5 h-5 text-[#D4AF37]" />
               </h1>
-              <p className="text-xs text-gray-400">
-                {isFr 
-                  ? 'Transactions réelles chiffrées par carte bancaire, PayPal, Apple Pay, Google Pay ou Web3 MetaMask.' 
-                  : isEs 
-                  ? 'Transacciones reales cifradas con tarjeta, PayPal, Apple Pay, Google Pay o Web3 MetaMask.' 
-                  : 'Authenticated transactions encrypted with Credit Card, PayPal, Apple Pay, Google Pay, or MetaMask Web3.'}
+              <p className="text-xs text-gray-400 mt-1">
+                {tr(currentLang, {
+                  ar: 'معاملات موثقة ومشفرة بالبطاقات البنكية أو PayPal أو Apple Pay أو Google Pay أو محفظة Web3 MetaMask.',
+                  fr: 'Transactions réelles chiffrées par carte bancaire, PayPal, Apple Pay, Google Pay ou Web3 MetaMask.',
+                  es: 'Transacciones reales cifradas con tarjeta, PayPal, Apple Pay, Google Pay o Web3 MetaMask.',
+                  en: 'Authenticated transactions encrypted with Credit Card, PayPal, Apple Pay, Google Pay, or MetaMask Web3.'
+                })}
               </p>
             </div>
 
@@ -587,103 +652,88 @@ export const Checkout: React.FC<CheckoutProps> = ({
 
             {/* Processing Step Overlay */}
             {isProcessing && (
-              <div className="p-4 bg-cyan-950/40 border border-cyan-400/50 rounded-2xl flex items-center gap-3 animate-pulse">
-                <RefreshCw className="w-5 h-5 text-cyan-400 animate-spin shrink-0" />
-                <span className="text-xs font-mono font-bold text-cyan-200">{processStep}</span>
+              <div className="p-4 bg-[#10B981]/15 border border-[#10B981]/50 rounded-2xl flex items-center gap-3 animate-pulse">
+                <RefreshCw className="w-5 h-5 text-[#10B981] animate-spin shrink-0" />
+                <span className="text-xs font-mono font-bold text-emerald-200">{processStep}</span>
               </div>
             )}
 
             {/* Payment Method Selector Grid */}
             <div className="space-y-3">
               <label className="block text-xs font-black font-anime text-gray-300 uppercase tracking-wider">
-                {isFr ? 'Sélectionner la Méthode de Paiement :' : isEs ? 'Seleccionar Método de Pago:' : 'Select Payment Gateway:'}
+                {tr(currentLang, {
+                  ar: 'اختر بوابة الدفع المعتمدة:',
+                  fr: 'Sélectionner la Méthode de Paiement :',
+                  es: 'Seleccionar Método de Pago:',
+                  en: 'Select Payment Gateway:'
+                })}
               </label>
 
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                {/* Credit Card */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setPaymentMethod('card');
-                    soundFX.playButtonClick();
-                  }}
+                  onClick={() => { setPaymentMethod('card'); soundFX.playButtonClick(); }}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                     paymentMethod === 'card'
-                      ? 'bg-emerald-500/15 border-emerald-400 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                      ? 'bg-[#10B981]/15 border-[#10B981] text-white shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                      : 'bg-[#0D1512] border-white/10 text-gray-400 hover:border-white/25'
                   }`}
                 >
-                  <CreditCard className="w-5 h-5 text-emerald-400" />
+                  <CreditCard className="w-5 h-5 text-[#10B981]" />
                   <span className="text-[11px] font-bold font-anime">
-                    {tr(currentLang, { en: 'Card', es: 'Tarjeta', fr: 'Carte', ar: 'بطاقة' })}
+                    {tr(currentLang, { ar: 'بطاقة بنكية', fr: 'Carte', es: 'Tarjeta', en: 'Card' })}
                   </span>
                 </button>
 
-                {/* Apple Pay */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setPaymentMethod('applepay');
-                    soundFX.playButtonClick();
-                  }}
+                  onClick={() => { setPaymentMethod('applepay'); soundFX.playButtonClick(); }}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                     paymentMethod === 'applepay'
-                      ? 'bg-white/10 border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.2)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                      ? 'bg-white/10 border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.18)]'
+                      : 'bg-[#0D1512] border-white/10 text-gray-400 hover:border-white/25'
                   }`}
                 >
                   <span className="text-base"></span>
                   <span className="text-[11px] font-bold font-anime">Apple Pay</span>
                 </button>
 
-                {/* Google Pay */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setPaymentMethod('googlepay');
-                    soundFX.playButtonClick();
-                  }}
+                  onClick={() => { setPaymentMethod('googlepay'); soundFX.playButtonClick(); }}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                     paymentMethod === 'googlepay'
-                      ? 'bg-cyan-500/15 border-cyan-400 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                      ? 'bg-[#10B981]/15 border-[#10B981] text-white shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                      : 'bg-[#0D1512] border-white/10 text-gray-400 hover:border-white/25'
                   }`}
                 >
                   <span className="text-xs font-black font-mono text-[#4285F4]">GPay</span>
                   <span className="text-[11px] font-bold font-anime">Google Pay</span>
                 </button>
 
-                {/* PayPal */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setPaymentMethod('paypal');
-                    soundFX.playButtonClick();
-                  }}
+                  onClick={() => { setPaymentMethod('paypal'); soundFX.playButtonClick(); }}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                     paymentMethod === 'paypal'
                       ? 'bg-[#0079C1]/20 border-[#0079C1] text-white shadow-[0_0_15px_rgba(0,121,193,0.3)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                      : 'bg-[#0D1512] border-white/10 text-gray-400 hover:border-white/25'
                   }`}
                 >
                   <span className="text-xs font-black italic text-[#0079C1]">PP</span>
                   <span className="text-[11px] font-bold font-anime">PayPal</span>
                 </button>
 
-                {/* MetaMask */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setPaymentMethod('metamask');
-                    soundFX.playButtonClick();
-                  }}
+                  onClick={() => { setPaymentMethod('metamask'); soundFX.playButtonClick(); }}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
                     paymentMethod === 'metamask'
-                      ? 'bg-amber-500/15 border-amber-400 text-white shadow-[0_0_15px_rgba(245,158,11,0.3)]'
-                      : 'bg-[#181A28] border-gray-800 text-gray-400 hover:border-gray-700'
+                      ? 'bg-[#D4AF37]/15 border-[#D4AF37] text-white shadow-[0_0_15px_rgba(212,175,55,0.28)]'
+                      : 'bg-[#0D1512] border-white/10 text-gray-400 hover:border-white/25'
                   }`}
                 >
-                  <Coins className="w-5 h-5 text-amber-400" />
+                  <Coins className="w-5 h-5 text-[#D4AF37]" />
                   <span className="text-[11px] font-bold font-anime">MetaMask</span>
                 </button>
               </div>
@@ -692,18 +742,30 @@ export const Checkout: React.FC<CheckoutProps> = ({
             {/* CARD PAYMENT FORM */}
             {paymentMethod === 'card' && (
               <form onSubmit={handleCardPayment} className="space-y-4 animate-fade-in">
-                <div className="p-4 bg-[#161828] rounded-2xl border border-gray-800 space-y-3.5">
+                <div className="p-4 bg-[#0D1512] rounded-2xl border border-white/10 space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black font-anime text-emerald-400 flex items-center gap-1.5">
+                    <span className="text-xs font-black font-anime text-[#10B981] flex items-center gap-1.5">
                       <Lock className="w-3.5 h-3.5" />
-                      <span>{isFr ? 'Détails de la Carte de Crédit' : isEs ? 'Detalles de Tarjeta de Crédito' : 'Credit / Debit Card Details'}</span>
+                      <span>
+                        {tr(currentLang, {
+                          ar: 'بيانات البطاقة الائتمانية / مدى / فيزا',
+                          fr: 'Détails de la Carte de Crédit',
+                          es: 'Detalles de Tarjeta de Crédito',
+                          en: 'Credit / Debit Card Details'
+                        })}
+                      </span>
                     </span>
                     <span className="text-[10px] text-gray-400 font-mono">256-BIT ENCRYPTION</span>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                      {isFr ? 'Titulaire de la Carte :' : isEs ? 'Titular de la Tarjeta:' : 'Cardholder Name:'}
+                      {tr(currentLang, {
+                        ar: 'الاسم على البطاقة:',
+                        fr: 'Titulaire de la Carte :',
+                        es: 'Titular de la Tarjeta:',
+                        en: 'Cardholder Name:'
+                      })}
                     </label>
                     <input
                       type="text"
@@ -711,24 +773,30 @@ export const Checkout: React.FC<CheckoutProps> = ({
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value)}
                       placeholder="e.g. Victor Cross"
-                      className="w-full bg-[#0E101D] border border-gray-700 focus:border-emerald-400 rounded-xl py-2.5 px-3.5 text-xs text-white outline-none"
+                      className="w-full bg-[#050807] border border-white/15 focus:border-[#10B981] rounded-xl py-2.5 px-3.5 text-xs text-white outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                      {isFr ? 'Numéro de Carte (16 chiffres) :' : isEs ? 'Número de Tarjeta (16 dígitos):' : 'Card Number (16 Digits):'}
+                      {tr(currentLang, {
+                        ar: 'رقم البطاقة (16 رقماً):',
+                        fr: 'Numéro de Carte (16 chiffres) :',
+                        es: 'Número de Tarjeta (16 dígitos):',
+                        en: 'Card Number (16 Digits):'
+                      })}
                     </label>
                     <div className="relative">
-                      <CreditCard className="w-4 h-4 text-gray-500 absolute top-1/2 -translate-y-1/2 left-3" />
+                      <CreditCard className={`w-4 h-4 text-gray-500 absolute top-1/2 -translate-y-1/2 ${isAr ? 'right-3' : 'left-3'}`} />
                       <input
                         type="text"
                         required
+                        dir="ltr"
                         maxLength={19}
                         value={cardNumber}
                         onChange={handleCardNumberChange}
                         placeholder="4532 •••• •••• 8892"
-                        className="w-full bg-[#0E101D] border border-gray-700 focus:border-emerald-400 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white font-mono outline-none"
+                        className={`w-full bg-[#050807] border border-white/15 focus:border-[#10B981] rounded-xl py-2.5 ${isAr ? 'pr-9 pl-3' : 'pl-9 pr-3'} text-xs text-white font-mono outline-none`}
                       />
                     </div>
                   </div>
@@ -736,37 +804,49 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                        {isFr ? 'Expiration (MM/AA) :' : isEs ? 'Expiración (MM/AA):' : 'Expiration (MM/YY):'}
+                        {tr(currentLang, {
+                          ar: 'تاريخ الانتهاء (MM/YY):',
+                          fr: 'Expiration (MM/AA) :',
+                          es: 'Expiración (MM/AA):',
+                          en: 'Expiration (MM/YY):'
+                        })}
                       </label>
                       <input
                         type="text"
                         required
+                        dir="ltr"
                         maxLength={5}
                         value={expiry}
                         onChange={handleExpiryChange}
                         placeholder="12/28"
-                        className="w-full bg-[#0E101D] border border-gray-700 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white font-mono text-center outline-none"
+                        className="w-full bg-[#050807] border border-white/15 focus:border-[#10B981] rounded-xl py-2.5 px-3 text-xs text-white font-mono text-center outline-none"
                       />
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                        CVV / CVC :
+                        {tr(currentLang, { ar: 'رمز الأمان CVV:', fr: 'CVV / CVC :', es: 'CVV / CVC:', en: 'CVV / CVC :' })}
                       </label>
                       <input
                         type="password"
                         required
+                        dir="ltr"
                         maxLength={4}
                         value={cvv}
                         onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))}
                         placeholder="•••"
-                        className="w-full bg-[#0E101D] border border-gray-700 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white font-mono text-center outline-none"
+                        className="w-full bg-[#050807] border border-white/15 focus:border-[#10B981] rounded-xl py-2.5 px-3 text-xs text-white font-mono text-center outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-300 mb-1">
-                      {isFr ? 'Adresse de Livraison :' : isEs ? 'Dirección de Envío:' : 'Shipping Address:'}
+                      {tr(currentLang, {
+                        ar: 'عنوان التوصيل والشحن:',
+                        fr: 'Adresse de Livraison :',
+                        es: 'Dirección de Envío:',
+                        en: 'Shipping Address:'
+                      })}
                     </label>
                     <input
                       type="text"
@@ -774,7 +854,7 @@ export const Checkout: React.FC<CheckoutProps> = ({
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
                       placeholder="Street address"
-                      className="w-full bg-[#0E101D] border border-gray-700 focus:border-emerald-400 rounded-xl py-2.5 px-3 text-xs text-white outline-none"
+                      className="w-full bg-[#050807] border border-white/15 focus:border-[#10B981] rounded-xl py-2.5 px-3 text-xs text-white outline-none"
                     />
                   </div>
                 </div>
@@ -782,13 +862,18 @@ export const Checkout: React.FC<CheckoutProps> = ({
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-sm shadow-[0_0_25px_rgba(16,185,129,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 rounded-2xl bg-[#10B981] hover:bg-emerald-400 text-[#050807] font-black font-anime text-sm shadow-[0_0_25px_rgba(16,185,129,0.35)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Lock className="w-4 h-4" />
                   <span>
                     {isProcessing 
-                      ? (isFr ? 'Traitement en cours...' : isEs ? 'Procesando pago...' : 'Processing...') 
-                      : (isFr ? `Payer $${total} par Carte ⚡` : isEs ? `Pagar $${total} con Tarjeta ⚡` : `Confirm Order & Pay $${total} ⚡`)}
+                      ? tr(currentLang, { ar: 'جارٍ معالجة الدفع...', fr: 'Traitement en cours...', es: 'Procesando pago...', en: 'Processing...' })
+                      : tr(currentLang, {
+                          ar: `تأكيد الطلب ودفع $${total} ⚡`,
+                          fr: `Payer $${total} par Carte ⚡`,
+                          es: `Pagar $${total} con Tarjeta ⚡`,
+                          en: `Confirm Order & Pay $${total} ⚡`
+                        })}
                   </span>
                 </button>
               </form>
@@ -796,15 +881,18 @@ export const Checkout: React.FC<CheckoutProps> = ({
 
             {/* APPLE PAY */}
             {paymentMethod === 'applepay' && (
-              <div className="p-6 bg-[#161828] border border-gray-800 rounded-2xl space-y-4 animate-fade-in text-center">
+              <div className="p-6 bg-[#0D1512] border border-white/10 rounded-2xl space-y-4 animate-fade-in text-center">
                 <span className="text-3xl block"></span>
-                <h3 className="font-anime font-black text-white text-lg">Apple Pay Express Checkout</h3>
+                <h3 className="font-anime font-black text-white text-lg">
+                  {tr(currentLang, { ar: 'الدفع السريع عبر Apple Pay', fr: 'Apple Pay Express Checkout', es: 'Pago Exprés Apple Pay', en: 'Apple Pay Express Checkout' })}
+                </h3>
                 <p className="text-xs text-gray-300 max-w-md mx-auto">
-                  {isFr
-                    ? 'Paiement express et sécurisé via Touch ID / Face ID sur vos appareils Apple.'
-                    : isEs
-                    ? 'Pago exprés y seguro con Touch ID / Face ID en tus dispositivos Apple.'
-                    : 'Encrypted checkout with Face ID / Touch ID linked to your Apple Wallet.'}
+                  {tr(currentLang, {
+                    ar: 'دفع مشفر وفوري عبر البصمة أو Face ID من خلال محفظة Apple الخاصة بك.',
+                    fr: 'Paiement express et sécurisé via Touch ID / Face ID sur vos appareils Apple.',
+                    es: 'Pago exprés y seguro con Touch ID / Face ID en tus dispositivos Apple.',
+                    en: 'Encrypted checkout with Face ID / Touch ID linked to your Apple Wallet.'
+                  })}
                 </p>
                 <button
                   type="button"
@@ -813,46 +901,52 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   className="w-full py-4 rounded-2xl bg-white hover:bg-gray-100 text-black font-black font-anime text-base transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                 >
                   <span> Pay</span>
-                  <span>— ${total}</span>
+                  <span dir="ltr">— ${total}</span>
                 </button>
               </div>
             )}
 
             {/* GOOGLE PAY */}
             {paymentMethod === 'googlepay' && (
-              <div className="p-6 bg-[#161828] border border-gray-800 rounded-2xl space-y-4 animate-fade-in text-center">
+              <div className="p-6 bg-[#0D1512] border border-white/10 rounded-2xl space-y-4 animate-fade-in text-center">
                 <span className="text-2xl font-black font-mono text-[#4285F4] block">Google Pay</span>
-                <h3 className="font-anime font-black text-white text-lg">Google Pay Fast Checkout</h3>
+                <h3 className="font-anime font-black text-white text-lg">
+                  {tr(currentLang, { ar: 'الدفع السريع عبر Google Pay', fr: 'Google Pay Fast Checkout', es: 'Pago Rápido Google Pay', en: 'Google Pay Fast Checkout' })}
+                </h3>
                 <p className="text-xs text-gray-300 max-w-md mx-auto">
-                  {isFr
-                    ? 'Règlement rapide avec votre compte Google et vos cartes enregistrées chiffrées.'
-                    : isEs
-                    ? 'Pago rápido con tu cuenta de Google y tarjetas cifradas seguras.'
-                    : 'Instant checkout with your Google Account and stored secure cards.'}
+                  {tr(currentLang, {
+                    ar: 'إتمام فوري للمعاملة عبر حساب Google وبطاقاتك المحفوظة المشفرة.',
+                    fr: 'Règlement rapide avec votre compte Google et vos cartes enregistrées chiffrées.',
+                    es: 'Pago rápido con tu cuenta de Google y tarjetas cifradas seguras.',
+                    en: 'Instant checkout with your Google Account and stored secure cards.'
+                  })}
                 </p>
                 <button
                   type="button"
                   disabled={isProcessing}
                   onClick={() => handleInstantWalletPayment('googlepay')}
-                  className="w-full py-4 rounded-2xl bg-black hover:bg-gray-900 border border-gray-700 text-white font-black font-anime text-base transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                  className="w-full py-4 rounded-2xl bg-[#050807] hover:bg-black border border-white/20 text-white font-black font-anime text-base transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                 >
                   <span className="text-[#4285F4] font-mono">G</span>
-                  <span>Pay — ${total}</span>
+                  <span dir="ltr">Pay — ${total}</span>
                 </button>
               </div>
             )}
 
             {/* PAYPAL */}
             {paymentMethod === 'paypal' && (
-              <div className="p-6 bg-[#161828] border border-[#0079C1]/50 rounded-2xl space-y-4 animate-fade-in text-center">
+              <div className="p-6 bg-[#0D1512] border border-[#0079C1]/50 rounded-2xl space-y-4 animate-fade-in text-center">
                 <span className="text-2xl font-black italic text-[#0079C1] block">PayPal</span>
-                <h3 className="font-anime font-black text-white text-lg">PayPal Buyer Protection</h3>
+                <h3 className="font-anime font-black text-white text-lg">
+                  {tr(currentLang, { ar: 'حماية المشتري عبر PayPal', fr: 'Protection Acheteur PayPal', es: 'Protección al Comprador PayPal', en: 'PayPal Buyer Protection' })}
+                </h3>
                 <p className="text-xs text-gray-300 max-w-md mx-auto">
-                  {isFr
-                    ? 'Payez via votre solde PayPal ou vos cartes liées avec la protection complète des achats.'
-                    : isEs
-                    ? 'Paga mediante tu saldo de PayPal o tarjetas con protección integral al comprador.'
-                    : 'Pay via your PayPal balance or linked cards with comprehensive buyer protection.'}
+                  {tr(currentLang, {
+                    ar: 'ادفع عبر رصيد PayPal أو بطاقاتك المرتبطة مع تغطية حماية المشتري الكاملة.',
+                    fr: 'Payez via votre solde PayPal ou vos cartes liées avec la protection complète des achats.',
+                    es: 'Paga mediante tu saldo de PayPal o tarjetas con protección integral al comprador.',
+                    en: 'Pay via your PayPal balance or linked cards with comprehensive buyer protection.'
+                  })}
                 </p>
                 <button
                   type="button"
@@ -861,59 +955,54 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   className="w-full py-4 rounded-2xl bg-[#FFC439] hover:bg-[#F4B400] text-black font-black font-anime text-base transition-all cursor-pointer flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,196,57,0.3)] disabled:opacity-50"
                 >
                   <span className="italic font-black text-[#003087]">PayPal</span>
-                  <span>— ${total}</span>
+                  <span dir="ltr">— ${total}</span>
                 </button>
               </div>
             )}
 
             {/* METAMASK WEB3 */}
             {paymentMethod === 'metamask' && (
-              <div className="p-6 bg-[#161828] border-2 border-amber-500/50 rounded-2xl space-y-4 animate-fade-in">
-                <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+              <div className="p-6 bg-[#0D1512] border-2 border-[#D4AF37]/50 rounded-2xl space-y-4 animate-fade-in">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div className="flex items-center gap-3">
-                    <Coins className="w-8 h-8 text-amber-400" />
+                    <Coins className="w-8 h-8 text-[#D4AF37]" />
                     <div>
                       <h3 className="font-anime font-black text-white text-base">
-                        {tr(currentLang, {
-                          en: 'MetaMask Web3 Gateway',
-                          es: 'Pasarela Web3 MetaMask',
-                          fr: 'Passerelle Web3 MetaMask',
-                          ar: 'بوابة الدفع Web3 MetaMask'
-                        })}
+                        {tr(currentLang, { ar: 'بوابة MetaMask Web3', fr: 'Passerelle MetaMask Web3', es: 'Pasarela MetaMask Web3', en: 'MetaMask Web3 Gateway' })}
                       </h3>
                       <span className="text-[11px] text-gray-400 font-mono">{networkName}</span>
                     </div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-mono font-bold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-[10px] font-mono font-bold">
                     {hasMetaMask
-                      ? tr(currentLang, { en: 'EXTENSION DETECTED', es: 'EXTENSIÓN DETECTADA', fr: 'EXTENSION DÉTECTÉE', ar: 'الإضافة متصلة' })
-                      : tr(currentLang, { en: 'EXTENSION NOT FOUND', es: 'NO DETECTADA', fr: 'NON DÉTECTÉE', ar: 'الإضافة غير موجودة' })}
+                      ? tr(currentLang, { ar: 'الإضافة متصلة', fr: 'EXTENSION DÉTECTÉE', es: 'EXTENSIÓN DETECTADA', en: 'EXTENSION DETECTED' })
+                      : tr(currentLang, { ar: 'غير مثبتة', fr: 'NON DÉTECTÉE', es: 'NO DETECTADA', en: 'EXTENSION NOT FOUND' })}
                   </span>
                 </div>
 
-                <div className="p-3 bg-black/60 rounded-xl border border-gray-800 text-xs space-y-1">
+                <div className="p-3 bg-black/60 rounded-xl border border-white/10 text-xs space-y-1">
                   <span className="text-[10px] text-gray-400 block font-mono">
                     {tr(currentLang, {
-                      en: 'OFFICIAL RECEIVING TREASURY WALLET:',
-                      es: 'CARTERA OFICIAL RECEPTORA:',
-                      fr: 'PORTEFEUILLE OFFICIEL DE RÉCEPTION :',
-                      ar: 'محفظة الاستلام الرسمية:'
+                      ar: 'محفظة الخزينة الرسمية المستلمة:',
+                      fr: 'PORTEFEUILLE DE TRÉSORERIE OFFICIEL :',
+                      es: 'BILLETERA OFICIAL DE TESORERÍA:',
+                      en: 'OFFICIAL RECEIVING TREASURY WALLET:'
                     })}
                   </span>
-                  <p className="font-mono text-cyan-300 font-bold break-all text-[11px]">{TREASURY_WALLET_ADDRESS}</p>
+                  <p className="font-mono text-[#10B981] font-bold break-all text-[11px]" dir="ltr">{TREASURY_WALLET_ADDRESS}</p>
                 </div>
 
                 {walletAddress ? (
-                  <div className="p-3 bg-black/40 rounded-xl border border-emerald-500/40 flex justify-between items-center text-xs">
+                  <div className="p-3 bg-black/40 rounded-xl border border-[#10B981]/40 flex justify-between items-center text-xs">
                     <div>
-                      <span className="text-[10px] text-emerald-400 block font-mono">
-                        {tr(currentLang, { en: 'CONNECTED WALLET:', es: 'CARTERA CONECTADA:', fr: 'PORTEFEUILLE CONNECTÉ :', ar: 'المحفظة المتصلة:' })}
+                      <span className="text-[10px] text-[#10B981] block font-mono">
+                        {tr(currentLang, { ar: 'المحفظة المتصلة:', fr: 'CONNECTÉ :', es: 'CONECTADO:', en: 'CONNECTED WALLET:' })}
                       </span>
-                      <span className="font-mono font-bold text-white">
+                      <span className="font-mono font-bold text-white" dir="ltr">
                         {walletAddress.substring(0, 8)}...{walletAddress.substring(walletAddress.length - 6)}
                       </span>
                     </div>
-                    <span className="font-anime font-black text-[#FFE600] text-sm">
+                    <span className="font-anime font-black text-[#D4AF37] text-sm tabular-nums" dir="ltr">
                       ≈ {ethEquivalent} ETH
                     </span>
                   </div>
@@ -922,18 +1011,13 @@ export const Checkout: React.FC<CheckoutProps> = ({
                     type="button"
                     onClick={connectMetaMask}
                     disabled={isConnecting}
-                    className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black font-anime text-xs cursor-pointer transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl bg-[#D4AF37] hover:bg-amber-300 text-black font-black font-anime text-xs cursor-pointer transition-all flex items-center justify-center gap-2"
                   >
                     <Wallet className="w-4 h-4" />
                     <span>
                       {isConnecting
-                        ? tr(currentLang, { en: 'Connecting...', es: 'Conectando...', fr: 'Connexion...', ar: 'جاري الاتصال...' })
-                        : tr(currentLang, {
-                            en: 'Connect MetaMask Wallet 🦊',
-                            es: 'Conectar Cartera MetaMask 🦊',
-                            fr: 'Connecter MetaMask 🦊',
-                            ar: 'ربط محفظة MetaMask 🦊'
-                          })}
+                        ? tr(currentLang, { ar: 'جارٍ الاتصال...', fr: 'Connexion...', es: 'Conectando...', en: 'Connecting...' })
+                        : tr(currentLang, { ar: 'ربط محفظة MetaMask', fr: 'Connecter MetaMask', es: 'Conectar MetaMask', en: 'Connect MetaMask Wallet' })}
                     </span>
                   </button>
                 )}
@@ -942,17 +1026,17 @@ export const Checkout: React.FC<CheckoutProps> = ({
                   type="button"
                   onClick={handleMetaMaskPayment}
                   disabled={isProcessing}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-emerald-400 text-black font-black font-anime text-sm shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#D4AF37] to-[#10B981] text-[#050807] font-black font-anime text-sm shadow-[0_0_20px_rgba(212,175,55,0.28)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Coins className="w-4 h-4" />
                   <span>
-                    {isProcessing
-                      ? tr(currentLang, { en: 'Signing Web3 Transaction...', es: 'Firmando Transacción Web3...', fr: 'Signature Web3...', ar: 'جاري التوقيع...' })
+                    {isProcessing 
+                      ? tr(currentLang, { ar: 'جارٍ توقيع معاملة Web3...', fr: 'Signature Web3...', es: 'Firmando Web3...', en: 'Signing Web3 Transaction...' })
                       : tr(currentLang, {
-                          en: `Pay $${total} (${ethEquivalent} ETH) via MetaMask ⚡`,
-                          es: `Pagar $${total} (${ethEquivalent} ETH) vía MetaMask ⚡`,
+                          ar: `دفع $${total} (${ethEquivalent} ETH) عبر MetaMask ⚡`,
                           fr: `Payer $${total} (${ethEquivalent} ETH) via MetaMask ⚡`,
-                          ar: `دفع $${total} (${ethEquivalent} ETH) عبر MetaMask ⚡`
+                          es: `Pagar $${total} (${ethEquivalent} ETH) con MetaMask ⚡`,
+                          en: `Pay $${total} (${ethEquivalent} ETH) via MetaMask ⚡`
                         })}
                   </span>
                 </button>
@@ -962,69 +1046,70 @@ export const Checkout: React.FC<CheckoutProps> = ({
           </div>
 
           {/* Right Summary Column */}
-          <div className="lg:col-span-5 bg-[#121422] p-6 sm:p-8 rounded-3xl border border-gray-800 space-y-6 h-fit">
-            <h2 className="text-xl font-black font-anime text-white border-b border-gray-800 pb-3">
-              {tr(currentLang, { en: 'Order Summary', es: 'Resumen del Pedido', fr: 'Récapitulatif de la Commande', ar: 'ملخص الطلب' })}
+          <div className="lg:col-span-5 bg-[#080D0B] p-6 sm:p-8 rounded-3xl border border-white/10 space-y-6 h-fit shadow-2xl">
+            <h2 className="text-xl font-black font-anime text-white border-b border-white/10 pb-3">
+              {tr(currentLang, {
+                ar: 'ملخص الطلب والمشتريات',
+                fr: 'Récapitulatif de la Commande',
+                es: 'Resumen del Pedido',
+                en: 'Order Summary'
+              })}
             </h2>
 
-            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1 yard-slim-scrollbar">
               {items.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-[#161828] rounded-xl border border-gray-800">
-                  <img src={item.imageUrl} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-gray-700 shrink-0" />
+                <div key={idx} className="flex items-center gap-3 p-3 bg-[#0D1512] rounded-xl border border-white/10">
+                  <img src={item.imageUrl} alt={item.name} className="w-12 h-12 rounded-lg object-cover border border-white/15 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-white text-xs truncate font-anime">{item.name}</h3>
                     <span className="text-[10px] text-gray-400 block">{item.category} {item.size ? `• ${item.size}` : ''}</span>
                   </div>
-                  <span className="font-black text-[#FFE600] font-mono text-sm" dir="ltr">${item.price}</span>
+                  <span className="font-black text-[#D4AF37] font-mono text-sm tabular-nums" dir="ltr">${item.price}</span>
                 </div>
               ))}
             </div>
 
-            <div className="border-t border-gray-800 pt-4 space-y-2 text-xs">
+            <div className="border-t border-white/10 pt-4 space-y-2 text-xs">
               <div className="flex justify-between text-gray-400">
-                <span>{tr(currentLang, { en: 'Subtotal:', es: 'Subtotal:', fr: 'Sous-total :', ar: 'المجموع الفرعي:' })}</span>
-                <span className="text-white font-bold">${subtotal}</span>
+                <span>{tr(currentLang, { ar: 'المجموع الفرعي:', fr: 'Sous-total :', es: 'Subtotal:', en: 'Subtotal:' })}</span>
+                <span className="text-white font-bold tabular-nums" dir="ltr">${subtotal}</span>
               </div>
-              <div className="flex justify-between text-emerald-400">
-                <span>{tr(currentLang, { en: 'Shipping:', es: 'Envío:', fr: 'Frais d’expédition :', ar: 'الشحن:' })}</span>
-                <span className="font-bold">
-                  {tr(currentLang, { en: 'FREE ⚡', es: 'GRATIS ⚡', fr: 'GRATUIT ⚡', ar: 'مجاني ⚡' })}
-                </span>
+              <div className="flex justify-between text-[#10B981]">
+                <span>{tr(currentLang, { ar: 'رسوم الشحن الدولي:', fr: 'Frais d’expédition :', es: 'Envío:', en: 'Shipping:' })}</span>
+                <span className="font-bold">{tr(currentLang, { ar: 'مجاني ⚡', fr: 'GRATUIT ⚡', es: 'GRATIS ⚡', en: 'FREE ⚡' })}</span>
               </div>
-              <div className="border-t border-gray-800/80 pt-2 flex justify-between items-center text-sm">
-                <span className="font-black font-anime text-white">
-                  {tr(currentLang, { en: 'TOTAL:', es: 'TOTAL:', fr: 'TOTAL :', ar: 'الإجمالي:' })}
-                </span>
-                <span className="text-2xl font-black font-mono text-[#FFE600]" dir="ltr">${total}</span>
+              <div className="border-t border-white/10 pt-2 flex justify-between items-center text-sm">
+                <span className="font-black font-anime text-white">{tr(currentLang, { ar: 'الإجمالي النهائي:', fr: 'TOTAL :', es: 'TOTAL:', en: 'TOTAL:' })}</span>
+                <span className="text-2xl font-black font-mono text-[#D4AF37] tabular-nums" dir="ltr">${total}</span>
               </div>
             </div>
 
             {/* Athlete Bio-Metrics Clearance Badges */}
-            <div className="pt-4 border-t border-gray-800 space-y-2">
+            <div className="pt-4 border-t border-white/10 space-y-2">
               <span className="text-[10px] font-black text-gray-400 uppercase font-anime block">
                 {tr(currentLang, {
-                  en: '🛡️ CERTIFIED ATHLETE PLATFORM CLEARANCE:',
-                  es: '🛡️ CERTIFICACIÓN OFICIAL DE ATLETA:',
-                  fr: '🛡️ CERTIFICATION OFFICIELLE ATHLÈTE :',
-                  ar: '🛡️ اعتماد الأمان والجاهزية الرياضية:'
+                  ar: '🛡️ اعتماد منصة يارد 300 الحيوي للرياضيين:',
+                  fr: '🛡️ CERTIFICATION BIOMÉTRIQUE ATHLÈTE YARD 300 :',
+                  es: '🛡️ CERTIFICACIÓN BIOMÉTRICA ATLETA YARD 300:',
+                  en: '🛡️ CERTIFIED ATHLETE PLATFORM CLEARANCE:'
                 })}
               </span>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
-                  <HeartPulse className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{tr(currentLang, { en: 'Cardio Protected', es: 'Cardio Protegido', fr: 'Cardio Protégé', ar: 'حماية قلبية' })}</span>
+                <div className="p-2 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2 text-gray-300">
+                  <HeartPulse className="w-4 h-4 text-[#10B981] shrink-0" />
+                  <span>{tr(currentLang, { ar: 'حماية قلبية', fr: 'Cardio Protégé', es: 'Cardio Protegido', en: 'Cardio Protected' })}</span>
                 </div>
-                <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
-                  <Activity className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>{tr(currentLang, { en: 'ACWR Balanced', es: 'ACWR Equilibrado', fr: 'ACWR Équilibré', ar: 'توازن ACWR' })}</span>
+                <div className="p-2 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2 text-gray-300">
+                  <Activity className="w-4 h-4 text-[#10B981] shrink-0" />
+                  <span>{tr(currentLang, { ar: 'توازن ACWR', fr: 'ACWR Équilibré', es: 'ACWR Equilibrado', en: 'ACWR Balanced' })}</span>
                 </div>
-                <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
-                  <Moon className="w-4 h-4 text-purple-400 shrink-0" />
-                  <span>{tr(currentLang, { en: 'Sleep Verified', es: 'Sueño Verificado', fr: 'Sommeil Vérifié', ar: 'تحليل النوم' })}</span>
+                <div className="p-2 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2 text-gray-300">
+                  <Moon className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                  <span>{tr(currentLang, { ar: 'تعافٍ موثق', fr: 'Sommeil Vérifié', es: 'Sueño Verificado', en: 'Sleep Verified' })}</span>
                 </div>
-                <div className="p-2 rounded-xl bg-black/40 border border-gray-800 flex items-center gap-2 text-gray-300">
-                  <ShieldCheck className="w-4 h-4 text-[#FFE600] shrink-0" />
-                  <span>{tr(currentLang, { en: 'Biometric Pass', es: 'Pase Biométrico', fr: 'Pass Biométrique', ar: 'مرور بيومتري' })}</span>
+                <div className="p-2 rounded-xl bg-black/50 border border-white/10 flex items-center gap-2 text-gray-300">
+                  <ShieldCheck className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                  <span>{tr(currentLang, { ar: 'اعتماد حيوي', fr: 'Pass Biométrique', es: 'Pase Biométrico', en: 'Biometric Pass' })}</span>
                 </div>
               </div>
             </div>

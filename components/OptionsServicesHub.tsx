@@ -20,7 +20,9 @@ import {
   ChevronRight,
   LayoutGrid,
   SlidersHorizontal,
-  Trophy
+  Trophy,
+  Moon,
+  ShieldCheck
 } from 'lucide-react';
 import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
@@ -92,6 +94,79 @@ const SERVICE_OPTIONS: ServiceOption[] = [
       es: ['VFC, VO2 Máx y Horas de Entreno', 'Top 10 Semanal y Top 50 Mensual', 'Expedientes Interactivos de Campeones'],
       fr: ['VFC, VO2 Max & Heures d’Entraînement', 'Top 10 Hebdo & Top 50 Mensuel', 'Dossiers Interactifs des Champions'],
       ar: ['قراءات HRV و VO2 Max وساعات التدريب', 'أبطال الأسبوع (10) والشهر (50)', 'ملفات فحص دقيقة لكل بطل']
+    }
+  },
+  {
+    id: 'products',
+    category: 'store',
+    title: {
+      en: 'YARD 300 Luxury Store (300 Units)',
+      es: 'Tienda de Lujo YARD 300 (300 Unidades)',
+      fr: 'Boutique Luxe YARD 300 (300 Unités)',
+      ar: 'متجر يارد 300 الحصري (300 قطعة)'
+    },
+    subtitle: {
+      en: 'Precision athletic wear, biometric rings & carbon-composite gear serialized strictly to 300 units worldwide.',
+      es: 'Indumentaria atlética, anillos biométricos y equipamiento numerado estrictamente a 300 unidades.',
+      fr: 'Vêtements techniques, bagues biométriques et équipement numérotés strictement à 300 exemplaires.',
+      ar: 'ملابس وأجهزة قياس حيوي ومعدات رياضية فاخرة مرقمة بدقة بـ 300 قطعة فقط على مستوى العالم.'
+    },
+    badge: {
+      en: '300 SERIALIZED',
+      es: '300 SERIADAS',
+      fr: '300 NUMÉROTÉES',
+      ar: 'إصدار 300 قطعة'
+    },
+    icon: ShoppingBag,
+    accentColor: '#D4AF37',
+    stats: {
+      en: 'Men & Women Editions',
+      es: 'Ediciones Hombre y Mujer',
+      fr: 'Éditions Homme & Femme',
+      ar: 'إصدارات رجالية ونسائية'
+    },
+    features: {
+      en: ['Strictly 300 Units / Drop', 'Technical Moisture Fabrics', 'Direct Global Checkout'],
+      es: ['Solo 300 Unidades por Edición', 'Tejidos Técnicos Transpirables', 'Pago Global Directo'],
+      fr: ['300 Unités Strictes / Drop', 'Tissus Techniques Haute Performance', 'Paiement Mondial Direct'],
+      ar: ['300 قطعة فقط لكل تصميم', 'أنسجة تقنية عالية الأداء', 'دفع إلكتروني وشحن دولي']
+    }
+  },
+  {
+    id: 'bazaruto',
+    category: 'destinations',
+    title: {
+      en: 'YARD Bio-Recovery Resort · Bazaruto',
+      es: 'Resort de Bio-Recuperación YARD · Bazaruto',
+      fr: 'Resort Bio-Récupération YARD · Bazaruto',
+      ar: 'منتجع يارد الصحي · أرخبيل بازاروتو'
+    },
+    subtitle: {
+      en: 'Opening October 2027. 10 beachfront villas, 30 hotel suites + 4 VIP suites, marine recovery pools & wellness clinic.',
+      es: 'Apertura octubre 2027. 10 villas frente al mar, 30 suites + 4 suites VIP, piscinas marinas y clínica de recuperación.',
+      fr: 'Ouverture octobre 2027. 10 villas en bord de mer, 30 suites + 4 suites VIP, bassins marins et clinique santé.',
+      ar: 'الافتتاح أكتوبر 2027. 10 فيلل شاطئية فاخرة، 30 غرفة و4 أجنحة VIP، مسابح ومستشفى استشفاء متكامل.'
+    },
+    badge: {
+      en: 'OCT 2027 · VIP',
+      es: 'OCT 2027 · VIP',
+      fr: 'OCT 2027 · VIP',
+      ar: 'أكتوبر 2027 · VIP'
+    },
+    icon: Palmtree,
+    accentColor: '#10B981',
+    image: '/images/yard_arch_board.jpg',
+    stats: {
+      en: 'Bazaruto Island',
+      es: 'Isla de Bazaruto',
+      fr: 'Île de Bazaruto',
+      ar: 'جزيرة بازاروتو'
+    },
+    features: {
+      en: ['Private Island Sanctuary', 'Sports Injury Hospital Wing', 'Architectural Presentation Concept'],
+      es: ['Santuario en Isla Privada', 'Hospital de Medicina Deportiva', 'Diseño Arquitectónico Exclusivo'],
+      fr: ['Sanctuaire sur Île Privée', 'Hôpital de Médecine du Sport', 'Concept Architectural Exclusif'],
+      ar: ['ملاذ خاص في أرخبيل بازاروتو', 'مستشفى لعلاج الإصابات الرياضية', 'توقيع معماري احترافي حصري']
     }
   },
   {
@@ -169,79 +244,6 @@ const SERVICE_OPTIONS: ServiceOption[] = [
     }
   },
   {
-    id: 'bazaruto',
-    category: 'destinations',
-    title: {
-      en: 'YARD Bio-Recovery Resort · Bazaruto',
-      es: 'Resort de Bio-Recuperación YARD · Bazaruto',
-      fr: 'Resort Bio-Récupération YARD · Bazaruto',
-      ar: 'منتجع يارد الصحي · أرخبيل بازاروتو'
-    },
-    subtitle: {
-      en: 'Opening October 2027. 10 beachfront villas, 30 hotel suites + 4 VIP suites, marine recovery pools & wellness clinic.',
-      es: 'Apertura octubre 2027. 10 villas frente al mar, 30 suites + 4 suites VIP, piscinas marinas y clínica de recuperación.',
-      fr: 'Ouverture octobre 2027. 10 villas en bord de mer, 30 suites + 4 suites VIP, bassins marins et clinique santé.',
-      ar: 'الافتتاح أكتوبر 2027. 10 فيلل شاطئية فاخرة، 30 غرفة و4 أجنحة VIP، مسابح ومستشفى استشفاء متكامل.'
-    },
-    badge: {
-      en: 'OCT 2027 · VIP',
-      es: 'OCT 2027 · VIP',
-      fr: 'OCT 2027 · VIP',
-      ar: 'أكتوبر 2027 · VIP'
-    },
-    icon: Palmtree,
-    accentColor: '#10B981',
-    image: '/images/bazaruto_aerial_night_v3.jpg',
-    stats: {
-      en: 'Bazaruto Island',
-      es: 'Isla de Bazaruto',
-      fr: 'Île de Bazaruto',
-      ar: 'جزيرة بازاروتو'
-    },
-    features: {
-      en: ['Private Island Sanctuary', 'Biometric & Mental Recovery', 'Designed by Ayman .A. suwaidi'],
-      es: ['Santuario en Isla Privada', 'Recuperación Biométrica y Mental', 'Diseñado por Ayman .A. suwaidi'],
-      fr: ['Sanctuaire sur Île Privée', 'Récupération Biométrique & Mentale', 'Conçu par Ayman .A. suwaidi'],
-      ar: ['ملاذ خاص في أرخبيل بازاروتو', 'مستشفى لعلاج الإصابات والتعافي', 'تصميم Ayman .A. suwaidi']
-    }
-  },
-  {
-    id: 'products',
-    category: 'store',
-    title: {
-      en: 'YARD 300 Luxury Store (300 Units)',
-      es: 'Tienda de Lujo YARD 300 (300 Unidades)',
-      fr: 'Boutique Luxe YARD 300 (300 Unités)',
-      ar: 'متجر يارد 300 الحصري (300 قطعة)'
-    },
-    subtitle: {
-      en: 'Precision athletic wear and carbon-composite gear serialized strictly to 300 units worldwide.',
-      es: 'Indumentaria atlética y equipamiento de carbono numerado estrictamente a 300 unidades en el mundo.',
-      fr: 'Vêtements techniques et équipement carbone numérotés strictement à 300 exemplaires mondiaux.',
-      ar: 'ملابس ومعدات رياضية عالية الجودة مرقمة بدقة بـ 300 قطعة فقط على مستوى العالم.'
-    },
-    badge: {
-      en: '300 SERIALIZED',
-      es: '300 SERIADAS',
-      fr: '300 NUMÉROTÉES',
-      ar: 'إصدار 300 قطعة'
-    },
-    icon: ShoppingBag,
-    accentColor: '#D4AF37',
-    stats: {
-      en: 'Men & Women Editions',
-      es: 'Ediciones Hombre y Mujer',
-      fr: 'Éditions Homme & Femme',
-      ar: 'إصدارات رجالية ونسائية'
-    },
-    features: {
-      en: ['Strictly 300 Units / Drop', 'Technical Moisture Fabrics', 'Direct Global Checkout'],
-      es: ['Solo 300 Unidades por Edición', 'Tejidos Técnicos Transpirables', 'Pago Global Directo'],
-      fr: ['300 Unités Strictes / Drop', 'Tissus Techniques Haute Performance', 'Paiement Mondial Direct'],
-      ar: ['300 قطعة فقط لكل تصميم', 'أنسجة تقنية عالية الأداء', 'دفع إلكتروني وشحن دولي']
-    }
-  },
-  {
     id: 'yardEngine',
     category: 'performance',
     title: {
@@ -275,6 +277,78 @@ const SERVICE_OPTIONS: ServiceOption[] = [
       es: ['Fases NREM3 y REM del Sueño', 'Motor de Riesgo Gabbett ACWR', 'Alertas Automáticas de Descarga'],
       fr: ['Analyse Sommeil NREM3 & REM', 'Moteur de Risque Gabbett ACWR', 'Alertes Préventives Automatisées'],
       ar: ['تحليل مراحل النوم العميق', 'مؤشر الحمل الحاد والمزمن', 'تنبيهات وقائية ذكية']
+    }
+  },
+  {
+    id: 'sleepStudies',
+    category: 'performance',
+    title: {
+      en: 'Sleep Architecture & Recovery Lab',
+      es: 'Laboratorio de Sueño y Recuperación',
+      fr: 'Laboratoire Architecture du Sommeil',
+      ar: 'مختبر دراسات النوم والاستشفاء'
+    },
+    subtitle: {
+      en: 'Evaluate NREM3 deep sleep, growth hormone recovery windows, REM coordination, and athletic sleep debt.',
+      es: 'Evalúa sueño profundo NREM3, síntesis hormonal, fases REM y deuda de sueño atlética.',
+      fr: 'Évaluez le sommeil profond NREM3, la récupération hormonale, le REM et la dette de sommeil.',
+      ar: 'تقييم أطوار النوم العميق NREM3 و REM وتعافي الجهاز العصبي والعضلي للرياضيين.'
+    },
+    badge: {
+      en: 'SLEEP SCIENCE',
+      es: 'CIENCIA SUEÑO',
+      fr: 'SOMMEIL LAB',
+      ar: 'علوم النوم'
+    },
+    icon: Moon,
+    accentColor: '#10B981',
+    stats: {
+      en: 'NREM3 + REM Analysis',
+      es: 'Análisis NREM3 + REM',
+      fr: 'Analyse NREM3 + REM',
+      ar: 'تحليل NREM3 و REM'
+    },
+    features: {
+      en: ['Stage-3 GH Modeling', 'REM Reflex Score', 'Sleep Debt Tracker'],
+      es: ['Modelo GH Fase 3', 'Índice de Reflejos REM', 'Control de Deuda de Sueño'],
+      fr: ['Modèle GH Phase 3', 'Score Réflexes REM', 'Suivi Dette de Sommeil'],
+      ar: ['نمذجة هرمون النمو الليلي', 'تقييم كفاءة REM', 'قياس عجز النوم']
+    }
+  },
+  {
+    id: 'injuryPrediction',
+    category: 'performance',
+    title: {
+      en: 'Gabbett ACWR Injury Prediction',
+      es: 'Predicción de Lesiones Gabbett ACWR',
+      fr: 'Prédiction des Blessures Gabbett ACWR',
+      ar: 'خوارزمية التنبؤ بالإصابات ACWR'
+    },
+    subtitle: {
+      en: '7-day preventative model tracking Acute:Chronic Workload Ratio, joint stress, and soft-tissue overload alerts.',
+      es: 'Modelo preventivo a 7 días del ratio de carga aguda:crónica, estrés articular y alertas tendinosas.',
+      fr: 'Modèle préventif à 7 jours du ratio aigu/chronique, stress articulaire et alertes tendineuses.',
+      ar: 'نموذج وقائي لمدة 7 أيام لقياس الحمل الحاد والمزمن وحماية المفاصل والأوتار قبل الإجهاد.'
+    },
+    badge: {
+      en: '7-DAY SHIELD',
+      es: 'ESCUDO 7 DÍAS',
+      fr: 'BOUCLIER 7J',
+      ar: 'حماية 7 أيام'
+    },
+    icon: ShieldCheck,
+    accentColor: '#D4AF37',
+    stats: {
+      en: '0.8 – 1.3 Safe Zone',
+      es: 'Zona Segura 0.8–1.3',
+      fr: 'Zone Sûre 0,8–1,3',
+      ar: 'النطاق الآمن 0.8–1.3'
+    },
+    features: {
+      en: ['Acute vs Chronic Load', 'Tendon Strain Alerts', 'Deload Prescription'],
+      es: ['Carga Aguda vs Crónica', 'Alertas Tendinosas', 'Prescripción de Descarga'],
+      fr: ['Charge Aiguë vs Chronique', 'Alertes Tendineuses', 'Plan d’Allègement'],
+      ar: ['توازن الحمل الحاد والمزمن', 'تنبيهات الأوتار والمفاصل', 'بروتوكولات تقليل الحمل']
     }
   },
   {
@@ -390,8 +464,8 @@ const SERVICE_OPTIONS: ServiceOption[] = [
 ];
 
 const FILTER_TABS: { id: 'all' | 'destinations' | 'performance' | 'store'; label: LocalizedText }[] = [
-  { id: 'all', label: { en: 'All Options (9)', es: 'Todas las Opciones (9)', fr: 'Toutes les Options (9)', ar: 'كافة الخيارات (9)' } },
-  { id: 'destinations', label: { en: 'Club · Camp · Resort', es: 'Club · Camp · Resort', fr: 'Club · Camp · Resort', ar: 'النادي · الكامب · المنتجع' } },
+  { id: 'all', label: { en: 'Executive Directory', es: 'Directorio Ejecutivo', fr: 'Répertoire Exécutif', ar: 'الدليل التنفيذي' } },
+  { id: 'destinations', label: { en: 'Resort · Club · Camp', es: 'Resort · Club · Camp', fr: 'Resort · Club · Camp', ar: 'المنتجع · النادي · الكامب' } },
   { id: 'performance', label: { en: 'Champions · Labs · AI', es: 'Campeones · Labs · IA', fr: 'Champions · Labos · IA', ar: 'الأبطال · المختبر · الذكاء' } },
   { id: 'store', label: { en: 'Store & Championships', es: 'Tienda y Campeonatos', fr: 'Boutique & Championnats', ar: 'المتجر والبطولات' } }
 ];
@@ -405,7 +479,7 @@ export const OptionsServicesHub: React.FC<OptionsServicesHubProps> = ({
   const isAr = currentLang === 'ar';
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'destinations' | 'performance' | 'store'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'rail' | 'grid'>('rail');
+  const [viewMode, setViewMode] = useState<'rail' | 'grid'>('grid');
   const [activeCardIdx, setActiveCardIdx] = useState<number>(0);
   const [ownerCfg, setOwnerCfg] = useState(() => OwnerConfigService.getConfig());
 
@@ -664,8 +738,8 @@ export const OptionsServicesHub: React.FC<OptionsServicesHubProps> = ({
             </button>
           )}
 
-          <div className="px-3.5 py-1.5 rounded-lg bg-[#0C0E14] border border-emerald-500/25 text-xs font-mono text-[#10B981]">
-            YARD 300 // SPATIAL ECOSYSTEM HUB
+          <div className="px-3.5 py-1.5 rounded-lg bg-[#0C0E14] border border-[#D4AF37]/30 text-xs font-mono text-[#D4AF37]">
+            YARD 300 · EXECUTIVE ECOSYSTEM
           </div>
         </div>
 
@@ -860,7 +934,7 @@ export const OptionsServicesHub: React.FC<OptionsServicesHubProps> = ({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filteredOptions.map((opt, idx) => renderCard(opt, idx, false))}
           </div>
         )}

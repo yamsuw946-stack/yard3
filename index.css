@@ -618,5 +618,32 @@ p, span, h1, h2, h3, h4, h5, h6 {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+/* Global Obsidian Black & Emerald Green Scrollbars (eliminates default white scrollbars) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #10B981 #050807;
+}
 
+*::-webkit-scrollbar,
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
+*::-webkit-scrollbar-track,
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #050807;
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb,
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #059669, #10B981);
+  border-radius: 9999px;
+  border: 1px solid #050807;
+}
+
+*::-webkit-scrollbar-thumb:hover,
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #34D399;
+}

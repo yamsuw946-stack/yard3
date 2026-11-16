@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  ShieldCheck,
-  Activity,
-  CheckCircle2,
-  ArrowUpRight,
-  X
-} from 'lucide-react';
+import { ShieldCheck, Activity, CheckCircle2, X } from 'lucide-react';
 import { Language, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 
@@ -13,585 +7,320 @@ interface GlobalSponsorsShowcaseProps {
   currentLang?: Language;
 }
 
+interface LText {
+  en: string;
+  es: string;
+  fr: string;
+  ar: string;
+}
+
 interface Partner {
   id: string;
   name: string;
-  tagline: { en: string; es: string; fr: string; ar: string };
-  category: { en: string; es: string; fr: string; ar: string };
-  tierLabel: { en: string; es: string; fr: string; ar: string };
+  tagline: LText;
+  category: LText;
+  badge: string;
   accentColor: string;
+  glowColor: string;
   logoSvg: React.ReactNode;
-  mandate: { en: string; es: string; fr: string; ar: string };
+  mandate: LText;
   perks: { en: string[]; es: string[]; fr: string[]; ar: string[] };
-  metrics: { label: { en: string; es: string; fr: string; ar: string }; value: string }[];
+  metrics: { label: LText; value: string }[];
 }
 
 export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ currentLang = 'en' }) => {
   const isAr = currentLang === 'ar';
-  const lKey: 'en' | 'es' | 'fr' | 'ar' =
-    currentLang === 'ar' || currentLang === 'es' || currentLang === 'fr' ? currentLang : 'en';
-
   const [activePartner, setActivePartner] = useState<Partner | null>(null);
+
+  const pick = (text: LText) => tr(currentLang, text);
+  const pickList = (perks: { en: string[]; es: string[]; fr: string[]; ar: string[] }) => {
+    if (currentLang === 'ar') return perks.ar;
+    if (currentLang === 'es') return perks.es;
+    if (currentLang === 'fr') return perks.fr;
+    return perks.en;
+  };
 
   const partners: Partner[] = [
     {
       id: 'adidas',
-      name: 'adidas Combat Sports',
+      name: 'ADIDAS COMBAT SPORTS',
       tagline: {
-        en: 'Official Kinetic Apparel & Fightwear',
-        es: 'Indumentaria Oficial de Combate',
-        fr: 'Équipement Officiel de Combat',
-        ar: 'شريك الملابس القتالية والأزياء الحركية'
+        en: 'Official Technical Fightwear',
+        es: 'Indumentaria Técnica de Combate',
+        fr: 'Tenue Technique de Combat',
+        ar: 'شريك الملابس القتالية المعتمد'
       },
       category: {
         en: 'Technical Apparel',
         es: 'Ropa Técnica',
-        fr: 'Tenue Technique',
-        ar: 'الملابس التقنية'
+        fr: 'Équipement Technique',
+        ar: 'الملابس القتالية التقنية'
       },
-      tierLabel: {
-        en: 'APPAREL PARTNER',
-        es: 'SOCIO TEXTIL',
-        fr: 'PARTENAIRE TEXTILE',
-        ar: 'شريك الأزياء'
-      },
-      accentColor: '#F8FAFC',
+      badge: 'PARTNER #1',
+      accentColor: '#FFFFFF',
+      glowColor: 'rgba(255, 255, 255, 0.2)',
       logoSvg: (
-        <svg viewBox="0 0 180 72" className="h-11 w-auto" role="img" aria-label="adidas official logo">
-          {/* Iconic 3-Bar Performance Mountain */}
-          <g fill="#FFFFFF">
-            <polygon points="58,34 71,34 62,21 49,21" />
-            <polygon points="76,34 89,34 73,12 60,12" />
-            <polygon points="94,34 107,34 84,3 71,3" />
-          </g>
-          {/* Authentic Geometric adidas Wordmark */}
-          <text
-            x="90"
-            y="54"
-            textAnchor="middle"
-            fill="#FFFFFF"
-            fontSize="19"
-            fontWeight="800"
-            fontFamily="'Plus Jakarta Sans', 'Arial Black', sans-serif"
-            letterSpacing="-0.03em"
-          >
-            adidas
-          </text>
-          <text
-            x="90"
-            y="66"
-            textAnchor="middle"
-            fill="#94A3B8"
-            fontSize="6.5"
-            fontWeight="700"
-            fontFamily="'JetBrains Mono', monospace"
-            letterSpacing="0.22em"
-          >
-            COMBAT SPORTS
-          </text>
+        <svg viewBox="0 0 130 65" className="w-16 h-8" fill="none">
+          <path d="M 22 36 L 33 36 L 22 22 L 11 22 Z" fill="#FFFFFF" />
+          <path d="M 38 36 L 49 36 L 33 13 L 22 13 Z" fill="#FFFFFF" />
+          <path d="M 54 36 L 65 36 L 44 4 L 33 4 Z" fill="#FFFFFF" />
+          <text x="38" y="50" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.06em">adidas</text>
+          <text x="38" y="59" textAnchor="middle" fill="#9CA3AF" fontSize="6.2" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.16em">COMBAT SPORTS</text>
         </svg>
       ),
       mandate: {
-        en: 'Engineered with nano-weave tensile compression supporting YARD 300 athletes across high-output martial camps and wilderness endurance trials.',
-        es: 'Diseñado con compresión de nanotextil de alta resistencia para apoyar a los atletas de YARD 300 en campamentos y pruebas de resistencia.',
-        fr: 'Conçu avec une compression nano-tissée haute résistance équipant les athlètes YARD 300 lors des camps et épreuves d’endurance.',
-        ar: 'صُنعت بنسيج نانو ضاغط عالي المتانة لدعم أبطال YARD 300 في معسكرات النزال وسباقات التحمل الشاقة.'
+        en: 'Engineered with tensile compression fibers supporting YARD 300 athletes across high-output endurance and combat camps.',
+        es: 'Diseñado con compresión de nanotextil de alta resistencia para potenciar a los atletas de YARD 300.',
+        fr: 'Conçu avec une compression haute résistance pour équiper les athlètes de YARD 300.',
+        ar: 'صُنعت خصيصاً بنسيج ضاغط عالي المتانة لدعم أبطال YARD 300 في التحديات والمعسكرات القتالية.'
       },
       perks: {
-        en: [
-          '25% member privilege on YARD 300 Pro Rashguards & Fight Shorts',
-          'Impact-certified hand wraps and compression shin guards',
-          'Thermal-dissipation fiber for high-intensity conditioning'
-        ],
-        es: [
-          '25% de beneficio exclusivo en ropa oficial de combate YARD 300',
-          'Vendas y espinilleras con absorción de impacto certificada',
-          'Fibra de disipación térmica para máxima intensidad'
-        ],
-        fr: [
-          '25% d’avantage membre sur les tenues officielles YARD 300',
-          'Bandages et protège-tibias certifiés absorption des chocs',
-          'Fibre thermo-régulatrice haute intensité'
-        ],
-        ar: [
-          'امتياز خصم 25% على أزياء النزال الاحترافية لأعضاء YARD',
-          'أربطة يد وواقيات معتمدة لامتصاص الصدمات القصوى',
-          'ألياف تبريد حركي متطورة أثناء الجولات العالية'
-        ]
+        en: ['25% discount on pro rashguards & fightwear', 'ISO impact-tested wraps & shin guards', 'Thermal dissipation athletic fiber'],
+        es: ['25% de descuento en ropa de combate YARD 300', 'Vendas y espinilleras certificadas', 'Tejido térmico de máxima intensidad'],
+        fr: ['25 % de réduction sur les tenues de combat', 'Bandes et protections certifiées', 'Fibre thermo-régulatrice haute intensité'],
+        ar: ['خصم 25% على ملابس النزال لأعضاء YARD', 'أربطة يد معتمدة لامتصاص الصدمات', 'ألياف تبريد حركية عالية الكفاءة']
       },
       metrics: [
-        {
-          label: { en: 'Tensile Strength', es: 'Resistencia', fr: 'Résistance', ar: 'قوة الشد' },
-          value: '450 N/cm²'
-        },
-        {
-          label: { en: 'Cooling Delta', es: 'Enfriamiento', fr: 'Refroidissement', ar: 'معامل التبريد' },
-          value: '-3.8 °C'
-        },
-        {
-          label: { en: 'Clearance', es: 'Certificación', fr: 'Certification', ar: 'الاعتماد' },
-          value: '100% Pro'
-        }
+        { label: { en: 'Tensile Strength', es: 'Tracción', fr: 'Résistance', ar: 'قوة الشد' }, value: '450 N/cm²' },
+        { label: { en: 'Cooling Delta', es: 'Enfriamiento', fr: 'Refroidissement', ar: 'معامل التبريد' }, value: '-3.8 °C' },
+        { label: { en: 'Standard', es: 'Estándar', fr: 'Norme', ar: 'المعيار' }, value: 'ISO Pro' }
       ]
     },
     {
       id: 'redbull',
-      name: 'Red Bull Athlete Lab',
+      name: 'RED BULL ATHLETE LAB',
       tagline: {
-        en: 'Cognitive Reflex & Peak Stamina Lab',
-        es: 'Laboratorio de Reflejos y Resistencia',
-        fr: 'Laboratoire Réflexe & Endurance',
-        ar: 'شريك الطاقة والتحمل ورد الفعل العصبي'
+        en: 'Cognitive Reflex & Endurance',
+        es: 'Reflejos y Resistencia Física',
+        fr: 'Réflexes & Endurance',
+        ar: 'شريك التحمل وسرعة رد الفعل'
       },
       category: {
-        en: 'Performance Diagnostics',
-        es: 'Diagnóstico Deportivo',
-        fr: 'Diagnostic Performance',
-        ar: 'التشخيص البدني'
+        en: 'Endurance Lab',
+        es: 'Lab Resistencia',
+        fr: 'Labo Endurance',
+        ar: 'التحمل والأداء العصبي'
       },
-      tierLabel: {
-        en: 'PERFORMANCE LAB',
-        es: 'LAB RENDIMIENTO',
-        fr: 'LABO PERFORMANCE',
-        ar: 'مختبر الأداء'
-      },
-      accentColor: '#FACC15',
+      badge: 'PARTNER #2',
+      accentColor: '#D4AF37',
+      glowColor: 'rgba(212, 175, 55, 0.25)',
       logoSvg: (
-        <svg viewBox="0 0 180 72" className="h-11 w-auto" role="img" aria-label="Red Bull official logo">
-          {/* Sun Disc */}
-          <circle cx="90" cy="23" r="15" fill="#FFCC00" />
-          {/* Left Charging Bull */}
-          <path
-            d="M 41 29 C 44 23 50 22 55 19 C 59 15 65 14 71 16 C 77 18 82 21 88 24 C 84 26 80 25 76 24 C 72 27 68 32 63 34 C 58 35 53 34 48 35 C 44 36 41 38 39 40 L 42 32 C 39 32 39 30 41 29 Z"
-            fill="#DC2626"
-          />
-          <path d="M 43 24 C 41 18 46 14 50 12 L 51 13 C 47 16 44 19 45 24 Z" fill="#DC2626" />
-          {/* Right Charging Bull */}
-          <path
-            d="M 139 29 C 136 23 130 22 125 19 C 121 15 115 14 109 16 C 103 18 98 21 92 24 C 96 26 100 25 104 24 C 108 27 112 32 117 34 C 122 35 127 34 132 35 C 136 36 139 38 141 40 L 138 32 C 141 32 141 30 139 29 Z"
-            fill="#DC2626"
-          />
-          <path d="M 137 24 C 139 18 134 14 130 12 L 129 13 C 133 16 136 19 135 24 Z" fill="#DC2626" />
-          <text
-            x="90"
-            y="55"
-            textAnchor="middle"
-            fill="#FFFFFF"
-            fontSize="16"
-            fontWeight="900"
-            fontStyle="italic"
-            fontFamily="'Plus Jakarta Sans', sans-serif"
-          >
-            Red Bull
-          </text>
-          <text
-            x="90"
-            y="66"
-            textAnchor="middle"
-            fill="#FACC15"
-            fontSize="6.5"
-            fontWeight="700"
-            fontFamily="'JetBrains Mono', monospace"
-            letterSpacing="0.2em"
-          >
-            ATHLETE LAB
-          </text>
+        <svg viewBox="0 0 140 70" className="w-18 h-9" fill="none">
+          <circle cx="70" cy="28" r="20" fill="#FFCC00" />
+          <g fill="#D20A11">
+            <path d="M 12 36 C 14 30 20 28 26 25 C 28 21 34 18 42 19 C 48 20 54 24 60 26 C 65 27 68 31 70 33 C 66 35 62 33 58 32 C 54 35 50 41 46 44 C 42 46 36 45 32 46 C 28 47 24 53 22 55 L 20 55 L 23 46 C 20 47 16 45 13 42 C 10 39 10 37 12 36 Z" />
+          </g>
+          <g fill="#D20A11">
+            <path d="M 128 36 C 126 30 120 28 114 25 C 112 21 106 18 98 19 C 92 20 86 24 80 26 C 75 27 72 31 70 33 C 74 35 78 33 82 32 C 86 35 90 41 94 44 C 98 46 104 45 108 46 C 112 47 116 53 118 55 L 120 55 L 117 46 C 120 47 124 45 127 42 C 130 39 130 37 128 36 Z" />
+          </g>
+          <text x="70" y="56" textAnchor="middle" fill="#FFFFFF" fontSize="13" fontWeight="900" fontStyle="italic" fontFamily="sans-serif" letterSpacing="0.04em">Red Bull</text>
+          <text x="70" y="65" textAnchor="middle" fill="#D4AF37" fontSize="6.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.16em">ATHLETE LAB</text>
         </svg>
       ),
       mandate: {
-        en: 'Scientific diagnostics collaboration measuring neural reaction latencies and lactate clearance under severe metabolic stress.',
-        es: 'Colaboración científica para medir latencia neuronal y tolerancia láctica bajo esfuerzo máximo.',
-        fr: 'Partenariat scientifique évaluant les latences réflexes et le seuil lactique sous haute intensité.',
-        ar: 'شراكة تشخيص رياضي لاختبار سرعة الاستجابة العصبية وعتبة اللاكتيك تحت أقصى حمل بدني.'
+        en: 'Collaborating on reaction-speed telemetry and lactic acid threshold performance under high-intensity combat workloads.',
+        es: 'Colaboración científica en reflejos neuronales y umbral láctico bajo fatiga extrema.',
+        fr: 'Partenariat scientifique pour la vitesse réflexe sous acidose lactique.',
+        ar: 'تعاون في اختبارات سرعة الاستجابة العصبية وعتبة التحمل البدني تحت الجهد العالي.'
       },
       perks: {
-        en: [
-          'Cognitive reaction benchmarks integrated into YARD Arena',
-          'High-altitude electrolyte & hydration dosing protocols',
-          'Direct biomechanics research laboratory access'
-        ],
-        es: [
-          'Pruebas de reacción cognitiva integradas en YARD Arena',
-          'Protocolos avanzados de electrolitos e hidratación',
-          'Acceso a estudios de biomecánica de élite'
-        ],
-        fr: [
-          'Tests de réflexes cognitifs intégrés à l’Arène YARD',
-          'Protocoles d’hydratation et d’électrolytes haute altitude',
-          'Accès aux recherches biomécaniques de pointe'
-        ],
-        ar: [
-          'بروتوكولات سرعة رد الفعل المدمجة في حلبة YARD',
-          'أنظمة ترطيب وإلكترولايتس مدروسة لسباقات التحمل',
-          'الوصول لأبحاث ومختبرات الميكانيكا الحيوية'
-        ]
+        en: ['Cognitive reaction protocols', 'Electrolyte hydration research', 'VO2 efficiency testing'],
+        es: ['Protocolos de reacción cognitiva', 'Nutrición y electrolitos de élite', 'Pruebas de eficiencia VO2'],
+        fr: ['Protocoles de réflexes cognitifs', 'Support en électrolytes', 'Tests d’efficacité VO2'],
+        ar: ['بروتوكولات سرعة رد الفعل', 'تركيبات الترطيب والأملاح', 'اختبارات كفاءة VO2']
       },
       metrics: [
-        {
-          label: { en: 'Reaction Time', es: 'Tiempo Reacción', fr: 'Temps Réflexe', ar: 'زمن الاستجابة' },
-          value: '142 ms'
-        },
-        {
-          label: { en: 'Lactate Gain', es: 'Umbral Láctico', fr: 'Seuil Lactique', ar: 'عتبة اللاكتيك' },
-          value: '+18.4%'
-        },
-        {
-          label: { en: 'VO2 Max Delta', es: 'Mejora VO2 Max', fr: 'Gain VO2 Max', ar: 'تحسن VO2' },
-          value: '+11.2%'
-        }
+        { label: { en: 'Reaction Latency', es: 'Latencia Refleja', fr: 'Latence Réflexe', ar: 'زمن الاستجابة' }, value: '142 ms' },
+        { label: { en: 'Lactate Gain', es: 'Umbral Láctico', fr: 'Seuil Lactique', ar: 'عتبة اللاكتات' }, value: '+18.4%' },
+        { label: { en: 'VO2 Max Delta', es: 'VO2 Max', fr: 'VO2 Max', ar: 'الأكسجين VO2' }, value: '+11.2%' }
       ]
     },
     {
       id: 'whoop',
-      name: 'WHOOP 4.0 Biometrics',
+      name: 'WHOOP 4.0',
       tagline: {
-        en: 'Continuous HRV & Sleep Telemetry',
-        es: 'Telemetría Continua de VFC y Sueño',
-        fr: 'Télémétrie Continue VRC & Sommeil',
-        ar: 'شريك القياسات الحيوية والنوم المستمر'
+        en: 'Continuous Biometric Telemetry',
+        es: 'Telemetría Biométrica Continua',
+        fr: 'Télémétrie Biométrique Directe',
+        ar: 'شريك القياسات الحيوية و HRV'
       },
       category: {
-        en: 'Wearable Telemetry',
-        es: 'Telemetría Corporal',
-        fr: 'Télémétrie Biométrique',
-        ar: 'المستشعرات الحيوية'
+        en: 'Wearable Sensors',
+        es: 'Sensores Biométricos',
+        fr: 'Capteurs Biométriques',
+        ar: 'المستشعرات البيومترية'
       },
-      tierLabel: {
-        en: 'TELEMETRY SENSOR',
-        es: 'SENSOR BIOMÉTRICO',
-        fr: 'CAPTEUR BIOMÉTRIQUE',
-        ar: 'مستشعر حيوي'
-      },
-      accentColor: '#38BDF8',
+      badge: 'PARTNER #3',
+      accentColor: '#10B981',
+      glowColor: 'rgba(16, 185, 129, 0.25)',
       logoSvg: (
-        <svg viewBox="0 0 180 72" className="h-11 w-auto" role="img" aria-label="WHOOP official logo">
-          {/* Precision Hardware Badge */}
-          <rect x="28" y="13" width="124" height="32" rx="6" fill="#090D16" stroke="#38BDF8" strokeOpacity="0.45" strokeWidth="1.4" />
-          <text
-            x="90"
-            y="35"
-            textAnchor="middle"
-            fill="#FFFFFF"
-            fontSize="19"
-            fontWeight="900"
-            fontFamily="'Barlow Condensed', sans-serif"
-            letterSpacing="0.28em"
-          >
-            WHOOP
-          </text>
-          {/* Biometric Pulse Line */}
-          <polyline
-            fill="none"
-            stroke="#38BDF8"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            points="44,56 68,56 75,49 82,63 90,46 98,60 105,56 136,56"
-          />
-          <text
-            x="90"
-            y="68"
-            textAnchor="middle"
-            fill="#38BDF8"
-            fontSize="6"
-            fontWeight="700"
-            fontFamily="'JetBrains Mono', monospace"
-            letterSpacing="0.2em"
-          >
-            4.0 BIOMETRICS
-          </text>
+        <svg viewBox="0 0 135 55" className="w-18 h-9" fill="none">
+          <g transform="translate(18, 25)">
+            <circle cx="0" cy="0" r="14" stroke="#10B981" strokeWidth="2.5" strokeDasharray="14 3 6 3" strokeLinecap="round" />
+            <circle cx="0" cy="0" r="4.5" fill="#10B981" />
+          </g>
+          <text x="78" y="30" textAnchor="middle" fill="#FFFFFF" fontSize="18" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.2em">WHOOP</text>
+          <text x="78" y="44" textAnchor="middle" fill="#10B981" fontSize="7" fontWeight="800" fontFamily="sans-serif" letterSpacing="0.22em">4.0 TELEMETRY</text>
         </svg>
       ),
       mandate: {
-        en: 'Direct 100 Hz streaming of HRV, nocturnal temperature deviations, and sleep stages into YARD 300 ACWR injury models.',
-        es: 'Transmisión directa a 100 Hz de VFC, temperatura nocturna y sueño profundo hacia el motor preventivo ACWR.',
-        fr: 'Flux continu 100 Hz de VRC, température nocturne et stades de sommeil vers les modèles préventifs ACWR.',
-        ar: 'مزامنة حية لتباين نبض القلب HRV وحرارة الجلد وأطوار النوم مباشرة مع خوارزميات YARD الوقائية.'
+        en: 'Continuous HRV, resting heart rate, skin temperature & NREM3 deep sleep sync directly powering the YARD ACWR injury model.',
+        es: 'Sincronización en vivo de VFC, sueño profundo NREM3 y temperatura cutánea con el motor YARD.',
+        fr: 'Synchronisation directe du VRC, sommeil profond NREM3 et température avec le moteur YARD.',
+        ar: 'مزامنة مباشرة لتقلب نبض القلب HRV وحرارة الجلد وأطوار النوم العميق مع خوارزميات YARD.'
       },
       perks: {
-        en: [
-          'Real-time BLE telemetry sync with YARD Combat Engine',
-          'Automated Stage-3 NREM & REM hormonal synthesis feed',
-          'Pre-strain muscle overload alerts before injury thresholds'
-        ],
-        es: [
-          'Sincronización BLE en tiempo real con el motor YARD',
-          'Cálculo automático de sueño NREM3 y síntesis hormonal',
-          'Alertas preventivas de sobrecarga muscular'
-        ],
-        fr: [
-          'Synchronisation BLE en direct avec le moteur YARD',
-          'Analyse automatique sommeil profond NREM3 et REM',
-          'Alertes précoces de surcharge tendineuse et musculaire'
-        ],
-        ar: [
-          'ربط بلوتوث مباشر بالمحرك السريري YARD 300',
-          'قراءة آلية للنوم العميق وإفراز هرمون النمو الليلي',
-          'تنبيهات استباقية قبل الوصول لحدود تمزق الأوتار'
-        ]
+        en: ['100 Hz continuous HRV feed', 'Automated NREM3 sleep calculation', 'Acute overload injury alerts'],
+        es: ['Muestreo continuo de VFC', 'Cálculo automático del sueño', 'Alertas tempranas de sobrecarga'],
+        fr: ['Flux VRC continu 100 Hz', 'Calcul auto du sommeil profond', 'Alertes de surcharge aiguë'],
+        ar: ['بث مستمر لمعدل HRV بدقة 100 Hz', 'حساب تلقائي لساعات النوم العميق', 'تنبيهات وقائية قبل الإصابات']
       },
       metrics: [
-        {
-          label: { en: 'Sample Rate', es: 'Muestreo', fr: 'Fréquence', ar: 'تردد العينة' },
-          value: '100 Hz'
-        },
-        {
-          label: { en: 'HRV Accuracy', es: 'Precisión VFC', fr: 'Précision VRC', ar: 'دقة HRV' },
-          value: '99.4%'
-        },
-        {
-          label: { en: 'Sync Latency', es: 'Latencia', fr: 'Latence', ar: 'زمن المزامنة' },
-          value: '0.25 s'
-        }
+        { label: { en: 'Sample Rate', es: 'Frecuencia', fr: 'Fréquence', ar: 'معدل العينات' }, value: '100 Hz' },
+        { label: { en: 'HRV Accuracy', es: 'Precisión VFC', fr: 'Précision VRC', ar: 'دقة HRV' }, value: '99.4%' },
+        { label: { en: 'Sync Latency', es: 'Sincronización', fr: 'Latence Synchro', ar: 'زمن المزامنة' }, value: '0.25 s' }
       ]
     },
     {
       id: 'ufc_mma',
-      name: 'UFC · Octagon Sanctioned',
+      name: 'UFC · WORLD MMA',
       tagline: {
-        en: 'Unified Rules & Championship Safety',
-        es: 'Reglas Unificadas y Seguridad MMA',
-        fr: 'Règles Unifiées & Sécurité MMA',
-        ar: 'شريك التحكيم ومعايير السلامة الدولية'
+        en: 'Official Championship Standard',
+        es: 'Estándar Mundial de Combate',
+        fr: 'Standard Mondial Homologué',
+        ar: 'شريك معايير النزالات الدولية'
       },
       category: {
-        en: 'Championship Body',
-        es: 'Organismo Oficial',
-        fr: 'Fédération Officielle',
-        ar: 'الهيئة التنظيمية'
+        en: 'Combat Federation',
+        es: 'Federación MMA',
+        fr: 'Fédération MMA',
+        ar: 'معايير النزالات العالمية'
       },
-      tierLabel: {
-        en: 'SANCTIONED MMA',
-        es: 'MMA OFICIAL',
-        fr: 'MMA HOMOLOGUÉ',
-        ar: 'اعتماد قتالي'
-      },
-      accentColor: '#EF4444',
+      badge: 'PARTNER #4',
+      accentColor: '#D20A0A',
+      glowColor: 'rgba(210, 10, 10, 0.25)',
       logoSvg: (
-        <svg viewBox="0 0 180 72" className="h-11 w-auto" role="img" aria-label="UFC official octagon logo">
-          {/* Subtle Octagon Outline */}
-          <polygon
-            points="66,5 114,5 138,20 138,44 114,59 66,59 42,44 42,20"
-            fill="#14090A"
-            stroke="#DC2626"
-            strokeOpacity="0.65"
-            strokeWidth="1.5"
-          />
-          {/* Authentic Slanted Bold UFC Geometry */}
-          <g transform="translate(52, 16) skewX(-12)">
-            <path
-              d="M 4 0 L 13 0 L 13 17 C 13 21 15 23 19 23 C 23 23 25 21 25 17 L 25 0 L 34 0 L 34 18 C 34 27 28 31 19 31 C 10 31 4 27 4 18 Z"
-              fill="#E11D48"
-            />
-            <path d="M 38 0 L 62 0 L 62 7 L 47 7 L 47 12 L 59 12 L 59 19 L 47 19 L 47 30 L 38 30 Z" fill="#E11D48" />
-            <path
-              d="M 88 7 L 80 11 C 78 8 76 7 73 7 C 68 7 65 10 65 15 C 65 20 68 23 73 23 C 76 23 79 21 81 18 L 89 22 C 85 28 80 31 73 31 C 63 31 56 24 56 15 C 56 6 63 0 73 0 C 80 0 85 2 88 7 Z"
-              fill="#E11D48"
-            />
+        <svg viewBox="0 0 130 55" className="w-18 h-9" fill="none">
+          <g transform="skewX(-10)">
+            <path d="M 16 8 L 27 8 L 27 26 C 27 31 30 33 35 33 C 40 33 43 31 43 26 L 43 8 L 54 8 L 54 26 C 54 38 46 43 35 43 C 24 43 16 38 16 26 Z" fill="#D20A0A" />
+            <path d="M 59 8 L 90 8 L 90 17 L 70 17 L 70 23 L 86 23 L 86 31 L 70 31 L 70 43 L 59 43 Z" fill="#D20A0A" />
+            <path d="M 120 16 L 110 22 C 108 17 105 16 101 16 C 95 16 91 20 91 25.5 C 91 31 95 35 101 35 C 105 35 108 33 111 29 L 121 34 C 116 41 110 43 101 43 C 89 43 80 35 80 25.5 C 80 16 89 8 101 8 C 110 8 116 11 120 16 Z" fill="#D20A0A" />
           </g>
-          <text
-            x="90"
-            y="68"
-            textAnchor="middle"
-            fill="#CBD5E1"
-            fontSize="6"
-            fontWeight="700"
-            fontFamily="'JetBrains Mono', monospace"
-            letterSpacing="0.22em"
-          >
-            OCTAGON SANCTIONED
-          </text>
+          <text x="65" y="52" textAnchor="middle" fill="#FFFFFF" fontSize="6.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.2em">OCTAGON SANCTIONED</text>
         </svg>
       ),
       mandate: {
-        en: 'Unified regulatory framework ensuring all YARD 300 combat tournaments uphold international medical safety and scoring integrity.',
-        es: 'Marco normativo unificado que garantiza seguridad médica internacional y arbitraje íntegro en YARD 300.',
-        fr: 'Cadre réglementaire garantissant la sécurité médicale internationale et l’arbitrage officiel YARD 300.',
-        ar: 'إطار تنظيمي معتمد يضمن تطبيق أعلى معايير السلامة الطبية والتحكيم الدولي في بطولات YARD 300.'
+        en: 'Unified athletic safety standards, competition division scoring, and clean WADA anti-doping pathways across YARD trials.',
+        es: 'Estándares unificados de seguridad, puntuación y cumplimiento antidopaje WADA.',
+        fr: 'Standards unifiés de sécurité, arbitrage homologué et conformité antidopage WADA.',
+        ar: 'تطبيق أعلى معايير السلامة الدولية وتحكيم المنافسات الرياضية النظيفة المعتمدة.'
       },
       perks: {
-        en: [
-          'Certified refereeing & algorithmic bout scoring',
-          'Full WADA-aligned athletic integrity standards',
-          'Official cross-division championship ranking sync'
-        ],
-        es: [
-          'Arbitraje certificado y puntuación algorítmica oficial',
-          'Estándares completos de integridad deportiva WADA',
-          'Sincronización con clasificaciones internacionales'
-        ],
-        fr: [
-          'Arbitrage certifié et notation officielle des combats',
-          'Conformité stricte aux normes d’intégrité WADA',
-          'Synchronisation des classements par catégorie'
-        ],
-        ar: [
-          'تحكيم معتمد ونظام تقييم رقمي دقيق للنزالات',
-          'الالتزام الكامل بمعايير السلامة ومكافحة المنشطات WADA',
-          'اعتماد نقاط التصنيف العالمي في لوحة الأبطال'
-        ]
+        en: ['Unified scoring protocols', 'WADA-compliant athletic integrity', 'Leaderboard division integration'],
+        es: ['Puntuación oficial unificada', 'Protocolos antidopaje WADA', 'Integración en el ranking'],
+        fr: ['Notation officielle unifiée', 'Protocoles WADA intègres', 'Points intégrés au classement'],
+        ar: ['بروتوكولات تحكيم معتمدة', 'التزام كامل بمعايير السلامة WADA', 'دمج نقاط التحديات في التصنيف']
       },
       metrics: [
-        {
-          label: { en: 'Sanctioned Bouts', es: 'Combates', fr: 'Combats', ar: 'نزالات معتمدة' },
-          value: '1,450+'
-        },
-        {
-          label: { en: 'Safety Code', es: 'Seguridad', fr: 'Sécurité', ar: 'معيار السلامة' },
-          value: '100% WADA'
-        },
-        {
-          label: { en: 'Weight Classes', es: 'Categorías', fr: 'Catégories', ar: 'الأوزان' },
-          value: '12 Classes'
-        }
+        { label: { en: 'Verified Bouts', es: 'Combates', fr: 'Combats', ar: 'نزالات معتمدة' }, value: '1,450+' },
+        { label: { en: 'Safety Standard', es: 'Seguridad', fr: 'Sécurité', ar: 'معيار السلامة' }, value: '100% WADA' },
+        { label: { en: 'Divisions', es: 'Divisiones', fr: 'Divisions', ar: 'الفئات' }, value: '12 Classes' }
       ]
     },
     {
       id: 'tiger_muay_thai',
-      name: 'Tiger Muay Thai & MMA',
+      name: 'TIGER MUAY THAI',
       tagline: {
-        en: 'Phuket World Champion Forge',
-        es: 'Forja Mundial de Campeones Phuket',
-        fr: 'Forge Mondiale des Champions Phuket',
-        ar: 'أكاديمية معسكرات الأبطال العالمية'
+        en: 'Elite Striking & Camp Academy',
+        es: 'Academia Élite de Combate',
+        fr: 'Académie Élite de Combat',
+        ar: 'أكاديمية التدريب والمعسكرات القتالية'
       },
       category: {
-        en: 'Combat Academy',
-        es: 'Academia de Combate',
-        fr: 'Académie de Combat',
-        ar: 'الأكاديمية القتالية'
+        en: 'Training Academy',
+        es: 'Academia de Campo',
+        fr: 'Académie Sportive',
+        ar: 'أكاديمية التدريب القتالي'
       },
-      tierLabel: {
-        en: 'WORLD ACADEMY',
-        es: 'ACADEMIA ÉLITE',
-        fr: 'ACADÉMIE ÉLITE',
-        ar: 'أكاديمية دولية'
-      },
-      accentColor: '#F97316',
+      badge: 'PARTNER #5',
+      accentColor: '#FF6B00',
+      glowColor: 'rgba(255, 107, 0, 0.25)',
       logoSvg: (
-        <svg viewBox="0 0 180 72" className="h-11 w-auto" role="img" aria-label="Tiger Muay Thai official shield logo">
-          {/* Shield Frame */}
-          <path
-            d="M 90 4 L 122 14 L 122 38 C 122 52 90 60 90 60 C 90 60 58 52 58 38 L 58 14 Z"
-            fill="#0D1017"
-            stroke="#F97316"
-            strokeWidth="2"
-          />
-          {/* Stylized Bengal Tiger Head Geometry */}
-          <polygon points="69,20 75,11 80,21" fill="#F97316" />
-          <polygon points="111,20 105,11 100,21" fill="#F97316" />
-          <path d="M 70 22 Q 90 16 110 22 Q 116 33 110 43 Q 90 51 70 43 Q 64 33 70 22 Z" fill="#F97316" />
-          {/* Tiger Stripes */}
-          <path d="M 90 18 L 87 25 L 93 25 Z" fill="#0D1017" />
-          <path d="M 74 25 L 82 28 L 76 31 Z" fill="#0D1017" />
-          <path d="M 106 25 L 98 28 L 104 31 Z" fill="#0D1017" />
-          {/* Eyes & Muzzle */}
-          <polygon points="78,30 85,32 83,35 76,33" fill="#FACC15" />
-          <polygon points="102,30 95,32 97,35 104,33" fill="#FACC15" />
-          <ellipse cx="90" cy="40" rx="6" ry="4" fill="#FFFFFF" />
-          <polygon points="88,38 92,38 90,41" fill="#0D1017" />
-          <text
-            x="90"
-            y="69"
-            textAnchor="middle"
-            fill="#F97316"
-            fontSize="6.5"
-            fontWeight="800"
-            fontFamily="'JetBrains Mono', monospace"
-            letterSpacing="0.16em"
-          >
-            TIGER MUAY THAI
-          </text>
+        <svg viewBox="0 0 130 75" className="w-16 h-9" fill="none">
+          <path d="M 65 3 L 105 15 L 105 48 C 105 65 65 74 65 74 C 65 74 25 65 25 48 L 25 15 Z" fill="#0C0E18" stroke="#FF6B00" strokeWidth="2.5" />
+          <path d="M 40 24 Q 65 18 90 24 Q 98 38 90 50 Q 65 60 40 50 Q 32 38 40 24 Z" fill="#FF6B00" />
+          <ellipse cx="65" cy="45" rx="7" ry="5" fill="#FFFFFF" />
+          <rect x="18" y="58" width="94" height="13" rx="3" fill="#FF6B00" stroke="#FFE600" strokeWidth="1" />
+          <text x="65" y="68" textAnchor="middle" fill="#000000" fontSize="7.5" fontWeight="900" fontFamily="sans-serif" letterSpacing="0.08em">TIGER MUAY THAI</text>
         </svg>
       ),
       mandate: {
-        en: 'Official Phuket training sanctuary partner hosting YARD 300 intensive Muay Thai, wrestling, and high-heat expedition camps.',
-        es: 'Sede asociada oficial en Phuket para campamentos intensivos de Muay Thai, lucha y preparación YARD 300.',
-        fr: 'Partenaire officiel à Phuket accueillant les camps intensifs Muay Thai, lutte et expéditions YARD 300.',
-        ar: 'الشريك الرسمي لمعسكرات التدريب المكثف للمواي تاي والمصارعة وإعداد أبطال YARD 300 في بوكيت.'
+        en: 'Hosting striking, endurance conditioning, and cross-training seminars for YARD 300 international expedition camps.',
+        es: 'Sede asociada para campamentos intensivos de resistencia y artes marciales.',
+        fr: 'Académie partenaire pour les stages intensifs de frappe et d’endurance YARD 300.',
+        ar: 'شراكة مع معسكرات YARD 300 لتطوير مهارات اللكم واللياقة القتالية والتحمل الميداني.'
       },
       perks: {
-        en: [
-          'Priority seasonal booking in YARD x Phuket Fighter Camps',
-          'Masterclass striking & clinching with world champion coaches',
-          'Direct invitation pathway to live YARD 300 tournaments'
-        ],
-        es: [
-          'Reserva prioritaria en campamentos YARD x Phuket',
-          'Clases magistrales con entrenadores de campeones mundiales',
-          'Vía directa de invitación a torneos YARD 300'
-        ],
-        fr: [
-          'Réservation prioritaire pour les camps YARD x Phuket',
-          'Masterclass de striking avec coachs champions du monde',
-          'Accès direct aux sélections des tournois YARD 300'
-        ],
-        ar: [
-          'أولوية حجز VIP لمعسكرات القتال الدولية في بوكيت',
-          'حصص تدريبية مع نخبة مدربي أبطال العالم',
-          'ترشيح مباشر للمنافسة في بطولات YARD 300 الحية'
-        ]
+        en: ['Priority camp booking access', 'Masterclasses with world coaches', 'Direct championship draft trials'],
+        es: ['Acceso prioritario a campamentos', 'Masterclasses con técnicos de élite', 'Pruebas de clasificación directas'],
+        fr: ['Accès prioritaire aux camps', 'Masterclass avec coachs mondiaux', 'Sélections directes aux tournois'],
+        ar: ['أولوية الحجز في المعسكرات', 'دروس مع مدربي أبطال العالم', 'تجارب تأهيل مباشرة للبطولات']
       },
       metrics: [
-        {
-          label: { en: 'World Champs', es: 'Campeones', fr: 'Champions', ar: 'أبطال العالم' },
-          value: '45+ UFC/ONE'
-        },
-        {
-          label: { en: 'Campus Size', es: 'Superficie', fr: 'Surface', ar: 'مساحة المعسكر' },
-          value: '11,000 m²'
-        },
-        {
-          label: { en: 'Standard', es: 'Nivel', fr: 'Standard', ar: 'التصنيف' },
-          value: 'Global Elite'
-        }
+        { label: { en: 'Champions', es: 'Campeones', fr: 'Champions', ar: 'أبطال متخرجون' }, value: '45+ Pro' },
+        { label: { en: 'Campus Area', es: 'Área Campo', fr: 'Superficie', ar: 'مساحة المعسكر' }, value: '11,000 m²' },
+        { label: { en: 'Tier', es: 'Categoría', fr: 'Niveau', ar: 'الاعتماد' }, value: 'Global' }
       ]
     }
   ];
 
   return (
-    <section className={`relative w-full py-2.5 md:py-3 ${isAr ? 'text-right' : 'text-left'}`}>
-      <div className="rounded-xl bg-[#0A0C12] border border-white/[0.08] px-3.5 py-3 sm:px-4 sm:py-3.5 space-y-3">
+    <section className="relative w-full py-5">
+      <div className="relative z-10 space-y-4">
         {/* Compact Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-white/[0.07]">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <div className="inline-flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-[0.16em] text-[#D4AF37]">
-              <ShieldCheck className="w-3 h-3" />
+        <div
+          className={`flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-emerald-500/15 pb-3 ${
+            isAr ? 'text-right' : 'text-left'
+          }`}
+        >
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-black font-anime tracking-wider text-emerald-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>
                 {tr(currentLang, {
-                  en: 'OFFICIAL SPONSORS',
-                  es: 'PATROCINADORES OFICIALES',
-                  fr: 'SPONSORS OFFICIELS',
-                  ar: 'الرعاة الرسميون'
+                  en: 'OFFICIAL GLOBAL PARTNERS & SPONSORS',
+                  es: 'PATROCINADORES Y SOCIOS GLOBALES OFICIALES',
+                  fr: 'PARTENAIRES ET SPONSORS MONDIAUX OFFICIELS',
+                  ar: 'الشركاء والرعاة العالميون المعتمدون'
                 })}
               </span>
             </div>
-            <h2 className="text-sm sm:text-base font-extrabold text-white tracking-tight">
+            <h2 className="text-xl md:text-2xl font-black font-anime tracking-tight text-white">
               {tr(currentLang, {
-                en: 'Global Combat Alliance',
-                es: 'Alianza Global de Combate',
-                fr: 'Alliance Mondiale Combat',
-                ar: 'تحالف الأداء القتالي العالمي'
+                en: 'Global Combat & Bio-Telemetry Alliance',
+                es: 'Alianza Global de Combate y Telemetría',
+                fr: 'Alliance Mondiale Performance & Biométrie',
+                ar: 'تحالف الأداء القتالي والقياسات الحيوية العالمي'
               })}
             </h2>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400 tabular-nums shrink-0">
-            <Activity className="w-3 h-3 text-[#10B981]" />
+          <div className="flex items-center gap-1.5 text-[11px] font-mono text-gray-400 shrink-0">
+            <Activity className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-white font-bold tabular-nums">5</span>
             <span>
-              05{' '}
               {tr(currentLang, {
-                en: 'VERIFIED',
-                es: 'VERIFICADOS',
-                fr: 'VÉRIFIÉS',
-                ar: 'معتمدين'
+                en: 'Official Tier-1 Partners',
+                es: 'Socios Oficiales',
+                fr: 'Partenaires Officiels',
+                ar: 'شركاء دوليون معتمدون'
               })}
             </span>
           </div>
         </div>
 
-        {/* Ultra-Compact 5-Partner Plates Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+        {/* Compact 5-Card Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {partners.map((partner) => {
             const isSelected = activePartner?.id === partner.id;
             return (
@@ -602,104 +331,132 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
                   soundFX.playButtonClick();
                   setActivePartner(partner);
                 }}
-                className={`group text-start rounded-lg p-2 bg-[#0F121B] border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 ${
+                className={`group text-start rounded-xl p-3 bg-[#080D0B] border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-2.5 ${
                   isSelected
-                    ? 'border-[#D4AF37] bg-[#141824]'
-                    : 'border-white/[0.08] hover:border-white/25 hover:bg-[#131722]'
+                    ? 'border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+                    : 'border-emerald-500/20 hover:border-emerald-400/60'
                 }`}
               >
-                <div className="flex items-center justify-between text-[8px] font-mono tracking-wider uppercase w-full">
-                  <span style={{ color: partner.accentColor }} className="truncate">{partner.tierLabel[lKey]}</span>
-                  <ArrowUpRight className="w-3 h-3 text-slate-500 group-hover:text-white transition-colors shrink-0" />
-                </div>
-
-                {/* Slim Brand Logo Plate */}
-                <div className="h-11 w-full rounded-md bg-[#07080C] border border-white/[0.07] flex items-center justify-center px-1.5 group-hover:border-white/20 transition-colors [&>svg]:h-8 [&>svg]:w-auto">
+                <div className="h-10 flex items-center justify-center p-1.5 rounded-lg bg-[#050807] border border-white/5">
                   {partner.logoSvg}
                 </div>
 
-                <div className="flex items-center justify-between gap-1 w-full">
-                  <h3 className="text-[11px] font-bold text-white group-hover:text-[#D4AF37] transition-colors truncate">
+                <div className="space-y-0.5">
+                  <h3 className="text-xs font-black font-anime text-white group-hover:text-emerald-300 transition-colors truncate">
                     {partner.name}
                   </h3>
-                  <span className="text-[9px] text-slate-400 group-hover:text-white shrink-0">
-                    {isAr ? '←' : '→'}
+                  <p className="text-[10px] font-medium text-gray-400 line-clamp-1">
+                    {pick(partner.tagline)}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-emerald-500/10 flex items-center justify-between text-[10px] font-black font-anime text-emerald-400">
+                  <span>
+                    {tr(currentLang, {
+                      en: 'Protocol',
+                      es: 'Detalles',
+                      fr: 'Protocole',
+                      ar: 'التفاصيل'
+                    })}
                   </span>
+                  <span>{isAr ? '←' : '→'}</span>
                 </div>
               </button>
             );
           })}
         </div>
+
+        {/* Compact Integration Strip */}
+        <div className="px-3.5 py-2 rounded-xl bg-[#070B09] border border-emerald-500/15 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-gray-400">
+          <span className="text-emerald-400 font-mono">
+            {tr(currentLang, {
+              en: 'ACTIVE IN ARENA, LABS & EXPEDITION CAMPS',
+              es: 'ACTIVO EN ARENA, LABS Y CAMPAMENTOS',
+              fr: 'ACTIF EN ARÈNE, LABOS ET CAMPS',
+              ar: 'شراكة فعالة في الحلبة والمختبرات والمعسكرات'
+            })}
+          </span>
+          <div className="flex flex-wrap items-center gap-4 font-mono text-[10px] text-gray-400">
+            <span>ADIDAS</span>
+            <span>RED BULL LAB</span>
+            <span>WHOOP 4.0</span>
+            <span>UFC · MMA</span>
+            <span>TIGER MUAY THAI</span>
+          </div>
+        </div>
       </div>
 
-      {/* Partner Details Modal */}
+      {/* Partner Detail Modal */}
       {activePartner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="relative w-full max-w-xl bg-[#0C0E14] border border-white/[0.14] rounded-2xl p-5 sm:p-6 shadow-2xl space-y-5">
+          <div className="relative w-full max-w-xl bg-[#080D0B] border border-emerald-500/40 rounded-2xl p-6 shadow-2xl space-y-5">
             <button
               type="button"
               onClick={() => {
                 soundFX.playButtonClick();
                 setActivePartner(null);
               }}
-              className="p-2 rounded-lg bg-[#141722] hover:bg-white/15 text-slate-300 hover:text-white transition-colors cursor-pointer float-end"
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-[#07080C] border border-white/[0.08] shrink-0">
+            <div className={`flex items-center gap-4 ${isAr ? 'flex-row-reverse text-right' : 'text-left'}`}>
+              <div className="p-2.5 rounded-xl bg-black border border-emerald-500/20 shrink-0">
                 {activePartner.logoSvg}
               </div>
-              <div className="min-w-0">
-                <span className="text-[10px] font-mono uppercase tracking-wider block" style={{ color: activePartner.accentColor }}>
-                  {activePartner.tierLabel[lKey]}
+              <div>
+                <span className="text-[10px] font-black font-mono text-emerald-400 block mb-0.5">
+                  {activePartner.badge} · {pick(activePartner.category)}
                 </span>
-                <h3 className="text-lg sm:text-xl font-bold text-white truncate">{activePartner.name}</h3>
-                <p className="text-xs text-slate-400">{activePartner.category[lKey]}</p>
+                <h3 className="text-xl font-black font-anime text-white">{activePartner.name}</h3>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#121622] border border-white/[0.07] space-y-1">
-              <span className="text-[10px] font-mono uppercase text-slate-400 block">
+            <div className={`p-3.5 rounded-xl bg-[#050807] border border-emerald-500/20 space-y-1 ${isAr ? 'text-right' : 'text-left'}`}>
+              <span className="text-[10px] font-black uppercase text-emerald-400 font-mono block">
                 {tr(currentLang, {
-                  en: 'TECHNICAL PARTNERSHIP MANDATE',
-                  es: 'MANDATO TÉCNICO DE ASOCIACIÓN',
-                  fr: 'MANDAT TECHNIQUE DU PARTENARIAT',
+                  en: 'PARTNERSHIP PROTOCOL',
+                  es: 'PROTOCOLO DE ASOCIACIÓN',
+                  fr: 'PROTOCOLE PARTENARIAT',
                   ar: 'ميثاق الشراكة التقنية'
                 })}
               </span>
-              <p className="text-xs text-slate-200 leading-relaxed">{activePartner.mandate[lKey]}</p>
+              <p className="text-xs text-gray-200 font-semibold leading-relaxed">
+                {pick(activePartner.mandate)}
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-2.5">
               {activePartner.metrics.map((m, idx) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-[#07080C] border border-white/[0.07] text-center">
-                  <span className="text-sm sm:text-base font-bold font-mono tabular-nums block" style={{ color: activePartner.accentColor }}>
+                <div key={idx} className="p-2.5 rounded-xl bg-[#050807] border border-emerald-500/15 text-center">
+                  <span className="text-sm font-black font-mono text-emerald-400 tabular-nums block">
                     {m.value}
                   </span>
-                  <span className="text-[10px] text-slate-400 block truncate">{m.label[lKey]}</span>
+                  <span className="text-[10px] font-bold text-gray-400 block truncate">
+                    {pick(m.label)}
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-xs font-bold text-white flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+            <div className={`space-y-2 ${isAr ? 'text-right' : 'text-left'}`}>
+              <h4 className="text-xs font-black font-anime text-white flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>
                   {tr(currentLang, {
-                    en: 'YARD 300 Athlete Benefits',
-                    es: 'Beneficios para Atletas YARD 300',
-                    fr: 'Avantages Athlètes YARD 300',
-                    ar: 'مزايا أبطال YARD 300 المعتمدة'
+                    en: 'YARD 300 Athlete Benefits:',
+                    es: 'Beneficios para Atletas YARD 300:',
+                    fr: 'Avantages Athlètes YARD 300 :',
+                    ar: 'امتيازات مشتركي YARD 300:'
                   })}
                 </span>
               </h4>
               <ul className="space-y-1.5">
-                {activePartner.perks[lKey].map((perk, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                    <span className="text-[#10B981] font-mono shrink-0">✓</span>
+                {pickList(activePartner.perks).map((perk, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-gray-300 font-medium">
+                    <span className="text-emerald-400 font-mono shrink-0">✓</span>
                     <span>{perk}</span>
                   </li>
                 ))}
@@ -712,13 +469,13 @@ export const GlobalSponsorsShowcase: React.FC<GlobalSponsorsShowcaseProps> = ({ 
                 soundFX.playButtonClick();
                 setActivePartner(null);
               }}
-              className="w-full py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] font-bold text-xs transition-colors cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black font-anime text-xs transition-colors cursor-pointer"
             >
               {tr(currentLang, {
                 en: 'Close Protocol',
                 es: 'Cerrar Protocolo',
                 fr: 'Fermer le Protocole',
-                ar: 'إغلاق البروتوكول'
+                ar: 'إغلاق التفاصيل'
               })}
             </button>
           </div>

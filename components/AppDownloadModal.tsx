@@ -34,20 +34,20 @@ export const AppDownloadModal: React.FC<AppDownloadModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[#0D0F1B] border-2 border-[#00F0FF] rounded-3xl p-6 md:p-8 max-w-lg w-full relative shadow-[0_0_60px_rgba(0,240,255,0.4)] text-white">
+    <div dir={isAr ? 'rtl' : 'ltr'} className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[#080D0B] border-2 border-[#10B981] rounded-3xl p-6 md:p-8 max-w-lg w-full relative shadow-[0_0_60px_rgba(16,185,129,0.3)] text-white">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-gray-800 text-gray-400 hover:text-white transition-colors cursor-pointer"
+          className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} p-2 rounded-full bg-[#0D1512] border border-white/10 text-gray-400 hover:text-white transition-colors cursor-pointer`}
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
         <div className="text-center space-y-2 mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00F0FF]/20 border border-[#00F0FF]/40 text-[#00F0FF] text-xs font-black font-anime">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/15 border border-[#10B981]/40 text-[#10B981] text-xs font-black font-anime">
             <Smartphone className="w-4 h-4" />
             <span>YARD 300 MOBILE APP (IOS & ANDROID)</span>
           </div>
@@ -72,16 +72,16 @@ export const AppDownloadModal: React.FC<AppDownloadModalProps> = ({
         </div>
 
         {/* QR Code Card */}
-        <div className="p-4 rounded-2xl bg-black/60 border border-gray-800 flex items-center gap-4 mb-6">
+        <div className="p-4 rounded-2xl bg-black/60 border border-white/10 flex items-center gap-4 mb-6">
           <div className="w-20 h-20 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0">
             <img 
-              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://yard300.app&color=000000" 
+              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.yard300.club&color=000000" 
               alt="YARD 300 QR Code"
               className="w-full h-full object-contain"
             />
           </div>
           <div className="space-y-1">
-            <span className="text-xs font-black font-anime text-[#FFE600] block">
+            <span className="text-xs font-black font-anime text-[#D4AF37] block">
               {isEs ? 'ESCANEAR CON LA CÁMARA' : isFr ? 'SCANNER AVEC L\'APPAREIL' : isAr ? 'امسح بكاميرا الهاتف' : 'SCAN WITH SMARTPHONE CAMERA'}
             </span>
             <p className="text-[11px] text-gray-400 leading-tight">
@@ -100,30 +100,30 @@ export const AppDownloadModal: React.FC<AppDownloadModalProps> = ({
         <div className="space-y-3">
           <button
             onClick={() => handleDownload('ios')}
-            className="w-full py-3.5 px-4 rounded-2xl bg-[#141624] hover:bg-[#1E2138] border border-gray-700 hover:border-[#00F0FF] transition-all flex items-center justify-between cursor-pointer group"
+            className="w-full py-3.5 px-4 rounded-2xl bg-[#0D1512] hover:bg-emerald-950/60 border border-white/10 hover:border-[#10B981] transition-all flex items-center justify-between cursor-pointer group"
           >
             <div className="flex items-center gap-3">
               <span className="text-2xl">🍏</span>
-              <div className="text-left">
+              <div className={isAr ? 'text-right' : 'text-left'}>
                 <span className="block text-[10px] text-gray-400 font-mono">APPLE TESTFLIGHT / APP STORE</span>
                 <span className="block text-xs font-black font-anime text-white">YARD300 for iOS (iPhone & Apple Watch)</span>
               </div>
             </div>
-            <Download className="w-4 h-4 text-[#00F0FF] group-hover:scale-110 transition-transform" />
+            <Download className="w-4 h-4 text-[#10B981] group-hover:scale-110 transition-transform" />
           </button>
 
           <button
             onClick={() => handleDownload('android')}
-            className="w-full py-3.5 px-4 rounded-2xl bg-[#141624] hover:bg-[#1E2138] border border-gray-700 hover:border-[#00F0FF] transition-all flex items-center justify-between cursor-pointer group"
+            className="w-full py-3.5 px-4 rounded-2xl bg-[#0D1512] hover:bg-emerald-950/60 border border-white/10 hover:border-[#10B981] transition-all flex items-center justify-between cursor-pointer group"
           >
             <div className="flex items-center gap-3">
               <span className="text-2xl">🤖</span>
-              <div className="text-left">
+              <div className={isAr ? 'text-right' : 'text-left'}>
                 <span className="block text-[10px] text-gray-400 font-mono">GOOGLE PLAY STORE & APK</span>
                 <span className="block text-xs font-black font-anime text-white">YARD300 for Android (Wear OS Ready)</span>
               </div>
             </div>
-            <Download className="w-4 h-4 text-[#00F0FF] group-hover:scale-110 transition-transform" />
+            <Download className="w-4 h-4 text-[#10B981] group-hover:scale-110 transition-transform" />
           </button>
         </div>
 

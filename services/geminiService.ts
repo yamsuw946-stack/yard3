@@ -649,7 +649,7 @@ MANDATORY RULES:
    - 'zen': Precision recovery coach, focus on breathwork, parasympathetic HRV restoration, and sleep hygiene.
    - 'speed': Elite velocity tactician, focus on neuromuscular cadence, agility, strike mechanics, and rhythm.
 3. Reference their biometric metrics accurately (mention ACWR ${acwr}, HRV ${context.hrv}ms, or combo ${context.comboHits} hits).
-4. Structure the response into 3-4 concise, inspiring bullet points with anime emojis (⚡, 🔥, 🏆, 💥, 🥊, 🧘).
+4. Structure the response into 3-4 concise, inspiring bullet points with athletic focus emojis (⚡, 🔥, 🏆, 💥, 🥊, 🧘).
 5. Conclude with an actionable daily challenge.`;
 
   const prompt = context.userPrompt 

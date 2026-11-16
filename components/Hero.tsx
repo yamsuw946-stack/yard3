@@ -4,13 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { HERO_IMAGE, handleImageError } from '../constants';
+import { HERO_IMAGE, YARD_COMMUNITY_TRIO_IMAGE, handleImageError } from '../constants';
 import { Language, translations, tr } from '../i18n';
 import { soundFX } from '../services/soundFX';
 import { Crown, Moon, ShieldCheck, Award, Swords, ArrowUpRight, Trophy } from 'lucide-react';
 import { OwnerConfigService } from '../services/ownerConfigService';
-
-import { LiveAnimeHeroStage } from './LiveAnimeHeroStage';
 
 interface HeroProps {
   currentLang?: Language;
@@ -113,10 +111,10 @@ const Hero: React.FC<HeroProps> = ({ currentLang = 'en', onYardClick, onNavClick
             </p>
             <p className="text-[11px] font-mono text-slate-400 leading-relaxed mb-4 max-w-xl">
               {tr(currentLang, {
-                en: 'Ayman Alsuwaidi (Yam Suw) · ACWR Injury Lab · Sleep Recovery Science · Jan 5, 2027 10-Challenge Championship · Bazaruto Resort',
-                es: 'Ayman Alsuwaidi (Yam Suw) · Lab Lesiones ACWR · Ciencia del Sueño · Campeonato 5 Ene 2027 · Resort Bazaruto',
-                fr: 'Ayman Alsuwaidi (Yam Suw) · Labo Blessures ACWR · Science du Sommeil · Championnat 5 Jan 2027 · Resort Bazaruto',
-                ar: 'أيمن السويدي (Yam Suw) · مختبر إصابات ACWR · علوم النوم والاستشفاء · بطولة التحديات الـ 10 (5 يناير 2027) · منتجع بازاروتو'
+                en: 'YARD 300 · ACWR Injury Lab · Sleep Recovery Science · Jan 5, 2027 10-Challenge Championship · Bazaruto Resort',
+                es: 'YARD 300 · Lab Lesiones ACWR · Ciencia del Sueño · Campeonato 5 Ene 2027 · Resort Bazaruto',
+                fr: 'YARD 300 · Labo Blessures ACWR · Science du Sommeil · Championnat 5 Jan 2027 · Resort Bazaruto',
+                ar: 'YARD 300 · مختبر إصابات ACWR · علوم النوم والاستشفاء · بطولة التحديات الـ 10 (5 يناير 2027) · منتجع بازاروتو'
               })}
             </p>
 
@@ -356,16 +354,132 @@ const Hero: React.FC<HeroProps> = ({ currentLang = 'en', onYardClick, onNavClick
             </div>
           </div>
 
-          {/* Right Column: Compact Photorealistic AI Bio-Enhanced Athlete Showcase */}
-          <div className="lg:col-span-5 w-full flex flex-col items-center">
-            <LiveAnimeHeroStage
-              currentLang={currentLang}
-              onExploreGear={() => {
-                const el = document.getElementById('products');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-full max-w-md lg:max-w-none"
-            />
+          {/* Right Column: Bespoke YARD Athletic Community Trio Showcase */}
+          <div className="lg:col-span-5 w-full flex flex-col">
+            <div
+              className={`w-full rounded-2xl bg-[#0B0E14]/95 border border-white/[0.1] overflow-hidden shadow-[0_24px_60px_rgba(0,0,0,0.75)] backdrop-blur-xl ${
+                isAr ? 'text-right' : 'text-left'
+              }`}
+            >
+              {/* Crisp 4:3 Photorealistic Community Trio Portrait */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#07080C]">
+                <img
+                  src={YARD_COMMUNITY_TRIO_IMAGE}
+                  alt={tr(currentLang, {
+                    en: 'YARD 300 Athletic Community — Built on Real Effort',
+                    es: 'Comunidad Atlética YARD 300 — Basada en el Esfuerzo Real',
+                    fr: 'Communauté Athlétique YARD 300 — Fondée sur l’Effort Réel',
+                    ar: 'مجتمع يارد الرياضي — جميع المستويات تعتمد على الجهد المبذول'
+                  })}
+                  onError={handleImageError}
+                  referrerPolicy="no-referrer"
+                  loading="eager"
+                  decoding="async"
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/25 to-transparent" />
+              </div>
+
+              {/* Executive Community Manifesto Panel */}
+              <div className="p-5 sm:p-6 space-y-3.5 -mt-6 relative z-10">
+                <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4AF37]">
+                  <span className="w-4 h-px bg-[#D4AF37]" />
+                  <span>
+                    {tr(currentLang, {
+                      en: 'YARD COMMUNITY · EFFORT-DRIVEN MERITOCRACY',
+                      es: 'COMUNIDAD YARD · MÉRITO POR ESFUERZO REAL',
+                      fr: 'COMMUNAUTÉ YARD · MÉRITE PAR L’EFFORT RÉEL',
+                      ar: 'مجتمع يارد · جميع المستويات تعتمد على الجهد المبذول'
+                    })}
+                  </span>
+                </div>
+
+                <h2 className="text-lg sm:text-xl font-bold text-white leading-snug">
+                  {tr(currentLang, {
+                    en: 'Built for Athletes & Driven Achievers Seeking Peak Energy',
+                    es: 'Creado para Atletas y Apasionados por Su Máxima Energía',
+                    fr: 'Conçu pour les Athlètes & Passionnés Visant leur Plein Potentiel',
+                    ar: 'مجتمع يارد الفريد — للرياضيين والشغوفين بالوصول لأعلى طاقتهم'
+                  })}
+                </h2>
+
+                <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed">
+                  {tr(currentLang, {
+                    en: 'YARD is a one-of-a-kind community where every level is earned strictly through real effort — uniting sport, adventure, luxury, digital investment, and live athletic events for dedicated athletes striving toward peak energy and capability.',
+                    es: 'YARD es una comunidad única en su clase donde todos los niveles dependen del esfuerzo real; reúne deporte, aventura, lujo, inversión digital y eventos deportivos para atletas y apasionados por alcanzar su máxima energía y capacidad.',
+                    fr: 'YARD est une communauté unique où chaque niveau repose exclusivement sur l’effort fourni — réunissant sport, aventure, luxe, investissement numérique et événements sportifs pour les athlètes et passionnés visant leur plus haute énergie et capacité physique.',
+                    ar: 'مجتمع يارد مجتمع فريد من نوعه، كل المستويات فيه تعتمد على الجهد المبذول؛ يجمع بين الرياضة والمغامرة والفخامة والاستثمار الرقمي والفعاليات الرياضية، وهو مكان مخصص للرياضيين والشغوفين بالوصول إلى أعلى طاقتهم وقدرتهم الرياضية.'
+                  })}
+                </p>
+
+                {/* Clean Architectural Pillars */}
+                <div className="pt-3 border-t border-white/[0.08] flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-mono text-slate-300">
+                  <span className="text-[#D4AF37] font-semibold">
+                    {tr(currentLang, { en: 'Sport', es: 'Deporte', fr: 'Sport', ar: 'الرياضة' })}
+                  </span>
+                  <span className="text-slate-600">·</span>
+                  <span>
+                    {tr(currentLang, { en: 'Adventure', es: 'Aventura', fr: 'Aventure', ar: 'المغامرة' })}
+                  </span>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-[#10B981] font-semibold">
+                    {tr(currentLang, { en: 'Luxury', es: 'Lujo', fr: 'Luxe', ar: 'الفخامة' })}
+                  </span>
+                  <span className="text-slate-600">·</span>
+                  <span>
+                    {tr(currentLang, { en: 'Digital Investment', es: 'Inversión Digital', fr: 'Investissement Digital', ar: 'الاستثمار الرقمي' })}
+                  </span>
+                  <span className="text-slate-600">·</span>
+                  <span>
+                    {tr(currentLang, { en: 'Athletic Events', es: 'Eventos', fr: 'Événements', ar: 'الفعاليات الرياضية' })}
+                  </span>
+                </div>
+
+                {/* Single-line Clean Action Buttons */}
+                <div className="pt-1 flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFX.playButtonClick();
+                      if (onSelectView) {
+                        onSelectView('subscriberTiers');
+                      } else {
+                        const el = document.getElementById('subscriber-tiers');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="flex-1 py-2.5 px-4 rounded-xl bg-[#D4AF37] hover:bg-[#E5C158] text-[#07080C] text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  >
+                    <span>
+                      {tr(currentLang, {
+                        en: 'Membership Levels',
+                        es: 'Ver Niveles',
+                        fr: 'Voir les Niveaux',
+                        ar: 'استعراض المستويات'
+                      })}
+                    </span>
+                    <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFX.playButtonClick();
+                      if (onSelectView) onSelectView('tickets');
+                      else window.location.hash = '#tickets';
+                    }}
+                    className="py-2.5 px-4 rounded-xl bg-[#121622] hover:bg-[#191E2E] text-white border border-white/[0.12] hover:border-[#10B981]/50 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  >
+                    {tr(currentLang, {
+                      en: 'Championships',
+                      es: 'Campeonatos',
+                      fr: 'Championnats',
+                      ar: 'الفعاليات'
+                    })}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

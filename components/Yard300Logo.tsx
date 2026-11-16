@@ -2,9 +2,11 @@ import React from 'react';
 
 interface Yard300LogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'hero';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'hero';
+  variant?: 'full' | 'badge';
   showText?: boolean;
   showSubtitle?: boolean;
+  showSubtext?: boolean;
   customSubtitle?: string;
   customBadge?: string;
 }
@@ -17,12 +19,21 @@ interface Yard300LogoProps {
 export const Yard300Logo: React.FC<Yard300LogoProps> = ({
   className = '',
   size = 'md',
+  variant,
   showText = false,
   showSubtitle = false,
+  showSubtext,
   customSubtitle,
   customBadge
 }) => {
   const sizeMap = {
+    xs: {
+      emblem: 'w-6 h-5 rounded-md p-0.5',
+      text: 'text-[11px]',
+      num: 'text-[10px]',
+      subtext: 'text-[7px]',
+      gap: 'gap-1.5'
+    },
     sm: {
       emblem: 'w-10 h-8',
       text: 'text-[15px]',
@@ -53,7 +64,9 @@ export const Yard300Logo: React.FC<Yard300LogoProps> = ({
     }
   };
 
-  const currentSize = sizeMap[size];
+  const currentSize = sizeMap[size] || sizeMap.sm;
+  const shouldShowText = showText || variant === 'badge';
+  const shouldShowSubtitle = showSubtext !== undefined ? showSubtext : showSubtitle;
 
   return (
     <div
@@ -104,15 +117,15 @@ export const Yard300Logo: React.FC<Yard300LogoProps> = ({
       </div>
 
       {/* Architectural YARD / 300 Wordmark Lockup */}
-      {showText && (
+      {shouldShowText && (
         <div className="flex flex-col items-start leading-none">
-          <div className="inline-flex items-baseline gap-1.5">
+          <div className="inline-flex items-baseline gap-1">
             <span
               className={`font-yard-brand font-extrabold uppercase tracking-[0.14em] bg-gradient-to-b from-white via-slate-100 to-slate-300 bg-clip-text text-transparent ${currentSize.text}`}
             >
               YARD
             </span>
-            <span className="h-3.5 w-[1.5px] bg-[#D4AF37]/75 -skew-x-[18deg] self-center" aria-hidden="true" />
+            <span className={`${size === 'xs' ? 'h-2.5' : 'h-3.5'} w-[1.5px] bg-[#D4AF37]/75 -skew-x-[18deg] self-center`} aria-hidden="true" />
             <span
               className={`font-yard-num font-black tracking-[0.12em] text-[#D4AF37] group-hover:text-[#F0CF61] transition-colors ${currentSize.num}`}
             >
@@ -120,9 +133,11 @@ export const Yard300Logo: React.FC<Yard300LogoProps> = ({
             </span>
           </div>
 
-          <div className="w-full h-[1px] mt-1 bg-gradient-to-r from-[#D4AF37]/65 via-white/25 to-transparent" aria-hidden="true" />
+          {size !== 'xs' && (
+            <div className="w-full h-[1px] mt-1 bg-gradient-to-r from-[#D4AF37]/65 via-white/25 to-transparent" aria-hidden="true" />
+          )}
 
-          {(showSubtitle || customSubtitle) && (
+          {(shouldShowSubtitle || customSubtitle) && (
             <span className={`font-mono font-semibold text-slate-400 tracking-[0.22em] uppercase mt-1 ${currentSize.subtext}`}>
               {customSubtitle || 'COMBAT HEALTH & PERFORMANCE'}
             </span>
